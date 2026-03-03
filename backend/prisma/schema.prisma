@@ -1,0 +1,351 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql" // or "mysql", etc.
+  url      = env("DATABASE_URL")
+}
+
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum PostStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+  ARCHIVED
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
+}
+
+enum ReportReason {
+  SPAM
+  HARASSMENT
+  INAPPROPRIATE
+  MISINFORMATION
+  SELF_HARM
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWING
+  RESOLVED
+  DISMISSED
+}
+
+enum ReportTargetType {
+  POST
+  COMMENT
+  USER
+}
+
+enum NotificationType {
+  NEW_COMMENT
+  COMMENT_REPLY
+  POST_UPVOTE
+  POST_APPROVED
+  POST_REJECTED
+  POST_FLAGGED
+  REPORT_RESOLVED
+  BADGE_EARNED
+  SYSTEM
+}
+
+// ==================== MODELS ====================
+
+/// User — Supports regular + anonymous posting, roles, reputation, banning.
+model User {
+  id            String    @id @default(uuid())
+  username      String    @unique
+  email         String    @unique
+  password      String
+  displayName   String?
+  bio           String?
+  avatar        String?
+  role          Role      @default(USER)
+  reputation    Int       @default(0)
+  isActive      Boolean   @default(true)
+  isVerified    Boolean   @default(false)
+
+  // Ban fields
+  bannedAt      DateTime?
+  banReason     String?
+  banExpiresAt  DateTime?
+  bannedById    String?
+  bannedBy      User?     @relation("BannedByUser", fields: [bannedById], references: [id])
+
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  posts              Post[]
+  comments           Comment[]
+  votes              Vote[]
+  notifications      Notification[]
+  reports            Report[]        @relation("ReporterReports")
+  moderatedReports   Report[]        @relation("ModeratorReports")
+  bookmarks          Bookmark[]
+  badges             UserBadge[]
+  bannedUsers        User[]          @relation("BannedByUser")
+
+  @@index([email])
+  @@index([username])
+  @@index([role])
+  @@index([isActive])
+  @@map("users")
+}
+
+/// Post — Supports anonymous posting, categories, tags, voting, moderation.
+model Post {
+  id              String     @id @default(uuid())
+  title           String
+  slug            String     @unique
+  content         String
+  excerpt         String?
+  isAnonymous     Boolean    @default(false)
+  status          PostStatus @default(APPROVED)
+  viewCount       Int        @default(0)
+  upvoteCount     Int        @default(0)
+  downvoteCount   Int        @default(0)
+  commentCount    Int        @default(0)
+  isPinned        Boolean    @default(false)
+
+  // Foreign keys
+  authorId        String
+  author          User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categoryId      String
+  category        Category   @relation(fields: [categoryId], references: [id])
+
+  deletedAt       DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Relations
+  comments        Comment[]
+  votes           Vote[]
+  tags            PostTag[]
+  bookmarks       Bookmark[]
+  reports         Report[]
+
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([slug])
+  @@index([upvoteCount])
+  @@map("posts")
+}
+
+/// Category — Top-level grouping for posts (e.g. Anxiety, Depression, General).
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  icon        String?
+  color       String?  // Hex color for UI display
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  posts       Post[]
+
+  @@index([slug])
+  @@map("categories")
+}
+
+/// Tag — User-defined labels on posts.
+model Tag {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  usageCount Int      @default(0)
+  createdAt DateTime  @default(now())
+
+  posts     PostTag[]
+
+  @@index([slug])
+  @@index([usageCount])
+  @@map("tags")
+}
+
+/// PostTag — Many-to-many join between Post and Tag.
+model PostTag {
+  postId String
+  tagId  String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("post_tags")
+}
+
+/// Comment — Threaded (nested) comments on posts. Supports anonymous.
+model Comment {
+  id          String    @id @default(uuid())
+  content     String
+  isAnonymous Boolean   @default(false)
+  isEdited    Boolean   @default(false)
+  upvoteCount Int       @default(0)
+  downvoteCount Int     @default(0)
+
+  // Self-referencing for threaded replies
+  parentId    String?
+  parent      Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     Comment[] @relation("CommentReplies")
+
+  // Foreign keys
+  postId      String
+  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  votes       Vote[]
+  reports     Report[]
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([createdAt])
+  @@map("comments")
+}
+
+/// Vote — Unified voting for both posts and comments.
+model Vote {
+  id        String   @id @default(uuid())
+  type      VoteType
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Polymorphic: one of these will be set
+  postId    String?
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  // Unique constraint: one vote per user per target
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+  @@index([postId])
+  @@index([commentId])
+  @@map("votes")
+}
+
+/// Bookmark — Users can save/bookmark posts.
+model Bookmark {
+  id        String   @id @default(uuid())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@map("bookmarks")
+}
+
+/// Notification — Real-time and stored notifications.
+model Notification {
+  id           String           @id @default(uuid())
+  type         NotificationType
+  title        String
+  message      String
+  isRead       Boolean          @default(false)
+  readAt       DateTime?
+
+  // The resource this notification refers to (post, comment, etc.)
+  resourceId   String?
+  resourceType String?
+
+  userId       String
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
+
+/// Report — Content/User reporting for moderation.
+model Report {
+  id             String           @id @default(uuid())
+  reason         ReportReason
+  description    String?
+  status         ReportStatus     @default(PENDING)
+  targetType     ReportTargetType
+  moderatorNote  String?
+  resolvedAt     DateTime?
+
+  // Who filed the report
+  reporterId     String
+  reporter       User             @relation("ReporterReports", fields: [reporterId], references: [id], onDelete: Cascade)
+
+  // Target (polymorphic — postId OR commentId set depending on targetType)
+  targetId       String
+  postId         String?
+  post           Post?            @relation(fields: [postId], references: [id], onDelete: SetNull)
+  commentId      String?
+  comment        Comment?         @relation(fields: [commentId], references: [id], onDelete: SetNull)
+
+  // Moderator who resolved the report
+  moderatorId    String?
+  moderator      User?            @relation("ModeratorReports", fields: [moderatorId], references: [id])
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([status])
+  @@index([reporterId])
+  @@index([targetType, status])
+  @@map("reports")
+}
+
+/// Badge — Gamification badges users can earn.
+model Badge {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String
+  icon        String
+  criteria    String    // JSON or human-readable description of earning criteria
+  createdAt   DateTime  @default(now())
+
+  users       UserBadge[]
+
+  @@map("badges")
+}
+
+/// UserBadge — Many-to-many join between User and Badge.
+model UserBadge {
+  userId    String
+  badgeId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  awardedAt DateTime @default(now())
+
+  @@id([userId, badgeId])
+  @@map("user_badges")
+}
