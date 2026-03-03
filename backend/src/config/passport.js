@@ -1,110 +1,114 @@
-/**
- * Passport Google OAuth Configuration
- */
-
 import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import Environment from './environment.js';
-import { Database } from '../config/database.js';
-import Helpers from '../utils/helpers.js';
-import logger from '../utils/logger.js';
+import bcrypt from 'bcryptjs';
+import { PrismaClient } from '@prisma/client';
 
-const env = Environment.getInstance();
+const prisma = new PrismaClient();
 
-// Configure Google OAuth Strategy
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: env.googleClientId,
-      clientSecret: env.googleClientSecret,
-      callbackURL: env.googleCallbackUrl,
-      scope: ['profile', 'email'],
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        const email = profile.emails[0].value;
-        const providerId = profile.id;
-        const provider = 'google';
-
-        // Check if user exists with this provider
-        let user = await Database.user.findFirst({
-          where: {
-            provider,
-            providerId,
-          },
-        });
-
-        if (user) {
-          // Update last login
-          user = await Database.user.update({
-            where: { id: user.id },
-            data: { lastLoginAt: new Date() },
-          });
-          logger.info(`Google OAuth login: ${user.email}`);
-          return done(null, user);
-        }
-
-        // Check if user exists with same email but different provider
-        const existingUser = await Database.user.findUnique({
-          where: { email },
-        });
-
-        if (existingUser) {
-          // Link Google account to existing user
-          user = await Database.user.update({
-            where: { id: existingUser.id },
-            data: {
-              provider,
-              providerId,
-              lastLoginAt: new Date(),
-              isVerified: true,
-            },
-          });
-          logger.info(`Linked Google account to existing user: ${user.email}`);
-          return done(null, user);
-        }
-
-        // Create new user
-        const username = Helpers.generateUsernameFromEmail(email);
-        const displayName = profile.displayName || username;
-        const avatar = profile.photos?.[0]?.value || null;
-
-        user = await Database.user.create({
-          data: {
-            email,
-            username,
-            displayName,
-            avatar,
-            provider,
-            providerId,
-            isVerified: true,
-            lastLoginAt: new Date(),
-          },
-        });
-
-        logger.info(`New user created via Google OAuth: ${user.email}`);
-        return done(null, user);
-      } catch (error) {
-        logger.error('Google OAuth error:', error);
-        return done(error, null);
-      }
-    }
-  )
-);
-
-// Serialize user for the session
+// Serialize user for session
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
-// Deserialize user from the session
+// Deserialize user from session
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await Database.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({ where: { id } });
     done(null, user);
   } catch (error) {
     done(error, null);
   }
 });
+
+// Local Strategy (Email/Password)
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: 'email',
+      passwordField: 'password',
+    },
+    async (email, password, done) => {
+      try {
+        // Find user by email
+        const user = await prisma.user.findUnique({
+          where: { email: email.toLowerCase() },
+        });
+
+        if (!user) {
+          return done(null, false, { message: 'Invalid email or password' });
+        }
+
+        // Check if user registered with Google
+        if (user.provider === 'google' || !user.password) {
+          return done(null, false, { 
+            message: 'Please sign in with Google' 
+          });
+        }
+
+        // Verify password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          return done(null, false, { message: 'Invalid email or password' });
+        }
+
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
+
+// Google OAuth Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // Check if user already exists
+        let user = await prisma.user.findUnique({
+          where: { googleId: profile.id },
+        });
+
+        if (user) {
+          // User exists, return user
+          return done(null, user);
+        }
+
+        // Check if email already exists with local provider
+        const emailExists = await prisma.user.findUnique({
+          where: { email: profile.emails[0].value },
+        });
+
+        if (emailExists) {
+          return done(null, false, { 
+            message: 'Email already registered. Please sign in with email/password' 
+          });
+        }
+
+        // Create new user
+        user = await prisma.user.create({
+          data: {
+            email: profile.emails[0].value,
+            name: profile.displayName,
+            googleId: profile.id,
+            provider: 'google',
+            profilePicture: profile.photos[0]?.value,
+            isVerified: true, // Google accounts are verified
+          },
+        });
+
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
 
 export default passport;

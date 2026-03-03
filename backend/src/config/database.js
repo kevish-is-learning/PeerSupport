@@ -1,6 +1,23 @@
-import {PrismaClient} from "../generated/prisma/index.js"
+import { PrismaClient } from '../generated/prisma/index.js';
 
-const globalForPrisma = globalThis;
-export const Database = globalForPrisma.prisma || new PrismaClient()
+const prisma = new PrismaClient({
+  log: ['error', 'warn'],
+});
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = Database
+// Test database connection
+const connectDatabase = async () => {
+  try {
+    await prisma.$connect();
+    console.log('✅ Database connected successfully');
+  } catch (error) {
+    console.error('❌ Database connection failed:', error);
+    process.exit(1);
+  }
+};
+
+// Graceful shutdown
+process.on('beforeExit', async () => {
+  await prisma.$disconnect();
+});
+
+export { prisma, connectDatabase };

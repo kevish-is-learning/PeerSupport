@@ -1,73 +1,164 @@
-/**
- * Auth Controller
- * Handles authentication HTTP endpoints.
- * Pattern: Controller / Delegate to Service
- */
+import authService from "../services/AuthService.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiError } from "../utils/ApiError.js";
+class AuthController {
+  // Register with Email/Password
+  async register(req, res) {
+    try {
+      const { email, password, name } = req.body;
 
-import BaseController from './BaseController.js';
-import authService from '../services/AuthService.js';
-import UserService from '../services/UserService.js';
+      const result = await authService.register({ email, password, name });
 
-class AuthController extends BaseController {
-  constructor() {
-    super(authService);
+      // Set JWT token in HTTP-only cookie
+      res.cookie('token', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
+      // Return user data without token
+      res
+        .status(201)
+        .json(new ApiResponse(201, "Registration successful", { user: result.user }));
+    } catch (error) {
+      res
+        .status(500)
+        .json(new ApiError(500, "Registration failed", error.message));
+    }
   }
 
-  /**
-   * POST /api/auth/register
-   */
-  register = BaseController.asyncHandler(async (req, res) => {
-    const result = await this.service.register(req.body);
-    this.created(res, result, 'Registration successful');
-  });
+  // Login with Email/Password
+  async login(req, res) {
+    try {
+      const { email, password } = req.body;
 
-  /**
-   * POST /api/auth/login
-   */
-  login = BaseController.asyncHandler(async (req, res) => {
-    const result = await this.service.login(req.body);
-    this.success(res, result, 'Login successful');
-  });
+      const result = await authService.login({ email, password });
 
-  /**
-   * POST /api/auth/refresh
-   */
-  refresh = BaseController.asyncHandler(async (req, res) => {
-    const { refreshToken } = req.body;
-    const tokens = await this.service.refreshToken(refreshToken);
-    this.success(res, tokens, 'Token refreshed');
-  });
+      // Set JWT token in HTTP-only cookie
+      res.cookie('token', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
 
-  /**
-   * PUT /api/auth/change-password
-   */
-  changePassword = BaseController.asyncHandler(async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
-    await this.service.changePassword(req.user.id, currentPassword, newPassword);
-    this.success(res, null, 'Password changed successfully');
-  });
+      // Return user data without token
+      res.status(200).json(new ApiResponse(200, "Login successful", { user: result.user }));
+    } catch (error) {
+      res.status(401).json(new ApiError(401, "Login failed", error.message));
+    }
+  }
 
-  /**
-   * GET /api/auth/me
-   */
-  getMe = BaseController.asyncHandler(async (req, res) => {
-    const user = await UserService.getProfile(req.user.id);
-    this.success(res, user);
-  });
+  // Google OAuth Callback Handler
+  googleCallback(req, res) {
+    try {
+      const frontendUrl = process.env.FRONTEND_URL || `http://localhost:${process.env.PORT || 5000}`;
+      
+      if (!req.user) {
+        return res.redirect(
+          `${frontendUrl}/login?error=authentication_failed`,
+        );
+      }
 
-  /**
-   * GET /api/auth/google/callback
-   * Handle Google OAuth callback
-   */
-  googleCallback = BaseController.asyncHandler(async (req, res) => {
-    // User is attached to req by passport
-    const result = await this.service.handleOAuthLogin(req.user);
-    
-    // Redirect to frontend with tokens
-    const env = require('../config/environment.js').default.getInstance();
-    const redirectUrl = `${env.clientUrl}/auth/callback?token=${result.accessToken}&refresh=${result.refreshToken}`;
-    res.redirect(redirectUrl);
-  });
+      // Generate JWT token
+      const token = authService.generateToken(req.user.id);
+
+      // Set JWT token in HTTP-only cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
+      // Redirect to frontend without token in URL
+      res.redirect(`${frontendUrl}/?success=true`);
+    } catch (error) {
+      const frontendUrl = process.env.FRONTEND_URL || `http://localhost:${process.env.PORT || 5000}`;
+      res.redirect(`${frontendUrl}/?error=server_error`);
+    }
+  }
+
+  // Get Current User Profile
+  async getProfile(req, res) {
+    try {
+      const user = await authService.getProfile(req.user.id);
+
+      res
+        .status(200)
+        .json(new ApiResponse(200, "Profile retrieved successfully", user));
+    } catch (error) {
+      res
+        .status(404)
+        .json(new ApiError(404, "Profile not found", error.message));
+    }
+  }
+
+  // Update User Profile
+  async updateProfile(req, res) {
+    try {
+      const { name, profilePicture } = req.body;
+
+      const user = await authService.updateProfile(req.user.id, {
+        name,
+        profilePicture,
+      });
+
+      res
+        .status(200)
+        .json(new ApiResponse(200, "Profile updated successfully", user));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Profile update failed", error.message));
+    }
+  }
+
+  // Change Password
+  async changePassword(req, res) {
+    try {
+      const { currentPassword, newPassword } = req.body;
+
+      const result = await authService.changePassword(req.user.id, {
+        currentPassword,
+        newPassword,
+      });
+
+      res
+        .status(200)
+        .json(new ApiResponse(200, "Password changed successfully", result));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Password change failed", error.message));
+    }
+  }
+
+  // Logout - clear JWT cookie
+  logout(req, res) {
+    try {
+      // Clear the token cookie
+      res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+      });
+
+      // Also handle passport session logout if exists
+      if (req.logout) {
+        req.logout((err) => {
+          if (err) {
+            console.error('Passport logout error:', err);
+          }
+        });
+      }
+
+      res.status(200).json(new ApiResponse(200, "Logged out successfully"));
+    } catch (error) {
+      res.status(500).json(new ApiError(500, "Logout failed", error.message));
+    }
+  }
 }
 
 export default new AuthController();

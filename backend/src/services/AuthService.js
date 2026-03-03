@@ -1,192 +1,187 @@
-/**
- * Auth Service
- * Handles user registration, login, token management.
- * Pattern: Service Layer
- */
-
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import BaseService from './BaseService.js';
-import Environment from '../config/environment.js';
-import { UnauthorizedError, ConflictError, BadRequestError } from '../errors/index.js';
-import Helpers from '../utils/helpers.js';
-import logger from '../utils/logger.js';
+import { prisma } from '../config/database.js';
 
-class AuthService extends BaseService {
-  constructor() {
-    super('user');
+class AuthService {
+  // Generate JWT Token
+  generateToken(userId) {
+    return jwt.sign(
+      { userId },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    );
   }
 
-  /**
-   * Registers a new user.
-   * @param {{ username: string, email: string, password: string, displayName?: string }} data
-   * @returns {Promise<{ user: object, accessToken: string, refreshToken: string }>}
-   */
-  async register({ username, email, password, displayName }) {
-    // Check uniqueness
-    const existingUser = await this.findOne({
-      OR: [{ email }, { username }],
+  // Register with Email/Password
+  async register({ email, password, name }) {
+    // Validate input
+    if (!email || !password) {
+      throw new Error('Email and password are required');
+    }
+
+    if (password.length < 6) {
+      throw new Error('Password must be at least 6 characters long');
+    }
+
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
     });
 
     if (existingUser) {
-      throw new ConflictError(
-        existingUser.email === email
-          ? 'Email already registered'
-          : 'Username already taken'
-      );
+      if (existingUser.provider === 'google') {
+        throw new Error('Email already registered with Google. Please sign in with Google');
+      }
+      throw new Error('Email already registered');
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
-    const user = await this.create({
-      username,
-      email,
-      password: hashedPassword,
-      displayName: displayName || username,
-      provider: 'local',
+    // Create user with default role MENTEE
+    const user = await prisma.user.create({
+      data: {
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        name: name || null,
+        provider: 'local',
+        role: 'MENTEE',
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        provider: true,
+        role: true,
+        isVerified: true,
+        createdAt: true,
+      },
     });
 
-    // Generate tokens
-    const tokens = this._generateTokens(user);
+    // Generate token
+    const token = this.generateToken(user.id);
 
-    logger.info(`User registered: ${user.email}`);
-
-    return {
-      user: Helpers.sanitizeUser(user),
-      ...tokens,
-    };
+    return { user, token };
   }
 
-  /**
-   * Authenticates a user with email/password.
-   * @param {{ email: string, password: string }} credentials
-   * @returns {Promise<{ user: object, accessToken: string, refreshToken: string }>}
-   */
+  // Login with Email/Password
   async login({ email, password }) {
-    const user = await this.findOne({ email });
-
-    if (!user || !user.isActive) {
-      throw new UnauthorizedError('Invalid email or password');
+    if (!email || !password) {
+      throw new Error('Email and password are required');
     }
 
-    // Check if user uses OAuth
-    if (user.provider && user.provider !== 'local') {
-      throw new BadRequestError(`Please login with ${user.provider}`);
-    }
-
-    // Check if user has a password (OAuth users might not have one)
-    if (!user.password) {
-      throw new BadRequestError('This account uses OAuth. Please login with your provider.');
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedError('Invalid email or password');
-    }
-
-    // Update last login
-    await this.update(user.id, { lastLoginAt: new Date() });
-
-    const tokens = this._generateTokens(user);
-
-    logger.info(`User logged in: ${user.email}`);
-
-    return {
-      user: Helpers.sanitizeUser(user),
-      ...tokens,
-    };
-  }
-
-  /**
-   * Refreshes the access token using a refresh token.
-   * @param {string} refreshToken
-   * @returns {Promise<{ accessToken: string, refreshToken: string }>}
-   */
-  async refreshToken(refreshToken) {
-    const env = Environment.getInstance();
-
-    try {
-      const decoded = jwt.verify(refreshToken, env.jwtRefreshSecret);
-      const user = await this.findById(decoded.id);
-
-      if (!user || !user.isActive) {
-        throw new UnauthorizedError('Invalid refresh token');
-      }
-
-      return this._generateTokens(user);
-    } catch (error) {
-      throw new UnauthorizedError('Invalid or expired refresh token');
-    }
-  }
-
-  /**
-   * Changes user password.
-   * @param {string} userId
-   * @param {string} currentPassword
-   * @param {string} newPassword
-   */
-  async changePassword(userId, currentPassword, newPassword) {
-    const user = await this.findById(userId);
+    // Find user
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
 
     if (!user) {
-      throw new BadRequestError('User not found');
+      throw new Error('Invalid email or password');
     }
 
-    const isValid = await bcrypt.compare(currentPassword, user.password);
-    if (!isValid) {
-      throw new BadRequestError('Current password is incorrect');
+    // Check if user registered with Google
+    if (user.provider === 'google' || !user.password) {
+      throw new Error('Please sign in with Google');
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
-    await this.update(userId, { password: hashedPassword });
+    // Verify password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new Error('Invalid email or password');
+    }
 
-    const tokens = this._generateTokens(user);
+    // Generate token
+    const token = this.generateToken(user.id);
 
-    logger.info(`OAuth login successful: ${user.email}`);
+    // Return user without password
+    const { password: _, ...userWithoutPassword } = user;
 
-    return {
-      user: Helpers.sanitizeUser(user),
-      ...tokens,
-    };
+    return { user: userWithoutPassword, token };
   }
 
-  /**
-   *  throw new BadRequestError('Current password is incorrect');
+  // Get user profile
+  async getProfile(userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        provider: true,
+        role: true,
+        profilePicture: true,
+        isVerified: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
-    await this.update(userId, { password: hashedPassword });
-
-    logger.info(`Password changed for user: ${user.email}`);
+    return user;
   }
 
-  /**
-   * Generates JWT access and refresh tokens.
-   * @param {object} user
-   * @returns {{ accessToken: string, refreshToken: string }}
-   * @private
-   */
-  _generateTokens(user) {
-    const env = Environment.getInstance();
-
-    const payload = {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      username: user.username,
-    };
-
-    const accessToken = jwt.sign(payload, env.jwtSecret, {
-      expiresIn: env.jwtExpiresIn,
+  // Update user profile
+  async updateProfile(userId, { name, profilePicture }) {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(profilePicture !== undefined && { profilePicture }),
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        provider: true,
+        role: true,
+        profilePicture: true,
+        isVerified: true,
+        isActive: true,
+        updatedAt: true,
+      },
     });
 
-    const refreshToken = jwt.sign({ id: user.id }, env.jwtRefreshSecret, {
-      expiresIn: env.jwtRefreshExpiresIn,
+    return user;
+  }
+
+  // Change password (for local users only)
+  async changePassword(userId, { currentPassword, newPassword }) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
     });
 
-    return { accessToken, refreshToken };
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (user.provider === 'google' || !user.password) {
+      throw new Error('Cannot change password for Google accounts');
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      throw new Error('Current password is incorrect');
+    }
+
+    if (newPassword.length < 6) {
+      throw new Error('New password must be at least 6 characters long');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    // Update password
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Password changed successfully' };
   }
 }
 
