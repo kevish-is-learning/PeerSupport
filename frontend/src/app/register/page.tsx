@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth.store';
@@ -8,7 +8,7 @@ import { registerSchema, RegisterInput } from '@/lib/validations';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register, isLoading, error, clearError } = useAuthStore();
+  const { register, isLoading, error, clearError, isAuthenticated, isInitialized } = useAuthStore();
   
   const [formData, setFormData] = useState<RegisterInput>({
     email: '',
@@ -16,6 +16,13 @@ export default function RegisterPage() {
     name: '',
   });
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isInitialized && isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, isInitialized, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

@@ -10,13 +10,13 @@ export default function ProfileLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { isAuthenticated, isLoading, user, logout } = useAuthStore();
+  const { isAuthenticated, isInitialized, user, logout } = useAuthStore();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (isInitialized && !isAuthenticated) {
       router.push('/login');
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isInitialized, router]);
 
   const handleLogout = async () => {
     try {
@@ -27,12 +27,9 @@ export default function ProfileLayout({
     }
   };
 
-  if (isLoading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse">Loading...</div>
-      </div>
-    );
+  // Don't render until initialized and authenticated
+  if (!isInitialized || !isAuthenticated) {
+    return null;
   }
 
   return (

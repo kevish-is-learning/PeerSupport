@@ -6,21 +6,17 @@ import { useAuthStore } from '@/store/auth.store';
 
 export default function HomePage() {
   const router = useRouter();
-  const { isAuthenticated, isLoading, user } = useAuthStore();
+  const { isAuthenticated, isInitialized } = useAuthStore();
 
   useEffect(() => {
-    if (!isLoading) {
+    if (isInitialized) {
       if (!isAuthenticated) {
         router.push('/login');
       } else {
         router.push('/dashboard');
       }
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isInitialized, router]);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-pulse">Loading...</div>
-    </div>
-  );
+  return null;
 }

@@ -9,12 +9,14 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  isInitialized: boolean;
   
   // Actions
   register: (data: RegisterInput) => Promise<void>;
   login: (data: LoginInput) => Promise<void>;
   logout: () => Promise<void>;
   fetchProfile: () => Promise<void>;
+  initialize: () => Promise<void>;
   setUser: (user: User | null) => void;
   clearError: () => void;
 }
@@ -26,6 +28,44 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       error: null,
       isAuthenticated: false,
+      isInitialized: false,
+
+      initialize: async () => {
+        // Skip if already initialized
+        if (get().isInitialized) return;
+        
+        set({ isLoading: true });
+        
+        // Check if we have persisted auth state
+        const { isAuthenticated } = get();
+        
+        if (isAuthenticated) {
+          // Verify the cookie is still valid by fetching profile
+          try {
+            const response = await authService.getProfile();
+            set({ 
+              user: response.data || null, 
+              isAuthenticated: true,
+              isLoading: false,
+              isInitialized: true
+            });
+          } catch (error: any) {
+            // Cookie expired or invalid, clear auth state
+            set({ 
+              user: null, 
+              isAuthenticated: false,
+              isLoading: false,
+              isInitialized: true
+            });
+          }
+        } else {
+          // No persisted auth, just mark as initialized
+          set({ 
+            isLoading: false,
+            isInitialized: true
+          });
+        }
+      },
 
       register: async (data: RegisterInput) => {
         set({ isLoading: true, error: null });
@@ -66,7 +106,8 @@ export const useAuthStore = create<AuthState>()(
           set({ 
             user: null, 
             isAuthenticated: false,
-            isLoading: false 
+            isLoading: false,
+            isInitialized: true
           });
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || 'Logout failed';
