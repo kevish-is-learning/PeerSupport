@@ -39,9 +39,6 @@ class Environment {
     this.rateLimitWindowMs = parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000;
     this.rateLimitMax = parseInt(process.env.RATE_LIMIT_MAX, 10) || 100;
 
-    // Socket.IO
-    this.socketCorsOrigin = process.env.SOCKET_CORS_ORIGIN || 'http://localhost:3000';
-
     // Logging
     this.logLevel = process.env.LOG_LEVEL || 'debug';
 

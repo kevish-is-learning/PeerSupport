@@ -9,18 +9,8 @@ import logger from '../utils/logger.js';
 import Helpers from '../utils/helpers.js';
 
 class NotificationService extends BaseService {
-  #io = null;
-
   constructor() {
     super('notification');
-  }
-
-  /**
-   * Attach the Socket.IO server instance.
-   * @param {import('socket.io').Server} io
-   */
-  setSocketIO(io) {
-    this.#io = io;
   }
 
   /**
@@ -37,11 +27,6 @@ class NotificationService extends BaseService {
       resourceId,
       resourceType,
     });
-
-    // Real-time emit
-    if (this.#io) {
-      this.#io.to(`user:${userId}`).emit('notification', notification);
-    }
 
     return notification;
   }
