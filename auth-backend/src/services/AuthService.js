@@ -38,19 +38,21 @@ class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
+    // Create user with default role MENTEE
     const user = await prisma.user.create({
       data: {
         email: email.toLowerCase(),
         password: hashedPassword,
         name: name || null,
         provider: 'local',
+        role: 'MENTEE',
       },
       select: {
         id: true,
         email: true,
         name: true,
         provider: true,
+        role: true,
         isVerified: true,
         createdAt: true,
       },
@@ -106,8 +108,10 @@ class AuthService {
         email: true,
         name: true,
         provider: true,
+        role: true,
         profilePicture: true,
         isVerified: true,
+        isActive: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -133,8 +137,10 @@ class AuthService {
         email: true,
         name: true,
         provider: true,
+        role: true,
         profilePicture: true,
         isVerified: true,
+        isActive: true,
         updatedAt: true,
       },
     });

@@ -1,4 +1,3 @@
-import passport from 'passport';
 import authService from '../services/AuthService.js';
 
 class AuthController {

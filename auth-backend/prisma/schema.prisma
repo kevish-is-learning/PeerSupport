@@ -8,349 +8,325 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+///////////////////////////
+// ENUMS
+///////////////////////////
 
 enum Role {
-  USER
-  MODERATOR
+  MENTOR
+  MENTEE
   ADMIN
 }
 
-enum PostStatus {
+enum SlotStatus {
+  AVAILABLE
+  BOOKED
+  BLOCKED
+  CANCELLED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  CREATED
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum SessionMode {
+  VIDEO
+  AUDIO
+  CHAT
+}
+
+enum SessionType {
+  ONE_ON_ONE
+  GROUP
+}
+
+enum VerificationStatus {
   PENDING
   APPROVED
   REJECTED
-  FLAGGED
-  ARCHIVED
 }
 
-enum VoteType {
-  UPVOTE
-  DOWNVOTE
+enum WebinarType {
+  FREE
+  PAID
 }
 
-enum ReportReason {
-  SPAM
-  HARASSMENT
-  INAPPROPRIATE
-  MISINFORMATION
-  SELF_HARM
-  OTHER
-}
+///////////////////////////
+// USER & AUTH
+///////////////////////////
 
-enum ReportStatus {
-  PENDING
-  REVIEWING
-  RESOLVED
-  DISMISSED
-}
-
-enum ReportTargetType {
-  POST
-  COMMENT
-  USER
-}
-
-enum NotificationType {
-  NEW_COMMENT
-  COMMENT_REPLY
-  POST_UPVOTE
-  POST_APPROVED
-  POST_REJECTED
-  POST_FLAGGED
-  REPORT_RESOLVED
-  BADGE_EARNED
-  SYSTEM
-}
-
-// ==================== MODELS ====================
-
-/// User — Supports regular + anonymous posting, roles, reputation, banning.
 model User {
-  id            String    @id @default(uuid())
-  username      String    @unique
-  email         String    @unique
-  password      String?   // Optional for OAuth users
-  displayName   String?
-  bio           String?
-  avatar        String?
-  role          Role      @default(USER)
-  reputation    Int       @default(0)
-  isActive      Boolean   @default(true)
-  isVerified    Boolean   @default(false)
-
-  // OAuth fields
-  provider      String?   // 'local', 'google', etc.
-  providerId    String?   // OAuth provider's user ID
-  
-  // Ban fields
-  bannedAt      DateTime?
-  banReason     String?
-  banExpiresAt  DateTime?
-  bannedById    String?
-  bannedBy      User?     @relation("BannedByUser", fields: [bannedById], references: [id])
-
-  lastLoginAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Relations
-  posts              Post[]
-  comments           Comment[]
-  votes              Vote[]
-  notifications      Notification[]
-  reports            Report[]        @relation("ReporterReports")
-  moderatedReports   Report[]        @relation("ModeratorReports")
-  bookmarks          Bookmark[]
-  badges             UserBadge[]
-  bannedUsers        User[]          @relation("BannedByUser")
-
-  @@unique([provider, providerId])
-  @@index([email])
-  @@index([username])
-  @@index([role])
-  @@index([isActive])
-  @@map("users")
-}
-
-/// Post — Supports anonymous posting, categories, tags, voting, moderation.
-model Post {
-  id              String     @id @default(uuid())
-  title           String
-  slug            String     @unique
-  content         String
-  excerpt         String?
-  isAnonymous     Boolean    @default(false)
-  status          PostStatus @default(APPROVED)
-  viewCount       Int        @default(0)
-  upvoteCount     Int        @default(0)
-  downvoteCount   Int        @default(0)
-  commentCount    Int        @default(0)
-  isPinned        Boolean    @default(false)
-
-  // Foreign keys
-  authorId        String
-  author          User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  categoryId      String
-  category        Category   @relation(fields: [categoryId], references: [id])
-
+  id              String   @id @default(uuid())
+  email           String   @unique
+  password        String?
+  googleId        String?  @unique
+  name            String?
+  profilePicture  String?
+  provider        String   @default("local") // "local" or "google"
+  role            Role     @default(MENTEE)
+  isVerified      Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   deletedAt       DateTime?
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
 
-  // Relations
-  comments        Comment[]
-  votes           Vote[]
-  tags            PostTag[]
-  bookmarks       Bookmark[]
-  reports         Report[]
+  mentorProfile   MentorProfile?
+  menteeProfile   MenteeProfile?
+  bookingsAsMentor Booking[] @relation("MentorBookings")
+  bookingsAsMentee Booking[] @relation("MenteeBookings")
+  notifications   Notification[]
+  verification    VerificationDocument?
+  webinarRegistrations WebinarRegistration[]
 
-  @@index([authorId])
-  @@index([categoryId])
-  @@index([status])
-  @@index([createdAt])
-  @@index([slug])
-  @@index([upvoteCount])
-  @@map("posts")
+  @@index([role])
+  @@index([email])
 }
 
-/// Category — Top-level grouping for posts (e.g. Anxiety, Depression, General).
-model Category {
+///////////////////////////
+// MENTOR PROFILE
+///////////////////////////
+
+model MentorProfile {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  bio               String
+  expertise         String[]
+  certifications    String[]
+  pricePerSession   Float
+  rating            Float    @default(0)
+  totalReviews      Int      @default(0)
+  verificationStatus VerificationStatus @default(PENDING)
+  verifiedBadge     Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user              User     @relation(fields: [userId], references: [id])
+  slots             Slot[]
+  feedbackGiven     MentorFeedback[]
+  earnings          Earnings[]
+
+  @@index([pricePerSession])
+  @@index([rating])
+}
+
+///////////////////////////
+// MENTEE PROFILE
+///////////////////////////
+
+model MenteeProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  dob             DateTime?
+  education10th   String?
+  education12th   String?
+  bachelors       String?
+  masters         String?
+  workExperience  String?
+  certifications  String[]
+  catScore        Float?
+  expectations    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id])
+  resumes         Resume[]
+  sopDocuments    SOPDocument[]
+}
+
+///////////////////////////
+// DOCUMENTS
+///////////////////////////
+
+model Resume {
   id          String   @id @default(uuid())
-  name        String   @unique
-  slug        String   @unique
-  description String?
-  icon        String?
-  color       String?  // Hex color for UI display
-  sortOrder   Int      @default(0)
-  isActive    Boolean  @default(true)
+  menteeId    String
+  name        String
+  fileUrl     String
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
-  posts       Post[]
-
-  @@index([slug])
-  @@map("categories")
+  mentee      MenteeProfile @relation(fields: [menteeId], references: [id])
 }
 
-/// Tag — User-defined labels on posts.
-model Tag {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  slug      String    @unique
-  usageCount Int      @default(0)
-  createdAt DateTime  @default(now())
+model SOPDocument {
+  id          String   @id @default(uuid())
+  menteeId    String
+  collegeName String
+  fileUrl     String
+  createdAt   DateTime @default(now())
 
-  posts     PostTag[]
-
-  @@index([slug])
-  @@index([usageCount])
-  @@map("tags")
+  mentee      MenteeProfile @relation(fields: [menteeId], references: [id])
 }
 
-/// PostTag — Many-to-many join between Post and Tag.
-model PostTag {
-  postId String
-  tagId  String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+///////////////////////////
+// SLOT MANAGEMENT
+///////////////////////////
 
-  @@id([postId, tagId])
-  @@map("post_tags")
+model Slot {
+  id          String     @id @default(uuid())
+  mentorId    String
+  startTime   DateTime
+  endTime     DateTime
+  status      SlotStatus @default(AVAILABLE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  mentor      MentorProfile @relation(fields: [mentorId], references: [id])
+  booking     Booking?
+
+  @@index([mentorId])
+  @@index([startTime])
+  @@unique([mentorId, startTime, endTime])
 }
 
-/// Comment — Threaded (nested) comments on posts. Supports anonymous.
-model Comment {
-  id          String    @id @default(uuid())
-  content     String
-  isAnonymous Boolean   @default(false)
-  isEdited    Boolean   @default(false)
-  upvoteCount Int       @default(0)
-  downvoteCount Int     @default(0)
+///////////////////////////
+// BOOKING SYSTEM
+///////////////////////////
 
-  // Self-referencing for threaded replies
-  parentId    String?
-  parent      Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies     Comment[] @relation("CommentReplies")
+model Booking {
+  id            String        @id @default(uuid())
+  mentorId      String
+  menteeId      String
+  slotId        String        @unique
+  status        BookingStatus @default(PENDING)
+  sessionMode   SessionMode
+  sessionType   SessionType   @default(ONE_ON_ONE)
+  purpose       String
+  meetingLink   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
-  // Foreign keys
-  postId      String
-  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  authorId    String
-  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  mentor        User          @relation("MentorBookings", fields: [mentorId], references: [id])
+  mentee        User          @relation("MenteeBookings", fields: [menteeId], references: [id])
+  slot          Slot          @relation(fields: [slotId], references: [id])
+  payment       Payment?
+  feedback      Review?
 
-  deletedAt   DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  votes       Vote[]
-  reports     Report[]
-
-  @@index([postId])
-  @@index([authorId])
-  @@index([parentId])
-  @@index([createdAt])
-  @@map("comments")
-}
-
-/// Vote — Unified voting for both posts and comments.
-model Vote {
-  id        String   @id @default(uuid())
-  type      VoteType
-
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Polymorphic: one of these will be set
-  postId    String?
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  commentId String?
-  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  // Unique constraint: one vote per user per target
-  @@unique([userId, postId])
-  @@unique([userId, commentId])
-  @@index([postId])
-  @@index([commentId])
-  @@map("votes")
-}
-
-/// Bookmark — Users can save/bookmark posts.
-model Bookmark {
-  id        String   @id @default(uuid())
-
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  postId    String
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, postId])
-  @@index([userId])
-  @@map("bookmarks")
-}
-
-/// Notification — Real-time and stored notifications.
-model Notification {
-  id           String           @id @default(uuid())
-  type         NotificationType
-  title        String
-  message      String
-  isRead       Boolean          @default(false)
-  readAt       DateTime?
-
-  // The resource this notification refers to (post, comment, etc.)
-  resourceId   String?
-  resourceType String?
-
-  userId       String
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt    DateTime         @default(now())
-
-  @@index([userId, isRead])
-  @@index([userId, createdAt])
-  @@map("notifications")
-}
-
-/// Report — Content/User reporting for moderation.
-model Report {
-  id             String           @id @default(uuid())
-  reason         ReportReason
-  description    String?
-  status         ReportStatus     @default(PENDING)
-  targetType     ReportTargetType
-  moderatorNote  String?
-  resolvedAt     DateTime?
-
-  // Who filed the report
-  reporterId     String
-  reporter       User             @relation("ReporterReports", fields: [reporterId], references: [id], onDelete: Cascade)
-
-  // Target (polymorphic — postId OR commentId set depending on targetType)
-  targetId       String
-  postId         String?
-  post           Post?            @relation(fields: [postId], references: [id], onDelete: SetNull)
-  commentId      String?
-  comment        Comment?         @relation(fields: [commentId], references: [id], onDelete: SetNull)
-
-  // Moderator who resolved the report
-  moderatorId    String?
-  moderator      User?            @relation("ModeratorReports", fields: [moderatorId], references: [id])
-
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-
+  @@index([mentorId])
+  @@index([menteeId])
   @@index([status])
-  @@index([reporterId])
-  @@index([targetType, status])
-  @@map("reports")
 }
 
-/// Badge — Gamification badges users can earn.
-model Badge {
-  id          String    @id @default(uuid())
-  name        String    @unique
+///////////////////////////
+// PAYMENTS
+///////////////////////////
+
+model Payment {
+  id               String        @id @default(uuid())
+  bookingId        String        @unique
+  razorpayOrderId  String        @unique
+  razorpayPaymentId String?
+  amount           Float
+  currency         String        @default("INR")
+  status           PaymentStatus @default(CREATED)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  booking          Booking       @relation(fields: [bookingId], references: [id])
+}
+
+///////////////////////////
+// REVIEWS & FEEDBACK
+///////////////////////////
+
+model Review {
+  id          String   @id @default(uuid())
+  bookingId   String   @unique
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now())
+
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+}
+
+model MentorFeedback {
+  id          String   @id @default(uuid())
+  mentorId    String
+  bookingId   String   @unique
+  feedbackPdfUrl String?
+  createdAt   DateTime @default(now())
+
+  mentor      MentorProfile @relation(fields: [mentorId], references: [id])
+}
+
+///////////////////////////
+// EARNINGS TRACKING
+///////////////////////////
+
+model Earnings {
+  id          String   @id @default(uuid())
+  mentorId    String
+  bookingId   String   @unique
+  amount      Float
+  createdAt   DateTime @default(now())
+
+  mentor      MentorProfile @relation(fields: [mentorId], references: [id])
+}
+
+///////////////////////////
+// WEBINARS
+///////////////////////////
+
+model Webinar {
+  id          String       @id @default(uuid())
+  title       String
   description String
-  icon        String
-  criteria    String    // JSON or human-readable description of earning criteria
-  createdAt   DateTime  @default(now())
+  price       Float?
+  type        WebinarType
+  startTime   DateTime
+  endTime     DateTime
+  meetingLink String?
+  createdAt   DateTime     @default(now())
 
-  users       UserBadge[]
-
-  @@map("badges")
+  registrations WebinarRegistration[]
 }
 
-/// UserBadge — Many-to-many join between User and Badge.
-model UserBadge {
-  userId    String
-  badgeId   String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
-  awardedAt DateTime @default(now())
+model WebinarRegistration {
+  id          String   @id @default(uuid())
+  webinarId   String
+  userId      String
+  paymentId   String?
+  createdAt   DateTime @default(now())
 
-  @@id([userId, badgeId])
-  @@map("user_badges")
+  webinar     Webinar  @relation(fields: [webinarId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+///////////////////////////
+// NOTIFICATIONS
+///////////////////////////
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  message     String
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+///////////////////////////
+// VERIFICATION DOCUMENTS
+///////////////////////////
+
+model VerificationDocument {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  documentUrl String
+  status      VerificationStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
 }
