@@ -188,12 +188,12 @@
         <h1>🔐 AUTH API TESTING INTERFACE</h1>
 
         <div class="token-display">
-            <strong>Current Token:</strong> <span id="currentToken">None</span>
-            <button class="clear-btn" onclick="clearToken()">Clear Token</button>
+            <strong>Auth Status:</strong> <span id="authStatus">Not authenticated (using cookie-based auth)</span>
+            <button class="clear-btn" onclick="checkAuthStatus()">Check Status</button>
         </div>
 
         <div class="info-box">
-            <strong>Instructions:</strong> Start by registering or logging in. The token will be automatically saved and used for authenticated requests.
+            <strong>Instructions:</strong> This API uses HTTP-only cookie authentication. Register, login with email/password, or use Google OAuth. Cookies are automatically managed.
         </div>
 
         <!-- HEALTH & INFO -->
@@ -241,8 +241,8 @@
                 <div class="form-group">
                     <label>Role:</label>
                     <select id="register-role">
-                        <option value="USER">MENTEE</option>
-                        <option value="PEER_SUPPORTER">MENTOR</option>
+                        <option value="MENTEE">MENTEE</option>
+                        <option value="MENTOR">MENTOR</option>
                         <option value="ADMIN">ADMIN</option>
                     </select>
                 </div>
@@ -265,6 +265,18 @@
                 </div>
                 <button onclick="login()">Login</button>
                 <div id="login-response" class="response" style="display:none;"></div>
+            </div>
+
+            <!-- Google OAuth -->
+            <div class="endpoint">
+                <div class="endpoint-title">
+                    <span class="method">GET</span> /api/auth/google
+                </div>
+                <div class="info-box">
+                    <strong>How it works:</strong> Click the button below to authenticate with Google. You'll be redirected to Google's login page, then back to this page with authentication completed via cookie.
+                </div>
+                <button onclick="loginWithGoogle()">🔐 Login with Google</button>
+                <div id="google-auth-response" class="response" style="display:none;"></div>
             </div>
 
             <!-- Get Profile -->
@@ -546,21 +558,65 @@
 
     <script>
         const API_BASE = window.location.origin + '/api';
-        let authToken = localStorage.getItem('authToken') || null;
+        let currentUser = null;
 
-        // Update token display
-        function updateTokenDisplay() {
-            document.getElementById('currentToken').textContent = authToken ? authToken.substring(0, 50) + '...' : 'None';
+        // Check authentication status on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+            
+            // Check if redirected from Google OAuth
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('success') === 'true') {
+                showResponse('google-auth-response', { message: 'Google authentication successful!' }, 200);
+                checkAuthStatus();
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (urlParams.has('error')) {
+                showResponse('google-auth-response', { error: urlParams.get('error') }, 401);
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+
+        // Update auth status display
+        function updateAuthDisplay() {
+            const statusElement = document.getElementById('authStatus');
+            if (currentUser) {
+                statusElement.textContent = `Authenticated as: ${currentUser.email || currentUser.name}`;
+                statusElement.style.color = '#0f0';
+            } else {
+                statusElement.textContent = 'Not authenticated (using cookie-based auth)';
+                statusElement.style.color = '#fff';
+            }
         }
 
-        function clearToken() {
-            authToken = null;
-            localStorage.removeItem('authToken');
-            updateTokenDisplay();
-            showResponse('logout-response', { message: 'Token cleared successfully' });
-        }
+        // Check auth status by calling profile endpoint
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/profile`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-        updateTokenDisplay();
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.data || data;
+                    updateAuthDisplay();
+                    return true;
+                } else {
+                    currentUser = null;
+                    updateAuthDisplay();
+                    return false;
+                }
+            } catch (error) {
+                currentUser = null;
+                updateAuthDisplay();
+                return false;
+            }
+        }
 
         function showResponse(elementId, data, status = null) {
             const element = document.getElementById(elementId);
@@ -571,19 +627,14 @@
             }
         }
 
-        async function makeRequest(endpoint, method = 'GET', body = null, requiresAuth = false) {
+        async function makeRequest(endpoint, method = 'GET', body = null) {
             try {
-                const headers = {
-                    'Content-Type': 'application/json',
-                };
-
-                if (requiresAuth && authToken) {
-                    headers['Authorization'] = `Bearer ${authToken}`;
-                }
-
                 const options = {
                     method,
-                    headers,
+                    credentials: 'include', // Important: Include cookies in requests
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 };
 
                 if (body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
@@ -593,11 +644,9 @@
                 const response = await fetch(`${API_BASE}${endpoint}`, options);
                 const data = await response.json();
 
-                // Save token if present in response
-                if (data.token) {
-                    authToken = data.token;
-                    localStorage.setItem('authToken', authToken);
-                    updateTokenDisplay();
+                // Update auth status after any request
+                if (response.ok && (endpoint.includes('/login') || endpoint.includes('/register'))) {
+                    await checkAuthStatus();
                 }
 
                 return { data, status: response.status };
@@ -631,15 +680,21 @@
 
         async function login() {
             const body = {
-                identifier: document.getElementById('login-identifier').value,
+                email: document.getElementById('login-identifier').value,
                 password: document.getElementById('login-password').value,
             };
             const { data, status } = await makeRequest('/auth/login', 'POST', body);
             showResponse('login-response', data, status);
         }
 
+        // Google OAuth Login
+        function loginWithGoogle() {
+            // Redirect to Google OAuth endpoint
+            window.location.href = `${API_BASE}/auth/google`;
+        }
+
         async function getProfile() {
-            const { data, status } = await makeRequest('/auth/profile', 'GET', null, true);
+            const { data, status } = await makeRequest('/auth/profile', 'GET', null);
             showResponse('profile-response', data, status);
         }
 
@@ -648,7 +703,7 @@
                 fullName: document.getElementById('update-fullname').value,
                 phone: document.getElementById('update-phone').value,
             };
-            const { data, status } = await makeRequest('/auth/profile', 'PUT', body, true);
+            const { data, status } = await makeRequest('/auth/profile', 'PUT', body);
             showResponse('update-profile-response', data, status);
         }
 
@@ -657,15 +712,14 @@
                 currentPassword: document.getElementById('current-password').value,
                 newPassword: document.getElementById('new-password').value,
             };
-            const { data, status } = await makeRequest('/auth/change-password', 'POST', body, true);
+            const { data, status } = await makeRequest('/auth/change-password', 'POST', body);
             showResponse('change-password-response', data, status);
         }
 
         async function logout() {
-            const { data, status } = await makeRequest('/auth/logout', 'POST', null, true);
-            authToken = null;
-            localStorage.removeItem('authToken');
-            updateTokenDisplay();
+            const { data, status } = await makeRequest('/auth/logout', 'POST', null);
+            currentUser = null;
+            updateAuthDisplay();
             showResponse('logout-response', data, status);
         }
 
@@ -677,7 +731,7 @@
         }
 
         async function getCurrentUser() {
-            const { data, status } = await makeRequest('/users/me', 'GET', null, true);
+            const { data, status } = await makeRequest('/users/me', 'GET', null);
             showResponse('current-user-response', data, status);
         }
 
@@ -686,18 +740,18 @@
                 fullName: document.getElementById('update-me-fullname').value,
                 phone: document.getElementById('update-me-phone').value,
             };
-            const { data, status } = await makeRequest('/users/me', 'PUT', body, true);
+            const { data, status } = await makeRequest('/users/me', 'PUT', body);
             showResponse('update-me-response', data, status);
         }
 
         async function getAllUsers() {
-            const { data, status } = await makeRequest('/users', 'GET', null, true);
+            const { data, status } = await makeRequest('/users', 'GET', null);
             showResponse('all-users-response', data, status);
         }
 
         async function getUsersByRole() {
             const role = document.getElementById('role-filter').value;
-            const { data, status } = await makeRequest(`/users/role/${role}`, 'GET', null, true);
+            const { data, status } = await makeRequest(`/users/role/${role}`, 'GET', null);
             showResponse('users-by-role-response', data, status);
         }
 
@@ -709,13 +763,13 @@
                 fullName: document.getElementById('create-fullname').value,
                 role: document.getElementById('create-role').value,
             };
-            const { data, status } = await makeRequest('/users', 'POST', body, true);
+            const { data, status } = await makeRequest('/users', 'POST', body);
             showResponse('create-user-response', data, status);
         }
 
         async function getUserById() {
             const id = document.getElementById('get-user-id').value;
-            const { data, status } = await makeRequest(`/users/${id}`, 'GET', null, true);
+            const { data, status } = await makeRequest(`/users/${id}`, 'GET', null);
             showResponse('get-user-response', data, status);
         }
 
@@ -725,7 +779,7 @@
                 fullName: document.getElementById('admin-update-fullname').value,
                 phone: document.getElementById('admin-update-phone').value,
             };
-            const { data, status } = await makeRequest(`/users/${id}`, 'PUT', body, true);
+            const { data, status } = await makeRequest(`/users/${id}`, 'PUT', body);
             showResponse('admin-update-response', data, status);
         }
 
@@ -734,37 +788,37 @@
             const body = {
                 role: document.getElementById('role-update-role').value,
             };
-            const { data, status } = await makeRequest(`/users/${id}/role`, 'PATCH', body, true);
+            const { data, status } = await makeRequest(`/users/${id}/role`, 'PATCH', body);
             showResponse('role-update-response', data, status);
         }
 
         async function toggleUserStatus() {
             const id = document.getElementById('status-toggle-id').value;
-            const { data, status } = await makeRequest(`/users/${id}/status`, 'PATCH', null, true);
+            const { data, status } = await makeRequest(`/users/${id}/status`, 'PATCH', null);
             showResponse('status-toggle-response', data, status);
         }
 
         async function verifyUser() {
             const id = document.getElementById('verify-user-id').value;
-            const { data, status } = await makeRequest(`/users/${id}/verify`, 'PATCH', null, true);
+            const { data, status } = await makeRequest(`/users/${id}/verify`, 'PATCH', null);
             showResponse('verify-user-response', data, status);
         }
 
         async function deleteUser() {
             const id = document.getElementById('delete-user-id').value;
-            const { data, status } = await makeRequest(`/users/${id}`, 'DELETE', null, true);
+            const { data, status } = await makeRequest(`/users/${id}`, 'DELETE', null);
             showResponse('delete-user-response', data, status);
         }
 
         async function permanentDeleteUser() {
             const id = document.getElementById('permanent-delete-id').value;
-            const { data, status } = await makeRequest(`/users/${id}/permanent`, 'DELETE', null, true);
+            const { data, status } = await makeRequest(`/users/${id}/permanent`, 'DELETE', null);
             showResponse('permanent-delete-response', data, status);
         }
 
         async function restoreUser() {
             const id = document.getElementById('restore-user-id').value;
-            const { data, status } = await makeRequest(`/users/${id}/restore`, 'PATCH', null, true);
+            const { data, status } = await makeRequest(`/users/${id}/restore`, 'PATCH', null);
             showResponse('restore-user-response', data, status);
         }
     </script>

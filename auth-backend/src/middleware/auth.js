@@ -4,7 +4,8 @@ import { prisma } from '../config/database.js';
 // JWT Authentication Middleware
 const authenticateJWT = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
+    // Read token from cookie instead of Authorization header
+    const token = req.cookies.token;
 
     if (!token) {
       return res.status(401).json({ 
@@ -66,7 +67,8 @@ const authenticateJWT = async (req, res, next) => {
 // Optional JWT Authentication (doesn't fail if no token)
 const optionalAuth = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    // Read token from cookie
+    const token = req.cookies.token;
 
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
