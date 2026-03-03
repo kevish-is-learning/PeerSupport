@@ -7,7 +7,7 @@
 import BaseService from './BaseService.js';
 import { NotFoundError, ForbiddenError } from '../errors/index.js';
 import logger from '../utils/logger.js';
-import Database from '../config/database.js';
+import { Database } from '../config/database.js';
 import Helpers from '../utils/helpers.js';
 
 class CommentService extends BaseService {

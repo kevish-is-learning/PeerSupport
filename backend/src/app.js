@@ -7,15 +7,19 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 
 import logger from "./utils/logger.js";
+import passport from "./config/passport.js";
+import routes from "./routes/index.js";
+
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 const app = express();
+
 // Middleware
 app.use(helmet());
 app.use(
   cors({
-    origin:"http://localhost:3000",
+    origin: "http://localhost:3000",
     credentials: true,
   }),
 );
@@ -25,15 +29,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("combined"));
 
-// Routes
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
-});
+// Passport initialization
+app.use(passport.initialize());
+
+// API Routes
+app.use("/api", routes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: "Internal Server Error" });
+  logger.error('Error:', err);
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({ 
+    error: err.message || "Internal Server Error",
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
 });
 
 // Start server

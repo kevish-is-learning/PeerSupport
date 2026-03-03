@@ -1,48 +1,47 @@
 /**
  * Environment Configuration
- * Centralizes all environment variable access with validation and defaults.
- * Pattern: Singleton + Configuration Object
+ * Singleton pattern for managing environment variables
  */
 
-import dotenv from 'dotenv';
-dotenv.config();
-
 class Environment {
-  static #instance = null;
+  static instance = null;
 
   constructor() {
-    if (Environment.#instance) {
-      return Environment.#instance;
+    if (Environment.instance) {
+      return Environment.instance;
     }
 
+    // Server
     this.nodeEnv = process.env.NODE_ENV || 'development';
-    this.port = parseInt(process.env.PORT, 10) || 5000;
+    this.port = parseInt(process.env.PORT || '8080', 10);
+    this.clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
 
     // Database
     this.databaseUrl = process.env.DATABASE_URL;
 
     // JWT
-    this.jwtSecret = process.env.JWT_SECRET;
-    this.jwtRefreshSecret = process.env.JWT_REFRESH_SECRET;
+    this.jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
     this.jwtExpiresIn = process.env.JWT_EXPIRES_IN || '15m';
+    this.jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-change-in-production';
     this.jwtRefreshExpiresIn = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
 
-
-    // CORS
-    this.corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
-
-    // File Uploads
-    this.maxFileSize = parseInt(process.env.MAX_FILE_SIZE, 10) || 5 * 1024 * 1024;
-    this.uploadDir = process.env.UPLOAD_DIR || 'uploads';
+    // Google OAuth
+    this.googleClientId = process.env.GOOGLE_CLIENT_ID;
+    this.googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    this.googleCallbackUrl = process.env.GOOGLE_CALLBACK_URL || 'http://localhost:8080/api/auth/google/callback';
 
     // Rate Limiting
-    this.rateLimitWindowMs = parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000;
-    this.rateLimitMax = parseInt(process.env.RATE_LIMIT_MAX, 10) || 100;
+    this.rateLimitWindowMs = parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10); // 15 minutes
+    this.rateLimitMax = parseInt(process.env.RATE_LIMIT_MAX || '100', 10);
 
-    // Logging
-    this.logLevel = process.env.LOG_LEVEL || 'debug';
+    Environment.instance = this;
+  }
 
-    Environment.#instance = this;
+  static getInstance() {
+    if (!Environment.instance) {
+      Environment.instance = new Environment();
+    }
+    return Environment.instance;
   }
 
   get isDevelopment() {
@@ -55,28 +54,6 @@ class Environment {
 
   get isTest() {
     return this.nodeEnv === 'test';
-  }
-
-  /**
-   * Validates that all required environment variables are set.
-   * Call on startup.
-   */
-  validate() {
-    const required = ['DATABASE_URL', 'JWT_SECRET', 'JWT_REFRESH_SECRET'];
-    const missing = required.filter((key) => !process.env[key]);
-
-    if (missing.length > 0) {
-      throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
-    }
-
-    return this;
-  }
-
-  static getInstance() {
-    if (!Environment.#instance) {
-      new Environment();
-    }
-    return Environment.#instance;
   }
 }
 

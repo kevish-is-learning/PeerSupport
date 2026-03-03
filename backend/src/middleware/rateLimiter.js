@@ -1,80 +1,43 @@
 /**
  * Rate Limiter Middleware
- * Configurable rate limiters for different route categories.
- * Pattern: Strategy
+ * Prevents abuse by limiting request frequency
  */
 
 import rateLimit from 'express-rate-limit';
-import Environment from '../config/environment.js';
 
 class RateLimiter {
   /**
-   * General API rate limiter.
+   * Standard rate limit for general API endpoints
    */
-  static get api() {
-    const env = Environment.getInstance();
-    return rateLimit({
-      windowMs: env.rateLimitWindowMs,
-      max: env.rateLimitMax,
-      standardHeaders: true,
-      legacyHeaders: false,
-      message: {
-        success: false,
-        message: 'Too many requests, please try again later',
-      },
-    });
-  }
+  static standard = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
 
   /**
-   * Strict rate limiter for auth routes (login/register).
+   * Strict rate limit for authentication endpoints
    */
-  static get auth() {
-    return rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 10,
-      standardHeaders: true,
-      legacyHeaders: false,
-      message: {
-        success: false,
-        message: 'Too many auth attempts, please try again later',
-      },
-    });
-  }
+  static auth = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 requests per windowMs
+    message: 'Too many authentication attempts, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
 
   /**
-   * Rate limiter for content creation (posts, comments).
+   * Rate limit for creating content (posts, comments)
    */
-  static get create() {
-    return rateLimit({
-      windowMs: 15 * 60 * 1000,
-      max: 20,
-      standardHeaders: true,
-      legacyHeaders: false,
-      message: {
-        success: false,
-        message: 'Too many creation requests, please slow down',
-      },
-    });
-  }
-
-  /**
-   * Custom rate limiter factory.
-   * @param {number} windowMs
-   * @param {number} max
-   * @returns {Function}
-   */
-  static custom(windowMs, max) {
-    return rateLimit({
-      windowMs,
-      max,
-      standardHeaders: true,
-      legacyHeaders: false,
-      message: {
-        success: false,
-        message: 'Rate limit exceeded',
-      },
-    });
-  }
+  static content = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20, // Limit each IP to 20 requests per hour
+    message: 'Too many content submissions, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
 }
 
 export default RateLimiter;

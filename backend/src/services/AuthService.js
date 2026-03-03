@@ -45,6 +45,7 @@ class AuthService extends BaseService {
       email,
       password: hashedPassword,
       displayName: displayName || username,
+      provider: 'local',
     });
 
     // Generate tokens
@@ -68,6 +69,16 @@ class AuthService extends BaseService {
 
     if (!user || !user.isActive) {
       throw new UnauthorizedError('Invalid email or password');
+    }
+
+    // Check if user uses OAuth
+    if (user.provider && user.provider !== 'local') {
+      throw new BadRequestError(`Please login with ${user.provider}`);
+    }
+
+    // Check if user has a password (OAuth users might not have one)
+    if (!user.password) {
+      throw new BadRequestError('This account uses OAuth. Please login with your provider.');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -126,6 +137,23 @@ class AuthService extends BaseService {
     const isValid = await bcrypt.compare(currentPassword, user.password);
     if (!isValid) {
       throw new BadRequestError('Current password is incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await this.update(userId, { password: hashedPassword });
+
+    const tokens = this._generateTokens(user);
+
+    logger.info(`OAuth login successful: ${user.email}`);
+
+    return {
+      user: Helpers.sanitizeUser(user),
+      ...tokens,
+    };
+  }
+
+  /**
+   *  throw new BadRequestError('Current password is incorrect');
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 12);

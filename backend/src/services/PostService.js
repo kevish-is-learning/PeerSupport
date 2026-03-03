@@ -15,12 +15,7 @@ class PostService extends BaseService {
     super('post');
   }
 
-  /**
-   * Creates a new post.
-   * @param {object} data - Post data
-   * @param {string} userId - Author ID
-   * @returns {Promise<object>}
-   */
+
   async createPost(data, userId) {
     const post = await this.create({
       ...data,

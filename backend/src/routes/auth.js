@@ -5,9 +5,9 @@
 import { Router } from 'express';
 import authController from '../controllers/AuthController.js';
 import AuthMiddleware from '../middleware/auth.js';
-import ValidationMiddleware from '../middleware/validation.js';
 import AuthValidators from '../validators/auth.js';
 import RateLimiter from '../middleware/rateLimiter.js';
+import passport from '../config/passport.js';
 
 const router = Router();
 
@@ -15,21 +15,33 @@ const router = Router();
 router.post(
   '/register',
   RateLimiter.auth,
-  ...ValidationMiddleware.run(AuthValidators.register),
   authController.register
 );
 
 router.post(
   '/login',
   RateLimiter.auth,
-  ...ValidationMiddleware.run(AuthValidators.login),
   authController.login
 );
 
 router.post(
   '/refresh',
-  ...ValidationMiddleware.run(AuthValidators.refreshToken),
   authController.refresh
+);
+
+// Google OAuth routes
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { 
+    session: false,
+    failureRedirect: '/login' 
+  }),
+  authController.googleCallback
 );
 
 // Protected routes
@@ -38,7 +50,6 @@ router.get('/me', AuthMiddleware.authenticate, authController.getMe);
 router.put(
   '/change-password',
   AuthMiddleware.authenticate,
-  ...ValidationMiddleware.run(AuthValidators.changePassword),
   authController.changePassword
 );
 

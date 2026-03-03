@@ -1,69 +1,66 @@
 /**
- * Custom Application Errors
- * Provides typed error classes for consistent error handling.
- * Pattern: Class Hierarchy / Template Method
+ * Custom Error Classes
  */
 
-class AppError extends Error {
-  constructor(message, statusCode = 500, errors = []) {
+class BaseError extends Error {
+  constructor(message, statusCode) {
     super(message);
-    this.name = this.constructor.name;
     this.statusCode = statusCode;
-    this.errors = errors;
-    this.isOperational = true;
+    this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
-class BadRequestError extends AppError {
-  constructor(message = 'Bad request', errors = []) {
-    super(message, 400, errors);
+class BadRequestError extends BaseError {
+  constructor(message = 'Bad Request') {
+    super(message, 400);
   }
 }
 
-class UnauthorizedError extends AppError {
+class UnauthorizedError extends BaseError {
   constructor(message = 'Unauthorized') {
     super(message, 401);
   }
 }
 
-class ForbiddenError extends AppError {
+class ForbiddenError extends BaseError {
   constructor(message = 'Forbidden') {
     super(message, 403);
   }
 }
 
-class NotFoundError extends AppError {
-  constructor(resource = 'Resource') {
-    super(`${resource} not found`, 404);
+class NotFoundError extends BaseError {
+  constructor(message = 'Resource not found') {
+    super(message, 404);
   }
 }
 
-class ConflictError extends AppError {
-  constructor(message = 'Resource already exists') {
+class ConflictError extends BaseError {
+  constructor(message = 'Conflict') {
     super(message, 409);
   }
 }
 
-class ValidationError extends AppError {
-  constructor(errors = []) {
-    super('Validation failed', 422, errors);
+class ValidationError extends BaseError {
+  constructor(message = 'Validation Error', errors = []) {
+    super(message, 422);
+    this.errors = errors;
   }
 }
 
-class TooManyRequestsError extends AppError {
-  constructor(message = 'Too many requests, please try again later') {
-    super(message, 429);
+class InternalServerError extends BaseError {
+  constructor(message = 'Internal Server Error') {
+    super(message, 500);
   }
 }
 
 export {
-  AppError,
+  BaseError,
   BadRequestError,
   UnauthorizedError,
   ForbiddenError,
   NotFoundError,
   ConflictError,
   ValidationError,
-  TooManyRequestsError,
+  InternalServerError,
 };

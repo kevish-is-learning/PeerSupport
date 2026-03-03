@@ -5,7 +5,6 @@
 import { Router } from 'express';
 import commentController from '../controllers/CommentController.js';
 import AuthMiddleware from '../middleware/auth.js';
-import ValidationMiddleware from '../middleware/validation.js';
 import CommentValidators from '../validators/comment.js';
 import RateLimiter from '../middleware/rateLimiter.js';
 
@@ -18,15 +17,13 @@ router.get('/posts/:postId/comments', commentController.getByPost);
 router.post(
   '/posts/:postId/comments',
   AuthMiddleware.authenticate,
-  RateLimiter.create,
-  ...ValidationMiddleware.run(CommentValidators.create),
+  CommentValidators.create,
   commentController.create
 );
 
 router.put(
   '/comments/:id',
   AuthMiddleware.authenticate,
-  ...ValidationMiddleware.run(CommentValidators.update),
   commentController.update
 );
 

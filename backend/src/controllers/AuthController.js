@@ -54,6 +54,20 @@ class AuthController extends BaseController {
     const user = await UserService.getProfile(req.user.id);
     this.success(res, user);
   });
+
+  /**
+   * GET /api/auth/google/callback
+   * Handle Google OAuth callback
+   */
+  googleCallback = BaseController.asyncHandler(async (req, res) => {
+    // User is attached to req by passport
+    const result = await this.service.handleOAuthLogin(req.user);
+    
+    // Redirect to frontend with tokens
+    const env = require('../config/environment.js').default.getInstance();
+    const redirectUrl = `${env.clientUrl}/auth/callback?token=${result.accessToken}&refresh=${result.refreshToken}`;
+    res.redirect(redirectUrl);
+  });
 }
 
 export default new AuthController();

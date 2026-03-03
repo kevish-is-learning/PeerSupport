@@ -1,49 +1,35 @@
 /**
  * Logger Utility
- * Centralized logging with Winston.
- * Pattern: Singleton
+ * Using Winston for logging
  */
 
 import winston from 'winston';
 
-const { combine, timestamp, printf, colorize, errors } = winston.format;
-
-const logFormat = printf(({ level, message, timestamp, stack }) => {
-  return `${timestamp} [${level}]: ${stack || message}`;
-});
-
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'debug',
-  format: combine(
-    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    errors({ stack: true }),
-    logFormat
+  level: process.env.LOG_LEVEL || 'info',
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
+    winston.format.json()
   ),
   defaultMeta: { service: 'peer-support-api' },
   transports: [
-    // Console transport (always)
-    new winston.transports.Console({
-      format: combine(colorize(), logFormat),
-    }),
-
-    // File transports (production & development)
-    new winston.transports.File({
-      filename: 'logs/error.log',
-      level: 'error',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-    new winston.transports.File({
-      filename: 'logs/combined.log',
-      maxsize: 5242880,
-      maxFiles: 5,
-    }),
+    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'logs/combined.log' }),
   ],
 });
 
-// In test env, silence logs
-if (process.env.NODE_ENV === 'test') {
-  logger.silent = true;
+// If we're not in production, log to the console with a simple format
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      ),
+    })
+  );
 }
 
 export default logger;

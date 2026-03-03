@@ -9,7 +9,7 @@ import { NotFoundError, BadRequestError } from '../errors/index.js';
 import { REPORT_STATUS } from '../utils/constants.js';
 import logger from '../utils/logger.js';
 import Helpers from '../utils/helpers.js';
-import Database from '../config/database.js';
+import { Database } from '../config/database.js';
 
 class ModerationService extends BaseService {
   constructor() {

@@ -1,18 +1,9 @@
-/**
- * Authentication Middleware
- * JWT verification and role-based access control.
- * Pattern: Middleware / Decorator
- */
-
 import jwt from 'jsonwebtoken';
 import Environment from '../config/environment.js';
 import { UnauthorizedError, ForbiddenError } from '../errors/index.js';
 
 class AuthMiddleware {
-  /**
-   * Verifies JWT token from Authorization header.
-   * Attaches decoded user to req.user.
-   */
+
   static authenticate(req, _res, next) {
     try {
       const authHeader = req.headers.authorization;
@@ -41,10 +32,7 @@ class AuthMiddleware {
     }
   }
 
-  /**
-   * Optional authentication — attaches user if token present, but doesn't fail.
-   * Useful for public routes that show extra data to logged-in users.
-   */
+
   static optionalAuth(req, _res, next) {
     try {
       const authHeader = req.headers.authorization;
@@ -66,12 +54,7 @@ class AuthMiddleware {
     next();
   }
 
-  /**
-   * Role-based access control.
-   * Usage: AuthMiddleware.authorize('ADMIN', 'MODERATOR')
-   * @param  {...string} roles - Allowed roles
-   * @returns {Function} Express middleware
-   */
+
   static authorize(...roles) {
     return (req, _res, next) => {
       if (!req.user) {
