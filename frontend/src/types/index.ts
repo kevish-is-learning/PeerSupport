@@ -81,6 +81,38 @@ export interface MenteeProfile {
   certifications: string[];
   catScore?: number;
   expectations?: string;
+  resumes?: Resume[];
+  sopDocuments?: SOPDocument[];
+}
+
+export interface AdminProfile {
+  id: string;
+  userId: string;
+  department?: string;
+  permissions: string[];
+  phoneNumber?: string;
+  lastLoginAt?: string;
+}
+
+export interface Resume {
+  id: string;
+  menteeId: string;
+  name: string;
+  fileUrl: string;
+  createdAt: string;
+}
+
+export interface SOPDocument {
+  id: string;
+  menteeId: string;
+  collegeName: string;
+  fileUrl: string;
+  createdAt: string;
+}
+
+export interface ProfileResponse {
+  user: User;
+  profile: MenteeProfile | MentorProfile | AdminProfile;
 }
 
 export interface ApiResponse<T = any> {

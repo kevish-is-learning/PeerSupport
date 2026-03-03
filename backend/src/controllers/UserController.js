@@ -266,6 +266,240 @@ class UserController {
         .json(new ApiError(500, "Failed to check email", error.message));
     }
   }
+
+  ///////////////////////////
+  // PROFILE MANAGEMENT - ROLE-BASED
+  ///////////////////////////
+
+  // Get current user profile (role-based)
+  async getCurrentUserProfile(req, res) {
+    try {
+      const profileData = await userService.getProfileByRole(req.user.id);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Profile retrieved successfully", profileData));
+    } catch (error) {
+      res
+        .status(404)
+        .json(new ApiError(404, "Profile not found", error.message));
+    }
+  }
+
+  // Update current user profile (role-based)
+  async updateCurrentUserProfile(req, res) {
+    try {
+      const profile = await userService.updateProfileByRole(req.user.id, req.body);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Profile updated successfully", profile));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to update profile", error.message));
+    }
+  }
+
+  // Delete current user profile (role-based)
+  async deleteCurrentUserProfile(req, res) {
+    try {
+      const result = await userService.deleteProfileByRole(req.user.id);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, result.message, null));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to delete profile", error.message));
+    }
+  }
+
+  ///////////////////////////
+  // MENTEE PROFILE CRUD
+  ///////////////////////////
+
+  // Create or Update Mentee Profile
+  async createOrUpdateMenteeProfile(req, res) {
+    try {
+      const userId = req.params.userId || req.user.id;
+      
+      // If not admin and trying to update another user's profile
+      if (req.user.role !== 'ADMIN' && userId !== req.user.id) {
+        return res.status(403).json(new ApiError(403, "Forbidden"));
+      }
+
+      const profile = await userService.createOrUpdateMenteeProfile(userId, req.body);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Mentee profile saved successfully", profile));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to save mentee profile", error.message));
+    }
+  }
+
+  // Get Mentee Profile
+  async getMenteeProfile(req, res) {
+    try {
+      const userId = req.params.userId || req.user.id;
+
+      const profile = await userService.getMenteeProfile(userId);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Mentee profile retrieved successfully", profile));
+    } catch (error) {
+      res
+        .status(404)
+        .json(new ApiError(404, "Mentee profile not found", error.message));
+    }
+  }
+
+  // Delete Mentee Profile
+  async deleteMenteeProfile(req, res) {
+    try {
+      const userId = req.params.userId || req.user.id;
+      
+      // If not admin and trying to delete another user's profile
+      if (req.user.role !== 'ADMIN' && userId !== req.user.id) {
+        return res.status(403).json(new ApiError(403, "Forbidden"));
+      }
+
+      const result = await userService.deleteMenteeProfile(userId);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, result.message, null));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to delete mentee profile", error.message));
+    }
+  }
+
+  ///////////////////////////
+  // MENTOR PROFILE CRUD
+  ///////////////////////////
+
+  // Create or Update Mentor Profile
+  async createOrUpdateMentorProfile(req, res) {
+    try {
+      const userId = req.params.userId || req.user.id;
+      
+      // If not admin and trying to update another user's profile
+      if (req.user.role !== 'ADMIN' && userId !== req.user.id) {
+        return res.status(403).json(new ApiError(403, "Forbidden"));
+      }
+
+      const profile = await userService.createOrUpdateMentorProfile(userId, req.body);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Mentor profile saved successfully", profile));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to save mentor profile", error.message));
+    }
+  }
+
+  // Get Mentor Profile
+  async getMentorProfile(req, res) {
+    try {
+      const userId = req.params.userId || req.user.id;
+
+      const profile = await userService.getMentorProfile(userId);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Mentor profile retrieved successfully", profile));
+    } catch (error) {
+      res
+        .status(404)
+        .json(new ApiError(404, "Mentor profile not found", error.message));
+    }
+  }
+
+  // Delete Mentor Profile
+  async deleteMentorProfile(req, res) {
+    try {
+      const userId = req.params.userId || req.user.id;
+      
+      // If not admin and trying to delete another user's profile
+      if (req.user.role !== 'ADMIN' && userId !== req.user.id) {
+        return res.status(403).json(new ApiError(403, "Forbidden"));
+      }
+
+      const result = await userService.deleteMentorProfile(userId);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, result.message, null));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to delete mentor profile", error.message));
+    }
+  }
+
+  ///////////////////////////
+  // ADMIN PROFILE CRUD
+  ///////////////////////////
+
+  // Create or Update Admin Profile (Admin only)
+  async createOrUpdateAdminProfile(req, res) {
+    try {
+      const userId = req.params.userId || req.user.id;
+
+      const profile = await userService.createOrUpdateAdminProfile(userId, req.body);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Admin profile saved successfully", profile));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to save admin profile", error.message));
+    }
+  }
+
+  // Get Admin Profile (Admin only)
+  async getAdminProfile(req, res) {
+    try {
+      const userId = req.params.userId || req.user.id;
+
+      const profile = await userService.getAdminProfile(userId);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Admin profile retrieved successfully", profile));
+    } catch (error) {
+      res
+        .status(404)
+        .json(new ApiError(404, "Admin profile not found", error.message));
+    }
+  }
+
+  // Delete Admin Profile (Admin only)
+  async deleteAdminProfile(req, res) {
+    try {
+      const userId = req.params.userId || req.user.id;
+
+      const result = await userService.deleteAdminProfile(userId);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, result.message, null));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to delete admin profile", error.message));
+    }
+  }
 }
 
 export default new UserController();

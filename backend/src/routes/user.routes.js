@@ -11,6 +11,35 @@ router.get('/check-email', userController.checkEmailExists);
 router.get('/me', authenticateJWT, userController.getCurrentUser);
 router.put('/me', authenticateJWT, userController.updateCurrentUser);
 
+// Profile Routes - Role-based (Get profile returns data according to role)
+router.get('/profile/me', authenticateJWT, userController.getCurrentUserProfile);
+router.put('/profile/me', authenticateJWT, userController.updateCurrentUserProfile);
+router.delete('/profile/me', authenticateJWT, userController.deleteCurrentUserProfile);
+
+// Mentee Profile Routes
+router.post('/profile/mentee', authenticateJWT, authorizeRoles('MENTEE', 'ADMIN'), userController.createOrUpdateMenteeProfile);
+router.get('/profile/mentee', authenticateJWT, authorizeRoles('MENTEE', 'ADMIN'), userController.getMenteeProfile);
+router.get('/profile/mentee/:userId', authenticateJWT, userController.getMenteeProfile);
+router.put('/profile/mentee/:userId', authenticateJWT, userController.createOrUpdateMenteeProfile);
+router.delete('/profile/mentee', authenticateJWT, authorizeRoles('MENTEE', 'ADMIN'), userController.deleteMenteeProfile);
+router.delete('/profile/mentee/:userId', authenticateJWT, adminOnly, userController.deleteMenteeProfile);
+
+// Mentor Profile Routes
+router.post('/profile/mentor', authenticateJWT, authorizeRoles('MENTOR', 'ADMIN'), userController.createOrUpdateMentorProfile);
+router.get('/profile/mentor', authenticateJWT, authorizeRoles('MENTOR', 'ADMIN'), userController.getMentorProfile);
+router.get('/profile/mentor/:userId', authenticateJWT, userController.getMentorProfile);
+router.put('/profile/mentor/:userId', authenticateJWT, userController.createOrUpdateMentorProfile);
+router.delete('/profile/mentor', authenticateJWT, authorizeRoles('MENTOR', 'ADMIN'), userController.deleteMentorProfile);
+router.delete('/profile/mentor/:userId', authenticateJWT, adminOnly, userController.deleteMentorProfile);
+
+// Admin Profile Routes (Admin only)
+router.post('/profile/admin', authenticateJWT, adminOnly, userController.createOrUpdateAdminProfile);
+router.get('/profile/admin', authenticateJWT, adminOnly, userController.getAdminProfile);
+router.get('/profile/admin/:userId', authenticateJWT, adminOnly, userController.getAdminProfile);
+router.put('/profile/admin/:userId', authenticateJWT, adminOnly, userController.createOrUpdateAdminProfile);
+router.delete('/profile/admin', authenticateJWT, adminOnly, userController.deleteAdminProfile);
+router.delete('/profile/admin/:userId', authenticateJWT, adminOnly, userController.deleteAdminProfile);
+
 // Admin routes
 router.get('/', authenticateJWT, adminOnly, userController.getAllUsers);
 router.get('/role/:role', authenticateJWT, adminOnly, userController.getUsersByRole);

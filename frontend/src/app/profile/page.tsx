@@ -1,16 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/auth.store';
 import { authService } from '@/services/auth.service';
+import { profileService } from '@/services/profile.service';
 import { updateProfileSchema, changePasswordSchema } from '@/lib/validations';
+import { Role, MenteeProfile, MentorProfile, AdminProfile } from '@/types';
+import MenteeProfileForm from '@/components/MenteeProfileForm';
+import MentorProfileForm from '@/components/MentorProfileForm';
+import AdminProfileForm from '@/components/AdminProfileForm';
 
 export default function ProfilePage() {
   const { user, setUser } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<'info' | 'password'>('info');
+  const [activeTab, setActiveTab] = useState<'account' | 'roleProfile' | 'password'>('account');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [roleProfile, setRoleProfile] = useState<MenteeProfile | MentorProfile | AdminProfile | null>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
@@ -22,6 +29,41 @@ export default function ProfilePage() {
     newPassword: '',
     confirmPassword: '',
   });
+
+  // Load role-specific profile
+  useEffect(() => {
+    if (activeTab === 'roleProfile' && user?.role) {
+      loadRoleProfile();
+    }
+  }, [activeTab, user?.role]);
+
+  const loadRoleProfile = async () => {
+    setIsLoadingProfile(true);
+    try {
+      let response;
+      switch (user?.role) {
+        case Role.MENTEE:
+          response = await profileService.getMenteeProfile();
+          break;
+        case Role.MENTOR:
+          response = await profileService.getMentorProfile();
+          break;
+        case Role.ADMIN:
+          response = await profileService.getAdminProfile();
+          break;
+      }
+      if (response?.data) {
+        setRoleProfile(response.data);
+      }
+    } catch (error: any) {
+      // Profile might not exist yet, which is fine
+      if (error.response?.status !== 404) {
+        console.error('Error loading profile:', error);
+      }
+    } finally {
+      setIsLoadingProfile(false);
+    }
+  };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,21 +111,50 @@ export default function ProfilePage() {
     }
   };
 
-  return (
-    <div className="max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Profile Settings</h1>
+  const handleRoleProfileSuccess = (profile: any) => {
+    setRoleProfile(profile);
+    setMessage({ type: 'success', text: 'Role profile updated successfully' });
+  };
 
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+  const getRoleLabel = (role: Role) => {
+    switch (role) {
+      case Role.MENTEE:
+        return 'Mentee Profile';
+      case Role.MENTOR:
+        return 'Mentor Profile';
+      case Role.ADMIN:
+        return 'Admin Profile';
+      default:
+        return 'Role Profile';
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-2">Profile Settings</h1>
+      <p className="text-gray-600 mb-6">Manage your account and {getRoleLabel(user?.role || Role.MENTEE).toLowerCase()}</p>
+
+      <div className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
         <div className="flex border-b border-gray-200">
           <button
-            onClick={() => setActiveTab('info')}
+            onClick={() => setActiveTab('account')}
             className={`flex-1 px-6 py-3 font-medium transition-colors ${
-              activeTab === 'info'
+              activeTab === 'account'
                 ? 'bg-black text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }`}
           >
             Account Info
+          </button>
+          <button
+            onClick={() => setActiveTab('roleProfile')}
+            className={`flex-1 px-6 py-3 font-medium transition-colors ${
+              activeTab === 'roleProfile'
+                ? 'bg-black text-white'
+                : 'bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            {getRoleLabel(user?.role || Role.MENTEE)}
           </button>
           <button
             onClick={() => setActiveTab('password')}
@@ -98,7 +169,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="p-6">
-          {message && (
+          {message && activeTab === 'account' && (
             <div
               className={`mb-4 p-3 rounded ${
                 message.type === 'success'
@@ -110,7 +181,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {activeTab === 'info' ? (
+          {activeTab === 'account' ? (
             <form onSubmit={handleProfileUpdate} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Email</label>
@@ -188,8 +259,50 @@ export default function ProfilePage() {
                 {isEditingProfile ? 'Updating...' : 'Update Profile'}
               </button>
             </form>
+          ) : activeTab === 'roleProfile' ? (
+            <div>
+              {isLoadingProfile ? (
+                <div className="text-center py-8">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+                  <p className="mt-2 text-gray-600">Loading profile...</p>
+                </div>
+              ) : (
+                <>
+                  {user?.role === Role.MENTEE && (
+                    <MenteeProfileForm
+                      initialData={roleProfile as MenteeProfile}
+                      onSuccess={handleRoleProfileSuccess}
+                    />
+                  )}
+                  {user?.role === Role.MENTOR && (
+                    <MentorProfileForm
+                      initialData={roleProfile as MentorProfile}
+                      onSuccess={handleRoleProfileSuccess}
+                    />
+                  )}
+                  {user?.role === Role.ADMIN && (
+                    <AdminProfileForm
+                      initialData={roleProfile as AdminProfile}
+                      onSuccess={handleRoleProfileSuccess}
+                    />
+                  )}
+                </>
+              )}
+            </div>
           ) : (
             <form onSubmit={handlePasswordChange} className="space-y-4">
+              {message && (
+                <div
+                  className={`mb-4 p-3 rounded ${
+                    message.type === 'success'
+                      ? 'bg-green-50 border border-green-200 text-green-600'
+                      : 'bg-red-50 border border-red-200 text-red-600'
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium mb-1">Current Password</label>
                 <input

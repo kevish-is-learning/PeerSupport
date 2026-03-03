@@ -29,6 +29,11 @@ export type MentorProfile = $Result.DefaultSelection<Prisma.$MentorProfilePayloa
  */
 export type MenteeProfile = $Result.DefaultSelection<Prisma.$MenteeProfilePayload>
 /**
+ * Model AdminProfile
+ * 
+ */
+export type AdminProfile = $Result.DefaultSelection<Prisma.$AdminProfilePayload>
+/**
  * Model Resume
  * 
  */
@@ -352,6 +357,16 @@ export class PrismaClient<
     * ```
     */
   get menteeProfile(): Prisma.MenteeProfileDelegate<ExtArgs>;
+
+  /**
+   * `prisma.adminProfile`: Exposes CRUD operations for the **AdminProfile** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AdminProfiles
+    * const adminProfiles = await prisma.adminProfile.findMany()
+    * ```
+    */
+  get adminProfile(): Prisma.AdminProfileDelegate<ExtArgs>;
 
   /**
    * `prisma.resume`: Exposes CRUD operations for the **Resume** model.
@@ -916,6 +931,7 @@ export namespace Prisma {
     User: 'User',
     MentorProfile: 'MentorProfile',
     MenteeProfile: 'MenteeProfile',
+    AdminProfile: 'AdminProfile',
     Resume: 'Resume',
     SOPDocument: 'SOPDocument',
     Slot: 'Slot',
@@ -943,7 +959,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "mentorProfile" | "menteeProfile" | "resume" | "sOPDocument" | "slot" | "booking" | "payment" | "review" | "mentorFeedback" | "earnings" | "webinar" | "webinarRegistration" | "notification" | "verificationDocument"
+      modelProps: "user" | "mentorProfile" | "menteeProfile" | "adminProfile" | "resume" | "sOPDocument" | "slot" | "booking" | "payment" | "review" | "mentorFeedback" | "earnings" | "webinar" | "webinarRegistration" | "notification" | "verificationDocument"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1154,6 +1170,76 @@ export namespace Prisma {
           count: {
             args: Prisma.MenteeProfileCountArgs<ExtArgs>
             result: $Utils.Optional<MenteeProfileCountAggregateOutputType> | number
+          }
+        }
+      }
+      AdminProfile: {
+        payload: Prisma.$AdminProfilePayload<ExtArgs>
+        fields: Prisma.AdminProfileFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AdminProfileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AdminProfileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload>
+          }
+          findFirst: {
+            args: Prisma.AdminProfileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AdminProfileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload>
+          }
+          findMany: {
+            args: Prisma.AdminProfileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload>[]
+          }
+          create: {
+            args: Prisma.AdminProfileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload>
+          }
+          createMany: {
+            args: Prisma.AdminProfileCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AdminProfileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload>[]
+          }
+          delete: {
+            args: Prisma.AdminProfileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload>
+          }
+          update: {
+            args: Prisma.AdminProfileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload>
+          }
+          deleteMany: {
+            args: Prisma.AdminProfileDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AdminProfileUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.AdminProfileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminProfilePayload>
+          }
+          aggregate: {
+            args: Prisma.AdminProfileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAdminProfile>
+          }
+          groupBy: {
+            args: Prisma.AdminProfileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AdminProfileGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AdminProfileCountArgs<ExtArgs>
+            result: $Utils.Optional<AdminProfileCountAggregateOutputType> | number
           }
         }
       }
@@ -2565,6 +2651,7 @@ export namespace Prisma {
     deletedAt?: boolean
     mentorProfile?: boolean | User$mentorProfileArgs<ExtArgs>
     menteeProfile?: boolean | User$menteeProfileArgs<ExtArgs>
+    adminProfile?: boolean | User$adminProfileArgs<ExtArgs>
     bookingsAsMentor?: boolean | User$bookingsAsMentorArgs<ExtArgs>
     bookingsAsMentee?: boolean | User$bookingsAsMenteeArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
@@ -2608,6 +2695,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     mentorProfile?: boolean | User$mentorProfileArgs<ExtArgs>
     menteeProfile?: boolean | User$menteeProfileArgs<ExtArgs>
+    adminProfile?: boolean | User$adminProfileArgs<ExtArgs>
     bookingsAsMentor?: boolean | User$bookingsAsMentorArgs<ExtArgs>
     bookingsAsMentee?: boolean | User$bookingsAsMenteeArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
@@ -2622,6 +2710,7 @@ export namespace Prisma {
     objects: {
       mentorProfile: Prisma.$MentorProfilePayload<ExtArgs> | null
       menteeProfile: Prisma.$MenteeProfilePayload<ExtArgs> | null
+      adminProfile: Prisma.$AdminProfilePayload<ExtArgs> | null
       bookingsAsMentor: Prisma.$BookingPayload<ExtArgs>[]
       bookingsAsMentee: Prisma.$BookingPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
@@ -3008,6 +3097,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     mentorProfile<T extends User$mentorProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$mentorProfileArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     menteeProfile<T extends User$menteeProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$menteeProfileArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    adminProfile<T extends User$adminProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$adminProfileArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     bookingsAsMentor<T extends User$bookingsAsMentorArgs<ExtArgs> = {}>(args?: Subset<T, User$bookingsAsMentorArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany"> | Null>
     bookingsAsMentee<T extends User$bookingsAsMenteeArgs<ExtArgs> = {}>(args?: Subset<T, User$bookingsAsMenteeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany"> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany"> | Null>
@@ -3396,6 +3486,21 @@ export namespace Prisma {
      */
     include?: MenteeProfileInclude<ExtArgs> | null
     where?: MenteeProfileWhereInput
+  }
+
+  /**
+   * User.adminProfile
+   */
+  export type User$adminProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    where?: AdminProfileWhereInput
   }
 
   /**
@@ -5739,6 +5844,971 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: MenteeProfileInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AdminProfile
+   */
+
+  export type AggregateAdminProfile = {
+    _count: AdminProfileCountAggregateOutputType | null
+    _min: AdminProfileMinAggregateOutputType | null
+    _max: AdminProfileMaxAggregateOutputType | null
+  }
+
+  export type AdminProfileMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    department: string | null
+    phoneNumber: string | null
+    lastLoginAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AdminProfileMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    department: string | null
+    phoneNumber: string | null
+    lastLoginAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AdminProfileCountAggregateOutputType = {
+    id: number
+    userId: number
+    department: number
+    permissions: number
+    phoneNumber: number
+    lastLoginAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AdminProfileMinAggregateInputType = {
+    id?: true
+    userId?: true
+    department?: true
+    phoneNumber?: true
+    lastLoginAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AdminProfileMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    department?: true
+    phoneNumber?: true
+    lastLoginAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AdminProfileCountAggregateInputType = {
+    id?: true
+    userId?: true
+    department?: true
+    permissions?: true
+    phoneNumber?: true
+    lastLoginAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AdminProfileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AdminProfile to aggregate.
+     */
+    where?: AdminProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminProfiles to fetch.
+     */
+    orderBy?: AdminProfileOrderByWithRelationInput | AdminProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AdminProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AdminProfiles
+    **/
+    _count?: true | AdminProfileCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AdminProfileMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AdminProfileMaxAggregateInputType
+  }
+
+  export type GetAdminProfileAggregateType<T extends AdminProfileAggregateArgs> = {
+        [P in keyof T & keyof AggregateAdminProfile]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAdminProfile[P]>
+      : GetScalarType<T[P], AggregateAdminProfile[P]>
+  }
+
+
+
+
+  export type AdminProfileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AdminProfileWhereInput
+    orderBy?: AdminProfileOrderByWithAggregationInput | AdminProfileOrderByWithAggregationInput[]
+    by: AdminProfileScalarFieldEnum[] | AdminProfileScalarFieldEnum
+    having?: AdminProfileScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AdminProfileCountAggregateInputType | true
+    _min?: AdminProfileMinAggregateInputType
+    _max?: AdminProfileMaxAggregateInputType
+  }
+
+  export type AdminProfileGroupByOutputType = {
+    id: string
+    userId: string
+    department: string | null
+    permissions: string[]
+    phoneNumber: string | null
+    lastLoginAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: AdminProfileCountAggregateOutputType | null
+    _min: AdminProfileMinAggregateOutputType | null
+    _max: AdminProfileMaxAggregateOutputType | null
+  }
+
+  type GetAdminProfileGroupByPayload<T extends AdminProfileGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AdminProfileGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AdminProfileGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AdminProfileGroupByOutputType[P]>
+            : GetScalarType<T[P], AdminProfileGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AdminProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    department?: boolean
+    permissions?: boolean
+    phoneNumber?: boolean
+    lastLoginAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["adminProfile"]>
+
+  export type AdminProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    department?: boolean
+    permissions?: boolean
+    phoneNumber?: boolean
+    lastLoginAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["adminProfile"]>
+
+  export type AdminProfileSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    department?: boolean
+    permissions?: boolean
+    phoneNumber?: boolean
+    lastLoginAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AdminProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AdminProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $AdminProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AdminProfile"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      department: string | null
+      permissions: string[]
+      phoneNumber: string | null
+      lastLoginAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["adminProfile"]>
+    composites: {}
+  }
+
+  type AdminProfileGetPayload<S extends boolean | null | undefined | AdminProfileDefaultArgs> = $Result.GetResult<Prisma.$AdminProfilePayload, S>
+
+  type AdminProfileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<AdminProfileFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: AdminProfileCountAggregateInputType | true
+    }
+
+  export interface AdminProfileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AdminProfile'], meta: { name: 'AdminProfile' } }
+    /**
+     * Find zero or one AdminProfile that matches the filter.
+     * @param {AdminProfileFindUniqueArgs} args - Arguments to find a AdminProfile
+     * @example
+     * // Get one AdminProfile
+     * const adminProfile = await prisma.adminProfile.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AdminProfileFindUniqueArgs>(args: SelectSubset<T, AdminProfileFindUniqueArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one AdminProfile that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {AdminProfileFindUniqueOrThrowArgs} args - Arguments to find a AdminProfile
+     * @example
+     * // Get one AdminProfile
+     * const adminProfile = await prisma.adminProfile.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AdminProfileFindUniqueOrThrowArgs>(args: SelectSubset<T, AdminProfileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first AdminProfile that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminProfileFindFirstArgs} args - Arguments to find a AdminProfile
+     * @example
+     * // Get one AdminProfile
+     * const adminProfile = await prisma.adminProfile.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AdminProfileFindFirstArgs>(args?: SelectSubset<T, AdminProfileFindFirstArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first AdminProfile that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminProfileFindFirstOrThrowArgs} args - Arguments to find a AdminProfile
+     * @example
+     * // Get one AdminProfile
+     * const adminProfile = await prisma.adminProfile.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AdminProfileFindFirstOrThrowArgs>(args?: SelectSubset<T, AdminProfileFindFirstOrThrowArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more AdminProfiles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminProfileFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AdminProfiles
+     * const adminProfiles = await prisma.adminProfile.findMany()
+     * 
+     * // Get first 10 AdminProfiles
+     * const adminProfiles = await prisma.adminProfile.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const adminProfileWithIdOnly = await prisma.adminProfile.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AdminProfileFindManyArgs>(args?: SelectSubset<T, AdminProfileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a AdminProfile.
+     * @param {AdminProfileCreateArgs} args - Arguments to create a AdminProfile.
+     * @example
+     * // Create one AdminProfile
+     * const AdminProfile = await prisma.adminProfile.create({
+     *   data: {
+     *     // ... data to create a AdminProfile
+     *   }
+     * })
+     * 
+     */
+    create<T extends AdminProfileCreateArgs>(args: SelectSubset<T, AdminProfileCreateArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many AdminProfiles.
+     * @param {AdminProfileCreateManyArgs} args - Arguments to create many AdminProfiles.
+     * @example
+     * // Create many AdminProfiles
+     * const adminProfile = await prisma.adminProfile.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AdminProfileCreateManyArgs>(args?: SelectSubset<T, AdminProfileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AdminProfiles and returns the data saved in the database.
+     * @param {AdminProfileCreateManyAndReturnArgs} args - Arguments to create many AdminProfiles.
+     * @example
+     * // Create many AdminProfiles
+     * const adminProfile = await prisma.adminProfile.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AdminProfiles and only return the `id`
+     * const adminProfileWithIdOnly = await prisma.adminProfile.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AdminProfileCreateManyAndReturnArgs>(args?: SelectSubset<T, AdminProfileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a AdminProfile.
+     * @param {AdminProfileDeleteArgs} args - Arguments to delete one AdminProfile.
+     * @example
+     * // Delete one AdminProfile
+     * const AdminProfile = await prisma.adminProfile.delete({
+     *   where: {
+     *     // ... filter to delete one AdminProfile
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AdminProfileDeleteArgs>(args: SelectSubset<T, AdminProfileDeleteArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one AdminProfile.
+     * @param {AdminProfileUpdateArgs} args - Arguments to update one AdminProfile.
+     * @example
+     * // Update one AdminProfile
+     * const adminProfile = await prisma.adminProfile.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AdminProfileUpdateArgs>(args: SelectSubset<T, AdminProfileUpdateArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more AdminProfiles.
+     * @param {AdminProfileDeleteManyArgs} args - Arguments to filter AdminProfiles to delete.
+     * @example
+     * // Delete a few AdminProfiles
+     * const { count } = await prisma.adminProfile.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AdminProfileDeleteManyArgs>(args?: SelectSubset<T, AdminProfileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AdminProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminProfileUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AdminProfiles
+     * const adminProfile = await prisma.adminProfile.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AdminProfileUpdateManyArgs>(args: SelectSubset<T, AdminProfileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one AdminProfile.
+     * @param {AdminProfileUpsertArgs} args - Arguments to update or create a AdminProfile.
+     * @example
+     * // Update or create a AdminProfile
+     * const adminProfile = await prisma.adminProfile.upsert({
+     *   create: {
+     *     // ... data to create a AdminProfile
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AdminProfile we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AdminProfileUpsertArgs>(args: SelectSubset<T, AdminProfileUpsertArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of AdminProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminProfileCountArgs} args - Arguments to filter AdminProfiles to count.
+     * @example
+     * // Count the number of AdminProfiles
+     * const count = await prisma.adminProfile.count({
+     *   where: {
+     *     // ... the filter for the AdminProfiles we want to count
+     *   }
+     * })
+    **/
+    count<T extends AdminProfileCountArgs>(
+      args?: Subset<T, AdminProfileCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AdminProfileCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AdminProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminProfileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AdminProfileAggregateArgs>(args: Subset<T, AdminProfileAggregateArgs>): Prisma.PrismaPromise<GetAdminProfileAggregateType<T>>
+
+    /**
+     * Group by AdminProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminProfileGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AdminProfileGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AdminProfileGroupByArgs['orderBy'] }
+        : { orderBy?: AdminProfileGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AdminProfileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAdminProfileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AdminProfile model
+   */
+  readonly fields: AdminProfileFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AdminProfile.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AdminProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AdminProfile model
+   */ 
+  interface AdminProfileFieldRefs {
+    readonly id: FieldRef<"AdminProfile", 'String'>
+    readonly userId: FieldRef<"AdminProfile", 'String'>
+    readonly department: FieldRef<"AdminProfile", 'String'>
+    readonly permissions: FieldRef<"AdminProfile", 'String[]'>
+    readonly phoneNumber: FieldRef<"AdminProfile", 'String'>
+    readonly lastLoginAt: FieldRef<"AdminProfile", 'DateTime'>
+    readonly createdAt: FieldRef<"AdminProfile", 'DateTime'>
+    readonly updatedAt: FieldRef<"AdminProfile", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AdminProfile findUnique
+   */
+  export type AdminProfileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminProfile to fetch.
+     */
+    where: AdminProfileWhereUniqueInput
+  }
+
+  /**
+   * AdminProfile findUniqueOrThrow
+   */
+  export type AdminProfileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminProfile to fetch.
+     */
+    where: AdminProfileWhereUniqueInput
+  }
+
+  /**
+   * AdminProfile findFirst
+   */
+  export type AdminProfileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminProfile to fetch.
+     */
+    where?: AdminProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminProfiles to fetch.
+     */
+    orderBy?: AdminProfileOrderByWithRelationInput | AdminProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AdminProfiles.
+     */
+    cursor?: AdminProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AdminProfiles.
+     */
+    distinct?: AdminProfileScalarFieldEnum | AdminProfileScalarFieldEnum[]
+  }
+
+  /**
+   * AdminProfile findFirstOrThrow
+   */
+  export type AdminProfileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminProfile to fetch.
+     */
+    where?: AdminProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminProfiles to fetch.
+     */
+    orderBy?: AdminProfileOrderByWithRelationInput | AdminProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AdminProfiles.
+     */
+    cursor?: AdminProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AdminProfiles.
+     */
+    distinct?: AdminProfileScalarFieldEnum | AdminProfileScalarFieldEnum[]
+  }
+
+  /**
+   * AdminProfile findMany
+   */
+  export type AdminProfileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which AdminProfiles to fetch.
+     */
+    where?: AdminProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminProfiles to fetch.
+     */
+    orderBy?: AdminProfileOrderByWithRelationInput | AdminProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AdminProfiles.
+     */
+    cursor?: AdminProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminProfiles.
+     */
+    skip?: number
+    distinct?: AdminProfileScalarFieldEnum | AdminProfileScalarFieldEnum[]
+  }
+
+  /**
+   * AdminProfile create
+   */
+  export type AdminProfileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AdminProfile.
+     */
+    data: XOR<AdminProfileCreateInput, AdminProfileUncheckedCreateInput>
+  }
+
+  /**
+   * AdminProfile createMany
+   */
+  export type AdminProfileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AdminProfiles.
+     */
+    data: AdminProfileCreateManyInput | AdminProfileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AdminProfile createManyAndReturn
+   */
+  export type AdminProfileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many AdminProfiles.
+     */
+    data: AdminProfileCreateManyInput | AdminProfileCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AdminProfile update
+   */
+  export type AdminProfileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AdminProfile.
+     */
+    data: XOR<AdminProfileUpdateInput, AdminProfileUncheckedUpdateInput>
+    /**
+     * Choose, which AdminProfile to update.
+     */
+    where: AdminProfileWhereUniqueInput
+  }
+
+  /**
+   * AdminProfile updateMany
+   */
+  export type AdminProfileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AdminProfiles.
+     */
+    data: XOR<AdminProfileUpdateManyMutationInput, AdminProfileUncheckedUpdateManyInput>
+    /**
+     * Filter which AdminProfiles to update
+     */
+    where?: AdminProfileWhereInput
+  }
+
+  /**
+   * AdminProfile upsert
+   */
+  export type AdminProfileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AdminProfile to update in case it exists.
+     */
+    where: AdminProfileWhereUniqueInput
+    /**
+     * In case the AdminProfile found by the `where` argument doesn't exist, create a new AdminProfile with this data.
+     */
+    create: XOR<AdminProfileCreateInput, AdminProfileUncheckedCreateInput>
+    /**
+     * In case the AdminProfile was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AdminProfileUpdateInput, AdminProfileUncheckedUpdateInput>
+  }
+
+  /**
+   * AdminProfile delete
+   */
+  export type AdminProfileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
+    /**
+     * Filter which AdminProfile to delete.
+     */
+    where: AdminProfileWhereUniqueInput
+  }
+
+  /**
+   * AdminProfile deleteMany
+   */
+  export type AdminProfileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AdminProfiles to delete
+     */
+    where?: AdminProfileWhereInput
+  }
+
+  /**
+   * AdminProfile without action
+   */
+  export type AdminProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminProfile
+     */
+    select?: AdminProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AdminProfileInclude<ExtArgs> | null
   }
 
 
@@ -17438,6 +18508,20 @@ export namespace Prisma {
   export type MenteeProfileScalarFieldEnum = (typeof MenteeProfileScalarFieldEnum)[keyof typeof MenteeProfileScalarFieldEnum]
 
 
+  export const AdminProfileScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    department: 'department',
+    permissions: 'permissions',
+    phoneNumber: 'phoneNumber',
+    lastLoginAt: 'lastLoginAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AdminProfileScalarFieldEnum = (typeof AdminProfileScalarFieldEnum)[keyof typeof AdminProfileScalarFieldEnum]
+
+
   export const ResumeScalarFieldEnum: {
     id: 'id',
     menteeId: 'menteeId',
@@ -17813,6 +18897,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     mentorProfile?: XOR<MentorProfileNullableRelationFilter, MentorProfileWhereInput> | null
     menteeProfile?: XOR<MenteeProfileNullableRelationFilter, MenteeProfileWhereInput> | null
+    adminProfile?: XOR<AdminProfileNullableRelationFilter, AdminProfileWhereInput> | null
     bookingsAsMentor?: BookingListRelationFilter
     bookingsAsMentee?: BookingListRelationFilter
     notifications?: NotificationListRelationFilter
@@ -17836,6 +18921,7 @@ export namespace Prisma {
     deletedAt?: SortOrderInput | SortOrder
     mentorProfile?: MentorProfileOrderByWithRelationInput
     menteeProfile?: MenteeProfileOrderByWithRelationInput
+    adminProfile?: AdminProfileOrderByWithRelationInput
     bookingsAsMentor?: BookingOrderByRelationAggregateInput
     bookingsAsMentee?: BookingOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
@@ -17862,6 +18948,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     mentorProfile?: XOR<MentorProfileNullableRelationFilter, MentorProfileWhereInput> | null
     menteeProfile?: XOR<MenteeProfileNullableRelationFilter, MenteeProfileWhereInput> | null
+    adminProfile?: XOR<AdminProfileNullableRelationFilter, AdminProfileWhereInput> | null
     bookingsAsMentor?: BookingListRelationFilter
     bookingsAsMentee?: BookingListRelationFilter
     notifications?: NotificationListRelationFilter
@@ -18109,6 +19196,76 @@ export namespace Prisma {
     expectations?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
+  }
+
+  export type AdminProfileWhereInput = {
+    AND?: AdminProfileWhereInput | AdminProfileWhereInput[]
+    OR?: AdminProfileWhereInput[]
+    NOT?: AdminProfileWhereInput | AdminProfileWhereInput[]
+    id?: StringFilter<"AdminProfile"> | string
+    userId?: StringFilter<"AdminProfile"> | string
+    department?: StringNullableFilter<"AdminProfile"> | string | null
+    permissions?: StringNullableListFilter<"AdminProfile">
+    phoneNumber?: StringNullableFilter<"AdminProfile"> | string | null
+    lastLoginAt?: DateTimeNullableFilter<"AdminProfile"> | Date | string | null
+    createdAt?: DateTimeFilter<"AdminProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"AdminProfile"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type AdminProfileOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    department?: SortOrderInput | SortOrder
+    permissions?: SortOrder
+    phoneNumber?: SortOrderInput | SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type AdminProfileWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId?: string
+    AND?: AdminProfileWhereInput | AdminProfileWhereInput[]
+    OR?: AdminProfileWhereInput[]
+    NOT?: AdminProfileWhereInput | AdminProfileWhereInput[]
+    department?: StringNullableFilter<"AdminProfile"> | string | null
+    permissions?: StringNullableListFilter<"AdminProfile">
+    phoneNumber?: StringNullableFilter<"AdminProfile"> | string | null
+    lastLoginAt?: DateTimeNullableFilter<"AdminProfile"> | Date | string | null
+    createdAt?: DateTimeFilter<"AdminProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"AdminProfile"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id" | "userId">
+
+  export type AdminProfileOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    department?: SortOrderInput | SortOrder
+    permissions?: SortOrder
+    phoneNumber?: SortOrderInput | SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AdminProfileCountOrderByAggregateInput
+    _max?: AdminProfileMaxOrderByAggregateInput
+    _min?: AdminProfileMinOrderByAggregateInput
+  }
+
+  export type AdminProfileScalarWhereWithAggregatesInput = {
+    AND?: AdminProfileScalarWhereWithAggregatesInput | AdminProfileScalarWhereWithAggregatesInput[]
+    OR?: AdminProfileScalarWhereWithAggregatesInput[]
+    NOT?: AdminProfileScalarWhereWithAggregatesInput | AdminProfileScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AdminProfile"> | string
+    userId?: StringWithAggregatesFilter<"AdminProfile"> | string
+    department?: StringNullableWithAggregatesFilter<"AdminProfile"> | string | null
+    permissions?: StringNullableListFilter<"AdminProfile">
+    phoneNumber?: StringNullableWithAggregatesFilter<"AdminProfile"> | string | null
+    lastLoginAt?: DateTimeNullableWithAggregatesFilter<"AdminProfile"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"AdminProfile"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AdminProfile"> | Date | string
   }
 
   export type ResumeWhereInput = {
@@ -18899,6 +20056,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -18922,6 +20080,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -18945,6 +20104,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -18968,6 +20128,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -19254,6 +20415,82 @@ export namespace Prisma {
     certifications?: MenteeProfileUpdatecertificationsInput | string[]
     catScore?: NullableFloatFieldUpdateOperationsInput | number | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminProfileCreateInput = {
+    id?: string
+    department?: string | null
+    permissions?: AdminProfileCreatepermissionsInput | string[]
+    phoneNumber?: string | null
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutAdminProfileInput
+  }
+
+  export type AdminProfileUncheckedCreateInput = {
+    id?: string
+    userId: string
+    department?: string | null
+    permissions?: AdminProfileCreatepermissionsInput | string[]
+    phoneNumber?: string | null
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AdminProfileUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    permissions?: AdminProfileUpdatepermissionsInput | string[]
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutAdminProfileNestedInput
+  }
+
+  export type AdminProfileUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    permissions?: AdminProfileUpdatepermissionsInput | string[]
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminProfileCreateManyInput = {
+    id?: string
+    userId: string
+    department?: string | null
+    permissions?: AdminProfileCreatepermissionsInput | string[]
+    phoneNumber?: string | null
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AdminProfileUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    permissions?: AdminProfileUpdatepermissionsInput | string[]
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminProfileUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    permissions?: AdminProfileUpdatepermissionsInput | string[]
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20125,6 +21362,11 @@ export namespace Prisma {
     isNot?: MenteeProfileWhereInput | null
   }
 
+  export type AdminProfileNullableRelationFilter = {
+    is?: AdminProfileWhereInput | null
+    isNot?: AdminProfileWhereInput | null
+  }
+
   export type BookingListRelationFilter = {
     every?: BookingWhereInput
     some?: BookingWhereInput
@@ -20561,6 +21803,37 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type AdminProfileCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    department?: SortOrder
+    permissions?: SortOrder
+    phoneNumber?: SortOrder
+    lastLoginAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AdminProfileMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    department?: SortOrder
+    phoneNumber?: SortOrder
+    lastLoginAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AdminProfileMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    department?: SortOrder
+    phoneNumber?: SortOrder
+    lastLoginAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type MenteeProfileRelationFilter = {
@@ -21094,6 +22367,12 @@ export namespace Prisma {
     connect?: MenteeProfileWhereUniqueInput
   }
 
+  export type AdminProfileCreateNestedOneWithoutUserInput = {
+    create?: XOR<AdminProfileCreateWithoutUserInput, AdminProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: AdminProfileCreateOrConnectWithoutUserInput
+    connect?: AdminProfileWhereUniqueInput
+  }
+
   export type BookingCreateNestedManyWithoutMentorInput = {
     create?: XOR<BookingCreateWithoutMentorInput, BookingUncheckedCreateWithoutMentorInput> | BookingCreateWithoutMentorInput[] | BookingUncheckedCreateWithoutMentorInput[]
     connectOrCreate?: BookingCreateOrConnectWithoutMentorInput | BookingCreateOrConnectWithoutMentorInput[]
@@ -21138,6 +22417,12 @@ export namespace Prisma {
     create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
     connect?: MenteeProfileWhereUniqueInput
+  }
+
+  export type AdminProfileUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<AdminProfileCreateWithoutUserInput, AdminProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: AdminProfileCreateOrConnectWithoutUserInput
+    connect?: AdminProfileWhereUniqueInput
   }
 
   export type BookingUncheckedCreateNestedManyWithoutMentorInput = {
@@ -21216,6 +22501,16 @@ export namespace Prisma {
     delete?: MenteeProfileWhereInput | boolean
     connect?: MenteeProfileWhereUniqueInput
     update?: XOR<XOR<MenteeProfileUpdateToOneWithWhereWithoutUserInput, MenteeProfileUpdateWithoutUserInput>, MenteeProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AdminProfileUpdateOneWithoutUserNestedInput = {
+    create?: XOR<AdminProfileCreateWithoutUserInput, AdminProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: AdminProfileCreateOrConnectWithoutUserInput
+    upsert?: AdminProfileUpsertWithoutUserInput
+    disconnect?: AdminProfileWhereInput | boolean
+    delete?: AdminProfileWhereInput | boolean
+    connect?: AdminProfileWhereUniqueInput
+    update?: XOR<XOR<AdminProfileUpdateToOneWithWhereWithoutUserInput, AdminProfileUpdateWithoutUserInput>, AdminProfileUncheckedUpdateWithoutUserInput>
   }
 
   export type BookingUpdateManyWithoutMentorNestedInput = {
@@ -21302,6 +22597,16 @@ export namespace Prisma {
     delete?: MenteeProfileWhereInput | boolean
     connect?: MenteeProfileWhereUniqueInput
     update?: XOR<XOR<MenteeProfileUpdateToOneWithWhereWithoutUserInput, MenteeProfileUpdateWithoutUserInput>, MenteeProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AdminProfileUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<AdminProfileCreateWithoutUserInput, AdminProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: AdminProfileCreateOrConnectWithoutUserInput
+    upsert?: AdminProfileUpsertWithoutUserInput
+    disconnect?: AdminProfileWhereInput | boolean
+    delete?: AdminProfileWhereInput | boolean
+    connect?: AdminProfileWhereUniqueInput
+    update?: XOR<XOR<AdminProfileUpdateToOneWithWhereWithoutUserInput, AdminProfileUpdateWithoutUserInput>, AdminProfileUncheckedUpdateWithoutUserInput>
   }
 
   export type BookingUncheckedUpdateManyWithoutMentorNestedInput = {
@@ -21661,6 +22966,29 @@ export namespace Prisma {
     update?: SOPDocumentUpdateWithWhereUniqueWithoutMenteeInput | SOPDocumentUpdateWithWhereUniqueWithoutMenteeInput[]
     updateMany?: SOPDocumentUpdateManyWithWhereWithoutMenteeInput | SOPDocumentUpdateManyWithWhereWithoutMenteeInput[]
     deleteMany?: SOPDocumentScalarWhereInput | SOPDocumentScalarWhereInput[]
+  }
+
+  export type AdminProfileCreatepermissionsInput = {
+    set: string[]
+  }
+
+  export type UserCreateNestedOneWithoutAdminProfileInput = {
+    create?: XOR<UserCreateWithoutAdminProfileInput, UserUncheckedCreateWithoutAdminProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAdminProfileInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type AdminProfileUpdatepermissionsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdateOneRequiredWithoutAdminProfileNestedInput = {
+    create?: XOR<UserCreateWithoutAdminProfileInput, UserUncheckedCreateWithoutAdminProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAdminProfileInput
+    upsert?: UserUpsertWithoutAdminProfileInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAdminProfileInput, UserUpdateWithoutAdminProfileInput>, UserUncheckedUpdateWithoutAdminProfileInput>
   }
 
   export type MenteeProfileCreateNestedOneWithoutResumesInput = {
@@ -22452,6 +23780,31 @@ export namespace Prisma {
     create: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
   }
 
+  export type AdminProfileCreateWithoutUserInput = {
+    id?: string
+    department?: string | null
+    permissions?: AdminProfileCreatepermissionsInput | string[]
+    phoneNumber?: string | null
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AdminProfileUncheckedCreateWithoutUserInput = {
+    id?: string
+    department?: string | null
+    permissions?: AdminProfileCreatepermissionsInput | string[]
+    phoneNumber?: string | null
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AdminProfileCreateOrConnectWithoutUserInput = {
+    where: AdminProfileWhereUniqueInput
+    create: XOR<AdminProfileCreateWithoutUserInput, AdminProfileUncheckedCreateWithoutUserInput>
+  }
+
   export type BookingCreateWithoutMentorInput = {
     id?: string
     status?: $Enums.BookingStatus
@@ -22691,6 +24044,37 @@ export namespace Prisma {
     sopDocuments?: SOPDocumentUncheckedUpdateManyWithoutMenteeNestedInput
   }
 
+  export type AdminProfileUpsertWithoutUserInput = {
+    update: XOR<AdminProfileUpdateWithoutUserInput, AdminProfileUncheckedUpdateWithoutUserInput>
+    create: XOR<AdminProfileCreateWithoutUserInput, AdminProfileUncheckedCreateWithoutUserInput>
+    where?: AdminProfileWhereInput
+  }
+
+  export type AdminProfileUpdateToOneWithWhereWithoutUserInput = {
+    where?: AdminProfileWhereInput
+    data: XOR<AdminProfileUpdateWithoutUserInput, AdminProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AdminProfileUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    permissions?: AdminProfileUpdatepermissionsInput | string[]
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminProfileUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    permissions?: AdminProfileUpdatepermissionsInput | string[]
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type BookingUpsertWithWhereUniqueWithoutMentorInput = {
     where: BookingWhereUniqueInput
     update: XOR<BookingUpdateWithoutMentorInput, BookingUncheckedUpdateWithoutMentorInput>
@@ -22835,6 +24219,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -22857,6 +24242,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -22973,6 +24359,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -22995,6 +24382,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -23100,6 +24488,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -23122,6 +24511,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -23208,6 +24598,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -23230,6 +24621,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -23289,6 +24681,114 @@ export namespace Prisma {
     collegeName?: StringFilter<"SOPDocument"> | string
     fileUrl?: StringFilter<"SOPDocument"> | string
     createdAt?: DateTimeFilter<"SOPDocument"> | Date | string
+  }
+
+  export type UserCreateWithoutAdminProfileInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    name?: string | null
+    profilePicture?: string | null
+    provider?: string
+    role?: $Enums.Role
+    isVerified?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
+    menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
+    bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    verification?: VerificationDocumentCreateNestedOneWithoutUserInput
+    webinarRegistrations?: WebinarRegistrationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAdminProfileInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    name?: string | null
+    profilePicture?: string | null
+    provider?: string
+    role?: $Enums.Role
+    isVerified?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
+    menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
+    bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    verification?: VerificationDocumentUncheckedCreateNestedOneWithoutUserInput
+    webinarRegistrations?: WebinarRegistrationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAdminProfileInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAdminProfileInput, UserUncheckedCreateWithoutAdminProfileInput>
+  }
+
+  export type UserUpsertWithoutAdminProfileInput = {
+    update: XOR<UserUpdateWithoutAdminProfileInput, UserUncheckedUpdateWithoutAdminProfileInput>
+    create: XOR<UserCreateWithoutAdminProfileInput, UserUncheckedCreateWithoutAdminProfileInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAdminProfileInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAdminProfileInput, UserUncheckedUpdateWithoutAdminProfileInput>
+  }
+
+  export type UserUpdateWithoutAdminProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
+    menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
+    bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    verification?: VerificationDocumentUpdateOneWithoutUserNestedInput
+    webinarRegistrations?: WebinarRegistrationUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAdminProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
+    menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
+    bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    verification?: VerificationDocumentUncheckedUpdateOneWithoutUserNestedInput
+    webinarRegistrations?: WebinarRegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type MenteeProfileCreateWithoutResumesInput = {
@@ -23635,6 +25135,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     verification?: VerificationDocumentCreateNestedOneWithoutUserInput
@@ -23657,6 +25158,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     verification?: VerificationDocumentUncheckedCreateNestedOneWithoutUserInput
@@ -23684,6 +25186,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     verification?: VerificationDocumentCreateNestedOneWithoutUserInput
@@ -23706,6 +25209,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     verification?: VerificationDocumentUncheckedCreateNestedOneWithoutUserInput
@@ -23815,6 +25319,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     verification?: VerificationDocumentUpdateOneWithoutUserNestedInput
@@ -23837,6 +25342,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     verification?: VerificationDocumentUncheckedUpdateOneWithoutUserNestedInput
@@ -23870,6 +25376,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     verification?: VerificationDocumentUpdateOneWithoutUserNestedInput
@@ -23892,6 +25399,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     verification?: VerificationDocumentUncheckedUpdateOneWithoutUserNestedInput
@@ -24392,6 +25900,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -24414,6 +25923,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -24487,6 +25997,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -24509,6 +26020,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -24531,6 +26043,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     verification?: VerificationDocumentCreateNestedOneWithoutUserInput
@@ -24553,6 +26066,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     verification?: VerificationDocumentUncheckedCreateNestedOneWithoutUserInput
@@ -24591,6 +26105,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     verification?: VerificationDocumentUpdateOneWithoutUserNestedInput
@@ -24613,6 +26128,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     verification?: VerificationDocumentUncheckedUpdateOneWithoutUserNestedInput
@@ -24635,6 +26151,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -24657,6 +26174,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -24695,6 +26213,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -24717,6 +26236,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -25106,6 +26626,10 @@ export namespace Prisma {
      * @deprecated Use MenteeProfileDefaultArgs instead
      */
     export type MenteeProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MenteeProfileDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use AdminProfileDefaultArgs instead
+     */
+    export type AdminProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AdminProfileDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ResumeDefaultArgs instead
      */

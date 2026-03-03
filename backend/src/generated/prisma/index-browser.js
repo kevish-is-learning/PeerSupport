@@ -169,6 +169,17 @@ exports.Prisma.MenteeProfileScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AdminProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  department: 'department',
+  permissions: 'permissions',
+  phoneNumber: 'phoneNumber',
+  lastLoginAt: 'lastLoginAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ResumeScalarFieldEnum = {
   id: 'id',
   menteeId: 'menteeId',
@@ -350,6 +361,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   MentorProfile: 'MentorProfile',
   MenteeProfile: 'MenteeProfile',
+  AdminProfile: 'AdminProfile',
   Resume: 'Resume',
   SOPDocument: 'SOPDocument',
   Slot: 'Slot',
