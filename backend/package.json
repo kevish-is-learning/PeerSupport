@@ -9,7 +9,10 @@
     "dev": "nodemon src/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "seed": "node src/seed-full.js",
+    "db:clear": "node src/clear-db.js",
+    "db:reset": "node src/clear-db.js && node src/seed-full.js"
   },
   "keywords": [
     "authentication",

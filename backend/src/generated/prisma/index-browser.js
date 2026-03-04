@@ -296,6 +296,37 @@ exports.Prisma.VerificationDocumentScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  icon: 'icon',
+  color: 'color',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BadgeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  icon: 'icon',
+  criteria: 'criteria',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserBadgeScalarFieldEnum = {
+  id: 'id',
+  odlUserId: 'odlUserId',
+  badgeId: 'badgeId',
+  awardedAt: 'awardedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -382,7 +413,10 @@ exports.Prisma.ModelName = {
   Webinar: 'Webinar',
   WebinarRegistration: 'WebinarRegistration',
   Notification: 'Notification',
-  VerificationDocument: 'VerificationDocument'
+  VerificationDocument: 'VerificationDocument',
+  Category: 'Category',
+  Badge: 'Badge',
+  UserBadge: 'UserBadge'
 };
 
 /**

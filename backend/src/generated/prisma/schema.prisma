@@ -364,3 +364,52 @@ model VerificationDocument {
 
   user User @relation(fields: [userId], references: [id])
 }
+
+///////////////////////////
+// CATEGORIES
+///////////////////////////
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  icon        String?
+  color       String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([sortOrder])
+}
+
+///////////////////////////
+// BADGES
+///////////////////////////
+
+model Badge {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  icon        String?
+  criteria    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userBadges UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(uuid())
+  odlUserId String
+  badgeId   String
+  awardedAt DateTime @default(now())
+
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  @@unique([odlUserId, badgeId])
+  @@index([odlUserId])
+}
