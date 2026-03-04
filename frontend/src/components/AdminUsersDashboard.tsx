@@ -27,7 +27,7 @@ export default function AdminUsersDashboard() {
     email: '',
     password: '',
     name: '',
-    role: 'MENTEE' as Role,
+    role: Role.MENTEE,
   });
 
   // Edit user form
@@ -82,7 +82,7 @@ export default function AdminUsersDashboard() {
       await adminService.createUser(createForm);
       setMessage({ type: 'success', text: 'User created successfully!' });
       setShowCreateModal(false);
-      setCreateForm({ email: '', password: '', name: '', role: 'MENTEE' });
+      setCreateForm({ email: '', password: '', name: '', role: Role.MENTEE });
       loadUsers();
     } catch (error: any) {
       setMessage({
