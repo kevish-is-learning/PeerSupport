@@ -40,6 +40,19 @@ router.put('/profile/admin/:userId', authenticateJWT, adminOnly, userController.
 router.delete('/profile/admin', authenticateJWT, adminOnly, userController.deleteAdminProfile);
 router.delete('/profile/admin/:userId', authenticateJWT, adminOnly, userController.deleteAdminProfile);
 
+// Resume Routes (Mentee only)
+router.post('/resumes', authenticateJWT, authorizeRoles('MENTEE', 'ADMIN'), userController.addResume);
+router.get('/resumes', authenticateJWT, authorizeRoles('MENTEE', 'ADMIN'), userController.getResumes);
+router.delete('/resumes/:resumeId', authenticateJWT, authorizeRoles('MENTEE', 'ADMIN'), userController.deleteResume);
+
+// Mentor Application Routes
+router.post('/mentor-applications', authenticateJWT, userController.submitMentorApplication);
+router.get('/mentor-applications/my', authenticateJWT, userController.getMyMentorApplication);
+router.get('/mentor-applications', authenticateJWT, adminOnly, userController.getAllMentorApplications);
+router.get('/mentor-applications/:applicationId', authenticateJWT, adminOnly, userController.getMentorApplicationById);
+router.patch('/mentor-applications/:applicationId/approve', authenticateJWT, adminOnly, userController.approveMentorApplication);
+router.patch('/mentor-applications/:applicationId/reject', authenticateJWT, adminOnly, userController.rejectMentorApplication);
+
 // Admin routes
 router.get('/', authenticateJWT, adminOnly, userController.getAllUsers);
 router.get('/role/:role', authenticateJWT, adminOnly, userController.getUsersByRole);

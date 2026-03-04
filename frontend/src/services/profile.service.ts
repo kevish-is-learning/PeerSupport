@@ -80,4 +80,20 @@ export const profileService = {
     const response = await apiClient.delete<ApiResponse>(url);
     return response.data;
   },
+
+  // Resume Operations (Mentee)
+  async addResume(name: string, fileUrl: string) {
+    const response = await apiClient.post<ApiResponse>('/users/resumes', { name, fileUrl });
+    return response.data;
+  },
+
+  async getResumes() {
+    const response = await apiClient.get<ApiResponse>('/users/resumes');
+    return response.data;
+  },
+
+  async deleteResumeById(resumeId: string) {
+    const response = await apiClient.delete<ApiResponse>(`/users/resumes/${resumeId}`);
+    return response.data;
+  },
 };

@@ -172,10 +172,21 @@ exports.Prisma.MenteeProfileScalarFieldEnum = {
 exports.Prisma.AdminProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  department: 'department',
-  permissions: 'permissions',
-  phoneNumber: 'phoneNumber',
   lastLoginAt: 'lastLoginAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MentorApplicationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  bio: 'bio',
+  expertise: 'expertise',
+  certifications: 'certifications',
+  pricePerSession: 'pricePerSession',
+  status: 'status',
+  rejectionReason: 'rejectionReason',
+  reviewedAt: 'reviewedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -184,14 +195,6 @@ exports.Prisma.ResumeScalarFieldEnum = {
   id: 'id',
   menteeId: 'menteeId',
   name: 'name',
-  fileUrl: 'fileUrl',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.SOPDocumentScalarFieldEnum = {
-  id: 'id',
-  menteeId: 'menteeId',
-  collegeName: 'collegeName',
   fileUrl: 'fileUrl',
   createdAt: 'createdAt'
 };
@@ -319,6 +322,12 @@ exports.VerificationStatus = exports.$Enums.VerificationStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.ApplicationStatus = exports.$Enums.ApplicationStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.SlotStatus = exports.$Enums.SlotStatus = {
   AVAILABLE: 'AVAILABLE',
   BOOKED: 'BOOKED',
@@ -362,8 +371,8 @@ exports.Prisma.ModelName = {
   MentorProfile: 'MentorProfile',
   MenteeProfile: 'MenteeProfile',
   AdminProfile: 'AdminProfile',
+  MentorApplication: 'MentorApplication',
   Resume: 'Resume',
-  SOPDocument: 'SOPDocument',
   Slot: 'Slot',
   Booking: 'Booking',
   Payment: 'Payment',

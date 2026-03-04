@@ -196,12 +196,12 @@ export default function AdminProfileForm({ initialData, onSuccess }: AdminProfil
                 </span>
               </div>
             )}
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Account Created:</span>
               <span className="text-sm font-medium">
                 {new Date(initialData.createdAt || '').toLocaleDateString()}
               </span>
-            </div>
+            </div> */}
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Active Permissions:</span>
               <span className="text-sm font-medium">

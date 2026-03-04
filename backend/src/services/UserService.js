@@ -69,7 +69,6 @@ class UserService {
         menteeProfile: {
           include: {
             resumes: true,
-            sopDocuments: true,
           }
         },
         adminProfile: true,
@@ -385,7 +384,6 @@ class UserService {
         },
         include: {
           resumes: true,
-          sopDocuments: true,
         },
       });
       return updatedProfile;
@@ -406,7 +404,6 @@ class UserService {
         },
         include: {
           resumes: true,
-          sopDocuments: true,
         },
       });
       return newProfile;
@@ -419,7 +416,6 @@ class UserService {
       where: { userId },
       include: {
         resumes: true,
-        sopDocuments: true,
         user: {
           select: this.userSelect,
         },
@@ -753,6 +749,257 @@ class UserService {
     }
 
     return result;
+  }
+
+  ///////////////////////////
+  // RESUME MANAGEMENT (MENTEE)
+  ///////////////////////////
+
+  // Add resume to mentee profile
+  async addResume(menteeProfileId, resumeData) {
+    const { name, fileUrl } = resumeData;
+
+    if (!name || !fileUrl) {
+      throw new Error('Resume name and file URL are required');
+    }
+
+    const resume = await prisma.resume.create({
+      data: {
+        menteeId: menteeProfileId,
+        name,
+        fileUrl,
+      },
+    });
+
+    return resume;
+  }
+
+  // Get all resumes for a mentee
+  async getResumes(menteeProfileId) {
+    const resumes = await prisma.resume.findMany({
+      where: { menteeId: menteeProfileId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return resumes;
+  }
+
+  // Delete a resume
+  async deleteResume(resumeId, userId) {
+    // Verify resume belongs to user
+    const resume = await prisma.resume.findUnique({
+      where: { id: resumeId },
+      include: {
+        mentee: {
+          select: { userId: true },
+        },
+      },
+    });
+
+    if (!resume) {
+      throw new Error('Resume not found');
+    }
+
+    if (resume.mentee.userId !== userId) {
+      throw new Error('Unauthorized to delete this resume');
+    }
+
+    await prisma.resume.delete({
+      where: { id: resumeId },
+    });
+
+    return { message: 'Resume deleted successfully' };
+  }
+
+  ///////////////////////////
+  // MENTOR APPLICATION MANAGEMENT
+  ///////////////////////////
+
+  // Submit mentor application (by user)
+  async submitMentorApplication(userId, applicationData) {
+    const { bio, expertise, certifications, pricePerSession } = applicationData;
+
+    // Validate required fields
+    if (!bio || !expertise || expertise.length === 0 || !pricePerSession) {
+      throw new Error('All fields are required: bio, expertise, and price per session');
+    }
+
+    // Check if user already has a pending application
+    const existingApplication = await prisma.mentorApplication.findFirst({
+      where: {
+        userId,
+        status: 'PENDING',
+      },
+    });
+
+    if (existingApplication) {
+      throw new Error('You already have a pending mentor application');
+    }
+
+    // Check if user is already a mentor
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { mentorProfile: true },
+    });
+
+    if (user.role === 'MENTOR' || user.mentorProfile) {
+      throw new Error('You are already registered as a mentor');
+    }
+
+    const application = await prisma.mentorApplication.create({
+      data: {
+        userId,
+        bio,
+        expertise,
+        certifications: certifications || [],
+        pricePerSession: parseFloat(pricePerSession),
+      },
+      include: {
+        user: {
+          select: this.userSelect,
+        },
+      },
+    });
+
+    return application;
+  }
+
+  // Get all mentor applications (admin only) with filtering
+  async getAllMentorApplications({ page = 1, limit = 10, status }) {
+    const skip = (page - 1) * limit;
+    
+    const where = {
+      ...(status && { status }),
+    };
+
+    const [applications, total] = await Promise.all([
+      prisma.mentorApplication.findMany({
+        where,
+        include: {
+          user: {
+            select: this.userSelect,
+          },
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.mentorApplication.count({ where }),
+    ]);
+
+    return {
+      applications,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  // Get single mentor application by ID
+  async getMentorApplicationById(applicationId) {
+    const application = await prisma.mentorApplication.findUnique({
+      where: { id: applicationId },
+      include: {
+        user: {
+          select: this.userSelect,
+        },
+      },
+    });
+
+    if (!application) {
+      throw new Error('Application not found');
+    }
+
+    return application;
+  }
+
+  // Get user's own mentor application
+  async getUserMentorApplication(userId) {
+    const application = await prisma.mentorApplication.findFirst({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return application;
+  }
+
+  // Approve mentor application (admin only)
+  async approveMentorApplication(applicationId) {
+    const application = await prisma.mentorApplication.findUnique({
+      where: { id: applicationId },
+      include: { user: true },
+    });
+
+    if (!application) {
+      throw new Error('Application not found');
+    }
+
+    if (application.status !== 'PENDING') {
+      throw new Error('Application has already been processed');
+    }
+
+    // Update application status and create mentor profile in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Update application
+      const updatedApplication = await tx.mentorApplication.update({
+        where: { id: applicationId },
+        data: {
+          status: 'APPROVED',
+          reviewedAt: new Date(),
+        },
+      });
+
+      // Create mentor profile
+      const mentorProfile = await tx.mentorProfile.create({
+        data: {
+          userId: application.userId,
+          bio: application.bio,
+          expertise: application.expertise,
+          certifications: application.certifications,
+          pricePerSession: application.pricePerSession,
+          verificationStatus: 'PENDING',
+        },
+      });
+
+      // Update user role to MENTOR
+      await tx.user.update({
+        where: { id: application.userId },
+        data: { role: 'MENTOR' },
+      });
+
+      return { application: updatedApplication, mentorProfile };
+    });
+
+    return result;
+  }
+
+  // Reject mentor application (admin only)
+  async rejectMentorApplication(applicationId, rejectionReason) {
+    const application = await prisma.mentorApplication.findUnique({
+      where: { id: applicationId },
+    });
+
+    if (!application) {
+      throw new Error('Application not found');
+    }
+
+    if (application.status !== 'PENDING') {
+      throw new Error('Application has already been processed');
+    }
+
+    const updatedApplication = await prisma.mentorApplication.update({
+      where: { id: applicationId },
+      data: {
+        status: 'REJECTED',
+        rejectionReason: rejectionReason || 'Application does not meet requirements',
+        reviewedAt: new Date(),
+      },
+    });
+
+    return updatedApplication;
   }
 }
 

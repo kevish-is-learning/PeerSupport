@@ -34,15 +34,15 @@ export type MenteeProfile = $Result.DefaultSelection<Prisma.$MenteeProfilePayloa
  */
 export type AdminProfile = $Result.DefaultSelection<Prisma.$AdminProfilePayload>
 /**
+ * Model MentorApplication
+ * 
+ */
+export type MentorApplication = $Result.DefaultSelection<Prisma.$MentorApplicationPayload>
+/**
  * Model Resume
  * 
  */
 export type Resume = $Result.DefaultSelection<Prisma.$ResumePayload>
-/**
- * Model SOPDocument
- * 
- */
-export type SOPDocument = $Result.DefaultSelection<Prisma.$SOPDocumentPayload>
 /**
  * Model Slot
  * 
@@ -116,6 +116,15 @@ export const VerificationStatus: {
 export type VerificationStatus = (typeof VerificationStatus)[keyof typeof VerificationStatus]
 
 
+export const ApplicationStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof ApplicationStatus]
+
+
 export const SlotStatus: {
   AVAILABLE: 'AVAILABLE',
   BOOKED: 'BOOKED',
@@ -180,6 +189,10 @@ export const Role: typeof $Enums.Role
 export type VerificationStatus = $Enums.VerificationStatus
 
 export const VerificationStatus: typeof $Enums.VerificationStatus
+
+export type ApplicationStatus = $Enums.ApplicationStatus
+
+export const ApplicationStatus: typeof $Enums.ApplicationStatus
 
 export type SlotStatus = $Enums.SlotStatus
 
@@ -369,6 +382,16 @@ export class PrismaClient<
   get adminProfile(): Prisma.AdminProfileDelegate<ExtArgs>;
 
   /**
+   * `prisma.mentorApplication`: Exposes CRUD operations for the **MentorApplication** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MentorApplications
+    * const mentorApplications = await prisma.mentorApplication.findMany()
+    * ```
+    */
+  get mentorApplication(): Prisma.MentorApplicationDelegate<ExtArgs>;
+
+  /**
    * `prisma.resume`: Exposes CRUD operations for the **Resume** model.
     * Example usage:
     * ```ts
@@ -377,16 +400,6 @@ export class PrismaClient<
     * ```
     */
   get resume(): Prisma.ResumeDelegate<ExtArgs>;
-
-  /**
-   * `prisma.sOPDocument`: Exposes CRUD operations for the **SOPDocument** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more SOPDocuments
-    * const sOPDocuments = await prisma.sOPDocument.findMany()
-    * ```
-    */
-  get sOPDocument(): Prisma.SOPDocumentDelegate<ExtArgs>;
 
   /**
    * `prisma.slot`: Exposes CRUD operations for the **Slot** model.
@@ -932,8 +945,8 @@ export namespace Prisma {
     MentorProfile: 'MentorProfile',
     MenteeProfile: 'MenteeProfile',
     AdminProfile: 'AdminProfile',
+    MentorApplication: 'MentorApplication',
     Resume: 'Resume',
-    SOPDocument: 'SOPDocument',
     Slot: 'Slot',
     Booking: 'Booking',
     Payment: 'Payment',
@@ -959,7 +972,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "mentorProfile" | "menteeProfile" | "adminProfile" | "resume" | "sOPDocument" | "slot" | "booking" | "payment" | "review" | "mentorFeedback" | "earnings" | "webinar" | "webinarRegistration" | "notification" | "verificationDocument"
+      modelProps: "user" | "mentorProfile" | "menteeProfile" | "adminProfile" | "mentorApplication" | "resume" | "slot" | "booking" | "payment" | "review" | "mentorFeedback" | "earnings" | "webinar" | "webinarRegistration" | "notification" | "verificationDocument"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1243,6 +1256,76 @@ export namespace Prisma {
           }
         }
       }
+      MentorApplication: {
+        payload: Prisma.$MentorApplicationPayload<ExtArgs>
+        fields: Prisma.MentorApplicationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MentorApplicationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MentorApplicationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload>
+          }
+          findFirst: {
+            args: Prisma.MentorApplicationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MentorApplicationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload>
+          }
+          findMany: {
+            args: Prisma.MentorApplicationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload>[]
+          }
+          create: {
+            args: Prisma.MentorApplicationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload>
+          }
+          createMany: {
+            args: Prisma.MentorApplicationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MentorApplicationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload>[]
+          }
+          delete: {
+            args: Prisma.MentorApplicationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload>
+          }
+          update: {
+            args: Prisma.MentorApplicationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload>
+          }
+          deleteMany: {
+            args: Prisma.MentorApplicationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MentorApplicationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MentorApplicationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorApplicationPayload>
+          }
+          aggregate: {
+            args: Prisma.MentorApplicationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMentorApplication>
+          }
+          groupBy: {
+            args: Prisma.MentorApplicationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MentorApplicationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MentorApplicationCountArgs<ExtArgs>
+            result: $Utils.Optional<MentorApplicationCountAggregateOutputType> | number
+          }
+        }
+      }
       Resume: {
         payload: Prisma.$ResumePayload<ExtArgs>
         fields: Prisma.ResumeFieldRefs
@@ -1310,76 +1393,6 @@ export namespace Prisma {
           count: {
             args: Prisma.ResumeCountArgs<ExtArgs>
             result: $Utils.Optional<ResumeCountAggregateOutputType> | number
-          }
-        }
-      }
-      SOPDocument: {
-        payload: Prisma.$SOPDocumentPayload<ExtArgs>
-        fields: Prisma.SOPDocumentFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.SOPDocumentFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.SOPDocumentFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload>
-          }
-          findFirst: {
-            args: Prisma.SOPDocumentFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.SOPDocumentFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload>
-          }
-          findMany: {
-            args: Prisma.SOPDocumentFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload>[]
-          }
-          create: {
-            args: Prisma.SOPDocumentCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload>
-          }
-          createMany: {
-            args: Prisma.SOPDocumentCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.SOPDocumentCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload>[]
-          }
-          delete: {
-            args: Prisma.SOPDocumentDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload>
-          }
-          update: {
-            args: Prisma.SOPDocumentUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload>
-          }
-          deleteMany: {
-            args: Prisma.SOPDocumentDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.SOPDocumentUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.SOPDocumentUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SOPDocumentPayload>
-          }
-          aggregate: {
-            args: Prisma.SOPDocumentAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateSOPDocument>
-          }
-          groupBy: {
-            args: Prisma.SOPDocumentGroupByArgs<ExtArgs>
-            result: $Utils.Optional<SOPDocumentGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.SOPDocumentCountArgs<ExtArgs>
-            result: $Utils.Optional<SOPDocumentCountAggregateOutputType> | number
           }
         }
       }
@@ -2244,6 +2257,7 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    mentorApplications: number
     bookingsAsMentor: number
     bookingsAsMentee: number
     notifications: number
@@ -2251,6 +2265,7 @@ export namespace Prisma {
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorApplications?: boolean | UserCountOutputTypeCountMentorApplicationsArgs
     bookingsAsMentor?: boolean | UserCountOutputTypeCountBookingsAsMentorArgs
     bookingsAsMentee?: boolean | UserCountOutputTypeCountBookingsAsMenteeArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
@@ -2266,6 +2281,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMentorApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorApplicationWhereInput
   }
 
   /**
@@ -2352,12 +2374,10 @@ export namespace Prisma {
 
   export type MenteeProfileCountOutputType = {
     resumes: number
-    sopDocuments: number
   }
 
   export type MenteeProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     resumes?: boolean | MenteeProfileCountOutputTypeCountResumesArgs
-    sopDocuments?: boolean | MenteeProfileCountOutputTypeCountSopDocumentsArgs
   }
 
   // Custom InputTypes
@@ -2376,13 +2396,6 @@ export namespace Prisma {
    */
   export type MenteeProfileCountOutputTypeCountResumesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ResumeWhereInput
-  }
-
-  /**
-   * MenteeProfileCountOutputType without action
-   */
-  export type MenteeProfileCountOutputTypeCountSopDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SOPDocumentWhereInput
   }
 
 
@@ -2652,6 +2665,7 @@ export namespace Prisma {
     mentorProfile?: boolean | User$mentorProfileArgs<ExtArgs>
     menteeProfile?: boolean | User$menteeProfileArgs<ExtArgs>
     adminProfile?: boolean | User$adminProfileArgs<ExtArgs>
+    mentorApplications?: boolean | User$mentorApplicationsArgs<ExtArgs>
     bookingsAsMentor?: boolean | User$bookingsAsMentorArgs<ExtArgs>
     bookingsAsMentee?: boolean | User$bookingsAsMenteeArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
@@ -2696,6 +2710,7 @@ export namespace Prisma {
     mentorProfile?: boolean | User$mentorProfileArgs<ExtArgs>
     menteeProfile?: boolean | User$menteeProfileArgs<ExtArgs>
     adminProfile?: boolean | User$adminProfileArgs<ExtArgs>
+    mentorApplications?: boolean | User$mentorApplicationsArgs<ExtArgs>
     bookingsAsMentor?: boolean | User$bookingsAsMentorArgs<ExtArgs>
     bookingsAsMentee?: boolean | User$bookingsAsMenteeArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
@@ -2711,6 +2726,7 @@ export namespace Prisma {
       mentorProfile: Prisma.$MentorProfilePayload<ExtArgs> | null
       menteeProfile: Prisma.$MenteeProfilePayload<ExtArgs> | null
       adminProfile: Prisma.$AdminProfilePayload<ExtArgs> | null
+      mentorApplications: Prisma.$MentorApplicationPayload<ExtArgs>[]
       bookingsAsMentor: Prisma.$BookingPayload<ExtArgs>[]
       bookingsAsMentee: Prisma.$BookingPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
@@ -3098,6 +3114,7 @@ export namespace Prisma {
     mentorProfile<T extends User$mentorProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$mentorProfileArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     menteeProfile<T extends User$menteeProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$menteeProfileArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     adminProfile<T extends User$adminProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$adminProfileArgs<ExtArgs>>): Prisma__AdminProfileClient<$Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    mentorApplications<T extends User$mentorApplicationsArgs<ExtArgs> = {}>(args?: Subset<T, User$mentorApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "findMany"> | Null>
     bookingsAsMentor<T extends User$bookingsAsMentorArgs<ExtArgs> = {}>(args?: Subset<T, User$bookingsAsMentorArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany"> | Null>
     bookingsAsMentee<T extends User$bookingsAsMenteeArgs<ExtArgs> = {}>(args?: Subset<T, User$bookingsAsMenteeArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany"> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany"> | Null>
@@ -3501,6 +3518,26 @@ export namespace Prisma {
      */
     include?: AdminProfileInclude<ExtArgs> | null
     where?: AdminProfileWhereInput
+  }
+
+  /**
+   * User.mentorApplications
+   */
+  export type User$mentorApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    where?: MentorApplicationWhereInput
+    orderBy?: MentorApplicationOrderByWithRelationInput | MentorApplicationOrderByWithRelationInput[]
+    cursor?: MentorApplicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MentorApplicationScalarFieldEnum | MentorApplicationScalarFieldEnum[]
   }
 
   /**
@@ -4762,10 +4799,6 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     dob: Date | null
-    education10th: string | null
-    education12th: string | null
-    bachelors: string | null
-    masters: string | null
     workExperience: string | null
     catScore: number | null
     expectations: string | null
@@ -4777,10 +4810,6 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     dob: Date | null
-    education10th: string | null
-    education12th: string | null
-    bachelors: string | null
-    masters: string | null
     workExperience: string | null
     catScore: number | null
     expectations: string | null
@@ -4818,10 +4847,6 @@ export namespace Prisma {
     id?: true
     userId?: true
     dob?: true
-    education10th?: true
-    education12th?: true
-    bachelors?: true
-    masters?: true
     workExperience?: true
     catScore?: true
     expectations?: true
@@ -4833,10 +4858,6 @@ export namespace Prisma {
     id?: true
     userId?: true
     dob?: true
-    education10th?: true
-    education12th?: true
-    bachelors?: true
-    masters?: true
     workExperience?: true
     catScore?: true
     expectations?: true
@@ -4951,10 +4972,10 @@ export namespace Prisma {
     id: string
     userId: string
     dob: Date | null
-    education10th: string | null
-    education12th: string | null
-    bachelors: string | null
-    masters: string | null
+    education10th: string[]
+    education12th: string[]
+    bachelors: string[]
+    masters: string[]
     workExperience: string | null
     certifications: string[]
     catScore: number | null
@@ -4998,7 +5019,6 @@ export namespace Prisma {
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     resumes?: boolean | MenteeProfile$resumesArgs<ExtArgs>
-    sopDocuments?: boolean | MenteeProfile$sopDocumentsArgs<ExtArgs>
     _count?: boolean | MenteeProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["menteeProfile"]>
 
@@ -5038,7 +5058,6 @@ export namespace Prisma {
   export type MenteeProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     resumes?: boolean | MenteeProfile$resumesArgs<ExtArgs>
-    sopDocuments?: boolean | MenteeProfile$sopDocumentsArgs<ExtArgs>
     _count?: boolean | MenteeProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MenteeProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5050,16 +5069,15 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       resumes: Prisma.$ResumePayload<ExtArgs>[]
-      sopDocuments: Prisma.$SOPDocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
       dob: Date | null
-      education10th: string | null
-      education12th: string | null
-      bachelors: string | null
-      masters: string | null
+      education10th: string[]
+      education12th: string[]
+      bachelors: string[]
+      masters: string[]
       workExperience: string | null
       certifications: string[]
       catScore: number | null
@@ -5432,7 +5450,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     resumes<T extends MenteeProfile$resumesArgs<ExtArgs> = {}>(args?: Subset<T, MenteeProfile$resumesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResumePayload<ExtArgs>, T, "findMany"> | Null>
-    sopDocuments<T extends MenteeProfile$sopDocumentsArgs<ExtArgs> = {}>(args?: Subset<T, MenteeProfile$sopDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5465,10 +5482,10 @@ export namespace Prisma {
     readonly id: FieldRef<"MenteeProfile", 'String'>
     readonly userId: FieldRef<"MenteeProfile", 'String'>
     readonly dob: FieldRef<"MenteeProfile", 'DateTime'>
-    readonly education10th: FieldRef<"MenteeProfile", 'String'>
-    readonly education12th: FieldRef<"MenteeProfile", 'String'>
-    readonly bachelors: FieldRef<"MenteeProfile", 'String'>
-    readonly masters: FieldRef<"MenteeProfile", 'String'>
+    readonly education10th: FieldRef<"MenteeProfile", 'String[]'>
+    readonly education12th: FieldRef<"MenteeProfile", 'String[]'>
+    readonly bachelors: FieldRef<"MenteeProfile", 'String[]'>
+    readonly masters: FieldRef<"MenteeProfile", 'String[]'>
     readonly workExperience: FieldRef<"MenteeProfile", 'String'>
     readonly certifications: FieldRef<"MenteeProfile", 'String[]'>
     readonly catScore: FieldRef<"MenteeProfile", 'Float'>
@@ -5813,26 +5830,6 @@ export namespace Prisma {
   }
 
   /**
-   * MenteeProfile.sopDocuments
-   */
-  export type MenteeProfile$sopDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    where?: SOPDocumentWhereInput
-    orderBy?: SOPDocumentOrderByWithRelationInput | SOPDocumentOrderByWithRelationInput[]
-    cursor?: SOPDocumentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SOPDocumentScalarFieldEnum | SOPDocumentScalarFieldEnum[]
-  }
-
-  /**
    * MenteeProfile without action
    */
   export type MenteeProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5860,8 +5857,6 @@ export namespace Prisma {
   export type AdminProfileMinAggregateOutputType = {
     id: string | null
     userId: string | null
-    department: string | null
-    phoneNumber: string | null
     lastLoginAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -5870,8 +5865,6 @@ export namespace Prisma {
   export type AdminProfileMaxAggregateOutputType = {
     id: string | null
     userId: string | null
-    department: string | null
-    phoneNumber: string | null
     lastLoginAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -5880,9 +5873,6 @@ export namespace Prisma {
   export type AdminProfileCountAggregateOutputType = {
     id: number
     userId: number
-    department: number
-    permissions: number
-    phoneNumber: number
     lastLoginAt: number
     createdAt: number
     updatedAt: number
@@ -5893,8 +5883,6 @@ export namespace Prisma {
   export type AdminProfileMinAggregateInputType = {
     id?: true
     userId?: true
-    department?: true
-    phoneNumber?: true
     lastLoginAt?: true
     createdAt?: true
     updatedAt?: true
@@ -5903,8 +5891,6 @@ export namespace Prisma {
   export type AdminProfileMaxAggregateInputType = {
     id?: true
     userId?: true
-    department?: true
-    phoneNumber?: true
     lastLoginAt?: true
     createdAt?: true
     updatedAt?: true
@@ -5913,9 +5899,6 @@ export namespace Prisma {
   export type AdminProfileCountAggregateInputType = {
     id?: true
     userId?: true
-    department?: true
-    permissions?: true
-    phoneNumber?: true
     lastLoginAt?: true
     createdAt?: true
     updatedAt?: true
@@ -5997,9 +5980,6 @@ export namespace Prisma {
   export type AdminProfileGroupByOutputType = {
     id: string
     userId: string
-    department: string | null
-    permissions: string[]
-    phoneNumber: string | null
     lastLoginAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -6025,9 +6005,6 @@ export namespace Prisma {
   export type AdminProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    department?: boolean
-    permissions?: boolean
-    phoneNumber?: boolean
     lastLoginAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6037,9 +6014,6 @@ export namespace Prisma {
   export type AdminProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    department?: boolean
-    permissions?: boolean
-    phoneNumber?: boolean
     lastLoginAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6049,9 +6023,6 @@ export namespace Prisma {
   export type AdminProfileSelectScalar = {
     id?: boolean
     userId?: boolean
-    department?: boolean
-    permissions?: boolean
-    phoneNumber?: boolean
     lastLoginAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -6072,9 +6043,6 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      department: string | null
-      permissions: string[]
-      phoneNumber: string | null
       lastLoginAt: Date | null
       createdAt: Date
       updatedAt: Date
@@ -6474,9 +6442,6 @@ export namespace Prisma {
   interface AdminProfileFieldRefs {
     readonly id: FieldRef<"AdminProfile", 'String'>
     readonly userId: FieldRef<"AdminProfile", 'String'>
-    readonly department: FieldRef<"AdminProfile", 'String'>
-    readonly permissions: FieldRef<"AdminProfile", 'String[]'>
-    readonly phoneNumber: FieldRef<"AdminProfile", 'String'>
     readonly lastLoginAt: FieldRef<"AdminProfile", 'DateTime'>
     readonly createdAt: FieldRef<"AdminProfile", 'DateTime'>
     readonly updatedAt: FieldRef<"AdminProfile", 'DateTime'>
@@ -6809,6 +6774,1037 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: AdminProfileInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MentorApplication
+   */
+
+  export type AggregateMentorApplication = {
+    _count: MentorApplicationCountAggregateOutputType | null
+    _avg: MentorApplicationAvgAggregateOutputType | null
+    _sum: MentorApplicationSumAggregateOutputType | null
+    _min: MentorApplicationMinAggregateOutputType | null
+    _max: MentorApplicationMaxAggregateOutputType | null
+  }
+
+  export type MentorApplicationAvgAggregateOutputType = {
+    pricePerSession: number | null
+  }
+
+  export type MentorApplicationSumAggregateOutputType = {
+    pricePerSession: number | null
+  }
+
+  export type MentorApplicationMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    bio: string | null
+    pricePerSession: number | null
+    status: $Enums.ApplicationStatus | null
+    rejectionReason: string | null
+    reviewedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorApplicationMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    bio: string | null
+    pricePerSession: number | null
+    status: $Enums.ApplicationStatus | null
+    rejectionReason: string | null
+    reviewedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorApplicationCountAggregateOutputType = {
+    id: number
+    userId: number
+    bio: number
+    expertise: number
+    certifications: number
+    pricePerSession: number
+    status: number
+    rejectionReason: number
+    reviewedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MentorApplicationAvgAggregateInputType = {
+    pricePerSession?: true
+  }
+
+  export type MentorApplicationSumAggregateInputType = {
+    pricePerSession?: true
+  }
+
+  export type MentorApplicationMinAggregateInputType = {
+    id?: true
+    userId?: true
+    bio?: true
+    pricePerSession?: true
+    status?: true
+    rejectionReason?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorApplicationMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    bio?: true
+    pricePerSession?: true
+    status?: true
+    rejectionReason?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorApplicationCountAggregateInputType = {
+    id?: true
+    userId?: true
+    bio?: true
+    expertise?: true
+    certifications?: true
+    pricePerSession?: true
+    status?: true
+    rejectionReason?: true
+    reviewedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MentorApplicationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorApplication to aggregate.
+     */
+    where?: MentorApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorApplications to fetch.
+     */
+    orderBy?: MentorApplicationOrderByWithRelationInput | MentorApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MentorApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorApplications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MentorApplications
+    **/
+    _count?: true | MentorApplicationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MentorApplicationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MentorApplicationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MentorApplicationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MentorApplicationMaxAggregateInputType
+  }
+
+  export type GetMentorApplicationAggregateType<T extends MentorApplicationAggregateArgs> = {
+        [P in keyof T & keyof AggregateMentorApplication]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMentorApplication[P]>
+      : GetScalarType<T[P], AggregateMentorApplication[P]>
+  }
+
+
+
+
+  export type MentorApplicationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorApplicationWhereInput
+    orderBy?: MentorApplicationOrderByWithAggregationInput | MentorApplicationOrderByWithAggregationInput[]
+    by: MentorApplicationScalarFieldEnum[] | MentorApplicationScalarFieldEnum
+    having?: MentorApplicationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MentorApplicationCountAggregateInputType | true
+    _avg?: MentorApplicationAvgAggregateInputType
+    _sum?: MentorApplicationSumAggregateInputType
+    _min?: MentorApplicationMinAggregateInputType
+    _max?: MentorApplicationMaxAggregateInputType
+  }
+
+  export type MentorApplicationGroupByOutputType = {
+    id: string
+    userId: string
+    bio: string
+    expertise: string[]
+    certifications: string[]
+    pricePerSession: number
+    status: $Enums.ApplicationStatus
+    rejectionReason: string | null
+    reviewedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: MentorApplicationCountAggregateOutputType | null
+    _avg: MentorApplicationAvgAggregateOutputType | null
+    _sum: MentorApplicationSumAggregateOutputType | null
+    _min: MentorApplicationMinAggregateOutputType | null
+    _max: MentorApplicationMaxAggregateOutputType | null
+  }
+
+  type GetMentorApplicationGroupByPayload<T extends MentorApplicationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MentorApplicationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MentorApplicationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MentorApplicationGroupByOutputType[P]>
+            : GetScalarType<T[P], MentorApplicationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MentorApplicationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    bio?: boolean
+    expertise?: boolean
+    certifications?: boolean
+    pricePerSession?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorApplication"]>
+
+  export type MentorApplicationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    bio?: boolean
+    expertise?: boolean
+    certifications?: boolean
+    pricePerSession?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorApplication"]>
+
+  export type MentorApplicationSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    bio?: boolean
+    expertise?: boolean
+    certifications?: boolean
+    pricePerSession?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    reviewedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MentorApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type MentorApplicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $MentorApplicationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MentorApplication"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      bio: string
+      expertise: string[]
+      certifications: string[]
+      pricePerSession: number
+      status: $Enums.ApplicationStatus
+      rejectionReason: string | null
+      reviewedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["mentorApplication"]>
+    composites: {}
+  }
+
+  type MentorApplicationGetPayload<S extends boolean | null | undefined | MentorApplicationDefaultArgs> = $Result.GetResult<Prisma.$MentorApplicationPayload, S>
+
+  type MentorApplicationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<MentorApplicationFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: MentorApplicationCountAggregateInputType | true
+    }
+
+  export interface MentorApplicationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MentorApplication'], meta: { name: 'MentorApplication' } }
+    /**
+     * Find zero or one MentorApplication that matches the filter.
+     * @param {MentorApplicationFindUniqueArgs} args - Arguments to find a MentorApplication
+     * @example
+     * // Get one MentorApplication
+     * const mentorApplication = await prisma.mentorApplication.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MentorApplicationFindUniqueArgs>(args: SelectSubset<T, MentorApplicationFindUniqueArgs<ExtArgs>>): Prisma__MentorApplicationClient<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one MentorApplication that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {MentorApplicationFindUniqueOrThrowArgs} args - Arguments to find a MentorApplication
+     * @example
+     * // Get one MentorApplication
+     * const mentorApplication = await prisma.mentorApplication.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MentorApplicationFindUniqueOrThrowArgs>(args: SelectSubset<T, MentorApplicationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MentorApplicationClient<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first MentorApplication that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorApplicationFindFirstArgs} args - Arguments to find a MentorApplication
+     * @example
+     * // Get one MentorApplication
+     * const mentorApplication = await prisma.mentorApplication.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MentorApplicationFindFirstArgs>(args?: SelectSubset<T, MentorApplicationFindFirstArgs<ExtArgs>>): Prisma__MentorApplicationClient<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first MentorApplication that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorApplicationFindFirstOrThrowArgs} args - Arguments to find a MentorApplication
+     * @example
+     * // Get one MentorApplication
+     * const mentorApplication = await prisma.mentorApplication.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MentorApplicationFindFirstOrThrowArgs>(args?: SelectSubset<T, MentorApplicationFindFirstOrThrowArgs<ExtArgs>>): Prisma__MentorApplicationClient<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more MentorApplications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorApplicationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MentorApplications
+     * const mentorApplications = await prisma.mentorApplication.findMany()
+     * 
+     * // Get first 10 MentorApplications
+     * const mentorApplications = await prisma.mentorApplication.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mentorApplicationWithIdOnly = await prisma.mentorApplication.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MentorApplicationFindManyArgs>(args?: SelectSubset<T, MentorApplicationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a MentorApplication.
+     * @param {MentorApplicationCreateArgs} args - Arguments to create a MentorApplication.
+     * @example
+     * // Create one MentorApplication
+     * const MentorApplication = await prisma.mentorApplication.create({
+     *   data: {
+     *     // ... data to create a MentorApplication
+     *   }
+     * })
+     * 
+     */
+    create<T extends MentorApplicationCreateArgs>(args: SelectSubset<T, MentorApplicationCreateArgs<ExtArgs>>): Prisma__MentorApplicationClient<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many MentorApplications.
+     * @param {MentorApplicationCreateManyArgs} args - Arguments to create many MentorApplications.
+     * @example
+     * // Create many MentorApplications
+     * const mentorApplication = await prisma.mentorApplication.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MentorApplicationCreateManyArgs>(args?: SelectSubset<T, MentorApplicationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MentorApplications and returns the data saved in the database.
+     * @param {MentorApplicationCreateManyAndReturnArgs} args - Arguments to create many MentorApplications.
+     * @example
+     * // Create many MentorApplications
+     * const mentorApplication = await prisma.mentorApplication.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MentorApplications and only return the `id`
+     * const mentorApplicationWithIdOnly = await prisma.mentorApplication.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MentorApplicationCreateManyAndReturnArgs>(args?: SelectSubset<T, MentorApplicationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a MentorApplication.
+     * @param {MentorApplicationDeleteArgs} args - Arguments to delete one MentorApplication.
+     * @example
+     * // Delete one MentorApplication
+     * const MentorApplication = await prisma.mentorApplication.delete({
+     *   where: {
+     *     // ... filter to delete one MentorApplication
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MentorApplicationDeleteArgs>(args: SelectSubset<T, MentorApplicationDeleteArgs<ExtArgs>>): Prisma__MentorApplicationClient<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one MentorApplication.
+     * @param {MentorApplicationUpdateArgs} args - Arguments to update one MentorApplication.
+     * @example
+     * // Update one MentorApplication
+     * const mentorApplication = await prisma.mentorApplication.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MentorApplicationUpdateArgs>(args: SelectSubset<T, MentorApplicationUpdateArgs<ExtArgs>>): Prisma__MentorApplicationClient<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more MentorApplications.
+     * @param {MentorApplicationDeleteManyArgs} args - Arguments to filter MentorApplications to delete.
+     * @example
+     * // Delete a few MentorApplications
+     * const { count } = await prisma.mentorApplication.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MentorApplicationDeleteManyArgs>(args?: SelectSubset<T, MentorApplicationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MentorApplications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorApplicationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MentorApplications
+     * const mentorApplication = await prisma.mentorApplication.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MentorApplicationUpdateManyArgs>(args: SelectSubset<T, MentorApplicationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MentorApplication.
+     * @param {MentorApplicationUpsertArgs} args - Arguments to update or create a MentorApplication.
+     * @example
+     * // Update or create a MentorApplication
+     * const mentorApplication = await prisma.mentorApplication.upsert({
+     *   create: {
+     *     // ... data to create a MentorApplication
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MentorApplication we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MentorApplicationUpsertArgs>(args: SelectSubset<T, MentorApplicationUpsertArgs<ExtArgs>>): Prisma__MentorApplicationClient<$Result.GetResult<Prisma.$MentorApplicationPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of MentorApplications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorApplicationCountArgs} args - Arguments to filter MentorApplications to count.
+     * @example
+     * // Count the number of MentorApplications
+     * const count = await prisma.mentorApplication.count({
+     *   where: {
+     *     // ... the filter for the MentorApplications we want to count
+     *   }
+     * })
+    **/
+    count<T extends MentorApplicationCountArgs>(
+      args?: Subset<T, MentorApplicationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MentorApplicationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MentorApplication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorApplicationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MentorApplicationAggregateArgs>(args: Subset<T, MentorApplicationAggregateArgs>): Prisma.PrismaPromise<GetMentorApplicationAggregateType<T>>
+
+    /**
+     * Group by MentorApplication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorApplicationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MentorApplicationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MentorApplicationGroupByArgs['orderBy'] }
+        : { orderBy?: MentorApplicationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MentorApplicationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMentorApplicationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MentorApplication model
+   */
+  readonly fields: MentorApplicationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MentorApplication.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MentorApplicationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MentorApplication model
+   */ 
+  interface MentorApplicationFieldRefs {
+    readonly id: FieldRef<"MentorApplication", 'String'>
+    readonly userId: FieldRef<"MentorApplication", 'String'>
+    readonly bio: FieldRef<"MentorApplication", 'String'>
+    readonly expertise: FieldRef<"MentorApplication", 'String[]'>
+    readonly certifications: FieldRef<"MentorApplication", 'String[]'>
+    readonly pricePerSession: FieldRef<"MentorApplication", 'Float'>
+    readonly status: FieldRef<"MentorApplication", 'ApplicationStatus'>
+    readonly rejectionReason: FieldRef<"MentorApplication", 'String'>
+    readonly reviewedAt: FieldRef<"MentorApplication", 'DateTime'>
+    readonly createdAt: FieldRef<"MentorApplication", 'DateTime'>
+    readonly updatedAt: FieldRef<"MentorApplication", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MentorApplication findUnique
+   */
+  export type MentorApplicationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorApplication to fetch.
+     */
+    where: MentorApplicationWhereUniqueInput
+  }
+
+  /**
+   * MentorApplication findUniqueOrThrow
+   */
+  export type MentorApplicationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorApplication to fetch.
+     */
+    where: MentorApplicationWhereUniqueInput
+  }
+
+  /**
+   * MentorApplication findFirst
+   */
+  export type MentorApplicationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorApplication to fetch.
+     */
+    where?: MentorApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorApplications to fetch.
+     */
+    orderBy?: MentorApplicationOrderByWithRelationInput | MentorApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorApplications.
+     */
+    cursor?: MentorApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorApplications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorApplications.
+     */
+    distinct?: MentorApplicationScalarFieldEnum | MentorApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * MentorApplication findFirstOrThrow
+   */
+  export type MentorApplicationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorApplication to fetch.
+     */
+    where?: MentorApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorApplications to fetch.
+     */
+    orderBy?: MentorApplicationOrderByWithRelationInput | MentorApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorApplications.
+     */
+    cursor?: MentorApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorApplications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorApplications.
+     */
+    distinct?: MentorApplicationScalarFieldEnum | MentorApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * MentorApplication findMany
+   */
+  export type MentorApplicationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorApplications to fetch.
+     */
+    where?: MentorApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorApplications to fetch.
+     */
+    orderBy?: MentorApplicationOrderByWithRelationInput | MentorApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MentorApplications.
+     */
+    cursor?: MentorApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorApplications.
+     */
+    skip?: number
+    distinct?: MentorApplicationScalarFieldEnum | MentorApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * MentorApplication create
+   */
+  export type MentorApplicationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MentorApplication.
+     */
+    data: XOR<MentorApplicationCreateInput, MentorApplicationUncheckedCreateInput>
+  }
+
+  /**
+   * MentorApplication createMany
+   */
+  export type MentorApplicationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MentorApplications.
+     */
+    data: MentorApplicationCreateManyInput | MentorApplicationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MentorApplication createManyAndReturn
+   */
+  export type MentorApplicationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many MentorApplications.
+     */
+    data: MentorApplicationCreateManyInput | MentorApplicationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MentorApplication update
+   */
+  export type MentorApplicationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MentorApplication.
+     */
+    data: XOR<MentorApplicationUpdateInput, MentorApplicationUncheckedUpdateInput>
+    /**
+     * Choose, which MentorApplication to update.
+     */
+    where: MentorApplicationWhereUniqueInput
+  }
+
+  /**
+   * MentorApplication updateMany
+   */
+  export type MentorApplicationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MentorApplications.
+     */
+    data: XOR<MentorApplicationUpdateManyMutationInput, MentorApplicationUncheckedUpdateManyInput>
+    /**
+     * Filter which MentorApplications to update
+     */
+    where?: MentorApplicationWhereInput
+  }
+
+  /**
+   * MentorApplication upsert
+   */
+  export type MentorApplicationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MentorApplication to update in case it exists.
+     */
+    where: MentorApplicationWhereUniqueInput
+    /**
+     * In case the MentorApplication found by the `where` argument doesn't exist, create a new MentorApplication with this data.
+     */
+    create: XOR<MentorApplicationCreateInput, MentorApplicationUncheckedCreateInput>
+    /**
+     * In case the MentorApplication was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MentorApplicationUpdateInput, MentorApplicationUncheckedUpdateInput>
+  }
+
+  /**
+   * MentorApplication delete
+   */
+  export type MentorApplicationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
+    /**
+     * Filter which MentorApplication to delete.
+     */
+    where: MentorApplicationWhereUniqueInput
+  }
+
+  /**
+   * MentorApplication deleteMany
+   */
+  export type MentorApplicationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorApplications to delete
+     */
+    where?: MentorApplicationWhereInput
+  }
+
+  /**
+   * MentorApplication without action
+   */
+  export type MentorApplicationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorApplication
+     */
+    select?: MentorApplicationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorApplicationInclude<ExtArgs> | null
   }
 
 
@@ -7742,939 +8738,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ResumeInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model SOPDocument
-   */
-
-  export type AggregateSOPDocument = {
-    _count: SOPDocumentCountAggregateOutputType | null
-    _min: SOPDocumentMinAggregateOutputType | null
-    _max: SOPDocumentMaxAggregateOutputType | null
-  }
-
-  export type SOPDocumentMinAggregateOutputType = {
-    id: string | null
-    menteeId: string | null
-    collegeName: string | null
-    fileUrl: string | null
-    createdAt: Date | null
-  }
-
-  export type SOPDocumentMaxAggregateOutputType = {
-    id: string | null
-    menteeId: string | null
-    collegeName: string | null
-    fileUrl: string | null
-    createdAt: Date | null
-  }
-
-  export type SOPDocumentCountAggregateOutputType = {
-    id: number
-    menteeId: number
-    collegeName: number
-    fileUrl: number
-    createdAt: number
-    _all: number
-  }
-
-
-  export type SOPDocumentMinAggregateInputType = {
-    id?: true
-    menteeId?: true
-    collegeName?: true
-    fileUrl?: true
-    createdAt?: true
-  }
-
-  export type SOPDocumentMaxAggregateInputType = {
-    id?: true
-    menteeId?: true
-    collegeName?: true
-    fileUrl?: true
-    createdAt?: true
-  }
-
-  export type SOPDocumentCountAggregateInputType = {
-    id?: true
-    menteeId?: true
-    collegeName?: true
-    fileUrl?: true
-    createdAt?: true
-    _all?: true
-  }
-
-  export type SOPDocumentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which SOPDocument to aggregate.
-     */
-    where?: SOPDocumentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SOPDocuments to fetch.
-     */
-    orderBy?: SOPDocumentOrderByWithRelationInput | SOPDocumentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: SOPDocumentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SOPDocuments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SOPDocuments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned SOPDocuments
-    **/
-    _count?: true | SOPDocumentCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: SOPDocumentMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: SOPDocumentMaxAggregateInputType
-  }
-
-  export type GetSOPDocumentAggregateType<T extends SOPDocumentAggregateArgs> = {
-        [P in keyof T & keyof AggregateSOPDocument]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateSOPDocument[P]>
-      : GetScalarType<T[P], AggregateSOPDocument[P]>
-  }
-
-
-
-
-  export type SOPDocumentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SOPDocumentWhereInput
-    orderBy?: SOPDocumentOrderByWithAggregationInput | SOPDocumentOrderByWithAggregationInput[]
-    by: SOPDocumentScalarFieldEnum[] | SOPDocumentScalarFieldEnum
-    having?: SOPDocumentScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: SOPDocumentCountAggregateInputType | true
-    _min?: SOPDocumentMinAggregateInputType
-    _max?: SOPDocumentMaxAggregateInputType
-  }
-
-  export type SOPDocumentGroupByOutputType = {
-    id: string
-    menteeId: string
-    collegeName: string
-    fileUrl: string
-    createdAt: Date
-    _count: SOPDocumentCountAggregateOutputType | null
-    _min: SOPDocumentMinAggregateOutputType | null
-    _max: SOPDocumentMaxAggregateOutputType | null
-  }
-
-  type GetSOPDocumentGroupByPayload<T extends SOPDocumentGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<SOPDocumentGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof SOPDocumentGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], SOPDocumentGroupByOutputType[P]>
-            : GetScalarType<T[P], SOPDocumentGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type SOPDocumentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    menteeId?: boolean
-    collegeName?: boolean
-    fileUrl?: boolean
-    createdAt?: boolean
-    mentee?: boolean | MenteeProfileDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["sOPDocument"]>
-
-  export type SOPDocumentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    menteeId?: boolean
-    collegeName?: boolean
-    fileUrl?: boolean
-    createdAt?: boolean
-    mentee?: boolean | MenteeProfileDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["sOPDocument"]>
-
-  export type SOPDocumentSelectScalar = {
-    id?: boolean
-    menteeId?: boolean
-    collegeName?: boolean
-    fileUrl?: boolean
-    createdAt?: boolean
-  }
-
-  export type SOPDocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    mentee?: boolean | MenteeProfileDefaultArgs<ExtArgs>
-  }
-  export type SOPDocumentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    mentee?: boolean | MenteeProfileDefaultArgs<ExtArgs>
-  }
-
-  export type $SOPDocumentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "SOPDocument"
-    objects: {
-      mentee: Prisma.$MenteeProfilePayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      menteeId: string
-      collegeName: string
-      fileUrl: string
-      createdAt: Date
-    }, ExtArgs["result"]["sOPDocument"]>
-    composites: {}
-  }
-
-  type SOPDocumentGetPayload<S extends boolean | null | undefined | SOPDocumentDefaultArgs> = $Result.GetResult<Prisma.$SOPDocumentPayload, S>
-
-  type SOPDocumentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<SOPDocumentFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: SOPDocumentCountAggregateInputType | true
-    }
-
-  export interface SOPDocumentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SOPDocument'], meta: { name: 'SOPDocument' } }
-    /**
-     * Find zero or one SOPDocument that matches the filter.
-     * @param {SOPDocumentFindUniqueArgs} args - Arguments to find a SOPDocument
-     * @example
-     * // Get one SOPDocument
-     * const sOPDocument = await prisma.sOPDocument.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends SOPDocumentFindUniqueArgs>(args: SelectSubset<T, SOPDocumentFindUniqueArgs<ExtArgs>>): Prisma__SOPDocumentClient<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one SOPDocument that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {SOPDocumentFindUniqueOrThrowArgs} args - Arguments to find a SOPDocument
-     * @example
-     * // Get one SOPDocument
-     * const sOPDocument = await prisma.sOPDocument.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends SOPDocumentFindUniqueOrThrowArgs>(args: SelectSubset<T, SOPDocumentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SOPDocumentClient<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first SOPDocument that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SOPDocumentFindFirstArgs} args - Arguments to find a SOPDocument
-     * @example
-     * // Get one SOPDocument
-     * const sOPDocument = await prisma.sOPDocument.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends SOPDocumentFindFirstArgs>(args?: SelectSubset<T, SOPDocumentFindFirstArgs<ExtArgs>>): Prisma__SOPDocumentClient<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first SOPDocument that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SOPDocumentFindFirstOrThrowArgs} args - Arguments to find a SOPDocument
-     * @example
-     * // Get one SOPDocument
-     * const sOPDocument = await prisma.sOPDocument.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends SOPDocumentFindFirstOrThrowArgs>(args?: SelectSubset<T, SOPDocumentFindFirstOrThrowArgs<ExtArgs>>): Prisma__SOPDocumentClient<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more SOPDocuments that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SOPDocumentFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all SOPDocuments
-     * const sOPDocuments = await prisma.sOPDocument.findMany()
-     * 
-     * // Get first 10 SOPDocuments
-     * const sOPDocuments = await prisma.sOPDocument.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const sOPDocumentWithIdOnly = await prisma.sOPDocument.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends SOPDocumentFindManyArgs>(args?: SelectSubset<T, SOPDocumentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a SOPDocument.
-     * @param {SOPDocumentCreateArgs} args - Arguments to create a SOPDocument.
-     * @example
-     * // Create one SOPDocument
-     * const SOPDocument = await prisma.sOPDocument.create({
-     *   data: {
-     *     // ... data to create a SOPDocument
-     *   }
-     * })
-     * 
-     */
-    create<T extends SOPDocumentCreateArgs>(args: SelectSubset<T, SOPDocumentCreateArgs<ExtArgs>>): Prisma__SOPDocumentClient<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many SOPDocuments.
-     * @param {SOPDocumentCreateManyArgs} args - Arguments to create many SOPDocuments.
-     * @example
-     * // Create many SOPDocuments
-     * const sOPDocument = await prisma.sOPDocument.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends SOPDocumentCreateManyArgs>(args?: SelectSubset<T, SOPDocumentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many SOPDocuments and returns the data saved in the database.
-     * @param {SOPDocumentCreateManyAndReturnArgs} args - Arguments to create many SOPDocuments.
-     * @example
-     * // Create many SOPDocuments
-     * const sOPDocument = await prisma.sOPDocument.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many SOPDocuments and only return the `id`
-     * const sOPDocumentWithIdOnly = await prisma.sOPDocument.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends SOPDocumentCreateManyAndReturnArgs>(args?: SelectSubset<T, SOPDocumentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a SOPDocument.
-     * @param {SOPDocumentDeleteArgs} args - Arguments to delete one SOPDocument.
-     * @example
-     * // Delete one SOPDocument
-     * const SOPDocument = await prisma.sOPDocument.delete({
-     *   where: {
-     *     // ... filter to delete one SOPDocument
-     *   }
-     * })
-     * 
-     */
-    delete<T extends SOPDocumentDeleteArgs>(args: SelectSubset<T, SOPDocumentDeleteArgs<ExtArgs>>): Prisma__SOPDocumentClient<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one SOPDocument.
-     * @param {SOPDocumentUpdateArgs} args - Arguments to update one SOPDocument.
-     * @example
-     * // Update one SOPDocument
-     * const sOPDocument = await prisma.sOPDocument.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends SOPDocumentUpdateArgs>(args: SelectSubset<T, SOPDocumentUpdateArgs<ExtArgs>>): Prisma__SOPDocumentClient<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more SOPDocuments.
-     * @param {SOPDocumentDeleteManyArgs} args - Arguments to filter SOPDocuments to delete.
-     * @example
-     * // Delete a few SOPDocuments
-     * const { count } = await prisma.sOPDocument.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends SOPDocumentDeleteManyArgs>(args?: SelectSubset<T, SOPDocumentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more SOPDocuments.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SOPDocumentUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many SOPDocuments
-     * const sOPDocument = await prisma.sOPDocument.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends SOPDocumentUpdateManyArgs>(args: SelectSubset<T, SOPDocumentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one SOPDocument.
-     * @param {SOPDocumentUpsertArgs} args - Arguments to update or create a SOPDocument.
-     * @example
-     * // Update or create a SOPDocument
-     * const sOPDocument = await prisma.sOPDocument.upsert({
-     *   create: {
-     *     // ... data to create a SOPDocument
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the SOPDocument we want to update
-     *   }
-     * })
-     */
-    upsert<T extends SOPDocumentUpsertArgs>(args: SelectSubset<T, SOPDocumentUpsertArgs<ExtArgs>>): Prisma__SOPDocumentClient<$Result.GetResult<Prisma.$SOPDocumentPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of SOPDocuments.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SOPDocumentCountArgs} args - Arguments to filter SOPDocuments to count.
-     * @example
-     * // Count the number of SOPDocuments
-     * const count = await prisma.sOPDocument.count({
-     *   where: {
-     *     // ... the filter for the SOPDocuments we want to count
-     *   }
-     * })
-    **/
-    count<T extends SOPDocumentCountArgs>(
-      args?: Subset<T, SOPDocumentCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], SOPDocumentCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a SOPDocument.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SOPDocumentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends SOPDocumentAggregateArgs>(args: Subset<T, SOPDocumentAggregateArgs>): Prisma.PrismaPromise<GetSOPDocumentAggregateType<T>>
-
-    /**
-     * Group by SOPDocument.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SOPDocumentGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends SOPDocumentGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: SOPDocumentGroupByArgs['orderBy'] }
-        : { orderBy?: SOPDocumentGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, SOPDocumentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSOPDocumentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the SOPDocument model
-   */
-  readonly fields: SOPDocumentFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for SOPDocument.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__SOPDocumentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    mentee<T extends MenteeProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MenteeProfileDefaultArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the SOPDocument model
-   */ 
-  interface SOPDocumentFieldRefs {
-    readonly id: FieldRef<"SOPDocument", 'String'>
-    readonly menteeId: FieldRef<"SOPDocument", 'String'>
-    readonly collegeName: FieldRef<"SOPDocument", 'String'>
-    readonly fileUrl: FieldRef<"SOPDocument", 'String'>
-    readonly createdAt: FieldRef<"SOPDocument", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * SOPDocument findUnique
-   */
-  export type SOPDocumentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which SOPDocument to fetch.
-     */
-    where: SOPDocumentWhereUniqueInput
-  }
-
-  /**
-   * SOPDocument findUniqueOrThrow
-   */
-  export type SOPDocumentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which SOPDocument to fetch.
-     */
-    where: SOPDocumentWhereUniqueInput
-  }
-
-  /**
-   * SOPDocument findFirst
-   */
-  export type SOPDocumentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which SOPDocument to fetch.
-     */
-    where?: SOPDocumentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SOPDocuments to fetch.
-     */
-    orderBy?: SOPDocumentOrderByWithRelationInput | SOPDocumentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for SOPDocuments.
-     */
-    cursor?: SOPDocumentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SOPDocuments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SOPDocuments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of SOPDocuments.
-     */
-    distinct?: SOPDocumentScalarFieldEnum | SOPDocumentScalarFieldEnum[]
-  }
-
-  /**
-   * SOPDocument findFirstOrThrow
-   */
-  export type SOPDocumentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which SOPDocument to fetch.
-     */
-    where?: SOPDocumentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SOPDocuments to fetch.
-     */
-    orderBy?: SOPDocumentOrderByWithRelationInput | SOPDocumentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for SOPDocuments.
-     */
-    cursor?: SOPDocumentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SOPDocuments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SOPDocuments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of SOPDocuments.
-     */
-    distinct?: SOPDocumentScalarFieldEnum | SOPDocumentScalarFieldEnum[]
-  }
-
-  /**
-   * SOPDocument findMany
-   */
-  export type SOPDocumentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which SOPDocuments to fetch.
-     */
-    where?: SOPDocumentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SOPDocuments to fetch.
-     */
-    orderBy?: SOPDocumentOrderByWithRelationInput | SOPDocumentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing SOPDocuments.
-     */
-    cursor?: SOPDocumentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SOPDocuments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SOPDocuments.
-     */
-    skip?: number
-    distinct?: SOPDocumentScalarFieldEnum | SOPDocumentScalarFieldEnum[]
-  }
-
-  /**
-   * SOPDocument create
-   */
-  export type SOPDocumentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    /**
-     * The data needed to create a SOPDocument.
-     */
-    data: XOR<SOPDocumentCreateInput, SOPDocumentUncheckedCreateInput>
-  }
-
-  /**
-   * SOPDocument createMany
-   */
-  export type SOPDocumentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many SOPDocuments.
-     */
-    data: SOPDocumentCreateManyInput | SOPDocumentCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * SOPDocument createManyAndReturn
-   */
-  export type SOPDocumentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many SOPDocuments.
-     */
-    data: SOPDocumentCreateManyInput | SOPDocumentCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * SOPDocument update
-   */
-  export type SOPDocumentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    /**
-     * The data needed to update a SOPDocument.
-     */
-    data: XOR<SOPDocumentUpdateInput, SOPDocumentUncheckedUpdateInput>
-    /**
-     * Choose, which SOPDocument to update.
-     */
-    where: SOPDocumentWhereUniqueInput
-  }
-
-  /**
-   * SOPDocument updateMany
-   */
-  export type SOPDocumentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update SOPDocuments.
-     */
-    data: XOR<SOPDocumentUpdateManyMutationInput, SOPDocumentUncheckedUpdateManyInput>
-    /**
-     * Filter which SOPDocuments to update
-     */
-    where?: SOPDocumentWhereInput
-  }
-
-  /**
-   * SOPDocument upsert
-   */
-  export type SOPDocumentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    /**
-     * The filter to search for the SOPDocument to update in case it exists.
-     */
-    where: SOPDocumentWhereUniqueInput
-    /**
-     * In case the SOPDocument found by the `where` argument doesn't exist, create a new SOPDocument with this data.
-     */
-    create: XOR<SOPDocumentCreateInput, SOPDocumentUncheckedCreateInput>
-    /**
-     * In case the SOPDocument was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<SOPDocumentUpdateInput, SOPDocumentUncheckedUpdateInput>
-  }
-
-  /**
-   * SOPDocument delete
-   */
-  export type SOPDocumentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
-    /**
-     * Filter which SOPDocument to delete.
-     */
-    where: SOPDocumentWhereUniqueInput
-  }
-
-  /**
-   * SOPDocument deleteMany
-   */
-  export type SOPDocumentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which SOPDocuments to delete
-     */
-    where?: SOPDocumentWhereInput
-  }
-
-  /**
-   * SOPDocument without action
-   */
-  export type SOPDocumentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SOPDocument
-     */
-    select?: SOPDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SOPDocumentInclude<ExtArgs> | null
   }
 
 
@@ -18511,15 +18574,29 @@ export namespace Prisma {
   export const AdminProfileScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
-    department: 'department',
-    permissions: 'permissions',
-    phoneNumber: 'phoneNumber',
     lastLoginAt: 'lastLoginAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type AdminProfileScalarFieldEnum = (typeof AdminProfileScalarFieldEnum)[keyof typeof AdminProfileScalarFieldEnum]
+
+
+  export const MentorApplicationScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    bio: 'bio',
+    expertise: 'expertise',
+    certifications: 'certifications',
+    pricePerSession: 'pricePerSession',
+    status: 'status',
+    rejectionReason: 'rejectionReason',
+    reviewedAt: 'reviewedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MentorApplicationScalarFieldEnum = (typeof MentorApplicationScalarFieldEnum)[keyof typeof MentorApplicationScalarFieldEnum]
 
 
   export const ResumeScalarFieldEnum: {
@@ -18531,17 +18608,6 @@ export namespace Prisma {
   };
 
   export type ResumeScalarFieldEnum = (typeof ResumeScalarFieldEnum)[keyof typeof ResumeScalarFieldEnum]
-
-
-  export const SOPDocumentScalarFieldEnum: {
-    id: 'id',
-    menteeId: 'menteeId',
-    collegeName: 'collegeName',
-    fileUrl: 'fileUrl',
-    createdAt: 'createdAt'
-  };
-
-  export type SOPDocumentScalarFieldEnum = (typeof SOPDocumentScalarFieldEnum)[keyof typeof SOPDocumentScalarFieldEnum]
 
 
   export const SlotScalarFieldEnum: {
@@ -18792,6 +18858,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ApplicationStatus'
+   */
+  export type EnumApplicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApplicationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ApplicationStatus[]'
+   */
+  export type ListEnumApplicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApplicationStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'SlotStatus'
    */
   export type EnumSlotStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SlotStatus'>
@@ -18898,6 +18978,7 @@ export namespace Prisma {
     mentorProfile?: XOR<MentorProfileNullableRelationFilter, MentorProfileWhereInput> | null
     menteeProfile?: XOR<MenteeProfileNullableRelationFilter, MenteeProfileWhereInput> | null
     adminProfile?: XOR<AdminProfileNullableRelationFilter, AdminProfileWhereInput> | null
+    mentorApplications?: MentorApplicationListRelationFilter
     bookingsAsMentor?: BookingListRelationFilter
     bookingsAsMentee?: BookingListRelationFilter
     notifications?: NotificationListRelationFilter
@@ -18922,6 +19003,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileOrderByWithRelationInput
     menteeProfile?: MenteeProfileOrderByWithRelationInput
     adminProfile?: AdminProfileOrderByWithRelationInput
+    mentorApplications?: MentorApplicationOrderByRelationAggregateInput
     bookingsAsMentor?: BookingOrderByRelationAggregateInput
     bookingsAsMentee?: BookingOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
@@ -18949,6 +19031,7 @@ export namespace Prisma {
     mentorProfile?: XOR<MentorProfileNullableRelationFilter, MentorProfileWhereInput> | null
     menteeProfile?: XOR<MenteeProfileNullableRelationFilter, MenteeProfileWhereInput> | null
     adminProfile?: XOR<AdminProfileNullableRelationFilter, AdminProfileWhereInput> | null
+    mentorApplications?: MentorApplicationListRelationFilter
     bookingsAsMentor?: BookingListRelationFilter
     bookingsAsMentee?: BookingListRelationFilter
     notifications?: NotificationListRelationFilter
@@ -19102,10 +19185,10 @@ export namespace Prisma {
     id?: StringFilter<"MenteeProfile"> | string
     userId?: StringFilter<"MenteeProfile"> | string
     dob?: DateTimeNullableFilter<"MenteeProfile"> | Date | string | null
-    education10th?: StringNullableFilter<"MenteeProfile"> | string | null
-    education12th?: StringNullableFilter<"MenteeProfile"> | string | null
-    bachelors?: StringNullableFilter<"MenteeProfile"> | string | null
-    masters?: StringNullableFilter<"MenteeProfile"> | string | null
+    education10th?: StringNullableListFilter<"MenteeProfile">
+    education12th?: StringNullableListFilter<"MenteeProfile">
+    bachelors?: StringNullableListFilter<"MenteeProfile">
+    masters?: StringNullableListFilter<"MenteeProfile">
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableListFilter<"MenteeProfile">
     catScore?: FloatNullableFilter<"MenteeProfile"> | number | null
@@ -19114,17 +19197,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"MenteeProfile"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
     resumes?: ResumeListRelationFilter
-    sopDocuments?: SOPDocumentListRelationFilter
   }
 
   export type MenteeProfileOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
     dob?: SortOrderInput | SortOrder
-    education10th?: SortOrderInput | SortOrder
-    education12th?: SortOrderInput | SortOrder
-    bachelors?: SortOrderInput | SortOrder
-    masters?: SortOrderInput | SortOrder
+    education10th?: SortOrder
+    education12th?: SortOrder
+    bachelors?: SortOrder
+    masters?: SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrder
     catScore?: SortOrderInput | SortOrder
@@ -19133,7 +19215,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
     resumes?: ResumeOrderByRelationAggregateInput
-    sopDocuments?: SOPDocumentOrderByRelationAggregateInput
   }
 
   export type MenteeProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -19143,10 +19224,10 @@ export namespace Prisma {
     OR?: MenteeProfileWhereInput[]
     NOT?: MenteeProfileWhereInput | MenteeProfileWhereInput[]
     dob?: DateTimeNullableFilter<"MenteeProfile"> | Date | string | null
-    education10th?: StringNullableFilter<"MenteeProfile"> | string | null
-    education12th?: StringNullableFilter<"MenteeProfile"> | string | null
-    bachelors?: StringNullableFilter<"MenteeProfile"> | string | null
-    masters?: StringNullableFilter<"MenteeProfile"> | string | null
+    education10th?: StringNullableListFilter<"MenteeProfile">
+    education12th?: StringNullableListFilter<"MenteeProfile">
+    bachelors?: StringNullableListFilter<"MenteeProfile">
+    masters?: StringNullableListFilter<"MenteeProfile">
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableListFilter<"MenteeProfile">
     catScore?: FloatNullableFilter<"MenteeProfile"> | number | null
@@ -19155,17 +19236,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"MenteeProfile"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
     resumes?: ResumeListRelationFilter
-    sopDocuments?: SOPDocumentListRelationFilter
   }, "id" | "userId">
 
   export type MenteeProfileOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
     dob?: SortOrderInput | SortOrder
-    education10th?: SortOrderInput | SortOrder
-    education12th?: SortOrderInput | SortOrder
-    bachelors?: SortOrderInput | SortOrder
-    masters?: SortOrderInput | SortOrder
+    education10th?: SortOrder
+    education12th?: SortOrder
+    bachelors?: SortOrder
+    masters?: SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrder
     catScore?: SortOrderInput | SortOrder
@@ -19186,10 +19266,10 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"MenteeProfile"> | string
     userId?: StringWithAggregatesFilter<"MenteeProfile"> | string
     dob?: DateTimeNullableWithAggregatesFilter<"MenteeProfile"> | Date | string | null
-    education10th?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
-    education12th?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
-    bachelors?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
-    masters?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    education10th?: StringNullableListFilter<"MenteeProfile">
+    education12th?: StringNullableListFilter<"MenteeProfile">
+    bachelors?: StringNullableListFilter<"MenteeProfile">
+    masters?: StringNullableListFilter<"MenteeProfile">
     workExperience?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableListFilter<"MenteeProfile">
     catScore?: FloatNullableWithAggregatesFilter<"MenteeProfile"> | number | null
@@ -19204,9 +19284,6 @@ export namespace Prisma {
     NOT?: AdminProfileWhereInput | AdminProfileWhereInput[]
     id?: StringFilter<"AdminProfile"> | string
     userId?: StringFilter<"AdminProfile"> | string
-    department?: StringNullableFilter<"AdminProfile"> | string | null
-    permissions?: StringNullableListFilter<"AdminProfile">
-    phoneNumber?: StringNullableFilter<"AdminProfile"> | string | null
     lastLoginAt?: DateTimeNullableFilter<"AdminProfile"> | Date | string | null
     createdAt?: DateTimeFilter<"AdminProfile"> | Date | string
     updatedAt?: DateTimeFilter<"AdminProfile"> | Date | string
@@ -19216,9 +19293,6 @@ export namespace Prisma {
   export type AdminProfileOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    department?: SortOrderInput | SortOrder
-    permissions?: SortOrder
-    phoneNumber?: SortOrderInput | SortOrder
     lastLoginAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19231,9 +19305,6 @@ export namespace Prisma {
     AND?: AdminProfileWhereInput | AdminProfileWhereInput[]
     OR?: AdminProfileWhereInput[]
     NOT?: AdminProfileWhereInput | AdminProfileWhereInput[]
-    department?: StringNullableFilter<"AdminProfile"> | string | null
-    permissions?: StringNullableListFilter<"AdminProfile">
-    phoneNumber?: StringNullableFilter<"AdminProfile"> | string | null
     lastLoginAt?: DateTimeNullableFilter<"AdminProfile"> | Date | string | null
     createdAt?: DateTimeFilter<"AdminProfile"> | Date | string
     updatedAt?: DateTimeFilter<"AdminProfile"> | Date | string
@@ -19243,9 +19314,6 @@ export namespace Prisma {
   export type AdminProfileOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    department?: SortOrderInput | SortOrder
-    permissions?: SortOrder
-    phoneNumber?: SortOrderInput | SortOrder
     lastLoginAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19260,12 +19328,96 @@ export namespace Prisma {
     NOT?: AdminProfileScalarWhereWithAggregatesInput | AdminProfileScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"AdminProfile"> | string
     userId?: StringWithAggregatesFilter<"AdminProfile"> | string
-    department?: StringNullableWithAggregatesFilter<"AdminProfile"> | string | null
-    permissions?: StringNullableListFilter<"AdminProfile">
-    phoneNumber?: StringNullableWithAggregatesFilter<"AdminProfile"> | string | null
     lastLoginAt?: DateTimeNullableWithAggregatesFilter<"AdminProfile"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"AdminProfile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"AdminProfile"> | Date | string
+  }
+
+  export type MentorApplicationWhereInput = {
+    AND?: MentorApplicationWhereInput | MentorApplicationWhereInput[]
+    OR?: MentorApplicationWhereInput[]
+    NOT?: MentorApplicationWhereInput | MentorApplicationWhereInput[]
+    id?: StringFilter<"MentorApplication"> | string
+    userId?: StringFilter<"MentorApplication"> | string
+    bio?: StringFilter<"MentorApplication"> | string
+    expertise?: StringNullableListFilter<"MentorApplication">
+    certifications?: StringNullableListFilter<"MentorApplication">
+    pricePerSession?: FloatFilter<"MentorApplication"> | number
+    status?: EnumApplicationStatusFilter<"MentorApplication"> | $Enums.ApplicationStatus
+    rejectionReason?: StringNullableFilter<"MentorApplication"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"MentorApplication"> | Date | string | null
+    createdAt?: DateTimeFilter<"MentorApplication"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorApplication"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type MentorApplicationOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    bio?: SortOrder
+    expertise?: SortOrder
+    certifications?: SortOrder
+    pricePerSession?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type MentorApplicationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: MentorApplicationWhereInput | MentorApplicationWhereInput[]
+    OR?: MentorApplicationWhereInput[]
+    NOT?: MentorApplicationWhereInput | MentorApplicationWhereInput[]
+    userId?: StringFilter<"MentorApplication"> | string
+    bio?: StringFilter<"MentorApplication"> | string
+    expertise?: StringNullableListFilter<"MentorApplication">
+    certifications?: StringNullableListFilter<"MentorApplication">
+    pricePerSession?: FloatFilter<"MentorApplication"> | number
+    status?: EnumApplicationStatusFilter<"MentorApplication"> | $Enums.ApplicationStatus
+    rejectionReason?: StringNullableFilter<"MentorApplication"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"MentorApplication"> | Date | string | null
+    createdAt?: DateTimeFilter<"MentorApplication"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorApplication"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type MentorApplicationOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    bio?: SortOrder
+    expertise?: SortOrder
+    certifications?: SortOrder
+    pricePerSession?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MentorApplicationCountOrderByAggregateInput
+    _avg?: MentorApplicationAvgOrderByAggregateInput
+    _max?: MentorApplicationMaxOrderByAggregateInput
+    _min?: MentorApplicationMinOrderByAggregateInput
+    _sum?: MentorApplicationSumOrderByAggregateInput
+  }
+
+  export type MentorApplicationScalarWhereWithAggregatesInput = {
+    AND?: MentorApplicationScalarWhereWithAggregatesInput | MentorApplicationScalarWhereWithAggregatesInput[]
+    OR?: MentorApplicationScalarWhereWithAggregatesInput[]
+    NOT?: MentorApplicationScalarWhereWithAggregatesInput | MentorApplicationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MentorApplication"> | string
+    userId?: StringWithAggregatesFilter<"MentorApplication"> | string
+    bio?: StringWithAggregatesFilter<"MentorApplication"> | string
+    expertise?: StringNullableListFilter<"MentorApplication">
+    certifications?: StringNullableListFilter<"MentorApplication">
+    pricePerSession?: FloatWithAggregatesFilter<"MentorApplication"> | number
+    status?: EnumApplicationStatusWithAggregatesFilter<"MentorApplication"> | $Enums.ApplicationStatus
+    rejectionReason?: StringNullableWithAggregatesFilter<"MentorApplication"> | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"MentorApplication"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MentorApplication"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MentorApplication"> | Date | string
   }
 
   export type ResumeWhereInput = {
@@ -19321,61 +19473,6 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Resume"> | string
     fileUrl?: StringWithAggregatesFilter<"Resume"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Resume"> | Date | string
-  }
-
-  export type SOPDocumentWhereInput = {
-    AND?: SOPDocumentWhereInput | SOPDocumentWhereInput[]
-    OR?: SOPDocumentWhereInput[]
-    NOT?: SOPDocumentWhereInput | SOPDocumentWhereInput[]
-    id?: StringFilter<"SOPDocument"> | string
-    menteeId?: StringFilter<"SOPDocument"> | string
-    collegeName?: StringFilter<"SOPDocument"> | string
-    fileUrl?: StringFilter<"SOPDocument"> | string
-    createdAt?: DateTimeFilter<"SOPDocument"> | Date | string
-    mentee?: XOR<MenteeProfileRelationFilter, MenteeProfileWhereInput>
-  }
-
-  export type SOPDocumentOrderByWithRelationInput = {
-    id?: SortOrder
-    menteeId?: SortOrder
-    collegeName?: SortOrder
-    fileUrl?: SortOrder
-    createdAt?: SortOrder
-    mentee?: MenteeProfileOrderByWithRelationInput
-  }
-
-  export type SOPDocumentWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: SOPDocumentWhereInput | SOPDocumentWhereInput[]
-    OR?: SOPDocumentWhereInput[]
-    NOT?: SOPDocumentWhereInput | SOPDocumentWhereInput[]
-    menteeId?: StringFilter<"SOPDocument"> | string
-    collegeName?: StringFilter<"SOPDocument"> | string
-    fileUrl?: StringFilter<"SOPDocument"> | string
-    createdAt?: DateTimeFilter<"SOPDocument"> | Date | string
-    mentee?: XOR<MenteeProfileRelationFilter, MenteeProfileWhereInput>
-  }, "id">
-
-  export type SOPDocumentOrderByWithAggregationInput = {
-    id?: SortOrder
-    menteeId?: SortOrder
-    collegeName?: SortOrder
-    fileUrl?: SortOrder
-    createdAt?: SortOrder
-    _count?: SOPDocumentCountOrderByAggregateInput
-    _max?: SOPDocumentMaxOrderByAggregateInput
-    _min?: SOPDocumentMinOrderByAggregateInput
-  }
-
-  export type SOPDocumentScalarWhereWithAggregatesInput = {
-    AND?: SOPDocumentScalarWhereWithAggregatesInput | SOPDocumentScalarWhereWithAggregatesInput[]
-    OR?: SOPDocumentScalarWhereWithAggregatesInput[]
-    NOT?: SOPDocumentScalarWhereWithAggregatesInput | SOPDocumentScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"SOPDocument"> | string
-    menteeId?: StringWithAggregatesFilter<"SOPDocument"> | string
-    collegeName?: StringWithAggregatesFilter<"SOPDocument"> | string
-    fileUrl?: StringWithAggregatesFilter<"SOPDocument"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"SOPDocument"> | Date | string
   }
 
   export type SlotWhereInput = {
@@ -20057,6 +20154,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -20081,6 +20179,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationUncheckedCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -20105,6 +20204,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -20129,6 +20229,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -20303,10 +20404,10 @@ export namespace Prisma {
   export type MenteeProfileCreateInput = {
     id?: string
     dob?: Date | string | null
-    education10th?: string | null
-    education12th?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education10th?: MenteeProfileCreateeducation10thInput | string[]
+    education12th?: MenteeProfileCreateeducation12thInput | string[]
+    bachelors?: MenteeProfileCreatebachelorsInput | string[]
+    masters?: MenteeProfileCreatemastersInput | string[]
     workExperience?: string | null
     certifications?: MenteeProfileCreatecertificationsInput | string[]
     catScore?: number | null
@@ -20315,17 +20416,16 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutMenteeProfileInput
     resumes?: ResumeCreateNestedManyWithoutMenteeInput
-    sopDocuments?: SOPDocumentCreateNestedManyWithoutMenteeInput
   }
 
   export type MenteeProfileUncheckedCreateInput = {
     id?: string
     userId: string
     dob?: Date | string | null
-    education10th?: string | null
-    education12th?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education10th?: MenteeProfileCreateeducation10thInput | string[]
+    education12th?: MenteeProfileCreateeducation12thInput | string[]
+    bachelors?: MenteeProfileCreatebachelorsInput | string[]
+    masters?: MenteeProfileCreatemastersInput | string[]
     workExperience?: string | null
     certifications?: MenteeProfileCreatecertificationsInput | string[]
     catScore?: number | null
@@ -20333,16 +20433,15 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     resumes?: ResumeUncheckedCreateNestedManyWithoutMenteeInput
-    sopDocuments?: SOPDocumentUncheckedCreateNestedManyWithoutMenteeInput
   }
 
   export type MenteeProfileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education10th?: MenteeProfileUpdateeducation10thInput | string[]
+    education12th?: MenteeProfileUpdateeducation12thInput | string[]
+    bachelors?: MenteeProfileUpdatebachelorsInput | string[]
+    masters?: MenteeProfileUpdatemastersInput | string[]
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: MenteeProfileUpdatecertificationsInput | string[]
     catScore?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -20351,17 +20450,16 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutMenteeProfileNestedInput
     resumes?: ResumeUpdateManyWithoutMenteeNestedInput
-    sopDocuments?: SOPDocumentUpdateManyWithoutMenteeNestedInput
   }
 
   export type MenteeProfileUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education10th?: MenteeProfileUpdateeducation10thInput | string[]
+    education12th?: MenteeProfileUpdateeducation12thInput | string[]
+    bachelors?: MenteeProfileUpdatebachelorsInput | string[]
+    masters?: MenteeProfileUpdatemastersInput | string[]
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: MenteeProfileUpdatecertificationsInput | string[]
     catScore?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -20369,17 +20467,16 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resumes?: ResumeUncheckedUpdateManyWithoutMenteeNestedInput
-    sopDocuments?: SOPDocumentUncheckedUpdateManyWithoutMenteeNestedInput
   }
 
   export type MenteeProfileCreateManyInput = {
     id?: string
     userId: string
     dob?: Date | string | null
-    education10th?: string | null
-    education12th?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education10th?: MenteeProfileCreateeducation10thInput | string[]
+    education12th?: MenteeProfileCreateeducation12thInput | string[]
+    bachelors?: MenteeProfileCreatebachelorsInput | string[]
+    masters?: MenteeProfileCreatemastersInput | string[]
     workExperience?: string | null
     certifications?: MenteeProfileCreatecertificationsInput | string[]
     catScore?: number | null
@@ -20391,10 +20488,10 @@ export namespace Prisma {
   export type MenteeProfileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education10th?: MenteeProfileUpdateeducation10thInput | string[]
+    education12th?: MenteeProfileUpdateeducation12thInput | string[]
+    bachelors?: MenteeProfileUpdatebachelorsInput | string[]
+    masters?: MenteeProfileUpdatemastersInput | string[]
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: MenteeProfileUpdatecertificationsInput | string[]
     catScore?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -20407,10 +20504,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education10th?: MenteeProfileUpdateeducation10thInput | string[]
+    education12th?: MenteeProfileUpdateeducation12thInput | string[]
+    bachelors?: MenteeProfileUpdatebachelorsInput | string[]
+    masters?: MenteeProfileUpdatemastersInput | string[]
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: MenteeProfileUpdatecertificationsInput | string[]
     catScore?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -20421,9 +20518,6 @@ export namespace Prisma {
 
   export type AdminProfileCreateInput = {
     id?: string
-    department?: string | null
-    permissions?: AdminProfileCreatepermissionsInput | string[]
-    phoneNumber?: string | null
     lastLoginAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20433,9 +20527,6 @@ export namespace Prisma {
   export type AdminProfileUncheckedCreateInput = {
     id?: string
     userId: string
-    department?: string | null
-    permissions?: AdminProfileCreatepermissionsInput | string[]
-    phoneNumber?: string | null
     lastLoginAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20443,9 +20534,6 @@ export namespace Prisma {
 
   export type AdminProfileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    permissions?: AdminProfileUpdatepermissionsInput | string[]
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20455,9 +20543,6 @@ export namespace Prisma {
   export type AdminProfileUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    permissions?: AdminProfileUpdatepermissionsInput | string[]
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20466,9 +20551,6 @@ export namespace Prisma {
   export type AdminProfileCreateManyInput = {
     id?: string
     userId: string
-    department?: string | null
-    permissions?: AdminProfileCreatepermissionsInput | string[]
-    phoneNumber?: string | null
     lastLoginAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20476,9 +20558,6 @@ export namespace Prisma {
 
   export type AdminProfileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    permissions?: AdminProfileUpdatepermissionsInput | string[]
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20487,10 +20566,104 @@ export namespace Prisma {
   export type AdminProfileUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    permissions?: AdminProfileUpdatepermissionsInput | string[]
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorApplicationCreateInput = {
+    id?: string
+    bio: string
+    expertise?: MentorApplicationCreateexpertiseInput | string[]
+    certifications?: MentorApplicationCreatecertificationsInput | string[]
+    pricePerSession: number
+    status?: $Enums.ApplicationStatus
+    rejectionReason?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMentorApplicationsInput
+  }
+
+  export type MentorApplicationUncheckedCreateInput = {
+    id?: string
+    userId: string
+    bio: string
+    expertise?: MentorApplicationCreateexpertiseInput | string[]
+    certifications?: MentorApplicationCreatecertificationsInput | string[]
+    pricePerSession: number
+    status?: $Enums.ApplicationStatus
+    rejectionReason?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorApplicationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertise?: MentorApplicationUpdateexpertiseInput | string[]
+    certifications?: MentorApplicationUpdatecertificationsInput | string[]
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMentorApplicationsNestedInput
+  }
+
+  export type MentorApplicationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertise?: MentorApplicationUpdateexpertiseInput | string[]
+    certifications?: MentorApplicationUpdatecertificationsInput | string[]
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorApplicationCreateManyInput = {
+    id?: string
+    userId: string
+    bio: string
+    expertise?: MentorApplicationCreateexpertiseInput | string[]
+    certifications?: MentorApplicationCreatecertificationsInput | string[]
+    pricePerSession: number
+    status?: $Enums.ApplicationStatus
+    rejectionReason?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorApplicationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertise?: MentorApplicationUpdateexpertiseInput | string[]
+    certifications?: MentorApplicationUpdatecertificationsInput | string[]
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorApplicationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertise?: MentorApplicationUpdateexpertiseInput | string[]
+    certifications?: MentorApplicationUpdatecertificationsInput | string[]
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20546,61 +20719,6 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     menteeId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    fileUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SOPDocumentCreateInput = {
-    id?: string
-    collegeName: string
-    fileUrl: string
-    createdAt?: Date | string
-    mentee: MenteeProfileCreateNestedOneWithoutSopDocumentsInput
-  }
-
-  export type SOPDocumentUncheckedCreateInput = {
-    id?: string
-    menteeId: string
-    collegeName: string
-    fileUrl: string
-    createdAt?: Date | string
-  }
-
-  export type SOPDocumentUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    collegeName?: StringFieldUpdateOperationsInput | string
-    fileUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    mentee?: MenteeProfileUpdateOneRequiredWithoutSopDocumentsNestedInput
-  }
-
-  export type SOPDocumentUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    menteeId?: StringFieldUpdateOperationsInput | string
-    collegeName?: StringFieldUpdateOperationsInput | string
-    fileUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SOPDocumentCreateManyInput = {
-    id?: string
-    menteeId: string
-    collegeName: string
-    fileUrl: string
-    createdAt?: Date | string
-  }
-
-  export type SOPDocumentUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    collegeName?: StringFieldUpdateOperationsInput | string
-    fileUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SOPDocumentUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    menteeId?: StringFieldUpdateOperationsInput | string
-    collegeName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21367,6 +21485,12 @@ export namespace Prisma {
     isNot?: AdminProfileWhereInput | null
   }
 
+  export type MentorApplicationListRelationFilter = {
+    every?: MentorApplicationWhereInput
+    some?: MentorApplicationWhereInput
+    none?: MentorApplicationWhereInput
+  }
+
   export type BookingListRelationFilter = {
     every?: BookingWhereInput
     some?: BookingWhereInput
@@ -21393,6 +21517,10 @@ export namespace Prisma {
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
+  }
+
+  export type MentorApplicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type BookingOrderByRelationAggregateInput = {
@@ -21721,17 +21849,7 @@ export namespace Prisma {
     none?: ResumeWhereInput
   }
 
-  export type SOPDocumentListRelationFilter = {
-    every?: SOPDocumentWhereInput
-    some?: SOPDocumentWhereInput
-    none?: SOPDocumentWhereInput
-  }
-
   export type ResumeOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type SOPDocumentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21759,10 +21877,6 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     dob?: SortOrder
-    education10th?: SortOrder
-    education12th?: SortOrder
-    bachelors?: SortOrder
-    masters?: SortOrder
     workExperience?: SortOrder
     catScore?: SortOrder
     expectations?: SortOrder
@@ -21774,10 +21888,6 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     dob?: SortOrder
-    education10th?: SortOrder
-    education12th?: SortOrder
-    bachelors?: SortOrder
-    masters?: SortOrder
     workExperience?: SortOrder
     catScore?: SortOrder
     expectations?: SortOrder
@@ -21808,9 +21918,6 @@ export namespace Prisma {
   export type AdminProfileCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    department?: SortOrder
-    permissions?: SortOrder
-    phoneNumber?: SortOrder
     lastLoginAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -21819,8 +21926,6 @@ export namespace Prisma {
   export type AdminProfileMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    department?: SortOrder
-    phoneNumber?: SortOrder
     lastLoginAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -21829,11 +21934,72 @@ export namespace Prisma {
   export type AdminProfileMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    department?: SortOrder
-    phoneNumber?: SortOrder
     lastLoginAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type EnumApplicationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
+  }
+
+  export type MentorApplicationCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    bio?: SortOrder
+    expertise?: SortOrder
+    certifications?: SortOrder
+    pricePerSession?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorApplicationAvgOrderByAggregateInput = {
+    pricePerSession?: SortOrder
+  }
+
+  export type MentorApplicationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    bio?: SortOrder
+    pricePerSession?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorApplicationMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    bio?: SortOrder
+    pricePerSession?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    reviewedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorApplicationSumOrderByAggregateInput = {
+    pricePerSession?: SortOrder
+  }
+
+  export type EnumApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApplicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApplicationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumApplicationStatusFilter<$PrismaModel>
+    _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
   }
 
   export type MenteeProfileRelationFilter = {
@@ -21861,30 +22027,6 @@ export namespace Prisma {
     id?: SortOrder
     menteeId?: SortOrder
     name?: SortOrder
-    fileUrl?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type SOPDocumentCountOrderByAggregateInput = {
-    id?: SortOrder
-    menteeId?: SortOrder
-    collegeName?: SortOrder
-    fileUrl?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type SOPDocumentMaxOrderByAggregateInput = {
-    id?: SortOrder
-    menteeId?: SortOrder
-    collegeName?: SortOrder
-    fileUrl?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type SOPDocumentMinOrderByAggregateInput = {
-    id?: SortOrder
-    menteeId?: SortOrder
-    collegeName?: SortOrder
     fileUrl?: SortOrder
     createdAt?: SortOrder
   }
@@ -22373,6 +22515,13 @@ export namespace Prisma {
     connect?: AdminProfileWhereUniqueInput
   }
 
+  export type MentorApplicationCreateNestedManyWithoutUserInput = {
+    create?: XOR<MentorApplicationCreateWithoutUserInput, MentorApplicationUncheckedCreateWithoutUserInput> | MentorApplicationCreateWithoutUserInput[] | MentorApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MentorApplicationCreateOrConnectWithoutUserInput | MentorApplicationCreateOrConnectWithoutUserInput[]
+    createMany?: MentorApplicationCreateManyUserInputEnvelope
+    connect?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
+  }
+
   export type BookingCreateNestedManyWithoutMentorInput = {
     create?: XOR<BookingCreateWithoutMentorInput, BookingUncheckedCreateWithoutMentorInput> | BookingCreateWithoutMentorInput[] | BookingUncheckedCreateWithoutMentorInput[]
     connectOrCreate?: BookingCreateOrConnectWithoutMentorInput | BookingCreateOrConnectWithoutMentorInput[]
@@ -22423,6 +22572,13 @@ export namespace Prisma {
     create?: XOR<AdminProfileCreateWithoutUserInput, AdminProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: AdminProfileCreateOrConnectWithoutUserInput
     connect?: AdminProfileWhereUniqueInput
+  }
+
+  export type MentorApplicationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<MentorApplicationCreateWithoutUserInput, MentorApplicationUncheckedCreateWithoutUserInput> | MentorApplicationCreateWithoutUserInput[] | MentorApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MentorApplicationCreateOrConnectWithoutUserInput | MentorApplicationCreateOrConnectWithoutUserInput[]
+    createMany?: MentorApplicationCreateManyUserInputEnvelope
+    connect?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
   }
 
   export type BookingUncheckedCreateNestedManyWithoutMentorInput = {
@@ -22511,6 +22667,20 @@ export namespace Prisma {
     delete?: AdminProfileWhereInput | boolean
     connect?: AdminProfileWhereUniqueInput
     update?: XOR<XOR<AdminProfileUpdateToOneWithWhereWithoutUserInput, AdminProfileUpdateWithoutUserInput>, AdminProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MentorApplicationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MentorApplicationCreateWithoutUserInput, MentorApplicationUncheckedCreateWithoutUserInput> | MentorApplicationCreateWithoutUserInput[] | MentorApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MentorApplicationCreateOrConnectWithoutUserInput | MentorApplicationCreateOrConnectWithoutUserInput[]
+    upsert?: MentorApplicationUpsertWithWhereUniqueWithoutUserInput | MentorApplicationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MentorApplicationCreateManyUserInputEnvelope
+    set?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
+    disconnect?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
+    delete?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
+    connect?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
+    update?: MentorApplicationUpdateWithWhereUniqueWithoutUserInput | MentorApplicationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MentorApplicationUpdateManyWithWhereWithoutUserInput | MentorApplicationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MentorApplicationScalarWhereInput | MentorApplicationScalarWhereInput[]
   }
 
   export type BookingUpdateManyWithoutMentorNestedInput = {
@@ -22607,6 +22777,20 @@ export namespace Prisma {
     delete?: AdminProfileWhereInput | boolean
     connect?: AdminProfileWhereUniqueInput
     update?: XOR<XOR<AdminProfileUpdateToOneWithWhereWithoutUserInput, AdminProfileUpdateWithoutUserInput>, AdminProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MentorApplicationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MentorApplicationCreateWithoutUserInput, MentorApplicationUncheckedCreateWithoutUserInput> | MentorApplicationCreateWithoutUserInput[] | MentorApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MentorApplicationCreateOrConnectWithoutUserInput | MentorApplicationCreateOrConnectWithoutUserInput[]
+    upsert?: MentorApplicationUpsertWithWhereUniqueWithoutUserInput | MentorApplicationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MentorApplicationCreateManyUserInputEnvelope
+    set?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
+    disconnect?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
+    delete?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
+    connect?: MentorApplicationWhereUniqueInput | MentorApplicationWhereUniqueInput[]
+    update?: MentorApplicationUpdateWithWhereUniqueWithoutUserInput | MentorApplicationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MentorApplicationUpdateManyWithWhereWithoutUserInput | MentorApplicationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MentorApplicationScalarWhereInput | MentorApplicationScalarWhereInput[]
   }
 
   export type BookingUncheckedUpdateManyWithoutMentorNestedInput = {
@@ -22853,6 +23037,22 @@ export namespace Prisma {
     deleteMany?: EarningsScalarWhereInput | EarningsScalarWhereInput[]
   }
 
+  export type MenteeProfileCreateeducation10thInput = {
+    set: string[]
+  }
+
+  export type MenteeProfileCreateeducation12thInput = {
+    set: string[]
+  }
+
+  export type MenteeProfileCreatebachelorsInput = {
+    set: string[]
+  }
+
+  export type MenteeProfileCreatemastersInput = {
+    set: string[]
+  }
+
   export type MenteeProfileCreatecertificationsInput = {
     set: string[]
   }
@@ -22870,13 +23070,6 @@ export namespace Prisma {
     connect?: ResumeWhereUniqueInput | ResumeWhereUniqueInput[]
   }
 
-  export type SOPDocumentCreateNestedManyWithoutMenteeInput = {
-    create?: XOR<SOPDocumentCreateWithoutMenteeInput, SOPDocumentUncheckedCreateWithoutMenteeInput> | SOPDocumentCreateWithoutMenteeInput[] | SOPDocumentUncheckedCreateWithoutMenteeInput[]
-    connectOrCreate?: SOPDocumentCreateOrConnectWithoutMenteeInput | SOPDocumentCreateOrConnectWithoutMenteeInput[]
-    createMany?: SOPDocumentCreateManyMenteeInputEnvelope
-    connect?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
-  }
-
   export type ResumeUncheckedCreateNestedManyWithoutMenteeInput = {
     create?: XOR<ResumeCreateWithoutMenteeInput, ResumeUncheckedCreateWithoutMenteeInput> | ResumeCreateWithoutMenteeInput[] | ResumeUncheckedCreateWithoutMenteeInput[]
     connectOrCreate?: ResumeCreateOrConnectWithoutMenteeInput | ResumeCreateOrConnectWithoutMenteeInput[]
@@ -22884,11 +23077,24 @@ export namespace Prisma {
     connect?: ResumeWhereUniqueInput | ResumeWhereUniqueInput[]
   }
 
-  export type SOPDocumentUncheckedCreateNestedManyWithoutMenteeInput = {
-    create?: XOR<SOPDocumentCreateWithoutMenteeInput, SOPDocumentUncheckedCreateWithoutMenteeInput> | SOPDocumentCreateWithoutMenteeInput[] | SOPDocumentUncheckedCreateWithoutMenteeInput[]
-    connectOrCreate?: SOPDocumentCreateOrConnectWithoutMenteeInput | SOPDocumentCreateOrConnectWithoutMenteeInput[]
-    createMany?: SOPDocumentCreateManyMenteeInputEnvelope
-    connect?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
+  export type MenteeProfileUpdateeducation10thInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MenteeProfileUpdateeducation12thInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MenteeProfileUpdatebachelorsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MenteeProfileUpdatemastersInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type MenteeProfileUpdatecertificationsInput = {
@@ -22926,20 +23132,6 @@ export namespace Prisma {
     deleteMany?: ResumeScalarWhereInput | ResumeScalarWhereInput[]
   }
 
-  export type SOPDocumentUpdateManyWithoutMenteeNestedInput = {
-    create?: XOR<SOPDocumentCreateWithoutMenteeInput, SOPDocumentUncheckedCreateWithoutMenteeInput> | SOPDocumentCreateWithoutMenteeInput[] | SOPDocumentUncheckedCreateWithoutMenteeInput[]
-    connectOrCreate?: SOPDocumentCreateOrConnectWithoutMenteeInput | SOPDocumentCreateOrConnectWithoutMenteeInput[]
-    upsert?: SOPDocumentUpsertWithWhereUniqueWithoutMenteeInput | SOPDocumentUpsertWithWhereUniqueWithoutMenteeInput[]
-    createMany?: SOPDocumentCreateManyMenteeInputEnvelope
-    set?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
-    disconnect?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
-    delete?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
-    connect?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
-    update?: SOPDocumentUpdateWithWhereUniqueWithoutMenteeInput | SOPDocumentUpdateWithWhereUniqueWithoutMenteeInput[]
-    updateMany?: SOPDocumentUpdateManyWithWhereWithoutMenteeInput | SOPDocumentUpdateManyWithWhereWithoutMenteeInput[]
-    deleteMany?: SOPDocumentScalarWhereInput | SOPDocumentScalarWhereInput[]
-  }
-
   export type ResumeUncheckedUpdateManyWithoutMenteeNestedInput = {
     create?: XOR<ResumeCreateWithoutMenteeInput, ResumeUncheckedCreateWithoutMenteeInput> | ResumeCreateWithoutMenteeInput[] | ResumeUncheckedCreateWithoutMenteeInput[]
     connectOrCreate?: ResumeCreateOrConnectWithoutMenteeInput | ResumeCreateOrConnectWithoutMenteeInput[]
@@ -22954,33 +23146,10 @@ export namespace Prisma {
     deleteMany?: ResumeScalarWhereInput | ResumeScalarWhereInput[]
   }
 
-  export type SOPDocumentUncheckedUpdateManyWithoutMenteeNestedInput = {
-    create?: XOR<SOPDocumentCreateWithoutMenteeInput, SOPDocumentUncheckedCreateWithoutMenteeInput> | SOPDocumentCreateWithoutMenteeInput[] | SOPDocumentUncheckedCreateWithoutMenteeInput[]
-    connectOrCreate?: SOPDocumentCreateOrConnectWithoutMenteeInput | SOPDocumentCreateOrConnectWithoutMenteeInput[]
-    upsert?: SOPDocumentUpsertWithWhereUniqueWithoutMenteeInput | SOPDocumentUpsertWithWhereUniqueWithoutMenteeInput[]
-    createMany?: SOPDocumentCreateManyMenteeInputEnvelope
-    set?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
-    disconnect?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
-    delete?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
-    connect?: SOPDocumentWhereUniqueInput | SOPDocumentWhereUniqueInput[]
-    update?: SOPDocumentUpdateWithWhereUniqueWithoutMenteeInput | SOPDocumentUpdateWithWhereUniqueWithoutMenteeInput[]
-    updateMany?: SOPDocumentUpdateManyWithWhereWithoutMenteeInput | SOPDocumentUpdateManyWithWhereWithoutMenteeInput[]
-    deleteMany?: SOPDocumentScalarWhereInput | SOPDocumentScalarWhereInput[]
-  }
-
-  export type AdminProfileCreatepermissionsInput = {
-    set: string[]
-  }
-
   export type UserCreateNestedOneWithoutAdminProfileInput = {
     create?: XOR<UserCreateWithoutAdminProfileInput, UserUncheckedCreateWithoutAdminProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutAdminProfileInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type AdminProfileUpdatepermissionsInput = {
-    set?: string[]
-    push?: string | string[]
   }
 
   export type UserUpdateOneRequiredWithoutAdminProfileNestedInput = {
@@ -22989,6 +23158,42 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutAdminProfileInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAdminProfileInput, UserUpdateWithoutAdminProfileInput>, UserUncheckedUpdateWithoutAdminProfileInput>
+  }
+
+  export type MentorApplicationCreateexpertiseInput = {
+    set: string[]
+  }
+
+  export type MentorApplicationCreatecertificationsInput = {
+    set: string[]
+  }
+
+  export type UserCreateNestedOneWithoutMentorApplicationsInput = {
+    create?: XOR<UserCreateWithoutMentorApplicationsInput, UserUncheckedCreateWithoutMentorApplicationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMentorApplicationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type MentorApplicationUpdateexpertiseInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MentorApplicationUpdatecertificationsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type EnumApplicationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ApplicationStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutMentorApplicationsNestedInput = {
+    create?: XOR<UserCreateWithoutMentorApplicationsInput, UserUncheckedCreateWithoutMentorApplicationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMentorApplicationsInput
+    upsert?: UserUpsertWithoutMentorApplicationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMentorApplicationsInput, UserUpdateWithoutMentorApplicationsInput>, UserUncheckedUpdateWithoutMentorApplicationsInput>
   }
 
   export type MenteeProfileCreateNestedOneWithoutResumesInput = {
@@ -23003,20 +23208,6 @@ export namespace Prisma {
     upsert?: MenteeProfileUpsertWithoutResumesInput
     connect?: MenteeProfileWhereUniqueInput
     update?: XOR<XOR<MenteeProfileUpdateToOneWithWhereWithoutResumesInput, MenteeProfileUpdateWithoutResumesInput>, MenteeProfileUncheckedUpdateWithoutResumesInput>
-  }
-
-  export type MenteeProfileCreateNestedOneWithoutSopDocumentsInput = {
-    create?: XOR<MenteeProfileCreateWithoutSopDocumentsInput, MenteeProfileUncheckedCreateWithoutSopDocumentsInput>
-    connectOrCreate?: MenteeProfileCreateOrConnectWithoutSopDocumentsInput
-    connect?: MenteeProfileWhereUniqueInput
-  }
-
-  export type MenteeProfileUpdateOneRequiredWithoutSopDocumentsNestedInput = {
-    create?: XOR<MenteeProfileCreateWithoutSopDocumentsInput, MenteeProfileUncheckedCreateWithoutSopDocumentsInput>
-    connectOrCreate?: MenteeProfileCreateOrConnectWithoutSopDocumentsInput
-    upsert?: MenteeProfileUpsertWithoutSopDocumentsInput
-    connect?: MenteeProfileWhereUniqueInput
-    update?: XOR<XOR<MenteeProfileUpdateToOneWithWhereWithoutSopDocumentsInput, MenteeProfileUpdateWithoutSopDocumentsInput>, MenteeProfileUncheckedUpdateWithoutSopDocumentsInput>
   }
 
   export type MentorProfileCreateNestedOneWithoutSlotsInput = {
@@ -23600,6 +23791,23 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumApplicationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
+  }
+
+  export type NestedEnumApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApplicationStatus[] | ListEnumApplicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApplicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApplicationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumApplicationStatusFilter<$PrismaModel>
+    _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
+  }
+
   export type NestedEnumSlotStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.SlotStatus | EnumSlotStatusFieldRefInput<$PrismaModel>
     in?: $Enums.SlotStatus[] | ListEnumSlotStatusFieldRefInput<$PrismaModel>
@@ -23744,10 +23952,10 @@ export namespace Prisma {
   export type MenteeProfileCreateWithoutUserInput = {
     id?: string
     dob?: Date | string | null
-    education10th?: string | null
-    education12th?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education10th?: MenteeProfileCreateeducation10thInput | string[]
+    education12th?: MenteeProfileCreateeducation12thInput | string[]
+    bachelors?: MenteeProfileCreatebachelorsInput | string[]
+    masters?: MenteeProfileCreatemastersInput | string[]
     workExperience?: string | null
     certifications?: MenteeProfileCreatecertificationsInput | string[]
     catScore?: number | null
@@ -23755,16 +23963,15 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     resumes?: ResumeCreateNestedManyWithoutMenteeInput
-    sopDocuments?: SOPDocumentCreateNestedManyWithoutMenteeInput
   }
 
   export type MenteeProfileUncheckedCreateWithoutUserInput = {
     id?: string
     dob?: Date | string | null
-    education10th?: string | null
-    education12th?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education10th?: MenteeProfileCreateeducation10thInput | string[]
+    education12th?: MenteeProfileCreateeducation12thInput | string[]
+    bachelors?: MenteeProfileCreatebachelorsInput | string[]
+    masters?: MenteeProfileCreatemastersInput | string[]
     workExperience?: string | null
     certifications?: MenteeProfileCreatecertificationsInput | string[]
     catScore?: number | null
@@ -23772,7 +23979,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     resumes?: ResumeUncheckedCreateNestedManyWithoutMenteeInput
-    sopDocuments?: SOPDocumentUncheckedCreateNestedManyWithoutMenteeInput
   }
 
   export type MenteeProfileCreateOrConnectWithoutUserInput = {
@@ -23782,9 +23988,6 @@ export namespace Prisma {
 
   export type AdminProfileCreateWithoutUserInput = {
     id?: string
-    department?: string | null
-    permissions?: AdminProfileCreatepermissionsInput | string[]
-    phoneNumber?: string | null
     lastLoginAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23792,9 +23995,6 @@ export namespace Prisma {
 
   export type AdminProfileUncheckedCreateWithoutUserInput = {
     id?: string
-    department?: string | null
-    permissions?: AdminProfileCreatepermissionsInput | string[]
-    phoneNumber?: string | null
     lastLoginAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23803,6 +24003,42 @@ export namespace Prisma {
   export type AdminProfileCreateOrConnectWithoutUserInput = {
     where: AdminProfileWhereUniqueInput
     create: XOR<AdminProfileCreateWithoutUserInput, AdminProfileUncheckedCreateWithoutUserInput>
+  }
+
+  export type MentorApplicationCreateWithoutUserInput = {
+    id?: string
+    bio: string
+    expertise?: MentorApplicationCreateexpertiseInput | string[]
+    certifications?: MentorApplicationCreatecertificationsInput | string[]
+    pricePerSession: number
+    status?: $Enums.ApplicationStatus
+    rejectionReason?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorApplicationUncheckedCreateWithoutUserInput = {
+    id?: string
+    bio: string
+    expertise?: MentorApplicationCreateexpertiseInput | string[]
+    certifications?: MentorApplicationCreatecertificationsInput | string[]
+    pricePerSession: number
+    status?: $Enums.ApplicationStatus
+    rejectionReason?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorApplicationCreateOrConnectWithoutUserInput = {
+    where: MentorApplicationWhereUniqueInput
+    create: XOR<MentorApplicationCreateWithoutUserInput, MentorApplicationUncheckedCreateWithoutUserInput>
+  }
+
+  export type MentorApplicationCreateManyUserInputEnvelope = {
+    data: MentorApplicationCreateManyUserInput | MentorApplicationCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type BookingCreateWithoutMentorInput = {
@@ -24013,10 +24249,10 @@ export namespace Prisma {
   export type MenteeProfileUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education10th?: MenteeProfileUpdateeducation10thInput | string[]
+    education12th?: MenteeProfileUpdateeducation12thInput | string[]
+    bachelors?: MenteeProfileUpdatebachelorsInput | string[]
+    masters?: MenteeProfileUpdatemastersInput | string[]
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: MenteeProfileUpdatecertificationsInput | string[]
     catScore?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -24024,16 +24260,15 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resumes?: ResumeUpdateManyWithoutMenteeNestedInput
-    sopDocuments?: SOPDocumentUpdateManyWithoutMenteeNestedInput
   }
 
   export type MenteeProfileUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education10th?: MenteeProfileUpdateeducation10thInput | string[]
+    education12th?: MenteeProfileUpdateeducation12thInput | string[]
+    bachelors?: MenteeProfileUpdatebachelorsInput | string[]
+    masters?: MenteeProfileUpdatemastersInput | string[]
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: MenteeProfileUpdatecertificationsInput | string[]
     catScore?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -24041,7 +24276,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resumes?: ResumeUncheckedUpdateManyWithoutMenteeNestedInput
-    sopDocuments?: SOPDocumentUncheckedUpdateManyWithoutMenteeNestedInput
   }
 
   export type AdminProfileUpsertWithoutUserInput = {
@@ -24057,9 +24291,6 @@ export namespace Prisma {
 
   export type AdminProfileUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    permissions?: AdminProfileUpdatepermissionsInput | string[]
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24067,12 +24298,42 @@ export namespace Prisma {
 
   export type AdminProfileUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    department?: NullableStringFieldUpdateOperationsInput | string | null
-    permissions?: AdminProfileUpdatepermissionsInput | string[]
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorApplicationUpsertWithWhereUniqueWithoutUserInput = {
+    where: MentorApplicationWhereUniqueInput
+    update: XOR<MentorApplicationUpdateWithoutUserInput, MentorApplicationUncheckedUpdateWithoutUserInput>
+    create: XOR<MentorApplicationCreateWithoutUserInput, MentorApplicationUncheckedCreateWithoutUserInput>
+  }
+
+  export type MentorApplicationUpdateWithWhereUniqueWithoutUserInput = {
+    where: MentorApplicationWhereUniqueInput
+    data: XOR<MentorApplicationUpdateWithoutUserInput, MentorApplicationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MentorApplicationUpdateManyWithWhereWithoutUserInput = {
+    where: MentorApplicationScalarWhereInput
+    data: XOR<MentorApplicationUpdateManyMutationInput, MentorApplicationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type MentorApplicationScalarWhereInput = {
+    AND?: MentorApplicationScalarWhereInput | MentorApplicationScalarWhereInput[]
+    OR?: MentorApplicationScalarWhereInput[]
+    NOT?: MentorApplicationScalarWhereInput | MentorApplicationScalarWhereInput[]
+    id?: StringFilter<"MentorApplication"> | string
+    userId?: StringFilter<"MentorApplication"> | string
+    bio?: StringFilter<"MentorApplication"> | string
+    expertise?: StringNullableListFilter<"MentorApplication">
+    certifications?: StringNullableListFilter<"MentorApplication">
+    pricePerSession?: FloatFilter<"MentorApplication"> | number
+    status?: EnumApplicationStatusFilter<"MentorApplication"> | $Enums.ApplicationStatus
+    rejectionReason?: StringNullableFilter<"MentorApplication"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"MentorApplication"> | Date | string | null
+    createdAt?: DateTimeFilter<"MentorApplication"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorApplication"> | Date | string
   }
 
   export type BookingUpsertWithWhereUniqueWithoutMentorInput = {
@@ -24220,6 +24481,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -24243,6 +24505,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationUncheckedCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -24360,6 +24623,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -24383,6 +24647,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -24489,6 +24754,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -24512,6 +24778,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationUncheckedCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -24548,30 +24815,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type SOPDocumentCreateWithoutMenteeInput = {
-    id?: string
-    collegeName: string
-    fileUrl: string
-    createdAt?: Date | string
-  }
-
-  export type SOPDocumentUncheckedCreateWithoutMenteeInput = {
-    id?: string
-    collegeName: string
-    fileUrl: string
-    createdAt?: Date | string
-  }
-
-  export type SOPDocumentCreateOrConnectWithoutMenteeInput = {
-    where: SOPDocumentWhereUniqueInput
-    create: XOR<SOPDocumentCreateWithoutMenteeInput, SOPDocumentUncheckedCreateWithoutMenteeInput>
-  }
-
-  export type SOPDocumentCreateManyMenteeInputEnvelope = {
-    data: SOPDocumentCreateManyMenteeInput | SOPDocumentCreateManyMenteeInput[]
-    skipDuplicates?: boolean
-  }
-
   export type UserUpsertWithoutMenteeProfileInput = {
     update: XOR<UserUpdateWithoutMenteeProfileInput, UserUncheckedUpdateWithoutMenteeProfileInput>
     create: XOR<UserCreateWithoutMenteeProfileInput, UserUncheckedCreateWithoutMenteeProfileInput>
@@ -24599,6 +24842,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -24622,6 +24866,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -24656,33 +24901,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Resume"> | Date | string
   }
 
-  export type SOPDocumentUpsertWithWhereUniqueWithoutMenteeInput = {
-    where: SOPDocumentWhereUniqueInput
-    update: XOR<SOPDocumentUpdateWithoutMenteeInput, SOPDocumentUncheckedUpdateWithoutMenteeInput>
-    create: XOR<SOPDocumentCreateWithoutMenteeInput, SOPDocumentUncheckedCreateWithoutMenteeInput>
-  }
-
-  export type SOPDocumentUpdateWithWhereUniqueWithoutMenteeInput = {
-    where: SOPDocumentWhereUniqueInput
-    data: XOR<SOPDocumentUpdateWithoutMenteeInput, SOPDocumentUncheckedUpdateWithoutMenteeInput>
-  }
-
-  export type SOPDocumentUpdateManyWithWhereWithoutMenteeInput = {
-    where: SOPDocumentScalarWhereInput
-    data: XOR<SOPDocumentUpdateManyMutationInput, SOPDocumentUncheckedUpdateManyWithoutMenteeInput>
-  }
-
-  export type SOPDocumentScalarWhereInput = {
-    AND?: SOPDocumentScalarWhereInput | SOPDocumentScalarWhereInput[]
-    OR?: SOPDocumentScalarWhereInput[]
-    NOT?: SOPDocumentScalarWhereInput | SOPDocumentScalarWhereInput[]
-    id?: StringFilter<"SOPDocument"> | string
-    menteeId?: StringFilter<"SOPDocument"> | string
-    collegeName?: StringFilter<"SOPDocument"> | string
-    fileUrl?: StringFilter<"SOPDocument"> | string
-    createdAt?: DateTimeFilter<"SOPDocument"> | Date | string
-  }
-
   export type UserCreateWithoutAdminProfileInput = {
     id?: string
     email: string
@@ -24699,6 +24917,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -24722,6 +24941,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationUncheckedCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -24761,6 +24981,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -24784,6 +25005,119 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUncheckedUpdateManyWithoutUserNestedInput
+    bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
+    bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    verification?: VerificationDocumentUncheckedUpdateOneWithoutUserNestedInput
+    webinarRegistrations?: WebinarRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutMentorApplicationsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    name?: string | null
+    profilePicture?: string | null
+    provider?: string
+    role?: $Enums.Role
+    isVerified?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
+    menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
+    bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
+    bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    verification?: VerificationDocumentCreateNestedOneWithoutUserInput
+    webinarRegistrations?: WebinarRegistrationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutMentorApplicationsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    name?: string | null
+    profilePicture?: string | null
+    provider?: string
+    role?: $Enums.Role
+    isVerified?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
+    menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
+    bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
+    bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    verification?: VerificationDocumentUncheckedCreateNestedOneWithoutUserInput
+    webinarRegistrations?: WebinarRegistrationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutMentorApplicationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMentorApplicationsInput, UserUncheckedCreateWithoutMentorApplicationsInput>
+  }
+
+  export type UserUpsertWithoutMentorApplicationsInput = {
+    update: XOR<UserUpdateWithoutMentorApplicationsInput, UserUncheckedUpdateWithoutMentorApplicationsInput>
+    create: XOR<UserCreateWithoutMentorApplicationsInput, UserUncheckedCreateWithoutMentorApplicationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMentorApplicationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMentorApplicationsInput, UserUncheckedUpdateWithoutMentorApplicationsInput>
+  }
+
+  export type UserUpdateWithoutMentorApplicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
+    menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
+    bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
+    bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    verification?: VerificationDocumentUpdateOneWithoutUserNestedInput
+    webinarRegistrations?: WebinarRegistrationUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMentorApplicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
+    menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -24794,10 +25128,10 @@ export namespace Prisma {
   export type MenteeProfileCreateWithoutResumesInput = {
     id?: string
     dob?: Date | string | null
-    education10th?: string | null
-    education12th?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education10th?: MenteeProfileCreateeducation10thInput | string[]
+    education12th?: MenteeProfileCreateeducation12thInput | string[]
+    bachelors?: MenteeProfileCreatebachelorsInput | string[]
+    masters?: MenteeProfileCreatemastersInput | string[]
     workExperience?: string | null
     certifications?: MenteeProfileCreatecertificationsInput | string[]
     catScore?: number | null
@@ -24805,24 +25139,22 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutMenteeProfileInput
-    sopDocuments?: SOPDocumentCreateNestedManyWithoutMenteeInput
   }
 
   export type MenteeProfileUncheckedCreateWithoutResumesInput = {
     id?: string
     userId: string
     dob?: Date | string | null
-    education10th?: string | null
-    education12th?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education10th?: MenteeProfileCreateeducation10thInput | string[]
+    education12th?: MenteeProfileCreateeducation12thInput | string[]
+    bachelors?: MenteeProfileCreatebachelorsInput | string[]
+    masters?: MenteeProfileCreatemastersInput | string[]
     workExperience?: string | null
     certifications?: MenteeProfileCreatecertificationsInput | string[]
     catScore?: number | null
     expectations?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    sopDocuments?: SOPDocumentUncheckedCreateNestedManyWithoutMenteeInput
   }
 
   export type MenteeProfileCreateOrConnectWithoutResumesInput = {
@@ -24844,10 +25176,10 @@ export namespace Prisma {
   export type MenteeProfileUpdateWithoutResumesInput = {
     id?: StringFieldUpdateOperationsInput | string
     dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education10th?: MenteeProfileUpdateeducation10thInput | string[]
+    education12th?: MenteeProfileUpdateeducation12thInput | string[]
+    bachelors?: MenteeProfileUpdatebachelorsInput | string[]
+    masters?: MenteeProfileUpdatemastersInput | string[]
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: MenteeProfileUpdatecertificationsInput | string[]
     catScore?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -24855,108 +25187,22 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutMenteeProfileNestedInput
-    sopDocuments?: SOPDocumentUpdateManyWithoutMenteeNestedInput
   }
 
   export type MenteeProfileUncheckedUpdateWithoutResumesInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education10th?: MenteeProfileUpdateeducation10thInput | string[]
+    education12th?: MenteeProfileUpdateeducation12thInput | string[]
+    bachelors?: MenteeProfileUpdatebachelorsInput | string[]
+    masters?: MenteeProfileUpdatemastersInput | string[]
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: MenteeProfileUpdatecertificationsInput | string[]
     catScore?: NullableFloatFieldUpdateOperationsInput | number | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sopDocuments?: SOPDocumentUncheckedUpdateManyWithoutMenteeNestedInput
-  }
-
-  export type MenteeProfileCreateWithoutSopDocumentsInput = {
-    id?: string
-    dob?: Date | string | null
-    education10th?: string | null
-    education12th?: string | null
-    bachelors?: string | null
-    masters?: string | null
-    workExperience?: string | null
-    certifications?: MenteeProfileCreatecertificationsInput | string[]
-    catScore?: number | null
-    expectations?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutMenteeProfileInput
-    resumes?: ResumeCreateNestedManyWithoutMenteeInput
-  }
-
-  export type MenteeProfileUncheckedCreateWithoutSopDocumentsInput = {
-    id?: string
-    userId: string
-    dob?: Date | string | null
-    education10th?: string | null
-    education12th?: string | null
-    bachelors?: string | null
-    masters?: string | null
-    workExperience?: string | null
-    certifications?: MenteeProfileCreatecertificationsInput | string[]
-    catScore?: number | null
-    expectations?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    resumes?: ResumeUncheckedCreateNestedManyWithoutMenteeInput
-  }
-
-  export type MenteeProfileCreateOrConnectWithoutSopDocumentsInput = {
-    where: MenteeProfileWhereUniqueInput
-    create: XOR<MenteeProfileCreateWithoutSopDocumentsInput, MenteeProfileUncheckedCreateWithoutSopDocumentsInput>
-  }
-
-  export type MenteeProfileUpsertWithoutSopDocumentsInput = {
-    update: XOR<MenteeProfileUpdateWithoutSopDocumentsInput, MenteeProfileUncheckedUpdateWithoutSopDocumentsInput>
-    create: XOR<MenteeProfileCreateWithoutSopDocumentsInput, MenteeProfileUncheckedCreateWithoutSopDocumentsInput>
-    where?: MenteeProfileWhereInput
-  }
-
-  export type MenteeProfileUpdateToOneWithWhereWithoutSopDocumentsInput = {
-    where?: MenteeProfileWhereInput
-    data: XOR<MenteeProfileUpdateWithoutSopDocumentsInput, MenteeProfileUncheckedUpdateWithoutSopDocumentsInput>
-  }
-
-  export type MenteeProfileUpdateWithoutSopDocumentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
-    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
-    certifications?: MenteeProfileUpdatecertificationsInput | string[]
-    catScore?: NullableFloatFieldUpdateOperationsInput | number | null
-    expectations?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutMenteeProfileNestedInput
-    resumes?: ResumeUpdateManyWithoutMenteeNestedInput
-  }
-
-  export type MenteeProfileUncheckedUpdateWithoutSopDocumentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    dob?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    education10th?: NullableStringFieldUpdateOperationsInput | string | null
-    education12th?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
-    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
-    certifications?: MenteeProfileUpdatecertificationsInput | string[]
-    catScore?: NullableFloatFieldUpdateOperationsInput | number | null
-    expectations?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    resumes?: ResumeUncheckedUpdateManyWithoutMenteeNestedInput
   }
 
   export type MentorProfileCreateWithoutSlotsInput = {
@@ -25136,6 +25382,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationCreateNestedManyWithoutUserInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     verification?: VerificationDocumentCreateNestedOneWithoutUserInput
@@ -25159,6 +25406,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationUncheckedCreateNestedManyWithoutUserInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     verification?: VerificationDocumentUncheckedCreateNestedOneWithoutUserInput
@@ -25187,6 +25435,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     verification?: VerificationDocumentCreateNestedOneWithoutUserInput
@@ -25210,6 +25459,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationUncheckedCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     verification?: VerificationDocumentUncheckedCreateNestedOneWithoutUserInput
@@ -25320,6 +25570,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUpdateManyWithoutUserNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     verification?: VerificationDocumentUpdateOneWithoutUserNestedInput
@@ -25343,6 +25594,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     verification?: VerificationDocumentUncheckedUpdateOneWithoutUserNestedInput
@@ -25377,6 +25629,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     verification?: VerificationDocumentUpdateOneWithoutUserNestedInput
@@ -25400,6 +25653,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     verification?: VerificationDocumentUncheckedUpdateOneWithoutUserNestedInput
@@ -25901,6 +26155,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -25924,6 +26179,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationUncheckedCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -25998,6 +26254,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -26021,6 +26278,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
@@ -26044,6 +26302,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     verification?: VerificationDocumentCreateNestedOneWithoutUserInput
@@ -26067,6 +26326,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationUncheckedCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     verification?: VerificationDocumentUncheckedCreateNestedOneWithoutUserInput
@@ -26106,6 +26366,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     verification?: VerificationDocumentUpdateOneWithoutUserNestedInput
@@ -26129,6 +26390,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     verification?: VerificationDocumentUncheckedUpdateOneWithoutUserNestedInput
@@ -26152,6 +26414,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingCreateNestedManyWithoutMenteeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
@@ -26175,6 +26438,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     adminProfile?: AdminProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorApplications?: MentorApplicationUncheckedCreateNestedManyWithoutUserInput
     bookingsAsMentor?: BookingUncheckedCreateNestedManyWithoutMentorInput
     bookingsAsMentee?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
@@ -26214,6 +26478,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
@@ -26237,10 +26502,24 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     adminProfile?: AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorApplications?: MentorApplicationUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsMentor?: BookingUncheckedUpdateManyWithoutMentorNestedInput
     bookingsAsMentee?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     webinarRegistrations?: WebinarRegistrationUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type MentorApplicationCreateManyUserInput = {
+    id?: string
+    bio: string
+    expertise?: MentorApplicationCreateexpertiseInput | string[]
+    certifications?: MentorApplicationCreatecertificationsInput | string[]
+    pricePerSession: number
+    status?: $Enums.ApplicationStatus
+    rejectionReason?: string | null
+    reviewedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BookingCreateManyMentorInput = {
@@ -26282,6 +26561,45 @@ export namespace Prisma {
     webinarId: string
     paymentId?: string | null
     createdAt?: Date | string
+  }
+
+  export type MentorApplicationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertise?: MentorApplicationUpdateexpertiseInput | string[]
+    certifications?: MentorApplicationUpdatecertificationsInput | string[]
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorApplicationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertise?: MentorApplicationUpdateexpertiseInput | string[]
+    certifications?: MentorApplicationUpdatecertificationsInput | string[]
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorApplicationUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertise?: MentorApplicationUpdateexpertiseInput | string[]
+    certifications?: MentorApplicationUpdatecertificationsInput | string[]
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookingUpdateWithoutMentorInput = {
@@ -26516,13 +26834,6 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
-  export type SOPDocumentCreateManyMenteeInput = {
-    id?: string
-    collegeName: string
-    fileUrl: string
-    createdAt?: Date | string
-  }
-
   export type ResumeUpdateWithoutMenteeInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -26540,27 +26851,6 @@ export namespace Prisma {
   export type ResumeUncheckedUpdateManyWithoutMenteeInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    fileUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SOPDocumentUpdateWithoutMenteeInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    collegeName?: StringFieldUpdateOperationsInput | string
-    fileUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SOPDocumentUncheckedUpdateWithoutMenteeInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    collegeName?: StringFieldUpdateOperationsInput | string
-    fileUrl?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SOPDocumentUncheckedUpdateManyWithoutMenteeInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    collegeName?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26631,13 +26921,13 @@ export namespace Prisma {
      */
     export type AdminProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AdminProfileDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use MentorApplicationDefaultArgs instead
+     */
+    export type MentorApplicationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorApplicationDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use ResumeDefaultArgs instead
      */
     export type ResumeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ResumeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use SOPDocumentDefaultArgs instead
-     */
-    export type SOPDocumentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SOPDocumentDefaultArgs<ExtArgs>
     /**
      * @deprecated Use SlotDefaultArgs instead
      */

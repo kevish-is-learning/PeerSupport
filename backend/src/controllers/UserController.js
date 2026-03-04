@@ -500,6 +500,188 @@ class UserController {
         .json(new ApiError(400, "Failed to delete admin profile", error.message));
     }
   }
+
+  ///////////////////////////
+  // RESUME MANAGEMENT (MENTEE)
+  ///////////////////////////
+
+  // Add resume to mentee profile
+  async addResume(req, res) {
+    try {
+      const { name, fileUrl } = req.body;
+
+      // Get mentee profile
+      const menteeProfile = await userService.getMenteeProfile(req.user.id);
+
+      const resume = await userService.addResume(menteeProfile.id, { name, fileUrl });
+
+      res
+        .status(201)
+        .json(new ApiResponse(true, "Resume added successfully", resume));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to add resume", error.message));
+    }
+  }
+
+  // Get resumes for current user
+  async getResumes(req, res) {
+    try {
+      // Get mentee profile
+      const menteeProfile = await userService.getMenteeProfile(req.user.id);
+
+      const resumes = await userService.getResumes(menteeProfile.id);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Resumes retrieved successfully", resumes));
+    } catch (error) {
+      res
+        .status(404)
+        .json(new ApiError(404, "Failed to retrieve resumes", error.message));
+    }
+  }
+
+  // Delete resume
+  async deleteResume(req, res) {
+    try {
+      const { resumeId } = req.params;
+
+      const result = await userService.deleteResume(resumeId, req.user.id);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, result.message, null));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to delete resume", error.message));
+    }
+  }
+
+  ///////////////////////////
+  // MENTOR APPLICATION MANAGEMENT
+  ///////////////////////////
+
+  // Submit mentor application (user)
+  async submitMentorApplication(req, res) {
+    try {
+      const { bio, expertise, certifications, pricePerSession } = req.body;
+
+      const application = await userService.submitMentorApplication(req.user.id, {
+        bio,
+        expertise,
+        certifications,
+        pricePerSession,
+      });
+
+      res
+        .status(201)
+        .json(new ApiResponse(true, "Mentor application submitted successfully", application));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to submit application", error.message));
+    }
+  }
+
+  // Get all mentor applications (admin only)
+  async getAllMentorApplications(req, res) {
+    try {
+      const { page = 1, limit = 10, status } = req.query;
+
+      const result = await userService.getAllMentorApplications({
+        page: parseInt(page),
+        limit: parseInt(limit),
+        status,
+      });
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Applications retrieved successfully", result));
+    } catch (error) {
+      res
+        .status(500)
+        .json(new ApiError(500, "Failed to retrieve applications", error.message));
+    }
+  }
+
+  // Get single mentor application (admin)
+  async getMentorApplicationById(req, res) {
+    try {
+      const { applicationId } = req.params;
+
+      const application = await userService.getMentorApplicationById(applicationId);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Application retrieved successfully", application));
+    } catch (error) {
+      res
+        .status(404)
+        .json(new ApiError(404, "Application not found", error.message));
+    }
+  }
+
+  // Get user's own mentor application
+  async getMyMentorApplication(req, res) {
+    try {
+      const application = await userService.getUserMentorApplication(req.user.id);
+
+      if (!application) {
+        return res
+          .status(404)
+          .json(new ApiResponse(false, "No application found", null));
+      }
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Application retrieved successfully", application));
+    } catch (error) {
+      res
+        .status(500)
+        .json(new ApiError(500, "Failed to retrieve application", error.message));
+    }
+  }
+
+  // Approve mentor application (admin only)
+  async approveMentorApplication(req, res) {
+    try {
+      const { applicationId } = req.params;
+
+      const result = await userService.approveMentorApplication(applicationId);
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Application approved successfully", result));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to approve application", error.message));
+    }
+  }
+
+  // Reject mentor application (admin only)
+  async rejectMentorApplication(req, res) {
+    try {
+      const { applicationId } = req.params;
+      const { rejectionReason } = req.body;
+
+      const application = await userService.rejectMentorApplication(
+        applicationId,
+        rejectionReason
+      );
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Application rejected successfully", application));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to reject application", error.message));
+    }
+  }
 }
 
 export default new UserController();

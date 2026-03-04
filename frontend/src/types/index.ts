@@ -43,6 +43,12 @@ export enum VerificationStatus {
   REJECTED = 'REJECTED',
 }
 
+export enum ApplicationStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
 export interface User {
   id: string;
   email: string;
@@ -73,10 +79,10 @@ export interface MenteeProfile {
   id: string;
   userId: string;
   dob?: string;
-  education10th?: string;
-  education12th?: string;
-  bachelors?: string;
-  masters?: string;
+  education10th: string[]; // [instituteName, score, yearOfPassout]
+  education12th: string[]; // [instituteName, score, yearOfPassout]
+  bachelors: string[]; // [instituteName, score, yearOfPassout]
+  masters: string[]; // [instituteName, score, yearOfPassout]
   workExperience?: string;
   certifications: string[];
   catScore?: number;
@@ -108,6 +114,21 @@ export interface SOPDocument {
   collegeName: string;
   fileUrl: string;
   createdAt: string;
+}
+
+export interface MentorApplication {
+  id: string;
+  userId: string;
+  bio: string;
+  expertise: string[];
+  certifications: string[];
+  pricePerSession: number;
+  status: ApplicationStatus;
+  rejectionReason?: string;
+  reviewedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  user?: User;
 }
 
 export interface ProfileResponse {
