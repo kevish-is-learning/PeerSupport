@@ -1,6 +1,14 @@
 import { apiClient } from '../lib/api-client';
 import { ApiResponse, PaginatedResponse } from '../types';
 
+export interface Slot {
+  id: string;
+  mentorId: string;
+  startTime: string;
+  endTime: string;
+  status: 'AVAILABLE' | 'BOOKED' | 'BLOCKED' | 'CANCELLED';
+}
+
 export interface MentorWithProfile {
   id: string;
   email: string;
@@ -17,6 +25,7 @@ export interface MentorWithProfile {
     totalReviews: number;
     verificationStatus: string;
     verifiedBadge: boolean;
+    slots?: Slot[];
   };
 }
 
@@ -29,6 +38,7 @@ export interface Booking {
   sessionMode: string;
   sessionType: string;
   purpose: string;
+  shareProfile?: boolean;
   meetingLink?: string;
   createdAt: string;
   updatedAt: string;
@@ -158,8 +168,13 @@ export const menteeService = {
     slotId: string;
     sessionMode: string;
     purpose: string;
+    shareProfile?: boolean;
   }) {
-    const response = await apiClient.post<ApiResponse<Booking>>(
+    const response = await apiClient.post<ApiResponse<{
+      booking: Booking;
+      paymentRequired: boolean;
+      amount: number;
+    }>>(
       '/mentee/bookings',
       data
     );

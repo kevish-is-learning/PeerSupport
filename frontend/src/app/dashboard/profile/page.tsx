@@ -149,7 +149,9 @@ export default function ProfilePage() {
       };
 
       const response = await profileService.createOrUpdateMenteeProfile(payload);
-      setProfile(response.data);
+      if (response.data) {
+        setProfile(response.data);
+      }
       setIsEditing(false);
       setMessage({ type: 'success', text: 'Profile updated successfully' });
     } catch (error: any) {

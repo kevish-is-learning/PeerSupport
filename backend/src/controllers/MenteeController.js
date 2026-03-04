@@ -1,5 +1,5 @@
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/apiResponse.js";
+import { ApiError } from "../utils/apiError.js";
 import { PrismaClient } from "../generated/prisma/index.js";
 
 const prisma = new PrismaClient();
@@ -215,7 +215,14 @@ class MenteeController {
   // Create booking
   async createBooking(req, res) {
     try {
-      const { mentorId, slotId, sessionMode, purpose } = req.body;
+      const { mentorId, slotId, sessionMode, purpose, shareProfile = false } = req.body;
+
+      // Validate required fields
+      if (!mentorId || !slotId || !sessionMode || !purpose) {
+        return res.status(400).json(
+          new ApiError(400, "Missing required fields: mentorId, slotId, sessionMode, and purpose are required")
+        );
+      }
 
       // Check if slot exists and is available
       const slot = await prisma.slot.findUnique({
@@ -231,6 +238,18 @@ class MenteeController {
         );
       }
 
+      // Verify mentor exists
+      const mentor = await prisma.user.findUnique({
+        where: { id: mentorId },
+        include: { mentorProfile: true },
+      });
+
+      if (!mentor || !mentor.mentorProfile) {
+        return res.status(404).json(
+          new ApiError(404, "Mentor not found")
+        );
+      }
+
       // Create booking
       const booking = await prisma.booking.create({
         data: {
@@ -239,11 +258,20 @@ class MenteeController {
           slotId,
           sessionMode,
           purpose,
+          shareProfile,
           status: 'PENDING',
           sessionType: 'ONE_ON_ONE',
         },
         include: {
           mentor: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              mentorProfile: true,
+            },
+          },
+          mentee: {
             select: {
               id: true,
               name: true,
@@ -260,20 +288,12 @@ class MenteeController {
         data: { status: 'BOOKED' },
       });
 
-      // Create payment record
-      const razorpayOrderId = `order_${Math.random().toString(36).substring(7).toUpperCase()}`;
-      await prisma.payment.create({
-        data: {
-          bookingId: booking.id,
-          razorpayOrderId,
-          amount: slot.mentor.pricePerSession,
-          currency: 'INR',
-          status: 'CREATED',
-        },
-      });
-
       res.status(201).json(
-        new ApiResponse(true, "Booking created successfully", booking)
+        new ApiResponse(true, "Booking created successfully. Proceed to payment.", {
+          booking,
+          paymentRequired: true,
+          amount: mentor.mentorProfile.pricePerSession,
+        })
       );
     } catch (error) {
       res.status(500).json(

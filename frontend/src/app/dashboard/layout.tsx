@@ -37,14 +37,16 @@ export default function DashboardLayout({
 
   // Define navigation items based on user role
   const getMenteeNavItems = () => [
+    { href: '/', label: 'Home', icon: '🏠' },
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { href: '/dashboard/find-mentors', label: 'Find Mentors', icon: '🔍' },
+    { href: '/dashboard/explore-mentors', label: 'Explore Mentors', icon: '🔍' },
     { href: '/dashboard/bookings', label: 'My Bookings', icon: '📅' },
     { href: '/dashboard/webinars', label: 'Webinars', icon: '🎥' },
     { href: '/dashboard/profile', label: 'My Profile', icon: '👤' },
   ];
 
   const getMentorNavItems = () => [
+    { href: '/', label: 'Home', icon: '🏠' },
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
     { href: '/dashboard/slots', label: 'Manage Slots', icon: '📅' },
     { href: '/dashboard/sessions', label: 'My Sessions', icon: '🎯' },
@@ -52,6 +54,7 @@ export default function DashboardLayout({
   ];
 
   const getAdminNavItems = () => [
+    { href: '/', label: 'Home', icon: '🏠' },
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
     { href: '/admin/users', label: 'Users', icon: '👥' },
     { href: '/admin/mentor-applications', label: 'Applications', icon: '📝' },
@@ -72,66 +75,62 @@ export default function DashboardLayout({
   const navItems = getNavItems();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation Bar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-8">
-              <Link href="/" className="text-xl font-bold">
-                PeerSupport
-              </Link>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                  {user?.name?.charAt(0).toUpperCase() || 'U'}
-                </div>
-                <div className="hidden sm:block">
-                  <p className="text-sm font-medium">{user?.name || user?.email}</p>
-                  <p className="text-xs text-gray-500">{user?.role}</p>
-                </div>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white border-r border-gray-200 fixed inset-y-0 left-0 z-50 flex flex-col">
+        {/* Logo */}
+        <div className="h-16 flex items-center px-6 border-b border-gray-200">
+          <Link href="/" className="text-xl font-bold">
+            PeerSupport
+          </Link>
+        </div>
+
+        {/* Navigation Items */}
+        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || 
+              (item.href !== '/' && item.href !== '/dashboard' && pathname.startsWith(item.href));
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-black text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
               >
-                Logout
-              </button>
+                <span className="text-lg">{item.icon}</span>
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* User Info & Logout */}
+        <div className="border-t border-gray-200 p-4 space-y-3">
+          <div className="flex items-center gap-3 px-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+              {user?.name?.charAt(0).toUpperCase() || 'U'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{user?.name || 'User'}</p>
+              <p className="text-xs text-gray-500 capitalize">{user?.role?.toLowerCase()}</p>
             </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-2 text-sm text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+          >
+            <span>🚪</span>
+            <span>Logout</span>
+          </button>
         </div>
-      </nav>
-
-      {/* Secondary Navigation - Tab Style */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex gap-1 overflow-x-auto py-2">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href || 
-                (item.href !== '/dashboard' && pathname.startsWith(item.href));
-              
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2 ${
-                    isActive
-                      ? 'bg-black text-white'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-black'
-                  }`}
-                >
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
+      </aside>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 ml-64 p-8">
         {children}
       </main>
     </div>

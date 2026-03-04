@@ -3,6 +3,7 @@ import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import menteeRoutes from './mentee.routes.js';
+import paymentRoutes from './payment.routes.js';
 
 const router = Router();
 
@@ -53,5 +54,6 @@ router.get('/health', (_req, res) => {
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/mentee', menteeRoutes);
+router.use('/payments', paymentRoutes);
 
 export default router;

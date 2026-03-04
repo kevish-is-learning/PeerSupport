@@ -10025,6 +10025,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode | null
     sessionType: $Enums.SessionType | null
     purpose: string | null
+    shareProfile: boolean | null
     meetingLink: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -10039,6 +10040,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode | null
     sessionType: $Enums.SessionType | null
     purpose: string | null
+    shareProfile: boolean | null
     meetingLink: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -10053,6 +10055,7 @@ export namespace Prisma {
     sessionMode: number
     sessionType: number
     purpose: number
+    shareProfile: number
     meetingLink: number
     createdAt: number
     updatedAt: number
@@ -10069,6 +10072,7 @@ export namespace Prisma {
     sessionMode?: true
     sessionType?: true
     purpose?: true
+    shareProfile?: true
     meetingLink?: true
     createdAt?: true
     updatedAt?: true
@@ -10083,6 +10087,7 @@ export namespace Prisma {
     sessionMode?: true
     sessionType?: true
     purpose?: true
+    shareProfile?: true
     meetingLink?: true
     createdAt?: true
     updatedAt?: true
@@ -10097,6 +10102,7 @@ export namespace Prisma {
     sessionMode?: true
     sessionType?: true
     purpose?: true
+    shareProfile?: true
     meetingLink?: true
     createdAt?: true
     updatedAt?: true
@@ -10184,6 +10190,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType: $Enums.SessionType
     purpose: string
+    shareProfile: boolean
     meetingLink: string | null
     createdAt: Date
     updatedAt: Date
@@ -10215,6 +10222,7 @@ export namespace Prisma {
     sessionMode?: boolean
     sessionType?: boolean
     purpose?: boolean
+    shareProfile?: boolean
     meetingLink?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10234,6 +10242,7 @@ export namespace Prisma {
     sessionMode?: boolean
     sessionType?: boolean
     purpose?: boolean
+    shareProfile?: boolean
     meetingLink?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10251,6 +10260,7 @@ export namespace Prisma {
     sessionMode?: boolean
     sessionType?: boolean
     purpose?: boolean
+    shareProfile?: boolean
     meetingLink?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10287,6 +10297,7 @@ export namespace Prisma {
       sessionMode: $Enums.SessionMode
       sessionType: $Enums.SessionType
       purpose: string
+      shareProfile: boolean
       meetingLink: string | null
       createdAt: Date
       updatedAt: Date
@@ -10696,6 +10707,7 @@ export namespace Prisma {
     readonly sessionMode: FieldRef<"Booking", 'SessionMode'>
     readonly sessionType: FieldRef<"Booking", 'SessionType'>
     readonly purpose: FieldRef<"Booking", 'String'>
+    readonly shareProfile: FieldRef<"Booking", 'Boolean'>
     readonly meetingLink: FieldRef<"Booking", 'String'>
     readonly createdAt: FieldRef<"Booking", 'DateTime'>
     readonly updatedAt: FieldRef<"Booking", 'DateTime'>
@@ -21798,6 +21810,7 @@ export namespace Prisma {
     sessionMode: 'sessionMode',
     sessionType: 'sessionType',
     purpose: 'purpose',
+    shareProfile: 'shareProfile',
     meetingLink: 'meetingLink',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -22762,6 +22775,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFilter<"Booking"> | $Enums.SessionMode
     sessionType?: EnumSessionTypeFilter<"Booking"> | $Enums.SessionType
     purpose?: StringFilter<"Booking"> | string
+    shareProfile?: BoolFilter<"Booking"> | boolean
     meetingLink?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     updatedAt?: DateTimeFilter<"Booking"> | Date | string
@@ -22781,6 +22795,7 @@ export namespace Prisma {
     sessionMode?: SortOrder
     sessionType?: SortOrder
     purpose?: SortOrder
+    shareProfile?: SortOrder
     meetingLink?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -22803,6 +22818,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFilter<"Booking"> | $Enums.SessionMode
     sessionType?: EnumSessionTypeFilter<"Booking"> | $Enums.SessionType
     purpose?: StringFilter<"Booking"> | string
+    shareProfile?: BoolFilter<"Booking"> | boolean
     meetingLink?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     updatedAt?: DateTimeFilter<"Booking"> | Date | string
@@ -22822,6 +22838,7 @@ export namespace Prisma {
     sessionMode?: SortOrder
     sessionType?: SortOrder
     purpose?: SortOrder
+    shareProfile?: SortOrder
     meetingLink?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -22842,6 +22859,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeWithAggregatesFilter<"Booking"> | $Enums.SessionMode
     sessionType?: EnumSessionTypeWithAggregatesFilter<"Booking"> | $Enums.SessionType
     purpose?: StringWithAggregatesFilter<"Booking"> | string
+    shareProfile?: BoolWithAggregatesFilter<"Booking"> | boolean
     meetingLink?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
@@ -24208,6 +24226,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24227,6 +24246,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24240,6 +24260,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24259,6 +24280,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24275,6 +24297,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24286,6 +24309,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24300,6 +24324,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25765,6 +25790,7 @@ export namespace Prisma {
     sessionMode?: SortOrder
     sessionType?: SortOrder
     purpose?: SortOrder
+    shareProfile?: SortOrder
     meetingLink?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -25779,6 +25805,7 @@ export namespace Prisma {
     sessionMode?: SortOrder
     sessionType?: SortOrder
     purpose?: SortOrder
+    shareProfile?: SortOrder
     meetingLink?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -25793,6 +25820,7 @@ export namespace Prisma {
     sessionMode?: SortOrder
     sessionType?: SortOrder
     purpose?: SortOrder
+    shareProfile?: SortOrder
     meetingLink?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -27850,6 +27878,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27867,6 +27896,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27890,6 +27920,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27907,6 +27938,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28167,6 +28199,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFilter<"Booking"> | $Enums.SessionMode
     sessionType?: EnumSessionTypeFilter<"Booking"> | $Enums.SessionType
     purpose?: StringFilter<"Booking"> | string
+    shareProfile?: BoolFilter<"Booking"> | boolean
     meetingLink?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     updatedAt?: DateTimeFilter<"Booking"> | Date | string
@@ -29053,6 +29086,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29070,6 +29104,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29144,6 +29179,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29161,6 +29197,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29558,6 +29595,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29576,6 +29614,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29604,6 +29643,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29622,6 +29662,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29634,6 +29675,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29652,6 +29694,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29680,6 +29723,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29698,6 +29742,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30441,6 +30486,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30454,6 +30500,7 @@ export namespace Prisma {
     sessionMode: $Enums.SessionMode
     sessionType?: $Enums.SessionType
     purpose: string
+    shareProfile?: boolean
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30519,6 +30566,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30536,6 +30584,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30551,6 +30600,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30562,6 +30612,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30579,6 +30630,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30594,6 +30646,7 @@ export namespace Prisma {
     sessionMode?: EnumSessionModeFieldUpdateOperationsInput | $Enums.SessionMode
     sessionType?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
     purpose?: StringFieldUpdateOperationsInput | string
+    shareProfile?: BoolFieldUpdateOperationsInput | boolean
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

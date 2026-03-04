@@ -137,11 +137,11 @@ export default function BookingsPage() {
                 {/* Mentor Info */}
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                    {booking.slot?.mentor?.user?.name?.charAt(0).toUpperCase() || 'M'}
+                    {booking.mentor?.name?.charAt(0).toUpperCase() || 'M'}
                   </div>
                   <div>
                     <h3 className="font-semibold">
-                      {booking.slot?.mentor?.user?.name || 'Mentor'}
+                      {booking.mentor?.name || 'Mentor'}
                     </h3>
                     <p className="text-sm text-gray-600">
                       {booking.sessionType === 'ONE_ON_ONE' ? '1-on-1 Session' : 'Group Session'}
@@ -168,7 +168,7 @@ export default function BookingsPage() {
               {/* Additional Info */}
               <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span>💰 ₹{booking.amount}</span>
+                  <span>💰 ₹{booking.payment?.amount || 0}</span>
                   <span>📍 Booking ID: {booking.id.slice(0, 8)}...</span>
                 </div>
                 

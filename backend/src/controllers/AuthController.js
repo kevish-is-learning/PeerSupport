@@ -1,6 +1,6 @@
 import authService from "../services/AuthService.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/apiResponse.js";
+import { ApiError } from "../utils/apiError.js";
 class AuthController {
   // Register with Email/Password
   async register(req, res) {

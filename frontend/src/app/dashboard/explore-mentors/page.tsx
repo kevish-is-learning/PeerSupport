@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { menteeService, MentorWithProfile } from '@/services/mentee.service';
 
-export default function FindMentorsPage() {
+export default function ExploreMentorsPage() {
   const [mentors, setMentors] = useState<MentorWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -102,7 +102,7 @@ export default function FindMentorsPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold mb-2">Find Mentors</h1>
+        <h1 className="text-2xl font-bold mb-2">Explore Mentors</h1>
         <p className="text-gray-600">Connect with experienced mentors to guide your MBA journey</p>
       </div>
 

@@ -1,6 +1,6 @@
 import userService from "../services/UserService.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/apiResponse.js";
+import { ApiError } from "../utils/apiError.js";
 
 class UserController {
   // Get all users with pagination and filtering

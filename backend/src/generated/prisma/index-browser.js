@@ -147,6 +147,7 @@ exports.Prisma.MentorProfileScalarFieldEnum = {
   pricePerSession: 'pricePerSession',
   rating: 'rating',
   totalReviews: 'totalReviews',
+  verificationStatus: 'verificationStatus',
   verifiedBadge: 'verifiedBadge',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -217,6 +218,7 @@ exports.Prisma.BookingScalarFieldEnum = {
   sessionMode: 'sessionMode',
   sessionType: 'sessionType',
   purpose: 'purpose',
+  shareProfile: 'shareProfile',
   meetingLink: 'meetingLink',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

@@ -228,17 +228,18 @@ model Slot {
 ///////////////////////////
 
 model Booking {
-  id          String        @id @default(uuid())
-  mentorId    String
-  menteeId    String
-  slotId      String        @unique
-  status      BookingStatus @default(PENDING)
-  sessionMode SessionMode
-  sessionType SessionType   @default(ONE_ON_ONE)
-  purpose     String
-  meetingLink String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id           String        @id @default(uuid())
+  mentorId     String
+  menteeId     String
+  slotId       String        @unique
+  status       BookingStatus @default(PENDING)
+  sessionMode  SessionMode
+  sessionType  SessionType   @default(ONE_ON_ONE)
+  purpose      String
+  shareProfile Boolean       @default(false)
+  meetingLink  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   mentor   User     @relation("MentorBookings", fields: [mentorId], references: [id])
   mentee   User     @relation("MenteeBookings", fields: [menteeId], references: [id])
@@ -366,7 +367,7 @@ model VerificationDocument {
 }
 
 ///////////////////////////
-// CATEGORIES
+// CATEGORIES & BADGES
 ///////////////////////////
 
 model Category {
@@ -384,10 +385,6 @@ model Category {
   @@index([slug])
   @@index([sortOrder])
 }
-
-///////////////////////////
-// BADGES
-///////////////////////////
 
 model Badge {
   id          String   @id @default(uuid())

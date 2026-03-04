@@ -218,6 +218,7 @@ exports.Prisma.BookingScalarFieldEnum = {
   sessionMode: 'sessionMode',
   sessionType: 'sessionType',
   purpose: 'purpose',
+  shareProfile: 'shareProfile',
   meetingLink: 'meetingLink',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
