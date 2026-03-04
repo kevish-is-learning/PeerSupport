@@ -2,6 +2,7 @@
 
 import { useAuthStore } from '@/store/auth.store';
 import { Role } from '@/types';
+import MenteeDashboardContent from '@/components/MenteeDashboardContent';
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
@@ -42,34 +43,7 @@ export default function DashboardPage() {
           </div>
         );
       case Role.MENTEE:
-        return (
-          <div className="space-y-6">
-            <section className="border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold mb-4">Mentee Dashboard</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-4 rounded">
-                  <p className="text-sm text-gray-600">Upcoming Sessions</p>
-                  <p className="text-2xl font-bold mt-1">0</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded">
-                  <p className="text-sm text-gray-600">Completed Sessions</p>
-                  <p className="text-2xl font-bold mt-1">0</p>
-                </div>
-              </div>
-              <div className="mt-6">
-                <p className="text-sm text-gray-600 mb-2">Quick Actions</p>
-                <div className="flex gap-2">
-                  <button className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">
-                    Find Mentors
-                  </button>
-                  <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
-                    My Bookings
-                  </button>
-                </div>
-              </div>
-            </section>
-          </div>
-        );
+        return <MenteeDashboardContent />;
       case Role.ADMIN:
         return (
           <div className="space-y-6">

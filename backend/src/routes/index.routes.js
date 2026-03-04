@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
+import menteeRoutes from './mentee.routes.js';
 
 const router = Router();
 
@@ -51,5 +52,6 @@ router.get('/health', (_req, res) => {
 // Mount route groups
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
+router.use('/mentee', menteeRoutes);
 
 export default router;
