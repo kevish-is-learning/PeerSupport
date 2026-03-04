@@ -44,7 +44,6 @@ async function main() {
       pricePerSession: 2500,
       rating: 4.8,
       totalReviews: 25,
-      verificationStatus: 'APPROVED',
       verifiedBadge: true,
     },
     {
@@ -56,7 +55,6 @@ async function main() {
       pricePerSession: 3000,
       rating: 4.9,
       totalReviews: 42,
-      verificationStatus: 'APPROVED',
       verifiedBadge: true,
     },
     {
@@ -68,7 +66,6 @@ async function main() {
       pricePerSession: 2000,
       rating: 4.7,
       totalReviews: 18,
-      verificationStatus: 'APPROVED',
       verifiedBadge: true,
     },
     {
@@ -80,7 +77,6 @@ async function main() {
       pricePerSession: 1500,
       rating: 4.6,
       totalReviews: 33,
-      verificationStatus: 'APPROVED',
       verifiedBadge: true,
     },
     {
@@ -92,7 +88,6 @@ async function main() {
       pricePerSession: 1000,
       rating: 0,
       totalReviews: 0,
-      verificationStatus: 'PENDING',
       verifiedBadge: false,
     },
   ];
@@ -117,7 +112,6 @@ async function main() {
             pricePerSession: mentorInfo.pricePerSession,
             rating: mentorInfo.rating,
             totalReviews: mentorInfo.totalReviews,
-            verificationStatus: mentorInfo.verificationStatus,
             verifiedBadge: mentorInfo.verifiedBadge,
           },
         },

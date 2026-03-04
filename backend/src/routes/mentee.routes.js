@@ -13,7 +13,7 @@ router.get('/dashboard/stats', menteeController.getDashboardStats);
 
 // Mentors
 router.get('/mentors', menteeController.getAllMentors);
-router.get('/mentors/:mentorId', menteeController.getMentorById);
+router.get('/mentors/:mentorId', menteeController.getMentorById); 
 
 // Bookings
 router.get('/bookings', menteeController.getMyBookings);

@@ -16,7 +16,6 @@ class MenteeController {
         isActive: true,
         mentorProfile: {
           isNot: null,
-          verificationStatus: 'APPROVED',
         },
       };
 
@@ -69,6 +68,7 @@ class MenteeController {
         })
       );
     } catch (error) {
+      console.log("-------",error)
       res.status(500).json(
         new ApiError(500, "Failed to retrieve mentors", error.message)
       );

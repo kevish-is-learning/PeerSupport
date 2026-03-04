@@ -45,7 +45,7 @@ export default function MenteeDashboardContent() {
         profileService.getCurrentProfile().catch(() => null),
         menteeService.getMyBookings({ status: 'CONFIRMED', limit: 5 }).catch(() => ({ data: { bookings: [], pagination: {} } })),
         menteeService.getMyBookings({ status: 'COMPLETED', limit: 5 }).catch(() => ({ data: { bookings: [], pagination: {} } })),
-        menteeService.getAllMentors({ limit: 6 }).catch(() => ({ data: { mentors: [], pagination: {} } })),
+        menteeService.getAllMentors({ limit: 5 }).catch(() => ({ data: { mentors: [], pagination: {} } })),
         menteeService.getAllWebinars({ limit: 3 }).catch(() => ({ data: { webinars: [], pagination: {} } })),
         menteeService.getNotifications({ limit: 5 }).catch(() => ({ data: { notifications: [], unreadCount: 0, pagination: {} } })),
         applicationService.getMyApplication().catch(() => ({ data: null })),

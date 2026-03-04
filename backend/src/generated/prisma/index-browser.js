@@ -147,7 +147,6 @@ exports.Prisma.MentorProfileScalarFieldEnum = {
   pricePerSession: 'pricePerSession',
   rating: 'rating',
   totalReviews: 'totalReviews',
-  verificationStatus: 'verificationStatus',
   verifiedBadge: 'verifiedBadge',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

@@ -20,7 +20,7 @@ export default function RegisterPage() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isInitialized && isAuthenticated) {
-      router.push('/dashboard');
+      router.push('/select-role');
     }
   }, [isAuthenticated, isInitialized, router]);
 
@@ -57,7 +57,7 @@ export default function RegisterPage() {
 
     try {
       await register(formData);
-      router.push('/dashboard');
+      router.push('/select-role');
     } catch (err) {
       // Error is handled by the store
     }
