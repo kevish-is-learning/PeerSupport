@@ -1,61 +1,33 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
 import { Role } from '@/types';
 import MenteeDashboardContent from '@/components/MenteeDashboardContent';
 import Link from 'next/link';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { user } = useAuthStore();
 
-  const getMentorDashboard = () => (
-    <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-          <p className="text-sm text-gray-600 mb-1">Upcoming Sessions</p>
-          <p className="text-3xl font-bold text-blue-600">0</p>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-          <p className="text-sm text-gray-600 mb-1">Total Earnings</p>
-          <p className="text-3xl font-bold text-green-600">₹0</p>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-          <p className="text-sm text-gray-600 mb-1">Total Sessions</p>
-          <p className="text-3xl font-bold">0</p>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-          <p className="text-sm text-gray-600 mb-1">Rating</p>
-          <p className="text-3xl font-bold text-yellow-600">-</p>
-        </div>
-      </div>
+  // Redirect mentors to their specific dashboard
+  useEffect(() => {
+    if (user?.role === Role.MENTOR) {
+      router.push('/dashboard/mentor');
+    }
+  }, [user, router]);
 
-      {/* Quick Actions */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-        <div className="flex flex-wrap gap-3">
-          <button className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-            Manage Availability
-          </button>
-          <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-            View Bookings
-          </button>
-          <button className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-            Edit Profile
-          </button>
-        </div>
+  // Show loading while redirecting mentors
+  if (user?.role === Role.MENTOR) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
       </div>
+    );
+  }
 
-      {/* Upcoming Sessions */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        <h2 className="text-lg font-semibold mb-4">Upcoming Sessions</h2>
-        <div className="text-center py-8 text-gray-500">
-          <p className="text-4xl mb-2">📅</p>
-          <p>No upcoming sessions</p>
-        </div>
-      </div>
-    </div>
-  );
+  const getMentorDashboard = () => null; // Mentors are redirected to /dashboard/mentor
 
   const getAdminDashboard = () => (
     <div className="space-y-6">

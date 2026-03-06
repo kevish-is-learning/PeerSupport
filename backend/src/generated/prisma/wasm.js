@@ -142,6 +142,7 @@ exports.Prisma.MentorProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   bio: 'bio',
+  headline: 'headline',
   expertise: 'expertise',
   certifications: 'certifications',
   pricePerSession: 'pricePerSession',
@@ -149,6 +150,23 @@ exports.Prisma.MentorProfileScalarFieldEnum = {
   totalReviews: 'totalReviews',
   verificationStatus: 'verificationStatus',
   verifiedBadge: 'verifiedBadge',
+  phone: 'phone',
+  location: 'location',
+  socialLinks: 'socialLinks',
+  education10th: 'education10th',
+  education12th: 'education12th',
+  bachelors: 'bachelors',
+  masters: 'masters',
+  workExperience: 'workExperience',
+  catScore: 'catScore',
+  catYear: 'catYear',
+  catPercentile: 'catPercentile',
+  reschedulePolicy: 'reschedulePolicy',
+  cancellationPolicy: 'cancellationPolicy',
+  refundPolicy: 'refundPolicy',
+  balance: 'balance',
+  totalEarnings: 'totalEarnings',
+  pendingEarnings: 'pendingEarnings',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -181,12 +199,26 @@ exports.Prisma.MentorApplicationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   bio: 'bio',
+  headline: 'headline',
+  phone: 'phone',
+  location: 'location',
+  socialLinks: 'socialLinks',
   expertise: 'expertise',
+  education10th: 'education10th',
+  education12th: 'education12th',
+  bachelors: 'bachelors',
+  masters: 'masters',
+  workExperience: 'workExperience',
+  catScore: 'catScore',
+  catYear: 'catYear',
+  catPercentile: 'catPercentile',
   certifications: 'certifications',
+  resumes: 'resumes',
   pricePerSession: 'pricePerSession',
   status: 'status',
   rejectionReason: 'rejectionReason',
   reviewedAt: 'reviewedAt',
+  reviewedBy: 'reviewedBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -194,6 +226,14 @@ exports.Prisma.MentorApplicationScalarFieldEnum = {
 exports.Prisma.ResumeScalarFieldEnum = {
   id: 'id',
   menteeId: 'menteeId',
+  name: 'name',
+  fileUrl: 'fileUrl',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MentorResumeScalarFieldEnum = {
+  id: 'id',
+  mentorId: 'mentorId',
   name: 'name',
   fileUrl: 'fileUrl',
   createdAt: 'createdAt'
@@ -220,6 +260,15 @@ exports.Prisma.BookingScalarFieldEnum = {
   purpose: 'purpose',
   shareProfile: 'shareProfile',
   meetingLink: 'meetingLink',
+  rescheduledFrom: 'rescheduledFrom',
+  rescheduledAt: 'rescheduledAt',
+  rescheduledBy: 'rescheduledBy',
+  rescheduleReason: 'rescheduleReason',
+  cancelledAt: 'cancelledAt',
+  cancelledBy: 'cancelledBy',
+  cancellationReason: 'cancellationReason',
+  refundInitiated: 'refundInitiated',
+  mentorNotes: 'mentorNotes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -257,6 +306,68 @@ exports.Prisma.EarningsScalarFieldEnum = {
   mentorId: 'mentorId',
   bookingId: 'bookingId',
   amount: 'amount',
+  platformFee: 'platformFee',
+  netAmount: 'netAmount',
+  status: 'status',
+  clearedAt: 'clearedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  mentorId: 'mentorId',
+  type: 'type',
+  amount: 'amount',
+  balanceBefore: 'balanceBefore',
+  balanceAfter: 'balanceAfter',
+  status: 'status',
+  reference: 'reference',
+  description: 'description',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.WithdrawalScalarFieldEnum = {
+  id: 'id',
+  mentorId: 'mentorId',
+  amount: 'amount',
+  status: 'status',
+  bankDetails: 'bankDetails',
+  upiId: 'upiId',
+  paymentMethod: 'paymentMethod',
+  processedAt: 'processedAt',
+  rejectionReason: 'rejectionReason',
+  transactionRef: 'transactionRef',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PayoutScalarFieldEnum = {
+  id: 'id',
+  mentorId: 'mentorId',
+  amount: 'amount',
+  status: 'status',
+  paymentMethod: 'paymentMethod',
+  transactionRef: 'transactionRef',
+  processedBy: 'processedBy',
+  processedAt: 'processedAt',
+  failureReason: 'failureReason',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.IncentiveScalarFieldEnum = {
+  id: 'id',
+  mentorId: 'mentorId',
+  type: 'type',
+  title: 'title',
+  description: 'description',
+  amount: 'amount',
+  status: 'status',
+  criteria: 'criteria',
+  expiresAt: 'expiresAt',
+  claimedAt: 'claimedAt',
   createdAt: 'createdAt'
 };
 
@@ -333,6 +444,11 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -341,6 +457,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.Role = exports.$Enums.Role = {
   MENTOR: 'MENTOR',
@@ -393,6 +515,36 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   REFUNDED: 'REFUNDED'
 };
 
+exports.TransactionStatus = exports.$Enums.TransactionStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.TransactionType = exports.$Enums.TransactionType = {
+  EARNING: 'EARNING',
+  WITHDRAWAL: 'WITHDRAWAL',
+  PAYOUT: 'PAYOUT',
+  REFUND: 'REFUND',
+  INCENTIVE: 'INCENTIVE',
+  PLATFORM_FEE: 'PLATFORM_FEE'
+};
+
+exports.WithdrawalStatus = exports.$Enums.WithdrawalStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  REJECTED: 'REJECTED'
+};
+
+exports.PayoutStatus = exports.$Enums.PayoutStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
 exports.WebinarType = exports.$Enums.WebinarType = {
   FREE: 'FREE',
   PAID: 'PAID'
@@ -405,12 +557,17 @@ exports.Prisma.ModelName = {
   AdminProfile: 'AdminProfile',
   MentorApplication: 'MentorApplication',
   Resume: 'Resume',
+  MentorResume: 'MentorResume',
   Slot: 'Slot',
   Booking: 'Booking',
   Payment: 'Payment',
   Review: 'Review',
   MentorFeedback: 'MentorFeedback',
   Earnings: 'Earnings',
+  Transaction: 'Transaction',
+  Withdrawal: 'Withdrawal',
+  Payout: 'Payout',
+  Incentive: 'Incentive',
   Webinar: 'Webinar',
   WebinarRegistration: 'WebinarRegistration',
   Notification: 'Notification',

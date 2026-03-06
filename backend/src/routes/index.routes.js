@@ -3,6 +3,7 @@ import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import menteeRoutes from './mentee.routes.js';
+import mentorRoutes from './mentor.routes.js';
 import paymentRoutes from './payment.routes.js';
 
 const router = Router();
@@ -20,6 +21,20 @@ router.get('/', (req, res) => {
         updateProfile: 'PUT /api/auth/profile',
         changePassword: 'POST /api/auth/change-password',
         logout: 'POST /api/auth/logout',
+      },
+      mentor: {
+        apply: 'POST /api/mentor/apply',
+        updateApplication: 'PUT /api/mentor/apply',
+        getApplication: 'GET /api/mentor/application/my',
+        profile: 'GET /api/mentor/profile',
+        updateProfile: 'PUT /api/mentor/profile',
+        dashboard: 'GET /api/mentor/dashboard',
+        slots: 'GET/POST /api/mentor/slots',
+        bookings: 'GET /api/mentor/bookings',
+        earnings: 'GET /api/mentor/earnings',
+        withdrawals: 'GET/POST /api/mentor/withdrawals',
+        incentives: 'GET /api/mentor/incentives',
+        ratings: 'GET /api/mentor/ratings',
       },
       users: {
         getCurrentUser: 'GET /api/users/me',
@@ -54,6 +69,7 @@ router.get('/health', (_req, res) => {
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/mentee', menteeRoutes);
+router.use('/mentor', mentorRoutes);
 router.use('/payments', paymentRoutes);
 
 export default router;

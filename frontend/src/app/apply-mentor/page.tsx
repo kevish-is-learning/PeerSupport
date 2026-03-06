@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
-import ApplyAsMentorForm from '@/components/ApplyAsMentorForm';
+import MentorApplicationForm from '@/components/MentorApplicationForm';
 
 export default function ApplyAsMentorPage() {
   const router = useRouter();
@@ -14,9 +14,9 @@ export default function ApplyAsMentorPage() {
       router.push('/login');
     }
 
-    // If user is already a mentor, redirect to profile
-    if (user?.role === 'MENTOR') {
-      router.push('/profile');
+    // If user is already a mentor with approved status, redirect to dashboard
+    if (user?.role === 'MENTOR' && user?.verificationStatus === 'APPROVED') {
+      router.push('/dashboard');
     }
   }, [user, isLoading, router]);
 
@@ -33,8 +33,14 @@ export default function ApplyAsMentorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <ApplyAsMentorForm />
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">Apply as a Mentor</h1>
+        <p className="text-gray-600 mt-2">
+          Share your expertise and help others achieve their goals. Complete the application below to become a mentor.
+        </p>
+      </div>
+      <MentorApplicationForm />
     </div>
   );
 }
