@@ -175,14 +175,18 @@ exports.Prisma.MenteeProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   dob: 'dob',
+  phone: 'phone',
+  location: 'location',
+  gender: 'gender',
   education10th: 'education10th',
   education12th: 'education12th',
   bachelors: 'bachelors',
   masters: 'masters',
   workExperience: 'workExperience',
   certifications: 'certifications',
-  catScore: 'catScore',
+  catAttempts: 'catAttempts',
   expectations: 'expectations',
+  targetColleges: 'targetColleges',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -223,7 +227,7 @@ exports.Prisma.MentorApplicationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ResumeScalarFieldEnum = {
+exports.Prisma.MenteeResumeScalarFieldEnum = {
   id: 'id',
   menteeId: 'menteeId',
   name: 'name',
@@ -476,6 +480,12 @@ exports.VerificationStatus = exports.$Enums.VerificationStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.Gender = exports.$Enums.Gender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER'
+};
+
 exports.ApplicationStatus = exports.$Enums.ApplicationStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -556,7 +566,7 @@ exports.Prisma.ModelName = {
   MenteeProfile: 'MenteeProfile',
   AdminProfile: 'AdminProfile',
   MentorApplication: 'MentorApplication',
-  Resume: 'Resume',
+  MenteeResume: 'MenteeResume',
   MentorResume: 'MentorResume',
   Slot: 'Slot',
   Booking: 'Booking',

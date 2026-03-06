@@ -18,6 +18,12 @@ enum Role {
   ADMIN
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
 enum SlotStatus {
   AVAILABLE
   BOOKED
@@ -149,10 +155,8 @@ model MentorProfile {
   verifiedBadge      Boolean            @default(false)
 
   // Personal Details
-  phone    String?
-  location String?
-
-  // Social Links (max 5 stored as JSON array)
+  phone       String?
+  location    String?
   socialLinks Json? // [{platform: string, url: string}]
 
   // Education
@@ -204,19 +208,23 @@ model MenteeProfile {
   id             String    @id @default(uuid())
   userId         String    @unique
   dob            DateTime?
+  phone          String?
+  location       String?
+  gender         Gender?
   education10th  String[]
   education12th  String[]
   bachelors      String[]
   masters        String[]
   workExperience String?
   certifications String[]
-  catScore       Float?
+  catAttempts    Json? // [{year, score, percentile}]
   expectations   String?
+  targetColleges String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  user    User     @relation(fields: [userId], references: [id])
-  resumes Resume[]
+  user    User           @relation(fields: [userId], references: [id])
+  resumes MenteeResume[]
 }
 
 ///////////////////////////
@@ -293,7 +301,7 @@ model MentorApplication {
 // DOCUMENTS
 ///////////////////////////
 
-model Resume {
+model MenteeResume {
   id        String   @id @default(uuid())
   menteeId  String
   name      String
