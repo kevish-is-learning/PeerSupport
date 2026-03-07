@@ -113,19 +113,21 @@ Include JWT token in Authorization header:
 Authorization: Bearer <your-jwt-token>
 ```
 
-#### Get Profile
+#### Get Profile (Role-based)
 ```http
-GET /api/auth/profile
+GET /api/users/me
 ```
+Returns user info and role-specific profile (mentee, mentor, or admin profile).
 
-#### Update Profile
+#### Update Profile (Role-based)
 ```http
-PUT /api/auth/profile
+PUT /api/users/me
 Content-Type: application/json
 
 {
-  "name": "Updated Name",
-  "profilePicture": "https://example.com/image.jpg"
+  "bio": "Updated bio",
+  "skills": ["JavaScript", "React"],
+  ... (other role-specific fields)
 }
 ```
 

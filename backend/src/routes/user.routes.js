@@ -8,13 +8,10 @@ const router = express.Router();
 router.get('/check-email', userController.checkEmailExists);
 
 // Protected routes (authenticated users)
-router.get('/me', authenticateJWT, userController.getCurrentUser);
-router.put('/me', authenticateJWT, userController.updateCurrentUser);
-
-// Profile Routes - Role-based (Get profile returns data according to role)
-router.get('/profile/me', authenticateJWT, userController.getCurrentUserProfile);
-router.put('/profile/me', authenticateJWT, userController.updateCurrentUserProfile);
-router.delete('/profile/me', authenticateJWT, userController.deleteCurrentUserProfile);
+// Get current user profile by role (mentee, mentor, or admin profile)
+router.get('/me', authenticateJWT, userController.getCurrentUserProfile);
+router.put('/me', authenticateJWT, userController.updateCurrentUserProfile);
+router.delete('/me', authenticateJWT, userController.deleteCurrentUserProfile);
 
 // Mentee Profile Routes
 router.post('/profile/mentee', authenticateJWT, authorizeRoles('MENTEE', 'ADMIN'), userController.createOrUpdateMenteeProfile);

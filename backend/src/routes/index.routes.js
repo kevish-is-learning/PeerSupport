@@ -17,8 +17,6 @@ router.get('/', (req, res) => {
         register: 'POST /api/auth/register',
         login: 'POST /api/auth/login',
         googleAuth: 'GET /api/auth/google',
-        profile: 'GET /api/auth/profile',
-        updateProfile: 'PUT /api/auth/profile',
         changePassword: 'POST /api/auth/change-password',
         logout: 'POST /api/auth/logout',
       },

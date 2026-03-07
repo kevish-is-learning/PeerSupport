@@ -32,10 +32,6 @@ router.get('/google/failure', (req, res) => {
   });
 });
 
-router.get('/profile', authenticateJWT, authController.getProfile);
-
-router.put('/profile', authenticateJWT, authController.updateProfile);
-
 router.post('/change-password', authenticateJWT, authController.changePassword);
 
 router.post('/logout', authenticateJWT, authController.logout);

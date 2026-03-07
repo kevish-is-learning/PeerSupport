@@ -282,16 +282,16 @@
             <!-- Get Profile -->
             <div class="endpoint">
                 <div class="endpoint-title">
-                    <span class="method">GET</span> /api/auth/profile 🔒
+                    <span class="method">GET</span> /api/users/me 🔒
                 </div>
-                <button onclick="getProfile()">Get Profile</button>
+                <button onclick="getProfile()">Get Profile (Role-based)</button>
                 <div id="profile-response" class="response" style="display:none;"></div>
             </div>
 
             <!-- Update Profile -->
             <div class="endpoint">
                 <div class="endpoint-title">
-                    <span class="method">PUT</span> /api/auth/profile 🔒
+                    <span class="method">PUT</span> /api/users/me 🔒
                 </div>
                 <div class="form-group">
                     <label>Full Name:</label>
@@ -593,7 +593,7 @@
         // Check auth status by calling profile endpoint
         async function checkAuthStatus() {
             try {
-                const response = await fetch(`${API_BASE}/auth/profile`, {
+                const response = await fetch(`${API_BASE}/users/me`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {
@@ -694,7 +694,7 @@
         }
 
         async function getProfile() {
-            const { data, status } = await makeRequest('/auth/profile', 'GET', null);
+            const { data, status } = await makeRequest('/users/me', 'GET', null);
             showResponse('profile-response', data, status);
         }
 
@@ -703,7 +703,7 @@
                 fullName: document.getElementById('update-fullname').value,
                 phone: document.getElementById('update-phone').value,
             };
-            const { data, status } = await makeRequest('/auth/profile', 'PUT', body);
+            const { data, status } = await makeRequest('/users/me', 'PUT', body);
             showResponse('update-profile-response', data, status);
         }
 
