@@ -44,6 +44,7 @@ router.delete('/resumes/:resumeId', authenticateJWT, authorizeRoles('MENTEE', 'A
 
 // Mentor Application Routes
 router.post('/mentor-applications', authenticateJWT, userController.submitMentorApplication);
+router.put('/mentor-applications', authenticateJWT, userController.updateMentorApplication);
 router.get('/mentor-applications/my', authenticateJWT, userController.getMyMentorApplication);
 router.get('/mentor-applications', authenticateJWT, adminOnly, userController.getAllMentorApplications);
 router.get('/mentor-applications/:applicationId', authenticateJWT, adminOnly, userController.getMentorApplicationById);

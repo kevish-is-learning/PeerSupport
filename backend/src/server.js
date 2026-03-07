@@ -7,7 +7,6 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import session from 'express-session';
 import passport from './config/passport.js';
-import logger from './config/logger.js';
 
 import { connectDatabase } from './config/database.js';
 import routes from "./routes/index.routes.js";
@@ -31,7 +30,10 @@ app.use(
 );
 app.use(compression());
 app.use(cookieParser());
-app.use(morgan('combined', { stream: logger.stream }));
+
+// HTTP request logging
+app.use(morgan('dev'));
+
 // Session configuration (required for Passport)
 app.use(
   session({
@@ -64,7 +66,12 @@ app.use((req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-  logger.error('Error:', { message: err.message, stack: err.stack, status: err.status });
+  console.error('Error:', {
+    message: err.message,
+    stack: err.stack,
+    status: err.status,
+    timestamp: new Date().toISOString()
+  });
   res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal server error',
@@ -80,12 +87,16 @@ const startServer = async () => {
 
     // Start Express server
     app.listen(PORT, () => {
-      logger.info(`🚀 Server running on port ${PORT}`);
-      logger.info(`📍 API available at http://localhost:${PORT}`);
-      logger.info(`🔐 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📍 API available at http://localhost:${PORT}`);
+      console.log(`🔐 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
   } catch (error) {
-    logger.error('Failed to start server:', { message: error.message, stack: error.stack });
+    console.error('Failed to start server:', {
+      message: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
     process.exit(1);
   }
 };

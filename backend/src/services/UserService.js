@@ -844,6 +844,44 @@ class UserService {
     return application;
   }
 
+  // Update mentor application (only if PENDING or REJECTED)
+  async updateMentorApplication(userId, applicationData) {
+    const { bio, expertise, certifications, pricePerSession } = applicationData;
+
+    // Find the user's most recent application that can be edited
+    const application = await prisma.mentorApplication.findFirst({
+      where: {
+        userId,
+        status: { in: ['PENDING', 'REJECTED'] },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!application) {
+      throw new Error('No editable application found. You can only update pending or rejected applications.');
+    }
+
+    // Update the application
+    const updatedApplication = await prisma.mentorApplication.update({
+      where: { id: application.id },
+      data: {
+        bio: bio !== undefined ? bio : application.bio,
+        expertise: expertise !== undefined ? expertise : application.expertise,
+        certifications: certifications !== undefined ? certifications : application.certifications,
+        pricePerSession: pricePerSession !== undefined ? parseFloat(pricePerSession) : application.pricePerSession,
+        status: 'PENDING', // Reset to pending if it was rejected
+        updatedAt: new Date(),
+      },
+      include: {
+        user: {
+          select: this.userSelect,
+        },
+      },
+    });
+
+    return updatedApplication;
+  }
+
   // Get all mentor applications (admin only) with filtering
   async getAllMentorApplications({ page = 1, limit = 10, status }) {
     const skip = (page - 1) * limit;

@@ -5,30 +5,14 @@ import { authenticateJWT, adminOnly, authorizeRoles } from '../middleware/auth.j
 const router = express.Router();
 
 ///////////////////////////
-// APPLICATION ROUTES (Any authenticated user can apply)
+// NOTE: Mentor application and profile routes have been moved to user.routes.js
+// to avoid duplication. Use the following routes instead:
+// - POST /api/users/mentor-applications (submit application)
+// - PUT /api/users/mentor-applications (update application)
+// - GET /api/users/mentor-applications/my (get my application)
+// - GET /api/users/profile/mentor (get mentor profile)
+// - PUT /api/users/profile/mentor/:userId (update mentor profile)
 ///////////////////////////
-
-// Submit mentor application
-router.post('/apply', authenticateJWT, mentorController.submitApplication);
-
-// Update mentor application (only if pending/rejected)
-router.put('/apply', authenticateJWT, mentorController.updateApplication);
-
-// Get my mentor application
-router.get('/application/my', authenticateJWT, mentorController.getMyApplication);
-
-// Approve application (admin only)
-router.patch('/application/:applicationId/approve', authenticateJWT, adminOnly, mentorController.approveApplication);
-
-///////////////////////////
-// PROFILE ROUTES (Mentor only)
-///////////////////////////
-
-// Get mentor profile
-router.get('/profile', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getProfile);
-
-// Update mentor profile
-router.put('/profile', authenticateJWT, authorizeRoles('MENTOR'), mentorController.updateProfile);
 
 // Check if mentor can accept bookings
 router.get('/can-accept-bookings', authenticateJWT, authorizeRoles('MENTOR'), mentorController.canAcceptBookings);

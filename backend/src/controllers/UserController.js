@@ -586,6 +586,28 @@ class UserController {
     }
   }
 
+  // Update mentor application (user)
+  async updateMentorApplication(req, res) {
+    try {
+      const { bio, expertise, certifications, pricePerSession } = req.body;
+
+      const application = await userService.updateMentorApplication(req.user.id, {
+        bio,
+        expertise,
+        certifications,
+        pricePerSession,
+      });
+
+      res
+        .status(200)
+        .json(new ApiResponse(true, "Mentor application updated successfully", application));
+    } catch (error) {
+      res
+        .status(400)
+        .json(new ApiError(400, "Failed to update application", error.message));
+    }
+  }
+
   // Get all mentor applications (admin only)
   async getAllMentorApplications(req, res) {
     try {

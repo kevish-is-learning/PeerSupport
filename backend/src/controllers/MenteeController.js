@@ -109,11 +109,79 @@ class MenteeController {
       }
 
       res.status(200).json(
-        new ApiResponse(true, "Mentor retrieved successfully", mentor)
+        new ApiResponse(true, "Mentor retrieved successfully", { mentor })
       );
     } catch (error) {
       res.status(500).json(
         new ApiError(500, "Failed to retrieve mentor", error.message)
+      );
+    }
+  }
+
+  // Get mentor slots
+  async getMentorSlots(req, res) {
+    try {
+      const { mentorId } = req.params;
+
+      const slots = await prisma.slot.findMany({
+        where: {
+          mentorId,
+          status: 'AVAILABLE',
+          startTime: {
+            gte: new Date(),
+          },
+        },
+        orderBy: {
+          startTime: 'asc',
+        },
+      });
+
+      res.status(200).json(
+        new ApiResponse(true, "Slots retrieved successfully", { slots })
+      );
+    } catch (error) {
+      res.status(500).json(
+        new ApiError(500, "Failed to retrieve slots", error.message)
+      );
+    }
+  }
+
+  // Get mentor reviews
+  async getMentorReviews(req, res) {
+    try {
+      const { mentorId } = req.params;
+
+      const reviews = await prisma.review.findMany({
+        where: {
+          booking: {
+            mentorId,
+          },
+        },
+        include: {
+          booking: {
+            include: {
+              mentee: {
+                select: {
+                  id: true,
+                  name: true,
+                  profilePicture: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: 20,
+      });
+
+      res.status(200).json(
+        new ApiResponse(true, "Reviews retrieved successfully", { reviews })
+      );
+    } catch (error) {
+      res.status(500).json(
+        new ApiError(500, "Failed to retrieve reviews", error.message)
       );
     }
   }
