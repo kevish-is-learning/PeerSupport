@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../config/database.js';
+import { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema } from '../validators/auth.validator.js';
 
 class AuthService {
   // Generate JWT Token
@@ -13,15 +14,9 @@ class AuthService {
   }
 
   // Register with Email/Password
-  async register({ email, password, name }) {
-    // Validate input
-    if (!email || !password) {
-      throw new Error('Email and password are required');
-    }
-
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters long');
-    }
+  async register(data) {
+    // Validate input using Zod
+    const { email, password, name } = registerSchema.parse(data);
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -65,10 +60,9 @@ class AuthService {
   }
 
   // Login with Email/Password
-  async login({ email, password }) {
-    if (!email || !password) {
-      throw new Error('Email and password are required');
-    }
+  async login(data) {
+    // Validate input using Zod
+    const { email, password } = loginSchema.parse(data);
 
     // Find user
     const user = await prisma.user.findUnique({
@@ -125,7 +119,10 @@ class AuthService {
   }
 
   // Update user profile
-  async updateProfile(userId, { name, profilePicture }) {
+  async updateProfile(userId, data) {
+    // Validate input using Zod
+    const { name, profilePicture } = updateProfileSchema.parse(data);
+    
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -149,7 +146,10 @@ class AuthService {
   }
 
   // Change password (for local users only)
-  async changePassword(userId, { currentPassword, newPassword }) {
+  async changePassword(userId, data) {
+    // Validate input using Zod
+    const { currentPassword, newPassword } = changePasswordSchema.parse(data);
+    
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -166,10 +166,6 @@ class AuthService {
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
       throw new Error('Current password is incorrect');
-    }
-
-    if (newPassword.length < 6) {
-      throw new Error('New password must be at least 6 characters long');
     }
 
     // Hash new password

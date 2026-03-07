@@ -1,4 +1,9 @@
 import { prisma } from '../config/database.js';
+import { 
+  submitMentorApplicationSchema, 
+  updateMentorApplicationSchema, 
+  updateMentorProfileSchema 
+} from '../validators/mentor.validator.js';
 
 class MentorService {
   // Platform fee percentage (can be configured)
@@ -23,6 +28,9 @@ class MentorService {
 
   // Submit mentor application with all steps
   async submitMentorApplication(userId, applicationData) {
+    // Validate input using Zod
+    const validatedData = submitMentorApplicationSchema.parse(applicationData);
+    
     const {
       // Step 1: Personal Details & Social Links
       bio,
@@ -56,17 +64,7 @@ class MentorService {
       
       // Pricing
       pricePerSession,
-    } = applicationData;
-
-    // Validate required fields
-    if (!bio || !expertise || expertise.length === 0 || !pricePerSession) {
-      throw new Error('Bio, expertise, and price per session are required');
-    }
-
-    // Validate social links (max 5)
-    if (socialLinks && socialLinks.length > 5) {
-      throw new Error('Maximum 5 social links allowed');
-    }
+    } = validatedData;
 
     // Check if user already has a pending/approved application
     const existingApplication = await prisma.mentorApplication.findFirst({
@@ -128,6 +126,9 @@ class MentorService {
 
   // Update existing application (only if PENDING or REJECTED)
   async updateMentorApplication(userId, applicationData) {
+    // Validate input using Zod (partial validation for updates)
+    const validatedData = updateMentorApplicationSchema.parse(applicationData);
+    
     const application = await prisma.mentorApplication.findFirst({
       where: {
         userId,
@@ -140,15 +141,10 @@ class MentorService {
       throw new Error('No editable application found');
     }
 
-    // Validate social links (max 5)
-    if (applicationData.socialLinks && applicationData.socialLinks.length > 5) {
-      throw new Error('Maximum 5 social links allowed');
-    }
-
     const updatedApplication = await prisma.mentorApplication.update({
       where: { id: application.id },
       data: {
-        ...applicationData,
+        ...validatedData,
         status: 'PENDING', // Reset to pending if it was rejected
         updatedAt: new Date(),
       },
@@ -289,6 +285,9 @@ class MentorService {
 
   // Update mentor profile
   async updateMentorProfile(userId, profileData) {
+    // Validate input using Zod
+    const validatedData = updateMentorProfileSchema.parse(profileData);
+    
     const profile = await prisma.mentorProfile.findUnique({
       where: { userId },
     });
@@ -297,33 +296,28 @@ class MentorService {
       throw new Error('Mentor profile not found');
     }
 
-    // Validate social links (max 5)
-    if (profileData.socialLinks && profileData.socialLinks.length > 5) {
-      throw new Error('Maximum 5 social links allowed');
-    }
-
     const updatedProfile = await prisma.mentorProfile.update({
       where: { userId },
       data: {
-        ...(profileData.bio !== undefined && { bio: profileData.bio }),
-        ...(profileData.headline !== undefined && { headline: profileData.headline }),
-        ...(profileData.phone !== undefined && { phone: profileData.phone }),
-        ...(profileData.location !== undefined && { location: profileData.location }),
-        ...(profileData.socialLinks !== undefined && { socialLinks: profileData.socialLinks }),
-        ...(profileData.expertise !== undefined && { expertise: profileData.expertise }),
-        ...(profileData.certifications !== undefined && { certifications: profileData.certifications }),
-        ...(profileData.pricePerSession !== undefined && { pricePerSession: profileData.pricePerSession }),
-        ...(profileData.reschedulePolicy !== undefined && { reschedulePolicy: profileData.reschedulePolicy }),
-        ...(profileData.cancellationPolicy !== undefined && { cancellationPolicy: profileData.cancellationPolicy }),
-        ...(profileData.refundPolicy !== undefined && { refundPolicy: profileData.refundPolicy }),
-        ...(profileData.workExperience !== undefined && { workExperience: profileData.workExperience }),
-        ...(profileData.education10th !== undefined && { education10th: profileData.education10th }),
-        ...(profileData.education12th !== undefined && { education12th: profileData.education12th }),
-        ...(profileData.bachelors !== undefined && { bachelors: profileData.bachelors }),
-        ...(profileData.masters !== undefined && { masters: profileData.masters }),
-        ...(profileData.catScore !== undefined && { catScore: profileData.catScore }),
-        ...(profileData.catYear !== undefined && { catYear: profileData.catYear }),
-        ...(profileData.catPercentile !== undefined && { catPercentile: profileData.catPercentile }),
+        ...(validatedData.bio !== undefined && { bio: validatedData.bio }),
+        ...(validatedData.headline !== undefined && { headline: validatedData.headline }),
+        ...(validatedData.phone !== undefined && { phone: validatedData.phone }),
+        ...(validatedData.location !== undefined && { location: validatedData.location }),
+        ...(validatedData.socialLinks !== undefined && { socialLinks: validatedData.socialLinks }),
+        ...(validatedData.expertise !== undefined && { expertise: validatedData.expertise }),
+        ...(validatedData.certifications !== undefined && { certifications: validatedData.certifications }),
+        ...(validatedData.pricePerSession !== undefined && { pricePerSession: validatedData.pricePerSession }),
+        ...(validatedData.reschedulePolicy !== undefined && { reschedulePolicy: validatedData.reschedulePolicy }),
+        ...(validatedData.cancellationPolicy !== undefined && { cancellationPolicy: validatedData.cancellationPolicy }),
+        ...(validatedData.refundPolicy !== undefined && { refundPolicy: validatedData.refundPolicy }),
+        ...(validatedData.workExperience !== undefined && { workExperience: validatedData.workExperience }),
+        ...(validatedData.education10th !== undefined && { education10th: validatedData.education10th }),
+        ...(validatedData.education12th !== undefined && { education12th: validatedData.education12th }),
+        ...(validatedData.bachelors !== undefined && { bachelors: validatedData.bachelors }),
+        ...(validatedData.masters !== undefined && { masters: validatedData.masters }),
+        ...(validatedData.catScore !== undefined && { catScore: validatedData.catScore }),
+        ...(validatedData.catYear !== undefined && { catYear: validatedData.catYear }),
+        ...(validatedData.catPercentile !== undefined && { catPercentile: validatedData.catPercentile }),
       },
       include: {
         user: {

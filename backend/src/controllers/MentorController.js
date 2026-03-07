@@ -1,6 +1,7 @@
 import mentorService from "../services/MentorService.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
+import { createSlotsSchema } from "../validators/mentor.validator.js";
 
 class MentorController {
   ///////////////////////////
@@ -143,13 +144,8 @@ class MentorController {
   // Create slots
   async createSlots(req, res) {
     try {
-      const { slots } = req.body;
-
-      if (!slots || !Array.isArray(slots) || slots.length === 0) {
-        return res.status(400).json(
-          new ApiError(400, "Slots array is required")
-        );
-      }
+      // Validate input using Zod
+      const { slots } = createSlotsSchema.parse(req.body);
 
       const createdSlots = await mentorService.createSlots(req.user.id, slots);
 

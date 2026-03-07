@@ -4,6 +4,11 @@ import { PrismaClient } from '../generated/prisma/index.js';
 import PaymentService from '../services/PaymentService.js';
 import EmailService from '../services/EmailService.js';
 import NotificationService from '../services/NotificationService.js';
+import { 
+  createPaymentOrderSchema, 
+  verifyPaymentSchema, 
+  handlePaymentFailureSchema 
+} from '../validators/payment.validator.js';
 
 const prisma = new PrismaClient();
 
@@ -11,7 +16,8 @@ class PaymentController {
   // Create a payment order (called after booking is created)
   async createPaymentOrder(req, res) {
     try {
-      const { bookingId } = req.body;
+      // Validate input using Zod
+      const { bookingId } = createPaymentOrderSchema.parse(req.body);
 
       // Get booking with payment info
       const booking = await prisma.booking.findFirst({
@@ -93,7 +99,8 @@ class PaymentController {
   // Verify and process payment
   async verifyPayment(req, res) {
     try {
-      const { bookingId, razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+      // Validate input using Zod
+      const { bookingId, razorpayOrderId, razorpayPaymentId, razorpaySignature } = verifyPaymentSchema.parse(req.body);
 
       // Process payment
       const payment = await PaymentService.processPayment({
@@ -186,7 +193,8 @@ class PaymentController {
   // Handle payment failure
   async handlePaymentFailure(req, res) {
     try {
-      const { razorpayOrderId } = req.body;
+      // Validate input using Zod
+      const { razorpayOrderId } = handlePaymentFailureSchema.parse(req.body);
 
       const payment = await PaymentService.handlePaymentFailure({ razorpayOrderId });
 

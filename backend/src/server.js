@@ -7,13 +7,15 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import session from 'express-session';
 import passport from './config/passport.js';
-import { connectDatabase } from './config/database.js';
 
+
+import { connectDatabase } from './config/database.js';
 import routes from "./routes/index.routes.js";
 
 
 export const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
+
 
 // Middleware
 app.use(cors({

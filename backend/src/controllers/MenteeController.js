@@ -1,6 +1,8 @@
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { PrismaClient } from "../generated/prisma/index.js";
+import { createBookingSchema } from "../validators/mentee.validator.js";
+import { ZodError } from "zod";
 
 const prisma = new PrismaClient();
 
@@ -215,14 +217,8 @@ class MenteeController {
   // Create booking
   async createBooking(req, res) {
     try {
-      const { mentorId, slotId, sessionMode, purpose, shareProfile = false } = req.body;
-
-      // Validate required fields
-      if (!mentorId || !slotId || !sessionMode || !purpose) {
-        return res.status(400).json(
-          new ApiError(400, "Missing required fields: mentorId, slotId, sessionMode, and purpose are required")
-        );
-      }
+      // Validate input using Zod
+      const { mentorId, slotId, sessionMode, purpose, shareProfile } = createBookingSchema.parse(req.body);
 
       // Check if slot exists and is available
       const slot = await prisma.slot.findUnique({

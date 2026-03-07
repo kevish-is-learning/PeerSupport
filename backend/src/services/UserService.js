@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '../config/database.js';
+import { createUserSchema, updateUserSchema, updateRoleSchema } from '../validators/user.validator.js';
 
 class UserService {
   // Select fields for user responses (excluding sensitive data)
@@ -110,29 +111,17 @@ class UserService {
   }
 
   // Create user (admin only - with role specification)
-  async createUser({ email, password, name, role = 'MENTEE', isVerified = false }) {
-    // Validate input
-    if (!email || !password) {
-      throw new Error('Email and password are required');
-    }
-
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters long');
-    }
+  async createUser(data) {
+    // Validate input using Zod
+    const { email, password, name, role, isVerified } = createUserSchema.parse(data);
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email },
     });
 
     if (existingUser) {
       throw new Error('Email already registered');
-    }
-
-    // Validate role
-    const validRoles = ['MENTOR', 'MENTEE', 'ADMIN'];
-    if (!validRoles.includes(role)) {
-      throw new Error('Invalid role. Must be MENTOR, MENTEE, or ADMIN');
     }
 
     // Hash password
@@ -141,7 +130,7 @@ class UserService {
     // Create user
     const user = await prisma.user.create({
       data: {
-        email: email.toLowerCase(),
+        email,
         password: hashedPassword,
         name: name || null,
         role,
@@ -156,7 +145,8 @@ class UserService {
 
   // Update user
   async updateUser(userId, updateData) {
-    const { name, profilePicture, role, isActive, isVerified } = updateData;
+    // Validate input using Zod
+    const { name, profilePicture, role, isActive, isVerified } = updateUserSchema.parse(updateData);
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -165,14 +155,6 @@ class UserService {
 
     if (!existingUser) {
       throw new Error('User not found');
-    }
-
-    // Validate role if provided
-    if (role) {
-      const validRoles = ['MENTOR', 'MENTEE', 'ADMIN'];
-      if (!validRoles.includes(role)) {
-        throw new Error('Invalid role. Must be MENTOR, MENTEE, or ADMIN');
-      }
     }
 
     const user = await prisma.user.update({
@@ -192,14 +174,12 @@ class UserService {
 
   // Update user role
   async updateUserRole(userId, role) {
-    const validRoles = ['MENTOR', 'MENTEE', 'ADMIN'];
-    if (!validRoles.includes(role)) {
-      throw new Error('Invalid role. Must be MENTOR, MENTEE, or ADMIN');
-    }
+    // Validate input using Zod
+    const { role: validatedRole } = updateRoleSchema.parse({ role });
 
     const user = await prisma.user.update({
       where: { id: userId },
-      data: { role },
+      data: { role: validatedRole },
       select: this.userSelect,
     });
 
