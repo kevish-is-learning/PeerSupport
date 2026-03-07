@@ -1,5 +1,6 @@
-import jwt from 'jsonwebtoken';
-import { prisma } from '../config/database.js';
+import jwt from "jsonwebtoken";
+import { prisma } from "../config/database.js";
+import { ApiError } from "../utils/apiError.js";
 
 // JWT Authentication Middleware
 const authenticateJWT = async (req, res, next) => {
@@ -8,14 +9,19 @@ const authenticateJWT = async (req, res, next) => {
     const token = req.cookies.token;
 
     if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Access token required' 
-      });
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            "Authentication token missing",
+            "Please log in to access this resource",
+          ),
+        );
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+
     // Find user
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
@@ -33,34 +39,50 @@ const authenticateJWT = async (req, res, next) => {
     });
 
     if (!user) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'User not found' 
-      });
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            "User not found",
+            "Please log in to access this resource",
+          ),
+        );
     }
 
     // Check if user is active
     if (!user.isActive) {
-      return res.status(403).json({
-        success: false,
-        message: 'Account is deactivated',
-      });
+      return res
+        .status(403)
+        .json(
+          new ApiError(
+            403,
+            "Account is deactivated",
+            "Your account has been deactivated",
+          ),
+        );
     }
 
     req.user = user;
     next();
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Token expired' 
-      });
+    if (error.name === "TokenExpiredError") {
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            "Token expired",
+            "Your authentication token has expired",
+          ),
+        );
     }
-    
-    return res.status(401).json({ 
-      success: false, 
-      message: 'Invalid token' 
-    });
+
+    return res
+      .status(401)
+      .json(
+        new ApiError(401, "Invalid token", "The provided token is invalid"),
+      );
   }
 };
 
@@ -85,12 +107,12 @@ const optionalAuth = async (req, res, next) => {
           isActive: true,
         },
       });
-      
+
       if (user && user.isActive) {
         req.user = user;
       }
     }
-    
+
     next();
   } catch (error) {
     // Continue without authentication
@@ -102,17 +124,27 @@ const optionalAuth = async (req, res, next) => {
 const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
     if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Authentication required',
-      });
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            "Authentication required",
+            "Please log in to access this resource",
+          ),
+        );
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: 'Access denied. Insufficient permissions.',
-      });
+      return res
+        .status(403)
+        .json(
+          new ApiError(
+            403,
+            "Access denied",
+            "You do not have permission to access this resource",
+          ),
+        );
     }
 
     next();
@@ -122,25 +154,30 @@ const authorizeRoles = (...allowedRoles) => {
 // Admin only middleware
 const adminOnly = (req, res, next) => {
   if (!req.user) {
-    return res.status(401).json({
-      success: false,
-      message: 'Authentication required',
-    });
+    return res
+      .status(401)
+      .json(
+        new ApiError(
+          401,
+          "Authentication required",
+          "Please log in to access this resource",
+        ),
+      );
   }
 
-  if (req.user.role !== 'ADMIN') {
-    return res.status(403).json({
-      success: false,
-      message: 'Admin access required',
-    });
+  if (req.user.role !== "ADMIN") {
+    return res
+      .status(403)
+      .json(
+        new ApiError(
+          403,
+          "Access denied",
+          "You do not have permission to access this resource",
+        ),
+      );
   }
 
   next();
 };
 
-export {
-  authenticateJWT,
-  optionalAuth,
-  authorizeRoles,
-  adminOnly,
-};
+export { authenticateJWT, optionalAuth, authorizeRoles, adminOnly };

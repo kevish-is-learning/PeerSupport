@@ -32,7 +32,7 @@ class AuthController {
   async login(req, res) {
     try {
       const { email, password } = req.body;
-
+ 
       const result = await authService.login({ email, password });
 
       // Set JWT token in HTTP-only cookie

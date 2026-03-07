@@ -66,7 +66,7 @@ class AuthService {
 
     // Find user
     const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email },
     });
 
     if (!user) {
