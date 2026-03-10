@@ -395,15 +395,6 @@ exports.Prisma.WebinarRegistrationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
-exports.Prisma.NotificationScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  title: 'title',
-  message: 'message',
-  isRead: 'isRead',
-  createdAt: 'createdAt'
-};
-
 exports.Prisma.VerificationDocumentScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -580,7 +571,6 @@ exports.Prisma.ModelName = {
   Incentive: 'Incentive',
   Webinar: 'Webinar',
   WebinarRegistration: 'WebinarRegistration',
-  Notification: 'Notification',
   VerificationDocument: 'VerificationDocument',
   Category: 'Category',
   Badge: 'Badge',

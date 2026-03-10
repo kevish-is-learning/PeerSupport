@@ -12,9 +12,6 @@ async function main() {
   console.log('Deleting Webinars...');
   await prisma.webinar.deleteMany({});
   
-  console.log('Deleting Notifications...');
-  await prisma.notification.deleteMany({});
-  
   console.log('Deleting VerificationDocuments...');
   await prisma.verificationDocument.deleteMany({});
   

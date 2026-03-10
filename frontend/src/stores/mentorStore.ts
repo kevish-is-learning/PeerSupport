@@ -8,7 +8,6 @@ import type {
   Transaction,
   Withdrawal,
   Incentive,
-  Notification,
 } from "@/lib/types";
 
 interface MentorState {
@@ -19,7 +18,6 @@ interface MentorState {
   transactions: Transaction[];
   withdrawals: Withdrawal[];
   incentives: Incentive[];
-  notifications: Notification[];
   isLoading: boolean;
 
   fetchDashboard: () => Promise<void>;
@@ -37,9 +35,6 @@ interface MentorState {
   requestWithdrawal: (data: Record<string, unknown>) => Promise<void>;
   fetchIncentives: () => Promise<void>;
   claimIncentive: (incentiveId: string) => Promise<void>;
-  fetchNotifications: () => Promise<void>;
-  markNotificationRead: (notificationId: string) => Promise<void>;
-  markAllNotificationsRead: () => Promise<void>;
 }
 
 export const useMentorStore = create<MentorState>((set, get) => ({
@@ -50,7 +45,6 @@ export const useMentorStore = create<MentorState>((set, get) => ({
   transactions: [],
   withdrawals: [],
   incentives: [],
-  notifications: [],
   isLoading: false,
 
   fetchDashboard: async () => {
@@ -131,30 +125,5 @@ export const useMentorStore = create<MentorState>((set, get) => ({
   claimIncentive: async (incentiveId) => {
     await api.patch(`/mentor/incentives/${incentiveId}/claim`);
     await get().fetchIncentives();
-  },
-
-  fetchNotifications: async () => {
-    try {
-      const res = await api.get("/mentee/notifications");
-      set({ notifications: res.data.data || [] });
-    } catch {
-      set({ notifications: [] });
-    }
-  },
-
-  markNotificationRead: async (notificationId) => {
-    await api.patch(`/mentee/notifications/${notificationId}/read`);
-    set((s) => ({
-      notifications: s.notifications.map((n) =>
-        n.id === notificationId ? { ...n, isRead: true } : n
-      ),
-    }));
-  },
-
-  markAllNotificationsRead: async () => {
-    await api.patch("/mentee/notifications/read-all");
-    set((s) => ({
-      notifications: s.notifications.map((n) => ({ ...n, isRead: true })),
-    }));
   },
 }));

@@ -629,101 +629,6 @@ class MenteeController {
     }
   }
 
-  // Get notifications
-  async getNotifications(req, res) {
-    try {
-      const { page = 1, limit = 20, isRead } = req.query;
-      const skip = (parseInt(page) - 1) * parseInt(limit);
-
-      const where = {
-        userId: req.user.id,
-      };
-
-      if (isRead !== undefined) {
-        where.isRead = isRead === 'true';
-      }
-
-      const notifications = await prisma.notification.findMany({
-        where,
-        skip,
-        take: parseInt(limit),
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
-
-      const total = await prisma.notification.count({ where });
-      const unreadCount = await prisma.notification.count({
-        where: { userId: req.user.id, isRead: false },
-      });
-
-      res.status(200).json(
-        new ApiResponse(true, "Notifications retrieved successfully", {
-          notifications,
-          unreadCount,
-          pagination: {
-            page: parseInt(page),
-            limit: parseInt(limit),
-            total,
-            totalPages: Math.ceil(total / parseInt(limit)),
-          },
-        })
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, "Failed to retrieve notifications", error.message)
-      );
-    }
-  }
-
-  // Mark notification as read
-  async markNotificationAsRead(req, res) {
-    try {
-      const { notificationId } = req.params;
-
-      const notification = await prisma.notification.update({
-        where: {
-          id: notificationId,
-          userId: req.user.id,
-        },
-        data: {
-          isRead: true,
-        },
-      });
-
-      res.status(200).json(
-        new ApiResponse(true, "Notification marked as read", notification)
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, "Failed to mark notification as read", error.message)
-      );
-    }
-  }
-
-  // Mark all notifications as read
-  async markAllNotificationsAsRead(req, res) {
-    try {
-      await prisma.notification.updateMany({
-        where: {
-          userId: req.user.id,
-          isRead: false,
-        },
-        data: {
-          isRead: true,
-        },
-      });
-
-      res.status(200).json(
-        new ApiResponse(true, "All notifications marked as read", null)
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, "Failed to mark all notifications as read", error.message)
-      );
-    }
-  }
-
   // Get dashboard stats
   async getDashboardStats(req, res) {
     try {
@@ -735,7 +640,6 @@ class MenteeController {
         pendingBookings,
         totalSpent,
         upcomingWebinars,
-        unreadNotifications,
       ] = await Promise.all([
         prisma.booking.count({
           where: {
@@ -781,12 +685,6 @@ class MenteeController {
             },
           },
         }),
-        prisma.notification.count({
-          where: {
-            userId,
-            isRead: false,
-          },
-        }),
       ]);
 
       res.status(200).json(
@@ -796,7 +694,6 @@ class MenteeController {
           pendingBookings,
           totalSpent: totalSpent._sum.amount || 0,
           upcomingWebinars,
-          unreadNotifications,
         })
       );
     } catch (error) {

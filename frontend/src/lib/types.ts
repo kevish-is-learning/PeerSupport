@@ -125,15 +125,6 @@ export interface Booking {
   mentor?: User;
 }
 
-export interface Notification {
-  id: string;
-  userId: string;
-  title: string;
-  message: string;
-  isRead: boolean;
-  createdAt: string;
-}
-
 export interface Earnings {
   id: string;
   mentorId: string;

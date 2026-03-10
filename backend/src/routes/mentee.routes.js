@@ -31,9 +31,4 @@ router.get('/webinars', menteeController.getAllWebinars);
 router.post('/webinars/:webinarId/register', menteeController.registerForWebinar);
 router.get('/webinars/registrations/my', menteeController.getMyWebinarRegistrations);
 
-// Notifications
-router.get('/notifications', menteeController.getNotifications);
-router.patch('/notifications/:notificationId/read', menteeController.markNotificationAsRead);
-router.patch('/notifications/read-all', menteeController.markAllNotificationsAsRead);
-
 export default router;

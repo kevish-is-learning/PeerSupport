@@ -129,7 +129,6 @@ model User {
   mentorApplications   MentorApplication[]
   bookingsAsMentor     Booking[]             @relation("MentorBookings")
   bookingsAsMentee     Booking[]             @relation("MenteeBookings")
-  notifications        Notification[]
   verification         VerificationDocument?
   webinarRegistrations WebinarRegistration[]
 
@@ -575,21 +574,6 @@ model WebinarRegistration {
 
   webinar Webinar @relation(fields: [webinarId], references: [id])
   user    User    @relation(fields: [userId], references: [id])
-}
-
-///////////////////////////
-// NOTIFICATIONS
-///////////////////////////
-
-model Notification {
-  id        String   @id @default(uuid())
-  userId    String
-  title     String
-  message   String
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
 }
 
 ///////////////////////////

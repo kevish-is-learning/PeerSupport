@@ -39,7 +39,7 @@ const FAQ_SECTIONS = [
     items: [
       {
         q: "How do sessions work?",
-        a: "Mentees book your available slots. You will receive a notification when a booking is made. On the scheduled time, use the meeting link provided in the booking to join the session.",
+        a: "Mentees book your available slots. You can view all bookings in your dashboard and inbox. On the scheduled time, use the meeting link provided in the booking to join the session.",
       },
       {
         q: "Can I reschedule or cancel a booking?",

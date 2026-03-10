@@ -1271,45 +1271,7 @@ async function main() {
   }
 
   // ========================================
-  // 22. NOTIFICATIONS
-  // ========================================
-  console.log('\n🔔 Creating notifications...');
-  const notificationData = [
-    { user: mentees[0], title: 'Booking Confirmed', message: 'Your session with John Smith has been confirmed for tomorrow at 10 AM.', isRead: false },
-    { user: mentees[0], title: 'New Webinar Available', message: 'Check out the new webinar on Breaking into Product Management starting next week!', isRead: true },
-    { user: mentees[1], title: 'Session Completed', message: 'Your session with Sarah Johnson is complete. Please leave a review!', isRead: false },
-    { user: mentees[2], title: 'Session Reminder', message: 'Reminder: Your session with Mike Chen starts in 1 hour.', isRead: false },
-    { user: mentees[3], title: 'Booking Confirmed', message: 'Your career counseling session with Priya Sharma is confirmed.', isRead: true },
-    { user: mentees[4], title: 'Refund Processed', message: 'Your refund of ₹2500 has been processed for the cancelled session.', isRead: false },
-    { user: mentees[5], title: 'New Webinar', message: 'Free webinar on Career Paths in Tech - Register now!', isRead: false },
-    { user: mentors[0], title: 'New Booking Request', message: 'Alice Williams has booked a session with you for tomorrow.', isRead: true },
-    { user: mentors[0], title: 'Withdrawal Completed', message: 'Your withdrawal request of ₹10,000 has been processed successfully.', isRead: true },
-    { user: mentors[1], title: 'Payment Received', message: 'You received ₹2,550 for your completed session with Bob Patel.', isRead: false },
-    { user: mentors[1], title: 'New Review', message: 'Bob Patel left a 5-star review on your session!', isRead: false },
-    { user: mentors[1], title: 'Milestone Achieved', message: 'Congratulations! You have completed 50 sessions. Bonus of ₹5,000 credited.', isRead: true },
-    { user: mentors[2], title: 'Upcoming Session', message: 'You have a session with Carol Singh starting in 2 hours.', isRead: false },
-    { user: mentors[3], title: 'New Booking', message: 'Emma Desai has booked a career counseling session with you.', isRead: true },
-    { user: mentors[4], title: 'Payout Failed', message: 'Your payout of ₹5,000 failed due to invalid bank details. Please update.', isRead: false },
-    { user: mentors[5], title: 'Rising Star Award', message: 'You have been awarded the Rising Star badge for excellent performance!', isRead: false },
-    { user: admin, title: 'New Mentor Application', message: 'Alice Williams has applied to become a mentor. Please review the application.', isRead: false },
-    { user: admin, title: 'New Mentor Application', message: 'Bob Patel has applied to become a mentor. Please review the application.', isRead: true },
-    { user: admin, title: 'Withdrawal Request', message: 'Mike Chen has requested a withdrawal of ₹5,000. Approve or reject.', isRead: false },
-  ];
-
-  for (const notif of notificationData) {
-    await prisma.notification.create({
-      data: {
-        userId: notif.user.id,
-        title: notif.title,
-        message: notif.message,
-        isRead: notif.isRead,
-      },
-    });
-    console.log(`✅ Notification created for ${notif.user.name}`);
-  }
-
-  // ========================================
-  // 23. VERIFICATION DOCUMENTS
+  // 22. VERIFICATION DOCUMENTS
   // ========================================
   console.log('\n📋 Creating verification documents...');
   for (let i = 0; i < mentors.length; i++) {
@@ -1352,7 +1314,6 @@ async function main() {
     prisma.incentive.count(),
     prisma.webinar.count(),
     prisma.webinarRegistration.count(),
-    prisma.notification.count(),
     prisma.verificationDocument.count(),
     prisma.menteeResume.count(),
     prisma.mentorResume.count(),
@@ -1376,9 +1337,8 @@ async function main() {
   console.log(`   🎁 Incentives: ${counts[17]}`);
   console.log(`   🎓 Webinars: ${counts[18]}`);
   console.log(`   📋 Webinar Registrations: ${counts[19]}`);
-  console.log(`   🔔 Notifications: ${counts[20]}`);
-  console.log(`   📄 Verification Documents: ${counts[21]}`);
-  console.log(`   📑 Resumes: ${counts[22]} mentee + ${counts[23]} mentor`);
+  console.log(`   � Verification Documents: ${counts[20]}`);
+  console.log(`   📑 Resumes: ${counts[21]} mentee + ${counts[22]} mentor`);
   console.log('────────────────────────────────────────────────────────────');
   
   console.log('\n🔑 Login Credentials:');
@@ -1397,7 +1357,6 @@ async function main() {
   console.log('   • Financial transactions, earnings, and withdrawals');
   console.log('   • Incentives, badges, and gamification data');
   console.log('   • Webinars with registrations');
-  console.log('   • Complete audit trail with notifications');
   console.log('');
 }
 

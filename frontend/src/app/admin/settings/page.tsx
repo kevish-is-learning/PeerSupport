@@ -1,6 +1,6 @@
 "use client";
 
-import { Settings as SettingsIcon, Shield, Bell, CreditCard, Database } from "lucide-react";
+import { Settings as SettingsIcon, Shield, CreditCard, Database } from "lucide-react";
 
 export default function AdminSettingsPage() {
   return (
@@ -21,16 +21,6 @@ export default function AdminSettingsPage() {
           <h3 className="text-base font-semibold text-foreground mb-2">Security</h3>
           <p className="text-sm text-muted-foreground">
             Manage authentication, permissions, and security settings
-          </p>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition group cursor-pointer">
-          <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
-            <Bell size={24} className="text-blue-400" />
-          </div>
-          <h3 className="text-base font-semibold text-foreground mb-2">Notifications</h3>
-          <p className="text-sm text-muted-foreground">
-            Configure email and push notification settings
           </p>
         </div>
 

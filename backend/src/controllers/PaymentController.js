@@ -3,7 +3,6 @@ import { ApiError } from '../utils/apiError.js';
 import { PrismaClient } from '../generated/prisma/index.js';
 import PaymentService from '../services/PaymentService.js';
 import EmailService from '../services/EmailService.js';
-import NotificationService from '../services/NotificationService.js';
 import { 
   createPaymentOrderSchema, 
   verifyPaymentSchema, 
@@ -154,27 +153,6 @@ class PaymentController {
         }),
       ]);
 
-      // Create in-app notifications
-      await Promise.all([
-        NotificationService.createBookingNotificationForMentee({
-          menteeId: booking.menteeId,
-          mentorName: booking.mentor.name || 'Mentor',
-          slotDate,
-          bookingId: booking.id,
-        }),
-        NotificationService.createBookingNotificationForMentor({
-          mentorId: booking.mentorId,
-          menteeName: booking.mentee.name || 'User',
-          slotDate,
-          bookingId: booking.id,
-        }),
-        NotificationService.createPaymentNotification({
-          userId: booking.menteeId,
-          amount: payment.amount,
-          status: 'SUCCESS',
-        }),
-      ]);
-
       res.status(200).json(
         new ApiResponse(true, 'Payment verified successfully', {
           bookingId: booking.id,
@@ -197,13 +175,6 @@ class PaymentController {
       const { razorpayOrderId } = handlePaymentFailureSchema.parse(req.body);
 
       const payment = await PaymentService.handlePaymentFailure({ razorpayOrderId });
-
-      // Create notification for failed payment
-      await NotificationService.createPaymentNotification({
-        userId: payment.booking.menteeId,
-        amount: payment.amount,
-        status: 'FAILED',
-      });
 
       res.status(200).json(
         new ApiResponse(true, 'Payment failure handled', {
