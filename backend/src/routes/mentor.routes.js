@@ -1,6 +1,7 @@
 import express from 'express';
 import mentorController from '../controllers/MentorController.js';
 import { authenticateJWT, adminOnly, authorizeRoles } from '../middleware/auth.js';
+import { uploadResume, handleUploadErrors } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
@@ -93,7 +94,10 @@ router.get('/ratings', authenticateJWT, authorizeRoles('MENTOR'), mentorControll
 // RESUME MANAGEMENT (Mentor only)
 ///////////////////////////
 
-// Add resume
+// Upload resume (file upload)
+router.post('/resumes/upload', authenticateJWT, authorizeRoles('MENTOR'), uploadResume, handleUploadErrors, mentorController.uploadResume);
+
+// Add resume (for backward compatibility)
 router.post('/resumes', authenticateJWT, authorizeRoles('MENTOR'), mentorController.addResume);
 
 // Get resumes

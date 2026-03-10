@@ -2,6 +2,13 @@ import mentorService from "../services/MentorService.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { createSlotsSchema } from "../validators/mentor.validator.js";
+import { deleteFile } from "../middleware/upload.middleware.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class MentorController {
   ///////////////////////////
@@ -485,7 +492,42 @@ class MentorController {
   // RESUME MANAGEMENT
   ///////////////////////////
 
-  // Add resume
+  // Upload resume (handles file upload)
+  async uploadResume(req, res) {
+    try {
+      if (!req.file) {
+        return res.status(400).json(new ApiError(400, "No file uploaded"));
+      }
+
+      const { name } = req.body;
+      if (!name) {
+        // Delete uploaded file if name not provided
+        deleteFile(req.file.path);
+        return res.status(400).json(new ApiError(400, "Resume name is required"));
+      }
+
+      // Create resume record with file URL
+      const resumeUrl = `/uploads/resumes/${req.file.filename}`;
+      const resume = await mentorService.addResume(req.user.id, {
+        name,
+        fileUrl: resumeUrl,
+      });
+
+      res.status(201).json(
+        new ApiResponse(true, "Resume uploaded successfully", resume)
+      );
+    } catch (error) {
+      // Delete uploaded file if there was an error
+      if (req.file) {
+        deleteFile(req.file.path);
+      }
+      res.status(400).json(
+        new ApiError(400, error.message || "Failed to upload resume")
+      );
+    }
+  }
+
+  // Add resume (for backward compatibility - expects fileUrl in body)
   async addResume(req, res) {
     try {
       const resume = await mentorService.addResume(req.user.id, req.body);
@@ -519,6 +561,15 @@ class MentorController {
   async deleteResume(req, res) {
     try {
       const { resumeId } = req.params;
+
+      // Get resume details to delete file
+      const resumes = await mentorService.getResumes(req.user.id);
+      const resume = resumes.find(r => r.id === resumeId);
+
+      if (resume && resume.fileUrl) {
+        const resumePath = path.join(__dirname, '../../uploads/resumes', path.basename(resume.fileUrl));
+        deleteFile(resumePath);
+      }
 
       const result = await mentorService.deleteResume(req.user.id, resumeId);
 

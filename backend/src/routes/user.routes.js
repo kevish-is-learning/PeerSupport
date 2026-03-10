@@ -1,6 +1,7 @@
 import express from 'express';
 import userController from '../controllers/UserController.js';
 import { authenticateJWT, adminOnly, authorizeRoles } from '../middleware/auth.js';
+import { uploadAvatar, handleUploadErrors } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
@@ -12,6 +13,10 @@ router.get('/check-email', userController.checkEmailExists);
 router.get('/me', authenticateJWT, userController.getCurrentUserProfile);
 router.put('/me', authenticateJWT, userController.updateCurrentUserProfile);
 router.delete('/me', authenticateJWT, userController.deleteCurrentUserProfile);
+
+// Avatar upload routes
+router.post('/avatar', authenticateJWT, uploadAvatar, handleUploadErrors, userController.uploadAvatar);
+router.delete('/avatar', authenticateJWT, userController.deleteAvatar);
 
 // Mentee Profile Routes
 router.post('/profile/mentee', authenticateJWT, authorizeRoles('MENTEE', 'ADMIN'), userController.createOrUpdateMenteeProfile);

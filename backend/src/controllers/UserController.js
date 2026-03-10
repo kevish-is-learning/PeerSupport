@@ -1,6 +1,13 @@
 import userService from "../services/UserService.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
+import { deleteFile } from "../middleware/upload.middleware.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class UserController {
   // Get all users with pagination and filtering
@@ -702,6 +709,78 @@ class UserController {
       res
         .status(400)
         .json(new ApiError(400, "Failed to reject application", error.message));
+    }
+  }
+
+  ///////////////////////////
+  // FILE UPLOADS
+  ///////////////////////////
+
+  // Upload avatar
+  async uploadAvatar(req, res) {
+    try {
+      if (!req.file) {
+        return res.status(400).json(new ApiError(400, "No file uploaded"));
+      }
+
+      // Get the current user to check for existing avatar
+      const currentUser = await userService.getUserById(req.user.id);
+
+      // Delete old avatar if it exists
+      if (currentUser.profilePicture) {
+        const oldAvatarPath = path.join(__dirname, '../../uploads/avatars', path.basename(currentUser.profilePicture));
+        deleteFile(oldAvatarPath);
+      }
+
+      // Update user with new avatar URL
+      const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+      const user = await userService.updateUser(req.user.id, {
+        profilePicture: avatarUrl,
+      });
+
+      res.status(200).json(
+        new ApiResponse(true, "Avatar uploaded successfully", {
+          profilePicture: user.profilePicture,
+        })
+      );
+    } catch (error) {
+      // Delete uploaded file if there was an error
+      if (req.file) {
+        deleteFile(req.file.path);
+      }
+      res.status(400).json(
+        new ApiError(400, "Failed to upload avatar", error.message)
+      );
+    }
+  }
+
+  // Delete avatar
+  async deleteAvatar(req, res) {
+    try {
+      const currentUser = await userService.getUserById(req.user.id);
+
+      if (!currentUser.profilePicture) {
+        return res.status(404).json(
+          new ApiError(404, "No avatar found")
+        );
+      }
+
+      // Delete the avatar file
+      const avatarPath = path.join(__dirname, '../../uploads/avatars', path.basename(currentUser.profilePicture));
+      deleteFile(avatarPath);
+
+      // Update user to remove avatar URL
+      const user = await userService.updateUser(req.user.id, {
+        profilePicture: null,
+      });
+
+      res.status(200).json(
+        new ApiResponse(true, "Avatar deleted successfully", null)
+      );
+    } catch (error) {
+      res.status(400).json(
+        new ApiError(400, "Failed to delete avatar", error.message)
+      );
     }
   }
 }

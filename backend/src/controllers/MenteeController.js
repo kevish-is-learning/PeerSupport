@@ -3,7 +3,13 @@ import { ApiError } from "../utils/apiError.js";
 import { PrismaClient } from "../generated/prisma/index.js";
 import { createBookingSchema } from "../validators/mentee.validator.js";
 import { ZodError } from "zod";
+import { deleteFile } from "../middleware/upload.middleware.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const prisma = new PrismaClient();
 
 class MenteeController {
@@ -699,6 +705,139 @@ class MenteeController {
     } catch (error) {
       res.status(500).json(
         new ApiError(500, "Failed to retrieve dashboard stats", error.message)
+      );
+    }
+  }
+
+  ///////////////////////////
+  // RESUME MANAGEMENT
+  ///////////////////////////
+
+  // Upload resume (handles file upload)
+  async uploadResume(req, res) {
+    try {
+      if (!req.file) {
+        return res.status(400).json(new ApiError(400, "No file uploaded"));
+      }
+
+      const { name } = req.body;
+      if (!name) {
+        // Delete uploaded file if name not provided
+        deleteFile(req.file.path);
+        return res.status(400).json(new ApiError(400, "Resume name is required"));
+      }
+
+      // Get mentee profile
+      const profile = await prisma.menteeProfile.findUnique({
+        where: { userId: req.user.id },
+      });
+
+      if (!profile) {
+        deleteFile(req.file.path);
+        return res.status(404).json(
+          new ApiError(404, "Mentee profile not found")
+        );
+      }
+
+      // Create resume record with file URL
+      const resumeUrl = `/uploads/resumes/${req.file.filename}`;
+      const resume = await prisma.menteeResume.create({
+        data: {
+          menteeId: profile.id,
+          name,
+          fileUrl: resumeUrl,
+        },
+      });
+
+      res.status(201).json(
+        new ApiResponse(true, "Resume uploaded successfully", resume)
+      );
+    } catch (error) {
+      // Delete uploaded file if there was an error
+      if (req.file) {
+        deleteFile(req.file.path);
+      }
+      res.status(400).json(
+        new ApiError(400, error.message || "Failed to upload resume")
+      );
+    }
+  }
+
+  // Get resumes
+  async getResumes(req, res) {
+    try {
+      const profile = await prisma.menteeProfile.findUnique({
+        where: { userId: req.user.id },
+      });
+
+      if (!profile) {
+        return res.status(404).json(
+          new ApiError(404, "Mentee profile not found")
+        );
+      }
+
+      const resumes = await prisma.menteeResume.findMany({
+        where: { menteeId: profile.id },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      res.status(200).json(
+        new ApiResponse(true, "Resumes retrieved successfully", resumes)
+      );
+    } catch (error) {
+      res.status(500).json(
+        new ApiError(500, error.message || "Failed to retrieve resumes")
+      );
+    }
+  }
+
+  // Delete resume
+  async deleteResume(req, res) {
+    try {
+      const { resumeId } = req.params;
+
+      const profile = await prisma.menteeProfile.findUnique({
+        where: { userId: req.user.id },
+      });
+
+      if (!profile) {
+        return res.status(404).json(
+          new ApiError(404, "Mentee profile not found")
+        );
+      }
+
+      const resume = await prisma.menteeResume.findUnique({
+        where: { id: resumeId },
+      });
+
+      if (!resume) {
+        return res.status(404).json(
+          new ApiError(404, "Resume not found")
+        );
+      }
+
+      if (resume.menteeId !== profile.id) {
+        return res.status(403).json(
+          new ApiError(403, "Unauthorized to delete this resume")
+        );
+      }
+
+      // Delete the file
+      if (resume.fileUrl) {
+        const resumePath = path.join(__dirname, '../../uploads/resumes', path.basename(resume.fileUrl));
+        deleteFile(resumePath);
+      }
+
+      await prisma.menteeResume.delete({
+        where: { id: resumeId },
+      });
+
+      res.status(200).json(
+        new ApiResponse(true, "Resume deleted successfully", null)
+      );
+    } catch (error) {
+      res.status(400).json(
+        new ApiError(400, error.message || "Failed to delete resume")
       );
     }
   }

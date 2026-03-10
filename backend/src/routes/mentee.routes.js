@@ -1,6 +1,7 @@
 import express from 'express';
 import menteeController from '../controllers/MenteeController.js';
 import { authenticateJWT, authorizeRoles } from '../middleware/auth.js';
+import { uploadResume, handleUploadErrors } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
@@ -30,5 +31,10 @@ router.post('/bookings/:bookingId/review', menteeController.submitReview);
 router.get('/webinars', menteeController.getAllWebinars);
 router.post('/webinars/:webinarId/register', menteeController.registerForWebinar);
 router.get('/webinars/registrations/my', menteeController.getMyWebinarRegistrations);
+
+// Resumes
+router.post('/resumes/upload', uploadResume, handleUploadErrors, menteeController.uploadResume);
+router.get('/resumes', menteeController.getResumes);
+router.delete('/resumes/:resumeId', menteeController.deleteResume);
 
 export default router;

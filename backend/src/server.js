@@ -7,10 +7,15 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import session from 'express-session';
 import passport from './config/passport.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 import { connectDatabase } from './config/database.js';
 import routes from "./routes/index.routes.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export const app = express();
 const PORT = process.env.PORT || 8080;
@@ -52,6 +57,9 @@ app.use(passport.session());
 
 // Serve static files (test UI)
 app.use(express.static('public'));
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use("/api", routes);
 
