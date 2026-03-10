@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
 import { toast } from "sonner";
 import api from "@/lib/api";
+import { uploadMenteeResume } from "@/lib/uploadApi";
 import {
   step1Schema,
   step2Schema,
@@ -24,6 +25,9 @@ import {
   ChevronRight,
   ChevronLeft,
   CheckCircle2,
+  Upload,
+  FileText,
+  X,
 } from "lucide-react";
 
 const STEPS = [
@@ -222,6 +226,35 @@ export default function ApplyMentorPage() {
 
   const removeCertification = (index: number) => {
     updateForm({ certifications: (form.certifications || []).filter((_, i) => i !== index) });
+  };
+
+  // Resume upload management
+  const [uploadingResume, setUploadingResume] = useState(false);
+
+  const handleResumeUpload = async (file: File, name: string) => {
+    if (!name.trim()) {
+      toast.error("Please enter a resume name");
+      return;
+    }
+
+    setUploadingResume(true);
+    try {
+      const result = await uploadMenteeResume(file, name);
+      const newResume = {
+        name: result.data.name,
+        fileUrl: result.data.fileUrl,
+      };
+      updateForm({ resumes: [...(form.resumes || []), newResume] });
+      toast.success("Resume uploaded successfully");
+    } catch (error) {
+      console.error("Resume upload failed:", error);
+    } finally {
+      setUploadingResume(false);
+    }
+  };
+
+  const removeResume = (index: number) => {
+    updateForm({ resumes: (form.resumes || []).filter((_, i) => i !== index) });
   };
 
   // Expertise toggle
@@ -708,57 +741,60 @@ export default function ApplyMentorPage() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium">Resumes (Optional)</label>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      updateForm({
-                        resumes: [...(form.resumes || []), { name: "", fileUrl: "" }],
-                      })
-                    }
-                    className="text-sm text-primary hover:underline flex items-center gap-1"
-                  >
-                    <Plus size={14} /> Add Resume
-                  </button>
+                <label className="block text-sm font-medium mb-2">
+                  Resumes (Optional)
+                </label>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Upload your resume(s) to showcase your qualifications (PDF, DOC, DOCX - Max 10MB)
+                </p>
+
+                {/* Upload Form */}
+                <div className="border-2 border-dashed border-border rounded-lg p-4 mb-4">
+                  <ResumeUploadForm 
+                    onUpload={handleResumeUpload}
+                    uploading={uploadingResume}
+                    disabled={(form.resumes || []).length >= 3}
+                  />
                 </div>
-                {(form.resumes || []).map((resume, idx) => (
-                  <div key={idx} className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={resume.name}
-                      onChange={(e) => {
-                        const resumes = [...(form.resumes || [])];
-                        resumes[idx] = { ...resumes[idx], name: e.target.value };
-                        updateForm({ resumes });
-                      }}
-                      className="w-1/3 px-3 py-2 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                      placeholder="Name"
-                    />
-                    <input
-                      type="url"
-                      value={resume.fileUrl}
-                      onChange={(e) => {
-                        const resumes = [...(form.resumes || [])];
-                        resumes[idx] = { ...resumes[idx], fileUrl: e.target.value };
-                        updateForm({ resumes });
-                      }}
-                      className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                      placeholder="File URL"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        updateForm({
-                          resumes: (form.resumes || []).filter((_, i) => i !== idx),
-                        })
-                      }
-                      className="text-destructive hover:text-destructive/80 px-2"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+
+                {/* Uploaded Resumes List */}
+                {(form.resumes || []).length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Uploaded Resumes:</p>
+                    {(form.resumes || []).map((resume, idx) => (
+                      <div 
+                        key={idx} 
+                        className="flex items-center gap-3 p-3 bg-secondary/50 border border-border rounded-lg"
+                      >
+                        <FileText className="h-5 w-5 text-primary shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{resume.name}</p>
+                          <a
+                            href={resume.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline"
+                          >
+                            View File
+                          </a>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeResume(idx)}
+                          className="text-destructive hover:text-destructive/80 p-1"
+                        >
+                          <X size={18} />
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
+
+                {(form.resumes || []).length >= 3 && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Maximum of 3 resumes allowed
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -795,6 +831,117 @@ export default function ApplyMentorPage() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Resume Upload Form Component
+function ResumeUploadForm({
+  onUpload,
+  uploading,
+  disabled,
+}: {
+  onUpload: (file: File, name: string) => void;
+  uploading: boolean;
+  disabled: boolean;
+}) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [resumeName, setResumeName] = useState("");
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please upload a PDF or DOC file");
+      return;
+    }
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
+
+    setSelectedFile(file);
+    // Auto-fill name from filename without extension
+    const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+    setResumeName(nameWithoutExt);
+  };
+
+  const handleUpload = () => {
+    if (!selectedFile) {
+      toast.error("Please select a file");
+      return;
+    }
+
+    if (!resumeName.trim()) {
+      toast.error("Please enter a resume name");
+      return;
+    }
+
+    onUpload(selectedFile, resumeName.trim());
+
+    // Reset form
+    setSelectedFile(null);
+    setResumeName("");
+    // Reset file input
+    const fileInput = document.getElementById("resume-file-input") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-2">
+        <div className="flex-1">
+          <input
+            id="resume-file-input"
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={handleFileChange}
+            disabled={disabled || uploading}
+            className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:opacity-90 file:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+        </div>
+      </div>
+
+      {selectedFile && (
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={resumeName}
+            onChange={(e) => setResumeName(e.target.value)}
+            placeholder="Resume name (e.g., My Resume 2025)"
+            disabled={uploading}
+            className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+          />
+          <button
+            type="button"
+            onClick={handleUpload}
+            disabled={uploading || !resumeName.trim()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2"
+          >
+            {uploading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Upload size={16} />
+                Upload
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

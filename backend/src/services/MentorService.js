@@ -141,13 +141,36 @@ class MentorService {
       throw new Error('No editable application found');
     }
 
+    // Build update data object with proper type conversions
+    const updateData = {
+      status: 'PENDING', // Reset to pending if it was rejected
+      updatedAt: new Date(),
+    };
+
+    // Add all fields from validatedData with proper processing
+    if (validatedData.bio !== undefined) updateData.bio = validatedData.bio;
+    if (validatedData.headline !== undefined) updateData.headline = validatedData.headline;
+    if (validatedData.phone !== undefined) updateData.phone = validatedData.phone;
+    if (validatedData.location !== undefined) updateData.location = validatedData.location;
+    if (validatedData.socialLinks !== undefined) updateData.socialLinks = validatedData.socialLinks;
+    if (validatedData.expertise !== undefined) updateData.expertise = validatedData.expertise;
+    if (validatedData.education10th !== undefined) updateData.education10th = validatedData.education10th;
+    if (validatedData.education12th !== undefined) updateData.education12th = validatedData.education12th;
+    if (validatedData.bachelors !== undefined) updateData.bachelors = validatedData.bachelors;
+    if (validatedData.masters !== undefined) updateData.masters = validatedData.masters;
+    if (validatedData.workExperience !== undefined) updateData.workExperience = validatedData.workExperience;
+    if (validatedData.catScore !== undefined) updateData.catScore = validatedData.catScore;
+    if (validatedData.catYear !== undefined) updateData.catYear = validatedData.catYear;
+    if (validatedData.catPercentile !== undefined) updateData.catPercentile = validatedData.catPercentile;
+    if (validatedData.certifications !== undefined) updateData.certifications = validatedData.certifications;
+    if (validatedData.resumes !== undefined) updateData.resumes = validatedData.resumes;
+    if (validatedData.pricePerSession !== undefined) {
+      updateData.pricePerSession = parseFloat(validatedData.pricePerSession);
+    }
+
     const updatedApplication = await prisma.mentorApplication.update({
       where: { id: application.id },
-      data: {
-        ...validatedData,
-        status: 'PENDING', // Reset to pending if it was rejected
-        updatedAt: new Date(),
-      },
+      data: updateData,
       include: {
         user: {
           select: this.userSelect,

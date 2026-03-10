@@ -22,7 +22,20 @@ const resumeSchema = z.object({
 });
 
 // Education schema (flexible for 10th, 12th, bachelors, masters)
-const educationSchema = z.array(z.any()).optional().default([]);
+// Expected format: [instituteName, score, yearOfPassout] for 10th/12th
+// Expected format: [degree, instituteName, score, yearOfPassout] for bachelors/masters
+const educationSchema = z.array(z.string()).optional().default([]);
+
+// Certification schema (can be string or object)
+const certificationSchema = z.union([
+  z.string(),
+  z.object({
+    name: z.string(),
+    issuer: z.string().optional(),
+    date: z.string().optional(),
+    url: z.string().optional(),
+  })
+]);
 
 // Submit mentor application schema
 export const submitMentorApplicationSchema = z.object({
@@ -51,7 +64,7 @@ export const submitMentorApplicationSchema = z.object({
   catPercentile: z.number().min(0).max(100).optional().nullable(),
 
   // Step 6: Certifications
-  certifications: z.array(z.any()).optional().default([]),
+  certifications: z.array(certificationSchema).optional().default([]),
 
   // Step 7: Resumes
   resumes: z.array(resumeSchema).optional().default([]),
@@ -73,10 +86,10 @@ export const updateMentorProfileSchema = z.object({
   location: z.string().optional(),
   socialLinks: z.array(socialLinkSchema).max(5, 'Maximum 5 social links allowed').optional(),
   expertise: z.array(z.string()).min(1, 'At least one expertise is required').optional(),
-  certifications: z.array(z.any()).optional(),
+  certifications: z.array(certificationSchema).optional(),
   pricePerSession: z.coerce.number().positive('Price must be positive').optional(),
-  reschedulePolicy: z.string().optional(),
-  cancellationPolicy: z.string().optional(),
+  reschedulePolicy: z.coerce.number().int().positive('Reschedule policy must be a positive number').optional(),
+  cancellationPolicy: z.coerce.number().int().positive('Cancellation policy must be a positive number').optional(),
   refundPolicy: z.string().optional(),
   workExperience: z.array(workExperienceSchema).optional(),
   education10th: educationSchema,
@@ -151,4 +164,6 @@ export default {
   socialLinkSchema,
   workExperienceSchema,
   resumeSchema,
+  certificationSchema,
+  educationSchema,
 };

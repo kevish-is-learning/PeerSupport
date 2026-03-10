@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import api from "@/lib/api";
 import { toast } from "sonner";
+import AvatarUpload from "@/components/AvatarUpload";
 import {
   User as UserIcon,
   Mail,
@@ -83,7 +84,7 @@ export default function MentorProfilePage() {
       // Update user name
       await api.put("/users/me", { name });
 
-      // Update mentor profile
+      // Update mentor profilex
       await api.post("/users/profile/mentor", {
         bio,
         headline,
@@ -200,9 +201,25 @@ export default function MentorProfilePage() {
       {/* Profile Header Card */}
       <div className="bg-card border border-border rounded-xl p-6">
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center text-primary text-xl font-bold shrink-0">
-            {user?.name?.[0]?.toUpperCase() || "M"}
-          </div>
+          {editMode ? (
+            <AvatarUpload 
+              currentAvatar={user?.profilePicture}
+              onUploadSuccess={() => fetchMe()}
+              size="lg"
+            />
+          ) : (
+            <div className="w-32 h-32 bg-primary/20 rounded-full flex items-center justify-center text-primary text-3xl font-bold shrink-0 overflow-hidden">
+              {user?.profilePicture ? (
+                <img 
+                  src={user.profilePicture} 
+                  alt={user.name || "Profile"}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                user?.name?.[0]?.toUpperCase() || "M"
+              )}
+            </div>
+          )}
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold text-foreground">

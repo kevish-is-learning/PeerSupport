@@ -809,11 +809,44 @@ class UserService {
 
   // Submit mentor application (by user)
   async submitMentorApplication(userId, applicationData) {
-    const { bio, expertise, certifications, pricePerSession } = applicationData;
+    const {
+      // Step 1: Personal Details & Social Links
+      bio,
+      headline,
+      phone,
+      location,
+      socialLinks,
+      
+      // Step 2: Expertise
+      expertise,
+      
+      // Step 3: Education
+      education10th,
+      education12th,
+      bachelors,
+      masters,
+      
+      // Step 4: Work Experience
+      workExperience,
+      
+      // Step 5: CAT Score
+      catScore,
+      catYear,
+      catPercentile,
+      
+      // Step 6: Certifications
+      certifications,
+      
+      // Step 7: Resumes
+      resumes,
+      
+      // Pricing
+      pricePerSession,
+    } = applicationData;
 
     // Validate required fields
     if (!bio || !expertise || expertise.length === 0 || !pricePerSession) {
-      throw new Error('All fields are required: bio, expertise, and price per session');
+      throw new Error('Required fields: bio, expertise, and price per session');
     }
 
     // Check if user already has a pending application
@@ -842,8 +875,21 @@ class UserService {
       data: {
         userId,
         bio,
+        headline: headline || null,
+        phone: phone || null,
+        location: location || null,
+        socialLinks: socialLinks || [],
         expertise,
+        education10th: education10th || [],
+        education12th: education12th || [],
+        bachelors: bachelors || [],
+        masters: masters || [],
+        workExperience: workExperience || [],
+        catScore: catScore || null,
+        catYear: catYear || null,
+        catPercentile: catPercentile || null,
         certifications: certifications || [],
+        resumes: resumes || [],
         pricePerSession: parseFloat(pricePerSession),
       },
       include: {
@@ -858,8 +904,6 @@ class UserService {
 
   // Update mentor application (only if PENDING or REJECTED)
   async updateMentorApplication(userId, applicationData) {
-    const { bio, expertise, certifications, pricePerSession } = applicationData;
-
     // Find the user's most recent application that can be edited
     const application = await prisma.mentorApplication.findFirst({
       where: {
@@ -873,17 +917,37 @@ class UserService {
       throw new Error('No editable application found. You can only update pending or rejected applications.');
     }
 
+    // Build update data object
+    const updateData = {
+      status: 'PENDING', // Reset to pending if it was rejected
+      updatedAt: new Date(),
+    };
+
+    // Add all provided fields to update data
+    if (applicationData.bio !== undefined) updateData.bio = applicationData.bio;
+    if (applicationData.headline !== undefined) updateData.headline = applicationData.headline;
+    if (applicationData.phone !== undefined) updateData.phone = applicationData.phone;
+    if (applicationData.location !== undefined) updateData.location = applicationData.location;
+    if (applicationData.socialLinks !== undefined) updateData.socialLinks = applicationData.socialLinks;
+    if (applicationData.expertise !== undefined) updateData.expertise = applicationData.expertise;
+    if (applicationData.education10th !== undefined) updateData.education10th = applicationData.education10th;
+    if (applicationData.education12th !== undefined) updateData.education12th = applicationData.education12th;
+    if (applicationData.bachelors !== undefined) updateData.bachelors = applicationData.bachelors;
+    if (applicationData.masters !== undefined) updateData.masters = applicationData.masters;
+    if (applicationData.workExperience !== undefined) updateData.workExperience = applicationData.workExperience;
+    if (applicationData.catScore !== undefined) updateData.catScore = applicationData.catScore;
+    if (applicationData.catYear !== undefined) updateData.catYear = applicationData.catYear;
+    if (applicationData.catPercentile !== undefined) updateData.catPercentile = applicationData.catPercentile;
+    if (applicationData.certifications !== undefined) updateData.certifications = applicationData.certifications;
+    if (applicationData.resumes !== undefined) updateData.resumes = applicationData.resumes;
+    if (applicationData.pricePerSession !== undefined) {
+      updateData.pricePerSession = parseFloat(applicationData.pricePerSession);
+    }
+
     // Update the application
     const updatedApplication = await prisma.mentorApplication.update({
       where: { id: application.id },
-      data: {
-        bio: bio !== undefined ? bio : application.bio,
-        expertise: expertise !== undefined ? expertise : application.expertise,
-        certifications: certifications !== undefined ? certifications : application.certifications,
-        pricePerSession: pricePerSession !== undefined ? parseFloat(pricePerSession) : application.pricePerSession,
-        status: 'PENDING', // Reset to pending if it was rejected
-        updatedAt: new Date(),
-      },
+      data: updateData,
       include: {
         user: {
           select: this.userSelect,
@@ -957,7 +1021,7 @@ class UserService {
   }
 
   // Approve mentor application (admin only)
-  async approveMentorApplication(applicationId) {
+  async approveMentorApplication(applicationId, adminUserId) {
     const application = await prisma.mentorApplication.findUnique({
       where: { id: applicationId },
       include: { user: true },
@@ -979,20 +1043,46 @@ class UserService {
         data: {
           status: 'APPROVED',
           reviewedAt: new Date(),
+          reviewedBy: adminUserId,
         },
       });
 
-      // Create mentor profile
+      // Create mentor profile with all fields from application
       const mentorProfile = await tx.mentorProfile.create({
         data: {
           userId: application.userId,
           bio: application.bio,
+          headline: application.headline,
+          phone: application.phone,
+          location: application.location,
+          socialLinks: application.socialLinks,
           expertise: application.expertise,
-          certifications: application.certifications,
+          education10th: application.education10th || [],
+          education12th: application.education12th || [],
+          bachelors: application.bachelors || [],
+          masters: application.masters || [],
+          workExperience: application.workExperience,
+          catScore: application.catScore,
+          catYear: application.catYear,
+          catPercentile: application.catPercentile,
+          certifications: application.certifications || [],
           pricePerSession: application.pricePerSession,
-          verificationStatus: 'PENDING',
+          verificationStatus: 'APPROVED',
         },
       });
+
+      // Create mentor resumes from application
+      if (application.resumes && Array.isArray(application.resumes)) {
+        for (const resume of application.resumes) {
+          await tx.mentorResume.create({
+            data: {
+              mentorId: mentorProfile.id,
+              name: resume.name,
+              fileUrl: resume.fileUrl,
+            },
+          });
+        }
+      }
 
       // Update user role to MENTOR
       await tx.user.update({
@@ -1007,7 +1097,7 @@ class UserService {
   }
 
   // Reject mentor application (admin only)
-  async rejectMentorApplication(applicationId, rejectionReason) {
+  async rejectMentorApplication(applicationId, rejectionReason, adminUserId) {
     const application = await prisma.mentorApplication.findUnique({
       where: { id: applicationId },
     });
@@ -1026,6 +1116,7 @@ class UserService {
         status: 'REJECTED',
         rejectionReason: rejectionReason || 'Application does not meet requirements',
         reviewedAt: new Date(),
+        reviewedBy: adminUserId,
       },
     });
 

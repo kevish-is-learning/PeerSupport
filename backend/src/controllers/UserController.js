@@ -574,14 +574,10 @@ class UserController {
   // Submit mentor application (user)
   async submitMentorApplication(req, res) {
     try {
-      const { bio, expertise, certifications, pricePerSession } = req.body;
-
-      const application = await userService.submitMentorApplication(req.user.id, {
-        bio,
-        expertise,
-        certifications,
-        pricePerSession,
-      });
+      const application = await userService.submitMentorApplication(
+        req.user.id,
+        req.body
+      );
 
       res
         .status(201)
@@ -596,14 +592,10 @@ class UserController {
   // Update mentor application (user)
   async updateMentorApplication(req, res) {
     try {
-      const { bio, expertise, certifications, pricePerSession } = req.body;
-
-      const application = await userService.updateMentorApplication(req.user.id, {
-        bio,
-        expertise,
-        certifications,
-        pricePerSession,
-      });
+      const application = await userService.updateMentorApplication(
+        req.user.id,
+        req.body
+      );
 
       res
         .status(200)
@@ -679,7 +671,10 @@ class UserController {
     try {
       const { applicationId } = req.params;
 
-      const result = await userService.approveMentorApplication(applicationId);
+      const result = await userService.approveMentorApplication(
+        applicationId,
+        req.user.id
+      );
 
       res
         .status(200)
@@ -699,7 +694,8 @@ class UserController {
 
       const application = await userService.rejectMentorApplication(
         applicationId,
-        rejectionReason
+        rejectionReason,
+        req.user.id
       );
 
       res
