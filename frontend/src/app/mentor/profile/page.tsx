@@ -44,6 +44,26 @@ export default function MentorProfilePage() {
   const [socialLinks, setSocialLinks] = useState<
     { platform: string; url: string }[]
   >([]);
+  
+  // Education fields
+  const [education10th, setEducation10th] = useState<string[]>([]);
+  const [education12th, setEducation12th] = useState<string[]>([]);
+  const [bachelors, setBachelors] = useState<string[]>([]);
+  const [masters, setMasters] = useState<string[]>([]);
+  
+  // Work experience
+  const [workExperience, setWorkExperience] = useState<any[]>([]);
+  
+  // CAT scores
+  const [catScore, setCatScore] = useState<number | null>(null);
+  const [catYear, setCatYear] = useState<number | null>(null);
+  const [catPercentile, setCatPercentile] = useState<number | null>(null);
+  
+  // Pricing and policies
+  const [pricePerSession, setPricePerSession] = useState<number>(0);
+  const [reschedulePolicy, setReschedulePolicy] = useState<number>(24);
+  const [cancellationPolicy, setCancellationPolicy] = useState<number>(24);
+  const [refundPolicy, setRefundPolicy] = useState<string>("");
 
   const [saving, setSaving] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -71,6 +91,30 @@ export default function MentorProfilePage() {
           ? mentorProfile.socialLinks
           : [],
       );
+      
+      // Education
+      setEducation10th(mentorProfile.education10th || []);
+      setEducation12th(mentorProfile.education12th || []);
+      setBachelors(mentorProfile.bachelors || []);
+      setMasters(mentorProfile.masters || []);
+      
+      // Work experience
+      setWorkExperience(
+        Array.isArray(mentorProfile.workExperience)
+          ? mentorProfile.workExperience
+          : [],
+      );
+      
+      // CAT scores
+      setCatScore(mentorProfile.catScore ?? null);
+      setCatYear(mentorProfile.catYear ?? null);
+      setCatPercentile(mentorProfile.catPercentile ?? null);
+      
+      // Pricing and policies
+      setPricePerSession(mentorProfile.pricePerSession || 0);
+      setReschedulePolicy(mentorProfile.reschedulePolicy || 24);
+      setCancellationPolicy(mentorProfile.cancellationPolicy || 24);
+      setRefundPolicy(mentorProfile.refundPolicy || "");
     }
   }, [user, mentorProfile]);
 
@@ -84,8 +128,8 @@ export default function MentorProfilePage() {
       // Update user name
       await api.put("/users/me", { name });
 
-      // Update mentor profilex
-      await api.post("/users/profile/mentor", {
+      // Update mentor profile
+      await api.put("/users/profile/mentor", {
         bio,
         headline,
         phone,
@@ -93,6 +137,18 @@ export default function MentorProfilePage() {
         expertise,
         certifications,
         socialLinks,
+        education10th,
+        education12th,
+        bachelors,
+        masters,
+        workExperience,
+        catScore,
+        catYear,
+        catPercentile,
+        pricePerSession,
+        reschedulePolicy,
+        cancellationPolicy,
+        refundPolicy,
       });
 
       toast.success("Profile updated successfully");
@@ -522,6 +578,454 @@ export default function MentorProfilePage() {
               </button>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Education Section */}
+      <div className="bg-card border border-border rounded-xl p-6 space-y-6">
+        <div className="flex items-center gap-2 mb-2">
+          <GraduationCap size={18} className="text-primary" />
+          <h3 className="text-lg font-semibold text-foreground">Education</h3>
+        </div>
+
+        {/* 10th Standard */}
+        <div>
+          <label className="text-sm font-medium text-foreground block mb-2">
+            10th Standard
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input
+              type="text"
+              value={education10th[0] || ""}
+              onChange={(e) => {
+                const arr = [...education10th];
+                arr[0] = e.target.value;
+                setEducation10th(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Institution"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={education10th[1] || ""}
+              onChange={(e) => {
+                const arr = [...education10th];
+                arr[1] = e.target.value;
+                setEducation10th(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Score/Percentage"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={education10th[2] || ""}
+              onChange={(e) => {
+                const arr = [...education10th];
+                arr[2] = e.target.value;
+                setEducation10th(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Year"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+          </div>
+        </div>
+
+        {/* 12th Standard */}
+        <div>
+          <label className="text-sm font-medium text-foreground block mb-2">
+            12th Standard
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input
+              type="text"
+              value={education12th[0] || ""}
+              onChange={(e) => {
+                const arr = [...education12th];
+                arr[0] = e.target.value;
+                setEducation12th(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Institution"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={education12th[1] || ""}
+              onChange={(e) => {
+                const arr = [...education12th];
+                arr[1] = e.target.value;
+                setEducation12th(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Score/Percentage"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={education12th[2] || ""}
+              onChange={(e) => {
+                const arr = [...education12th];
+                arr[2] = e.target.value;
+                setEducation12th(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Year"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+          </div>
+        </div>
+
+        {/* Bachelors */}
+        <div>
+          <label className="text-sm font-medium text-foreground block mb-2">
+            Bachelors
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input
+              type="text"
+              value={bachelors[0] || ""}
+              onChange={(e) => {
+                const arr = [...bachelors];
+                arr[0] = e.target.value;
+                setBachelors(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Degree"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={bachelors[1] || ""}
+              onChange={(e) => {
+                const arr = [...bachelors];
+                arr[1] = e.target.value;
+                setBachelors(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Institution"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={bachelors[2] || ""}
+              onChange={(e) => {
+                const arr = [...bachelors];
+                arr[2] = e.target.value;
+                setBachelors(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Score/CGPA"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={bachelors[3] || ""}
+              onChange={(e) => {
+                const arr = [...bachelors];
+                arr[3] = e.target.value;
+                setBachelors(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Year"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+          </div>
+        </div>
+
+        {/* Masters */}
+        <div>
+          <label className="text-sm font-medium text-foreground block mb-2">
+            Masters (Optional)
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input
+              type="text"
+              value={masters[0] || ""}
+              onChange={(e) => {
+                const arr = [...masters];
+                arr[0] = e.target.value;
+                setMasters(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Degree"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={masters[1] || ""}
+              onChange={(e) => {
+                const arr = [...masters];
+                arr[1] = e.target.value;
+                setMasters(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Institution"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={masters[2] || ""}
+              onChange={(e) => {
+                const arr = [...masters];
+                arr[2] = e.target.value;
+                setMasters(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Score/CGPA"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+            <input
+              type="text"
+              value={masters[3] || ""}
+              onChange={(e) => {
+                const arr = [...masters];
+                arr[3] = e.target.value;
+                setMasters(arr);
+              }}
+              disabled={!editMode}
+              placeholder="Year"
+              className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Work Experience Section */}
+      <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Briefcase size={18} className="text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">
+              Work Experience
+            </h3>
+          </div>
+          {editMode && (
+            <button
+              onClick={() =>
+                setWorkExperience([
+                  ...workExperience,
+                  { company: "", role: "", startDate: "", endDate: "", description: "" },
+                ])
+              }
+              className="text-xs text-primary hover:underline"
+            >
+              + Add Experience
+            </button>
+          )}
+        </div>
+
+        {workExperience.length === 0 ? (
+          <p className="text-xs text-muted-foreground">No work experience added</p>
+        ) : (
+          <div className="space-y-4">
+            {workExperience.map((exp, idx) => (
+              <div key={idx} className="border border-border rounded-lg p-4 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Experience {idx + 1}
+                  </span>
+                  {editMode && (
+                    <button
+                      onClick={() =>
+                        setWorkExperience(workExperience.filter((_, i) => i !== idx))
+                      }
+                      className="text-red-400 hover:text-red-300 text-xs"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    value={exp.company || ""}
+                    onChange={(e) => {
+                      const updated = [...workExperience];
+                      updated[idx] = { ...updated[idx], company: e.target.value };
+                      setWorkExperience(updated);
+                    }}
+                    disabled={!editMode}
+                    placeholder="Company"
+                    className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+                  />
+                  <input
+                    type="text"
+                    value={exp.role || ""}
+                    onChange={(e) => {
+                      const updated = [...workExperience];
+                      updated[idx] = { ...updated[idx], role: e.target.value };
+                      setWorkExperience(updated);
+                    }}
+                    disabled={!editMode}
+                    placeholder="Role"
+                    className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+                  />
+                  <input
+                    type="date"
+                    value={exp.startDate || ""}
+                    onChange={(e) => {
+                      const updated = [...workExperience];
+                      updated[idx] = { ...updated[idx], startDate: e.target.value };
+                      setWorkExperience(updated);
+                    }}
+                    disabled={!editMode}
+                    className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+                  />
+                  <input
+                    type="date"
+                    value={exp.endDate || ""}
+                    onChange={(e) => {
+                      const updated = [...workExperience];
+                      updated[idx] = { ...updated[idx], endDate: e.target.value };
+                      setWorkExperience(updated);
+                    }}
+                    disabled={!editMode}
+                    placeholder="End Date (leave blank if current)"
+                    className="px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+                  />
+                </div>
+                <textarea
+                  value={exp.description || ""}
+                  onChange={(e) => {
+                    const updated = [...workExperience];
+                    updated[idx] = { ...updated[idx], description: e.target.value };
+                    setWorkExperience(updated);
+                  }}
+                  disabled={!editMode}
+                  rows={2}
+                  placeholder="Description"
+                  className="w-full px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60 resize-none"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* CAT Scores & Pricing Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* CAT Scores */}
+        <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Star size={18} className="text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">CAT Score</h3>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">
+                Score
+              </label>
+              <input
+                type="number"
+                value={catScore ?? ""}
+                onChange={(e) =>
+                  setCatScore(e.target.value ? Number(e.target.value) : null)
+                }
+                disabled={!editMode}
+                placeholder="e.g. 180"
+                className="w-full px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">
+                Year
+              </label>
+              <input
+                type="number"
+                value={catYear ?? ""}
+                onChange={(e) =>
+                  setCatYear(e.target.value ? Number(e.target.value) : null)
+                }
+                disabled={!editMode}
+                placeholder="e.g. 2025"
+                className="w-full px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">
+                Percentile
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={catPercentile ?? ""}
+                onChange={(e) =>
+                  setCatPercentile(e.target.value ? Number(e.target.value) : null)
+                }
+                disabled={!editMode}
+                placeholder="e.g. 99.5"
+                className="w-full px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Pricing & Policies */}
+        <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <UserIcon size={18} className="text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">
+              Pricing & Policies
+            </h3>
+          </div>
+
+          <div>
+            <label className="text-sm text-muted-foreground block mb-1">
+              Price Per Session (INR)
+            </label>
+            <input
+              type="number"
+              value={pricePerSession}
+              onChange={(e) => setPricePerSession(Number(e.target.value))}
+              disabled={!editMode}
+              className="w-full px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">
+                Reschedule Policy (hours)
+              </label>
+              <input
+                type="number"
+                value={reschedulePolicy}
+                onChange={(e) => setReschedulePolicy(Number(e.target.value))}
+                disabled={!editMode}
+                className="w-full px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">
+                Cancellation Policy (hours)
+              </label>
+              <input
+                type="number"
+                value={cancellationPolicy}
+                onChange={(e) => setCancellationPolicy(Number(e.target.value))}
+                disabled={!editMode}
+                className="w-full px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm text-muted-foreground block mb-1">
+              Refund Policy
+            </label>
+            <textarea
+              value={refundPolicy}
+              onChange={(e) => setRefundPolicy(e.target.value)}
+              disabled={!editMode}
+              rows={3}
+              placeholder="Describe your refund policy..."
+              className="w-full px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60 resize-none"
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -28,6 +28,7 @@ router.delete('/profile/mentee/:userId', authenticateJWT, adminOnly, userControl
 
 // Mentor Profile Routes
 router.post('/profile/mentor', authenticateJWT, authorizeRoles('MENTOR', 'ADMIN'), userController.createOrUpdateMentorProfile);
+router.put('/profile/mentor', authenticateJWT, authorizeRoles('MENTOR', 'ADMIN'), userController.createOrUpdateMentorProfile);
 router.get('/profile/mentor', authenticateJWT, authorizeRoles('MENTOR', 'ADMIN'), userController.getMentorProfile);
 router.get('/profile/mentor/:userId', authenticateJWT, userController.getMentorProfile);
 router.put('/profile/mentor/:userId', authenticateJWT, userController.createOrUpdateMentorProfile);

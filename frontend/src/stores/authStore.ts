@@ -45,10 +45,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLoading: true });
       const res = await api.get("/users/me");
-      const data = res.data.data;
+      const responseData = res.data.data;
+      
+      // Backend returns { user: {...}, profile: {...} }
+      const user = responseData?.user || responseData;
+      const profile = responseData?.profile || null;
+      
+      // Set mentorProfile if user is a mentor
+      const mentorProfile = user?.role === "MENTOR" ? profile : null;
+      
       set({
-        user: data?.user || data,
-        mentorProfile: data?.mentorProfile || null,
+        user,
+        mentorProfile,
         isAuthenticated: true,
         isLoading: false,
       });
