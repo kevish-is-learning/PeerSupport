@@ -55,7 +55,7 @@ export const useMentorStore = create<MentorState>((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
-  },
+  }, 
 
   fetchSlots: async (params) => {
     const res = await api.get("/mentor/slots", { params });

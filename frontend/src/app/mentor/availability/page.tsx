@@ -42,10 +42,11 @@ export default function MentorAvailabilityPage() {
   const [endMin, setEndMin] = useState<number>(0);
   const [addingSlot, setAddingSlot] = useState(false);
 
-  useEffect(() => {
-    fetchSlots();
-    fetchMe();
-  }, [fetchSlots, fetchMe]);
+  if (!slots) {
+    useEffect(() => {
+      fetchSlots();
+    }, [fetchSlots]);
+  }
 
   useEffect(() => {
     if (mentorProfile?.pricePerSession != null) {

@@ -20,7 +20,12 @@ import {
 } from "lucide-react";
 
 export default function MentorProfilePage() {
-  const { user, mentorProfile, fetchMe, isLoading: authLoading } = useAuthStore();
+  const {
+    user,
+    mentorProfile,
+    fetchMe,
+    isLoading: authLoading,
+  } = useAuthStore();
 
   // User fields
   const [name, setName] = useState("");
@@ -35,14 +40,18 @@ export default function MentorProfilePage() {
   const [expertiseInput, setExpertiseInput] = useState("");
   const [certifications, setCertifications] = useState<string[]>([]);
   const [certInput, setCertInput] = useState("");
-  const [socialLinks, setSocialLinks] = useState<{ platform: string; url: string }[]>([]);
+  const [socialLinks, setSocialLinks] = useState<
+    { platform: string; url: string }[]
+  >([]);
 
   const [saving, setSaving] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-  useEffect(() => {
-    fetchMe();
-  }, [fetchMe]);
+  if (!user) {
+    useEffect(() => {
+      fetchMe();
+    }, [fetchMe]);
+  }
 
   useEffect(() => {
     if (user) {
@@ -57,7 +66,9 @@ export default function MentorProfilePage() {
       setExpertise(mentorProfile.expertise || []);
       setCertifications(mentorProfile.certifications || []);
       setSocialLinks(
-        Array.isArray(mentorProfile.socialLinks) ? mentorProfile.socialLinks : []
+        Array.isArray(mentorProfile.socialLinks)
+          ? mentorProfile.socialLinks
+          : [],
       );
     }
   }, [user, mentorProfile]);
@@ -125,7 +136,11 @@ export default function MentorProfilePage() {
     setSocialLinks(socialLinks.filter((_, i) => i !== idx));
   };
 
-  const updateSocialLink = (idx: number, field: "platform" | "url", value: string) => {
+  const updateSocialLink = (
+    idx: number,
+    field: "platform" | "url",
+    value: string,
+  ) => {
     const updated = [...socialLinks];
     updated[idx] = { ...updated[idx], [field]: value };
     setSocialLinks(updated);
@@ -144,7 +159,9 @@ export default function MentorProfilePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Profile</h1>
-          <p className="text-muted-foreground mt-1">Manage your mentor profile</p>
+          <p className="text-muted-foreground mt-1">
+            Manage your mentor profile
+          </p>
         </div>
         {!editMode ? (
           <button
@@ -169,7 +186,11 @@ export default function MentorProfilePage() {
               disabled={saving}
               className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition disabled:opacity-50 flex items-center gap-2"
             >
-              {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+              {saving ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Save size={14} />
+              )}
               Save Changes
             </button>
           </div>
@@ -184,12 +205,16 @@ export default function MentorProfilePage() {
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold text-foreground">{user?.name}</h2>
+              <h2 className="text-xl font-bold text-foreground">
+                {user?.name}
+              </h2>
               {mentorProfile?.verifiedBadge && (
                 <Shield size={16} className="text-primary" />
               )}
             </div>
-            <p className="text-sm text-muted-foreground">{mentorProfile?.headline || "Mentor"}</p>
+            <p className="text-sm text-muted-foreground">
+              {mentorProfile?.headline || "Mentor"}
+            </p>
             <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Mail size={14} /> {user?.email}
@@ -226,11 +251,15 @@ export default function MentorProfilePage() {
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <UserIcon size={18} className="text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              Basic Information
+            </h3>
           </div>
 
           <div>
-            <label className="text-sm text-muted-foreground block mb-1">Name</label>
+            <label className="text-sm text-muted-foreground block mb-1">
+              Name
+            </label>
             <input
               type="text"
               value={name}
@@ -241,7 +270,9 @@ export default function MentorProfilePage() {
           </div>
 
           <div>
-            <label className="text-sm text-muted-foreground block mb-1">Email</label>
+            <label className="text-sm text-muted-foreground block mb-1">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -251,7 +282,9 @@ export default function MentorProfilePage() {
           </div>
 
           <div>
-            <label className="text-sm text-muted-foreground block mb-1">Headline</label>
+            <label className="text-sm text-muted-foreground block mb-1">
+              Headline
+            </label>
             <input
               type="text"
               value={headline}
@@ -263,7 +296,9 @@ export default function MentorProfilePage() {
           </div>
 
           <div>
-            <label className="text-sm text-muted-foreground block mb-1">Phone</label>
+            <label className="text-sm text-muted-foreground block mb-1">
+              Phone
+            </label>
             <input
               type="tel"
               value={phone}
@@ -274,7 +309,9 @@ export default function MentorProfilePage() {
           </div>
 
           <div>
-            <label className="text-sm text-muted-foreground block mb-1">Location</label>
+            <label className="text-sm text-muted-foreground block mb-1">
+              Location
+            </label>
             <input
               type="text"
               value={location}
@@ -289,11 +326,15 @@ export default function MentorProfilePage() {
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Briefcase size={18} className="text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Bio & About</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              Bio & About
+            </h3>
           </div>
 
           <div>
-            <label className="text-sm text-muted-foreground block mb-1">Bio</label>
+            <label className="text-sm text-muted-foreground block mb-1">
+              Bio
+            </label>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
@@ -320,7 +361,9 @@ export default function MentorProfilePage() {
               )}
             </div>
             {socialLinks.length === 0 ? (
-              <p className="text-xs text-muted-foreground">No social links added</p>
+              <p className="text-xs text-muted-foreground">
+                No social links added
+              </p>
             ) : (
               <div className="space-y-2">
                 {socialLinks.map((link, idx) => (
@@ -328,7 +371,9 @@ export default function MentorProfilePage() {
                     <input
                       type="text"
                       value={link.platform}
-                      onChange={(e) => updateSocialLink(idx, "platform", e.target.value)}
+                      onChange={(e) =>
+                        updateSocialLink(idx, "platform", e.target.value)
+                      }
                       disabled={!editMode}
                       placeholder="Platform"
                       className="w-1/3 px-2 py-1.5 bg-secondary border border-border rounded-lg text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
@@ -336,7 +381,9 @@ export default function MentorProfilePage() {
                     <input
                       type="url"
                       value={link.url}
-                      onChange={(e) => updateSocialLink(idx, "url", e.target.value)}
+                      onChange={(e) =>
+                        updateSocialLink(idx, "url", e.target.value)
+                      }
                       disabled={!editMode}
                       placeholder="URL"
                       className="flex-1 px-2 py-1.5 bg-secondary border border-border rounded-lg text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
@@ -391,7 +438,9 @@ export default function MentorProfilePage() {
                 type="text"
                 value={expertiseInput}
                 onChange={(e) => setExpertiseInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addExpertise())}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && (e.preventDefault(), addExpertise())
+                }
                 placeholder="Add expertise tag"
                 className="flex-1 px-3 py-2 bg-secondary border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
@@ -409,7 +458,9 @@ export default function MentorProfilePage() {
         <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Shield size={18} className="text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Certifications</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              Certifications
+            </h3>
           </div>
 
           <div className="space-y-1">
