@@ -752,6 +752,7 @@ class MentorService {
 
   // Get dashboard stats
   async getDashboardStats(userId) {
+    console.log(userId)
     const profile = await prisma.mentorProfile.findUnique({
       where: { userId },
     });

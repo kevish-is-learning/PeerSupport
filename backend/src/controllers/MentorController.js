@@ -321,6 +321,7 @@ class MentorController {
         new ApiResponse(true, "Dashboard stats retrieved successfully", stats)
       );
     } catch (error) {
+      console.log(error)
       res.status(500).json(
         new ApiError(500, error.message || "Failed to retrieve dashboard stats")
       );

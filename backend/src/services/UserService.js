@@ -654,19 +654,31 @@ class UserService {
       throw new Error('User not found');
     }
 
-    let profile;
-    switch (user.role) {
-      case 'MENTEE':
-        profile = await this.getMenteeProfile(userId);
-        break;
-      case 'MENTOR':
-        profile = await this.getMentorProfile(userId);
-        break;
-      case 'ADMIN':
-        profile = await this.getAdminProfile(userId);
-        break;
-      default:
-        throw new Error('Invalid user role');
+    let profile = null;
+    try {
+      switch (user.role) {
+        case 'MENTEE':
+          profile = await this.getMenteeProfile(userId);
+          break;
+        case 'MENTOR':
+          profile = await this.getMentorProfile(userId);
+          break;
+        case 'ADMIN':
+          profile = await this.getAdminProfile(userId);
+          break;
+        default:
+          throw new Error('Invalid user role');
+      }
+    } catch (error) {
+      // If profile not found, return user data without profile
+      if (error.message.includes('profile not found')) {
+        return {
+          user,
+          profile: null,
+        };
+      }
+      // Re-throw other errors
+      throw error;
     }
 
     return {
