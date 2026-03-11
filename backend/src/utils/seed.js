@@ -84,28 +84,25 @@ async function main() {
       headline: 'Senior SWE @ Google | Full-Stack Expert',
       expertise: ['JavaScript', 'React', 'Node.js', 'System Design', 'MongoDB', 'AWS', 'Docker'],
       certifications: ['AWS Solutions Architect', 'Google Cloud Professional', 'Meta React Advanced'],
-      pricePerSession: 2500,
       rating: 4.8,
       totalReviews: 25,
       verificationStatus: 'APPROVED',
       verifiedBadge: true,
       phone: '+91-9876543210',
+      gender: 'MALE',
       location: 'Bangalore, India',
       socialLinks: [
         { platform: 'LinkedIn', url: 'https://linkedin.com/in/johnsmith' },
         { platform: 'GitHub', url: 'https://github.com/johnsmith' },
       ],
-      education10th: ['St. Joseph School', '95%', '2005'],
-      education12th: ['Delhi Public School', '92%', '2007'],
+      verificationIds: [],
       bachelors: ['BTech Computer Science', 'IIT Delhi', '8.9 CGPA', '2011'],
       masters: ['MS Computer Science', 'Stanford University', '3.8 GPA', '2013'],
       workExperience: [
         { company: 'Google', role: 'Senior Software Engineer', startDate: '2018-01', endDate: 'Present', description: 'Leading a team of 8 engineers building cloud infrastructure' },
         { company: 'Microsoft', role: 'Software Engineer', startDate: '2013-07', endDate: '2018-01', description: 'Worked on Azure services and distributed systems' },
       ],
-      catScore: null,
-      catYear: null,
-      catPercentile: null,
+      exams: [],
       balance: 15000,
       totalEarnings: 125000,
       pendingEarnings: 7500,
@@ -117,28 +114,25 @@ async function main() {
       headline: 'Senior PM @ Flipkart | Ex-Amazon | IIM-A',
       expertise: ['Product Management', 'Business Strategy', 'Data Analytics', 'Agile', 'Product Design', 'A/B Testing'],
       certifications: ['CSPO', 'PMP', 'Product Management by Duke University'],
-      pricePerSession: 3000,
       rating: 4.9,
       totalReviews: 42,
       verificationStatus: 'APPROVED',
       verifiedBadge: true,
       phone: '+91-9876543211',
+      gender: 'FEMALE',
       location: 'Mumbai, India',
       socialLinks: [
         { platform: 'LinkedIn', url: 'https://linkedin.com/in/sarahjohnson' },
         { platform: 'Twitter', url: 'https://twitter.com/sarahpm' },
       ],
-      education10th: ['Carmel Convent', '94%', '2006'],
-      education12th: ['St. Xavier College', '91%', '2008'],
+      verificationIds: [],
       bachelors: ['B.Tech', 'IIT Bombay', '9.1 CGPA', '2012'],
       masters: ['MBA', 'IIM Ahmedabad', '3.9 GPA', '2015'],
       workExperience: [
         { company: 'Flipkart', role: 'Senior Product Manager', startDate: '2020-03', endDate: 'Present', description: 'Leading payment products for 100M+ users' },
         { company: 'Amazon', role: 'Product Manager', startDate: '2015-07', endDate: '2020-03', description: 'Worked on Prime and marketplace products' },
       ],
-      catScore: 98.5,
-      catYear: 2012,
-      catPercentile: 99.2,
+      exams: [{ examName: 'CAT', score: 98.5, year: 2012, percentile: 99.2 }],
       balance: 22000,
       totalEarnings: 180000,
       pendingEarnings: 12000,
@@ -150,28 +144,25 @@ async function main() {
       headline: 'Lead Data Scientist | ML/AI Expert',
       expertise: ['Python', 'Machine Learning', 'Deep Learning', 'Statistics', 'TensorFlow', 'PyTorch', 'NLP'],
       certifications: ['Google Professional ML Engineer', 'IBM Data Science', 'Deep Learning Specialization'],
-      pricePerSession: 2000,
       rating: 4.7,
       totalReviews: 18,
       verificationStatus: 'APPROVED',
       verifiedBadge: true,
       phone: '+91-9876543212',
+      gender: 'MALE',
       location: 'Hyderabad, India',
       socialLinks: [
         { platform: 'LinkedIn', url: 'https://linkedin.com/in/mikechen' },
         { platform: 'GitHub', url: 'https://github.com/mikechen' },
       ],
-      education10th: ['International School', '96%', '2008'],
-      education12th: ['DPS RK Puram', '93%', '2010'],
+      verificationIds: [],
       bachelors: ['BTech', 'IIT Madras', '9.3 CGPA', '2014'],
       masters: ['MS AI', 'Carnegie Mellon University', '3.9 GPA', '2016'],
       workExperience: [
         { company: 'NVIDIA', role: 'Lead Data Scientist', startDate: '2020-01', endDate: 'Present', description: 'Building AI models for autonomous vehicles' },
         { company: 'Facebook', role: 'Data Scientist', startDate: '2016-07', endDate: '2020-01', description: 'Recommendation systems and feed ranking' },
       ],
-      catScore: null,
-      catYear: null,
-      catPercentile: null,
+      exams: [],
       balance: 8500,
       totalEarnings: 72000,
       pendingEarnings: 4000,
@@ -183,27 +174,24 @@ async function main() {
       headline: 'Career Coach | College Admissions Expert',
       expertise: ['Career Counseling', 'College Admissions', 'Resume Building', 'Interview Prep', 'MBA Counseling'],
       certifications: ['Certified Career Coach', 'NLP Practitioner', 'ICF Accredited Coach'],
-      pricePerSession: 1500,
       rating: 4.6,
       totalReviews: 33,
       verificationStatus: 'APPROVED',
       verifiedBadge: true,
       phone: '+91-9876543213',
+      gender: 'FEMALE',
       location: 'Delhi, India',
       socialLinks: [
         { platform: 'LinkedIn', url: 'https://linkedin.com/in/priyasharma' },
       ],
-      education10th: ['Modern School', '92%', '2005'],
-      education12th: ['DPS', '90%', '2007'],
+      verificationIds: [],
       bachelors: ['BA Psychology', 'Delhi University', '8.5 CGPA', '2011'],
       masters: ['M.Ed Counseling', 'Jamia Millia', '8.8 CGPA', '2013'],
       workExperience: [
         { company: 'Independent Consultant', role: 'Career Counselor', startDate: '2015-06', endDate: 'Present', description: 'Helped 500+ students with career planning' },
         { company: 'Career Launcher', role: 'Counselor', startDate: '2013-07', endDate: '2015-06', description: 'MBA admissions counseling' },
       ],
-      catScore: 95.0,
-      catYear: 2011,
-      catPercentile: 98.5,
+      exams: [{ examName: 'CAT', score: 95.0, year: 2011, percentile: 98.5 }],
       balance: 12000,
       totalEarnings: 89500,
       pendingEarnings: 4500,
@@ -215,26 +203,23 @@ async function main() {
       headline: 'Frontend Developer | React Specialist',
       expertise: ['HTML', 'CSS', 'JavaScript', 'React', 'Tailwind CSS'],
       certifications: ['FreeCodeCamp Certified', 'React - The Complete Guide'],
-      pricePerSession: 1000,
       rating: 4.5,
       totalReviews: 8,
       verificationStatus: 'PENDING',
       verifiedBadge: false,
       phone: '+91-9876543214',
+      gender: 'MALE',
       location: 'Pune, India',
       socialLinks: [
         { platform: 'GitHub', url: 'https://github.com/davidkumar' },
       ],
-      education10th: ['KV School', '88%', '2012'],
-      education12th: ['Kendriya Vidyalaya', '85%', '2014'],
+      verificationIds: [],
       bachelors: ['BCA', 'Symbiosis', '7.8 CGPA', '2018'],
       masters: [],
       workExperience: [
         { company: 'TCS', role: 'Frontend Developer', startDate: '2019-07', endDate: 'Present', description: 'Building web applications for clients' },
       ],
-      catScore: null,
-      catYear: null,
-      catPercentile: null,
+      exams: [],
       balance: 5000,
       totalEarnings: 16000,
       pendingEarnings: 3000,
@@ -246,28 +231,25 @@ async function main() {
       headline: 'Senior UX Designer | Design Mentor',
       expertise: ['UI/UX Design', 'Figma', 'User Research', 'Prototyping', 'Design Thinking', 'Wireframing'],
       certifications: ['Google UX Design Certificate', 'Interaction Design Foundation'],
-      pricePerSession: 1800,
       rating: 4.7,
       totalReviews: 15,
       verificationStatus: 'APPROVED',
       verifiedBadge: true,
       phone: '+91-9876543215',
+      gender: 'FEMALE',
       location: 'Bangalore, India',
       socialLinks: [
         { platform: 'LinkedIn', url: 'https://linkedin.com/in/anjaliverma' },
         { platform: 'Behance', url: 'https://behance.net/anjaliverma' },
       ],
-      education10th: ['Sacred Heart', '91%', '2009'],
-      education12th: ['Bishop Cotton', '89%', '2011'],
+      verificationIds: [],
       bachelors: ['B.Des', 'NID Ahmedabad', '8.6 CGPA', '2015'],
       masters: [],
       workExperience: [
         { company: 'Swiggy', role: 'Senior UX Designer', startDate: '2019-08', endDate: 'Present', description: 'Designing core user flows for food delivery app' },
         { company: 'Razorpay', role: 'UX Designer', startDate: '2016-07', endDate: '2019-08', description: 'Payment flows and merchant dashboard' },
       ],
-      catScore: null,
-      catYear: null,
-      catPercentile: null,
+      exams: [],
       balance: 9500,
       totalEarnings: 45000,
       pendingEarnings: 5400,
@@ -298,16 +280,14 @@ async function main() {
             verificationStatus: mentorInfo.verificationStatus,
             verifiedBadge: mentorInfo.verifiedBadge,
             phone: mentorInfo.phone,
+            gender: mentorInfo.gender,
             location: mentorInfo.location,
             socialLinks: mentorInfo.socialLinks,
-            education10th: mentorInfo.education10th,
-            education12th: mentorInfo.education12th,
+            verificationIds: mentorInfo.verificationIds || [],
             bachelors: mentorInfo.bachelors,
             masters: mentorInfo.masters,
             workExperience: mentorInfo.workExperience,
-            catScore: mentorInfo.catScore,
-            catYear: mentorInfo.catYear,
-            catPercentile: mentorInfo.catPercentile,
+            exams: mentorInfo.exams || [],
             balance: mentorInfo.balance,
             totalEarnings: mentorInfo.totalEarnings,
             pendingEarnings: mentorInfo.pendingEarnings,
@@ -377,8 +357,6 @@ async function main() {
       phone: '+91-9876500001',
       location: 'Delhi, India',
       gender: 'FEMALE',
-      education10th: ['St. Mary High School', '92%', '2017'],
-      education12th: ['Delhi Public School', '88%', '2019'],
       bachelors: ['BA Economics', 'Delhi University', '8.5 CGPA', '2023'],
       masters: [],
       workExperience: 'Intern at Tech Startup for 6 months - Product Analytics',
@@ -397,8 +375,6 @@ async function main() {
       phone: '+91-9876500002',
       location: 'Mumbai, India',
       gender: 'MALE',
-      education10th: ['KV School', '85%', '2016'],
-      education12th: ['National Public School', '82%', '2018'],
       bachelors: ['BTech CSE', 'IIT Delhi', '8.2 CGPA', '2022'],
       masters: ['MTech AI', 'IIT Bombay', '8.8 CGPA', '2024'],
       workExperience: 'Software Engineer at Amazon - 2 years',
@@ -414,8 +390,6 @@ async function main() {
       phone: '+91-9876500003',
       location: 'Bangalore, India',
       gender: 'FEMALE',
-      education10th: ['Modern School', '90%', '2018'],
-      education12th: ['Ryan International', '85%', '2020'],
       bachelors: ['BTech CSE', 'BITS Pilani', '7.8 CGPA', '2024'],
       masters: [],
       workExperience: null,
@@ -433,8 +407,6 @@ async function main() {
       phone: '+91-9876500004',
       location: 'Ahmedabad, India',
       gender: 'FEMALE',
-      education10th: ['Convent School', '88%', '2019'],
-      education12th: ['Cambridge School', '90%', '2021'],
       bachelors: ['BTech ECE', 'VIT Vellore', '8.1 CGPA', '2025'],
       masters: [],
       workExperience: null,
@@ -452,8 +424,6 @@ async function main() {
       phone: '+91-9876500005',
       location: 'Kolkata, India',
       gender: 'MALE',
-      education10th: ['South Point', '86%', '2017'],
-      education12th: ['La Martiniere', '84%', '2019'],
       bachelors: ['BBA', 'Presidency College', '8.0 CGPA', '2023'],
       masters: [],
       workExperience: 'Business Analyst at Deloitte - 1 year',
@@ -472,8 +442,6 @@ async function main() {
       phone: '+91-9876500006',
       location: 'Hyderabad, India',
       gender: 'FEMALE',
-      education10th: ['Oakridge', '93%', '2018'],
-      education12th: ['Oakridge', '91%', '2020'],
       bachelors: ['B.Des', 'NID', '8.4 CGPA', '2024'],
       masters: [],
       workExperience: null,
@@ -502,8 +470,6 @@ async function main() {
             phone: menteeInfo.phone,
             location: menteeInfo.location,
             gender: menteeInfo.gender,
-            education10th: menteeInfo.education10th,
-            education12th: menteeInfo.education12th,
             bachelors: menteeInfo.bachelors,
             masters: menteeInfo.masters,
             workExperience: menteeInfo.workExperience,
@@ -552,26 +518,23 @@ async function main() {
       bio: 'Recent graduate looking to mentor students in digital marketing and career planning.',
       headline: 'Digital Marketing & Career Planning',
       phone: '+91-9876500001',
+      gender: 'FEMALE',
       location: 'Delhi, India',
       socialLinks: [
         { platform: 'LinkedIn', url: 'https://linkedin.com/in/alicewilliams' },
       ],
+      verificationIds: [],
       expertise: ['Digital Marketing', 'Career Planning', 'Communication Skills', 'Content Writing'],
-      education10th: ['St. Mary High School', '92%', '2017'],
-      education12th: ['Delhi Public School', '88%', '2019'],
       bachelors: ['BA Economics', 'Delhi University', '8.5 CGPA', '2023'],
       masters: [],
       workExperience: [
         { company: 'Startup XYZ', role: 'Product Analytics Intern', startDate: '2023-01', endDate: '2023-06', description: 'Worked on user analytics and growth metrics' },
       ],
-      catScore: 92.3,
-      catYear: 2023,
-      catPercentile: 94.8,
+      exams: [{ examName: 'CAT', score: 92.3, year: 2023, percentile: 94.8 }],
       certifications: ['Google Digital Marketing', 'Content Writing'],
       resumes: [
         { name: 'Alice_Resume.pdf', fileUrl: 'https://storage.example.com/applications/alice_resume.pdf' },
       ],
-      pricePerSession: 800,
       status: 'PENDING',
     },
     {
@@ -579,27 +542,24 @@ async function main() {
       bio: 'Experienced Software Engineer wanting to help students with coding and system design.',
       headline: 'Software Engineer @ Amazon | AI/ML',
       phone: '+91-9876500002',
+      gender: 'MALE',
       location: 'Mumbai, India',
       socialLinks: [
         { platform: 'LinkedIn', url: 'https://linkedin.com/in/bobpatel' },
         { platform: 'GitHub', url: 'https://github.com/bobpatel' },
       ],
+      verificationIds: [],
       expertise: ['Java', 'Spring Boot', 'Microservices', 'System Design', 'Machine Learning', 'Python'],
-      education10th: ['KV School', '85%', '2016'],
-      education12th: ['National Public School', '82%', '2018'],
       bachelors: ['BTech CSE', 'IIT Delhi', '8.2 CGPA', '2022'],
       masters: ['MTech AI', 'IIT Bombay', '8.8 CGPA', '2024'],
       workExperience: [
         { company: 'Amazon', role: 'Software Engineer', startDate: '2022-07', endDate: 'Present', description: 'Working on recommendation systems and ML models' },
       ],
-      catScore: null,
-      catYear: null,
-      catPercentile: null,
+      exams: [],
       certifications: ['AWS Solutions Architect', 'Oracle Java Certified'],
       resumes: [
         { name: 'Bob_Resume.pdf', fileUrl: 'https://storage.example.com/applications/bob_resume.pdf' },
       ],
-      pricePerSession: 1800,
       status: 'APPROVED',
       reviewedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       reviewedBy: admin.id,
@@ -609,24 +569,21 @@ async function main() {
       bio: 'Web developer with 1 year experience, passionate about teaching coding fundamentals.',
       headline: 'Frontend Developer',
       phone: '+91-9876500003',
+      gender: 'FEMALE',
       location: 'Bangalore, India',
       socialLinks: [
         { platform: 'GitHub', url: 'https://github.com/carolsingh' },
       ],
+      verificationIds: [],
       expertise: ['HTML', 'CSS', 'JavaScript', 'React'],
-      education10th: ['Modern School', '90%', '2018'],
-      education12th: ['Ryan International', '85%', '2020'],
       bachelors: ['BTech CSE', 'BITS Pilani', '7.8 CGPA', '2024'],
       masters: [],
       workExperience: [],
-      catScore: null,
-      catYear: null,
-      catPercentile: null,
+      exams: [],
       certifications: [],
       resumes: [
         { name: 'Carol_Resume.pdf', fileUrl: 'https://storage.example.com/applications/carol_resume.pdf' },
       ],
-      pricePerSession: 500,
       status: 'REJECTED',
       rejectionReason: 'Need more professional experience and certifications before becoming a mentor. Please reapply after gaining 2+ years of industry experience.',
       reviewedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
@@ -641,20 +598,17 @@ async function main() {
         bio: app.bio,
         headline: app.headline,
         phone: app.phone,
+        gender: app.gender,
         location: app.location,
         socialLinks: app.socialLinks,
+        verificationIds: app.verificationIds || [],
         expertise: app.expertise,
-        education10th: app.education10th,
-        education12th: app.education12th,
         bachelors: app.bachelors,
         masters: app.masters,
         workExperience: app.workExperience,
-        catScore: app.catScore,
-        catYear: app.catYear,
-        catPercentile: app.catPercentile,
+        exams: app.exams || [],
         certifications: app.certifications,
         resumes: app.resumes,
-        pricePerSession: app.pricePerSession,
         status: app.status,
         rejectionReason: app.rejectionReason,
         reviewedAt: app.reviewedAt,
@@ -665,316 +619,177 @@ async function main() {
   }
 
   // ========================================
-  // 10. SLOTS FOR MENTORS
+  // 10. SERVICES FOR MENTORS
   // ========================================
-  console.log('\n📅 Creating mentor slots...');
-  const slotsCreated = [];
+  console.log('\n💼 Creating mentor services...');
+  const servicesCreated = [];
   
-  // Create slots for all mentors
+  const serviceTemplates = [
+    {
+      title: '1-on-1 Career Guidance Session',
+      shortDescription: 'Personalized career counseling and roadmap planning',
+      longDescription: 'Get expert guidance on your career path, industry insights, and actionable advice tailored to your goals. Perfect for career transitions, growth planning, and strategic decision-making.',
+      duration: 60,
+      tags: ['Career', 'Counseling', 'Planning'],
+      category: 'Career Development',
+    },
+    {
+      title: 'Resume & Profile Review',
+      shortDescription: 'Comprehensive review and optimization of your resume',
+      longDescription: 'I will thoroughly review your resume, LinkedIn profile, and provide detailed feedback to make them stand out to recruiters and hiring managers.',
+      duration: 45,
+      tags: ['Resume', 'Profile', 'Review'],
+      category: 'Job Preparation',
+    },
+    {
+      title: 'Mock Interview Session',
+      shortDescription: 'Practice interviews with real-time feedback',
+      longDescription: 'Realistic mock interview experience with immediate feedback on your responses, body language, and communication skills. Includes technical and behavioral rounds.',
+      duration: 90,
+      tags: ['Interview', 'Preparation', 'Mock'],
+      category: 'Interview Prep',
+    },
+    {
+      title: 'Technical Skill Development',
+      shortDescription: 'Learn specific technical skills with hands-on guidance',
+      longDescription: 'Focused sessions on building technical competencies in your domain. From coding to analytics, get personalized mentorship to accelerate your learning.',
+      duration: 120,
+      tags: ['Technical', 'Skills', 'Learning'],
+      category: 'Skill Development',
+    },
+    {
+      title: 'Quick Doubt Clearing',
+      shortDescription: 'Fast answers to your specific questions',
+      longDescription: 'Have a quick question or need clarity on a concept? Book this short session for immediate help without booking a full session.',
+      duration: 30,
+      tags: ['Quick', 'Help', 'Q&A'],
+      category: 'Support',
+    },
+  ];
+
   for (let mentorIndex = 0; mentorIndex < mentors.length; mentorIndex++) {
     const mentor = mentors[mentorIndex];
     if (!mentor.mentorProfile) continue;
 
-    // Create slots for next 7 days
-    for (let day = 0; day < 7; day++) {
-      const date = new Date();
-      date.setDate(date.getDate() + day);
-      
-      // Morning slot (10-11 AM)
-      const morningStart = new Date(date);
-      morningStart.setHours(10, 0, 0, 0);
-      const morningEnd = new Date(date);
-      morningEnd.setHours(11, 0, 0, 0);
+    // Create 2-3 services per mentor
+    const numServices = 2 + Math.floor(Math.random() * 2); // 2 or 3 services
+    const mentorServices = [];
 
-      const morningSlot = await prisma.slot.create({
+    for (let i = 0; i < numServices; i++) {
+      const template = serviceTemplates[i % serviceTemplates.length];
+      const priceMultiplier = 0.8 + (Math.random() * 0.4); // Random price between 80% and 120%
+      const basePrice = 1500 + (mentorIndex * 200); // Base price varies by mentor
+      const price = Math.round(basePrice * priceMultiplier);
+
+      const service = await prisma.service.create({
         data: {
           mentorId: mentor.mentorProfile.id,
-          startTime: morningStart,
-          endTime: morningEnd,
-          status: day === 0 && mentorIndex < 3 ? 'BOOKED' : 'AVAILABLE',
+          title: template.title,
+          shortDescription: template.shortDescription,
+          longDescription: template.longDescription,
+          price: price,
+          duration: template.duration,
+          status: i === 0 ? 'ACTIVE' : (Math.random() > 0.3 ? 'ACTIVE' : 'INACTIVE'), // First service always active
+          tags: template.tags,
+          category: template.category,
+          // Simulate some analytics for active services
+          totalBookings: i === 0 ? Math.floor(Math.random() * 50) + 10 : Math.floor(Math.random() * 20),
+          totalRevenue: 0, // Will be calculated
+          averageRating: 0, // Will be set when reviews are created
+          totalReviews: 0,
+          viewCount: Math.floor(Math.random() * 500) + 100,
+          isPopular: i === 0 && mentorIndex < 3, // First 3 mentors' first service is popular
         },
       });
-      slotsCreated.push(morningSlot);
 
-      // Afternoon slot (14-15 PM)
-      const afternoonStart = new Date(date);
-      afternoonStart.setHours(14, 0, 0, 0);
-      const afternoonEnd = new Date(date);
-      afternoonEnd.setHours(15, 0, 0, 0);
-
-      const afternoonSlot = await prisma.slot.create({
+      // Calculate total revenue based on bookings
+      await prisma.service.update({
+        where: { id: service.id },
         data: {
-          mentorId: mentor.mentorProfile.id,
-          startTime: afternoonStart,
-          endTime: afternoonEnd,
-          status: day === 1 && mentorIndex === 1 ? 'BOOKED' : 'AVAILABLE',
+          totalRevenue: service.totalBookings * price,
         },
       });
-      slotsCreated.push(afternoonSlot);
 
-      // Evening slot (18-19 PM)
-      const eveningStart = new Date(date);
-      eveningStart.setHours(18, 0, 0, 0);
-      const eveningEnd = new Date(date);
-      eveningEnd.setHours(19, 0, 0, 0);
-
-      const eveningSlot = await prisma.slot.create({
-        data: {
-          mentorId: mentor.mentorProfile.id,
-          startTime: eveningStart,
-          endTime: eveningEnd,
-          status: day === 6 ? 'BLOCKED' : day === 2 && mentorIndex === 2 ? 'BOOKED' : 'AVAILABLE',
-        },
-      });
-      slotsCreated.push(eveningSlot);
+      servicesCreated.push(service);
+      mentorServices.push(service);
+      console.log(`✅ Service created: "${service.title}" by ${mentor.name} - ₹${price} (${service.status})`);
     }
-    console.log(`✅ Created 21 slots for ${mentor.name}`);
   }
 
   // ========================================
-  // 11. BOOKINGS
+  // 11. SERVICE REVIEWS
   // ========================================
-  console.log('\n📦 Creating bookings...');
-  const bookingsData = [
-    {
-      mentor: mentors[0],
-      mentee: mentees[0],
-      slotIndex: 0, // First available booked slot
-      status: 'CONFIRMED',
-      sessionMode: 'VIDEO',
-      sessionType: 'ONE_ON_ONE',
-      purpose: 'Career guidance and resume review for PM roles',
-      shareProfile: true,
-      meetingLink: 'https://meet.google.com/abc-defg-hij',
-    },
-    {
-      mentor: mentors[1],
-      mentee: mentees[1],
-      slotIndex: 21 + 7, // Second mentor's afternoon slot
-      status: 'COMPLETED',
-      sessionMode: 'VIDEO',
-      sessionType: 'ONE_ON_ONE',
-      purpose: 'Product management interview preparation and case studies',
-      shareProfile: true,
-      meetingLink: 'https://zoom.us/j/123456789',
-    },
-    {
-      mentor: mentors[2],
-      mentee: mentees[2],
-      slotIndex: 42 + 14, // Third mentor's slot
-      status: 'PENDING',
-      sessionMode: 'CHAT',
-      sessionType: 'ONE_ON_ONE',
-      purpose: 'Quick doubt clearing session on ML algorithms',
-      shareProfile: false,
-      meetingLink: null,
-    },
-    {
-      mentor: mentors[1],
-      mentee: mentees[0],
-      slotIndex: 21 + 0, // Sarah's morning slot different day
-      status: 'COMPLETED',
-      sessionMode: 'VIDEO',
-      sessionType: 'ONE_ON_ONE',
-      purpose: 'Second session - Mock PM interview',
-      shareProfile: true,
-      meetingLink: 'https://zoom.us/j/987654321',
-    },
-    {
-      mentor: mentors[3],
-      mentee: mentees[3],
-      slotIndex: 63 + 7, // Priya's slot
-      status: 'CONFIRMED',
-      sessionMode: 'AUDIO',
-      sessionType: 'ONE_ON_ONE',
-      purpose: 'Career counseling for MBA vs MS decision',
-      shareProfile: true,
-      meetingLink: 'https://meet.google.com/xyz-abcd-efg',
-    },
-    {
-      mentor: mentors[0],
-      mentee: mentees[4],
-      slotIndex: 7, // John's afternoon slot
-      status: 'CANCELLED',
-      sessionMode: 'VIDEO',
-      sessionType: 'ONE_ON_ONE',
-      purpose: 'System design interview prep',
-      shareProfile: false,
-      cancelledAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-      cancelledBy: mentees[4].id,
-      cancellationReason: 'Personal emergency, need to reschedule',
-    },
-    {
-      mentor: mentors[5],
-      mentee: mentees[5],
-      slotIndex: 105 + 0, // Anjali's slot
-      status: 'CONFIRMED',
-      sessionMode: 'VIDEO',
-      sessionType: 'ONE_ON_ONE',
-      purpose: 'UX portfolio review and design feedback',
-      shareProfile: true,
-      meetingLink: 'https://meet.google.com/design-session',
-    },
+  console.log('\n⭐ Creating service reviews...');
+  
+  const reviewTemplates = [
+    { rating: 5, comment: 'Excellent session! Very insightful and helpful. The mentor was well-prepared and answered all my questions thoroughly.' },
+    { rating: 5, comment: 'Best mentorship experience I have had. Practical advice and clear guidance on my career path.' },
+    { rating: 4, comment: 'Great session, learned a lot. Would have appreciated more time for Q&A but overall very satisfied.' },
+    { rating: 5, comment: 'Highly recommended! The mentor is knowledgeable and patient. Got exactly what I needed.' },
+    { rating: 4, comment: 'Good session with actionable insights. The feedback was constructive and motivating.' },
+    { rating: 5, comment: 'Amazing experience! The mock interview was very realistic and the feedback helped me improve significantly.' },
+    { rating: 4, comment: 'Very helpful session. The mentor provided valuable industry insights and practical tips.' },
   ];
 
-  const bookings = [];
-  for (const bookingData of bookingsData) {
-    const slot = slotsCreated[bookingData.slotIndex];
-    if (!slot) continue;
+  // Create reviews for active services
+  let reviewCount = 0;
+  for (const service of servicesCreated) {
+    if (service.status === 'ACTIVE' && service.totalBookings > 0) {
+      // Create 1-3 reviews per active service
+      const numReviews = Math.min(3, Math.floor(Math.random() * 3) + 1);
+      let totalRating = 0;
 
-    const booking = await prisma.booking.create({
-      data: {
-        mentorId: bookingData.mentor.id,
-        menteeId: bookingData.mentee.id,
-        slotId: slot.id,
-        status: bookingData.status,
-        sessionMode: bookingData.sessionMode,
-        sessionType: bookingData.sessionType,
-        purpose: bookingData.purpose,
-        shareProfile: bookingData.shareProfile,
-        meetingLink: bookingData.meetingLink,
-        cancelledAt: bookingData.cancelledAt,
-        cancelledBy: bookingData.cancelledBy,
-        cancellationReason: bookingData.cancellationReason,
-      },
-    });
-    bookings.push(booking);
-    console.log(`✅ Booking created: ${bookingData.mentee.name} → ${bookingData.mentor.name} (${bookingData.status})`);
-  }
+      for (let i = 0; i < numReviews; i++) {
+        const randomMentee = mentees[Math.floor(Math.random() * mentees.length)];
+        const template = reviewTemplates[Math.floor(Math.random() * reviewTemplates.length)];
 
-  // ========================================
-  // 12. PAYMENTS
-  // ========================================
-  console.log('\n💳 Creating payments...');
-  for (let i = 0; i < bookings.length; i++) {
-    const booking = bookings[i];
-    const mentorIndex = mentors.findIndex(m => m.id === booking.mentorId);
-    const mentor = mentors[mentorIndex];
-    
-    let paymentStatus = 'CREATED';
-    if (booking.status === 'COMPLETED') paymentStatus = 'SUCCESS';
-    else if (booking.status === 'CONFIRMED') paymentStatus = 'SUCCESS';
-    else if (booking.status === 'CANCELLED') paymentStatus = 'REFUNDED';
+        const review = await prisma.serviceReview.create({
+          data: {
+            serviceId: service.id,
+            menteeId: randomMentee.id,
+            rating: template.rating,
+            comment: template.comment,
+            isVerified: Math.random() > 0.3, // 70% verified
+          },
+        });
 
-    await prisma.payment.create({
-      data: {
-        bookingId: booking.id,
-        razorpayOrderId: `order_${Math.random().toString(36).substring(7).toUpperCase()}`,
-        razorpayPaymentId: paymentStatus === 'SUCCESS' || paymentStatus === 'REFUNDED'
-          ? `pay_${Math.random().toString(36).substring(7).toUpperCase()}` 
-          : null,
-        amount: mentor.mentorProfile?.pricePerSession || 1500,
-        currency: 'INR',
-        status: paymentStatus,
-      },
-    });
-    console.log(`✅ Payment created for booking ${i + 1} - Status: ${paymentStatus}`);
-  }
+        totalRating += template.rating;
+        reviewCount++;
+        console.log(`✅ Review created for service "${service.title}" by ${randomMentee.name} - ${template.rating}⭐`);
+      }
 
-  // ========================================
-  // 13. REVIEWS
-  // ========================================
-  console.log('\n⭐ Creating reviews...');
-  const reviewData = [
-    {
-      booking: bookings[1], // Sarah's completed session
-      rating: 5,
-      comment: 'Excellent session! Sarah is very knowledgeable and helped me prepare for my PM interviews. Her insights on product thinking and case studies were invaluable. Highly recommended!',
-    },
-    {
-      booking: bookings[3], // Sarah's second completed session
-      rating: 5,
-      comment: 'Second session with Sarah was even better! The mock interview was very realistic and her feedback was spot-on. Got an offer from my dream company!',
-    },
-  ];
-
-  for (const review of reviewData) {
-    if (review.booking.status === 'COMPLETED') {
-      await prisma.review.create({
+      // Update service with average rating and review count
+      const averageRating = totalRating / numReviews;
+      await prisma.service.update({
+        where: { id: service.id },
         data: {
-          bookingId: review.booking.id,
-          rating: review.rating,
-          comment: review.comment,
+          averageRating: Math.round(averageRating * 10) / 10,
+          totalReviews: numReviews,
         },
       });
-      console.log(`✅ Review created for booking ${review.booking.id}`);
     }
   }
+  console.log(`\n✅ Created ${reviewCount} service reviews in total`);
 
   // ========================================
-  // 14. EARNINGS
-  // ========================================
-  console.log('\n💰 Creating earnings records...');
-  for (let i = 0; i < bookings.length; i++) {
-    const booking = bookings[i];
-    if (booking.status === 'COMPLETED' || booking.status === 'CONFIRMED') {
-      const mentorIndex = mentors.findIndex(m => m.id === booking.mentorId);
-      const mentor = mentors[mentorIndex];
-      
-      const amount = mentor.mentorProfile?.pricePerSession || 0;
-      const platformFee = amount * 0.15; // 15% platform fee
-      const netAmount = amount - platformFee;
-      
-      const isPending = booking.status === 'CONFIRMED';
-      
-      await prisma.earnings.create({
-        data: {
-          mentorId: mentor.mentorProfile?.id || '',
-          bookingId: booking.id,
-          amount: amount,
-          platformFee: platformFee,
-          netAmount: netAmount,
-          status: isPending ? 'PENDING' : 'COMPLETED',
-          clearedAt: isPending ? null : new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-        },
-      });
-      console.log(`✅ Earnings recorded for booking ${i + 1}: ₹${netAmount} (after ${platformFee} fee)`);
-    }
-  }
-
-  // ========================================
-  // 15. MENTOR FEEDBACK
-  // ========================================
-  console.log('\n📝 Creating mentor feedback...');
-  for (const booking of bookings) {
-    if (booking.status === 'COMPLETED') {
-      const mentorIndex = mentors.findIndex(m => m.id === booking.mentorId);
-      const mentor = mentors[mentorIndex];
-      
-      await prisma.mentorFeedback.create({
-        data: {
-          mentorId: mentor.mentorProfile?.id || '',
-          bookingId: booking.id,
-          feedbackPdfUrl: `https://storage.example.com/feedback/${booking.id}_feedback.pdf`,
-        },
-      });
-      console.log(`✅ Mentor feedback created for booking ${booking.id}`);
-    }
-  }
-
-  // ========================================
-  // 16. TRANSACTIONS
+  // 12. TRANSACTIONS
   // ========================================
   console.log('\n💸 Creating transaction records...');
   const transactionData = [
-    // Earnings transactions
-    { mentor: mentors[0], type: 'EARNING', amount: 2125, description: 'Session earnings from Alice Williams', reference: bookings[0].id },
-    { mentor: mentors[1], type: 'EARNING', amount: 2550, description: 'Session earnings from Bob Patel', reference: bookings[1].id },
-    { mentor: mentors[1], type: 'EARNING', amount: 2550, description: 'Session earnings from Alice Williams', reference: bookings[3].id },
-    { mentor: mentors[3], type: 'EARNING', amount: 1275, description: 'Session earnings from Emma Desai', reference: bookings[4].id },
-    { mentor: mentors[5], type: 'EARNING', amount: 1530, description: 'Session earnings from Grace Reddy', reference: bookings[6].id },
+    // Earnings transactions (from completed services)
+    { mentor: mentors[0], type: 'EARNING', amount: 2125, description: 'Service earnings from mentee', reference: 'service_001' },
+    { mentor: mentors[1], type: 'EARNING', amount: 2550, description: 'Service earnings from mentee', reference: 'service_002' },
+    { mentor: mentors[1], type: 'EARNING', amount: 2550, description: 'Service earnings from mentee', reference: 'service_003' },
+    { mentor: mentors[3], type: 'EARNING', amount: 1275, description: 'Service earnings from mentee', reference: 'service_004' },
+    { mentor: mentors[5], type: 'EARNING', amount: 1530, description: 'Service earnings from mentee', reference: 'service_005' },
     
     // Withdrawal transactions
     { mentor: mentors[0], type: 'WITHDRAWAL', amount: -10000, description: 'Withdrawal to bank account', reference: 'withdraw_001' },
     { mentor: mentors[1], type: 'WITHDRAWAL', amount: -15000, description: 'Withdrawal to UPI', reference: 'withdraw_002' },
     
     // Platform fee transactions
-    { mentor: mentors[0], type: 'PLATFORM_FEE', amount: -375, description: 'Platform commission (15%)', reference: bookings[0].id },
-    { mentor: mentors[1], type: 'PLATFORM_FEE', amount: -450, description: 'Platform commission (15%)', reference: bookings[1].id },
-    
-    // Incentive transactions
-    { mentor: mentors[1], type: 'INCENTIVE', amount: 5000, description: 'Bonus for completing 50 sessions', reference: 'incentive_001' },
-    { mentor: mentors[0], type: 'INCENTIVE', amount: 2000, description: 'Referral bonus', reference: 'incentive_002' },
+    { mentor: mentors[0], type: 'PLATFORM_FEE', amount: -375, description: 'Platform commission (15%)', reference: 'service_001' },
+    { mentor: mentors[1], type: 'PLATFORM_FEE', amount: -450, description: 'Platform commission (15%)', reference: 'service_002' },
   ];
 
   for (const txn of transactionData) {
@@ -995,7 +810,7 @@ async function main() {
   }
 
   // ========================================
-  // 17. WITHDRAWALS
+  // 13. WITHDRAWALS
   // ========================================
   console.log('\n🏦 Creating withdrawal requests...');
   const withdrawalData = [
@@ -1052,7 +867,7 @@ async function main() {
   }
 
   // ========================================
-  // 18. PAYOUTS (Admin-initiated)
+  // 14. PAYOUTS (Admin-initiated)
   // ========================================
   console.log('\n💰 Creating admin-initiated payouts...');
   const payoutData = [
@@ -1102,78 +917,7 @@ async function main() {
   }
 
   // ========================================
-  // 19. INCENTIVES
-  // ========================================
-  console.log('\n🎁 Creating incentives and rewards...');
-  const incentiveData = [
-    {
-      mentor: mentors[1],
-      type: 'milestone',
-      title: '50 Sessions Milestone',
-      description: 'Congratulations on completing 50 mentoring sessions!',
-      amount: 5000,
-      status: 'COMPLETED',
-      criteria: { sessions_completed: 50 },
-      claimedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    },
-    {
-      mentor: mentors[0],
-      type: 'referral',
-      title: 'Referral Bonus',
-      description: 'Thank you for referring a new mentor to our platform',
-      amount: 2000,
-      status: 'COMPLETED',
-      criteria: { referred_user: 'mentor_xyz' },
-      claimedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    },
-    {
-      mentor: mentors[5],
-      type: 'achievement',
-      title: 'Rising Star Award',
-      description: 'Achieved 4.7+ rating in first month',
-      amount: 1000,
-      status: 'PENDING',
-      criteria: { rating: 4.7, period: 'first_month' },
-    },
-    {
-      mentor: mentors[0],
-      type: 'bonus',
-      title: 'Top Mentor of the Month',
-      description: 'Highest bookings and ratings for January 2026',
-      amount: 3000,
-      status: 'COMPLETED',
-      criteria: { month: 'january_2026', rank: 1 },
-      claimedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    },
-    {
-      mentor: mentors[3],
-      type: 'milestone',
-      title: '25 Sessions Milestone',
-      description: 'Congratulations on completing 25 mentoring sessions!',
-      amount: 2500,
-      status: 'PENDING',
-      criteria: { sessions_completed: 25 },
-    },
-  ];
-
-  for (const incentive of incentiveData) {
-    await prisma.incentive.create({
-      data: {
-        mentorId: incentive.mentor.mentorProfile?.id || '',
-        type: incentive.type,
-        title: incentive.title,
-        description: incentive.description,
-        amount: incentive.amount,
-        status: incentive.status,
-        criteria: incentive.criteria,
-        claimedAt: incentive.claimedAt,
-      },
-    });
-    console.log(`✅ Incentive created for ${incentive.mentor.name}: ${incentive.title} - ₹${incentive.amount}`);
-  }
-
-  // ========================================
-  // 20. WEBINARS
+  // 15. WEBINARS
   // ========================================
   console.log('\n🎓 Creating webinars...');
   const webinarData = [

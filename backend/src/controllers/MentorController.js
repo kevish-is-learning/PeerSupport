@@ -1,7 +1,6 @@
 import mentorService from "../services/MentorService.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
-import { createSlotsSchema } from "../validators/mentor.validator.js";
 import { deleteFile } from "../middleware/upload.middleware.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -129,188 +128,126 @@ class MentorController {
     }
   }
 
-  // Check if can accept bookings
-  async canAcceptBookings(req, res) {
-    try {
-      const result = await mentorService.canAcceptBookings(req.user.id);
-
-      res.status(200).json(
-        new ApiResponse(true, "Status checked", result)
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, error.message || "Failed to check status")
-      );
-    }
-  }
-
   ///////////////////////////
-  // SLOT MANAGEMENT
+  // SERVICE MANAGEMENT
   ///////////////////////////
 
-  // Create slots
-  async createSlots(req, res) {
+  // Create a new service
+  async createService(req, res) {
     try {
-      // Validate input using Zod
-      const { slots } = createSlotsSchema.parse(req.body);
-
-      const createdSlots = await mentorService.createSlots(req.user.id, slots);
+      const service = await mentorService.createService(req.user.id, req.body);
 
       res.status(201).json(
-        new ApiResponse(true, "Slots created successfully", createdSlots)
+        new ApiResponse(true, "Service created successfully", service)
       );
     } catch (error) {
       res.status(400).json(
-        new ApiError(400, error.message || "Failed to create slots")
+        new ApiError(400, error.message || "Failed to create service")
       );
     }
   }
 
-  // Get slots
-  async getSlots(req, res) {
+  // Get mentor's services
+  async getServices(req, res) {
     try {
-      const { status, startDate, endDate } = req.query;
+      const { status, category, page, limit } = req.query;
 
-      const slots = await mentorService.getSlots(req.user.id, {
+      const result = await mentorService.getServices(req.user.id, {
         status,
-        startDate,
-        endDate,
+        category,
+        page: parseInt(page) || 1,
+        limit: parseInt(limit) || 20,
       });
 
       res.status(200).json(
-        new ApiResponse(true, "Slots retrieved successfully", slots)
+        new ApiResponse(true, "Services retrieved successfully", result)
       );
     } catch (error) {
       res.status(500).json(
-        new ApiError(500, error.message || "Failed to retrieve slots")
+        new ApiError(500, error.message || "Failed to retrieve services")
       );
     }
   }
 
-  // Update slot
-  async updateSlot(req, res) {
+  // Get a specific service
+  async getService(req, res) {
     try {
-      const { slotId } = req.params;
+      const { serviceId } = req.params;
 
-      const slot = await mentorService.updateSlot(req.user.id, slotId, req.body);
+      const service = await mentorService.getServiceById(req.user.id, serviceId);
 
       res.status(200).json(
-        new ApiResponse(true, "Slot updated successfully", slot)
+        new ApiResponse(true, "Service retrieved successfully", service)
+      );
+    } catch (error) {
+      res.status(404).json(
+        new ApiError(404, error.message || "Service not found")
+      );
+    }
+  }
+
+  // Update a service
+  async updateService(req, res) {
+    try {
+      const { serviceId } = req.params;
+
+      const service = await mentorService.updateService(
+        req.user.id,
+        serviceId,
+        req.body
+      );
+
+      res.status(200).json(
+        new ApiResponse(true, "Service updated successfully", service)
       );
     } catch (error) {
       res.status(400).json(
-        new ApiError(400, error.message || "Failed to update slot")
+        new ApiError(400, error.message || "Failed to update service")
       );
     }
   }
 
-  // Delete slot
-  async deleteSlot(req, res) {
+  // Delete a service
+  async deleteService(req, res) {
     try {
-      const { slotId } = req.params;
+      const { serviceId } = req.params;
 
-      const result = await mentorService.deleteSlot(req.user.id, slotId);
+      const result = await mentorService.deleteService(req.user.id, serviceId);
 
       res.status(200).json(
         new ApiResponse(true, result.message, null)
       );
     } catch (error) {
       res.status(400).json(
-        new ApiError(400, error.message || "Failed to delete slot")
+        new ApiError(400, error.message || "Failed to delete service")
       );
     }
   }
 
-  ///////////////////////////
-  // BOOKINGS
-  ///////////////////////////
-
-  // Get bookings
-  async getBookings(req, res) {
+  // Toggle service status
+  async toggleServiceStatus(req, res) {
     try {
-      const { status, page, limit } = req.query;
+      const { serviceId } = req.params;
+      const { status } = req.body;
 
-      const result = await mentorService.getBookings(req.user.id, {
-        status,
-        page: parseInt(page) || 1,
-        limit: parseInt(limit) || 10,
-      });
-
-      res.status(200).json(
-        new ApiResponse(true, "Bookings retrieved successfully", result)
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, error.message || "Failed to retrieve bookings")
-      );
-    }
-  }
-
-  // Reschedule booking
-  async rescheduleBooking(req, res) {
-    try {
-      const { bookingId } = req.params;
-      const { newSlotId, reason } = req.body;
-
-      if (!newSlotId) {
+      if (!status) {
         return res.status(400).json(
-          new ApiError(400, "New slot ID is required")
+          new ApiError(400, "Status is required")
         );
       }
 
-      const booking = await mentorService.rescheduleBooking(
+      const service = await mentorService.toggleServiceStatus(
         req.user.id,
-        bookingId,
-        newSlotId,
-        reason
+        serviceId,
+        status
       );
 
       res.status(200).json(
-        new ApiResponse(true, "Booking rescheduled successfully", booking)
+        new ApiResponse(true, "Service status updated successfully", service)
       );
     } catch (error) {
       res.status(400).json(
-        new ApiError(400, error.message || "Failed to reschedule booking")
-      );
-    }
-  }
-
-  // Cancel booking
-  async cancelBooking(req, res) {
-    try {
-      const { bookingId } = req.params;
-      const { reason } = req.body;
-
-      const result = await mentorService.cancelBooking(
-        req.user.id,
-        bookingId,
-        reason
-      );
-
-      res.status(200).json(
-        new ApiResponse(true, "Booking cancelled successfully", result)
-      );
-    } catch (error) {
-      res.status(400).json(
-        new ApiError(400, error.message || "Failed to cancel booking")
-      );
-    }
-  }
-
-  // Complete booking
-  async completeBooking(req, res) {
-    try {
-      const { bookingId } = req.params;
-      const { mentorNotes } = req.body;
-
-      const result = await mentorService.completeBooking(bookingId, mentorNotes);
-
-      res.status(200).json(
-        new ApiResponse(true, "Booking completed successfully", result)
-      );
-    } catch (error) {
-      res.status(400).json(
-        new ApiError(400, error.message || "Failed to complete booking")
+        new ApiError(400, error.message || "Failed to update service status")
       );
     }
   }
@@ -331,28 +268,6 @@ class MentorController {
       console.log(error)
       res.status(500).json(
         new ApiError(500, error.message || "Failed to retrieve dashboard stats")
-      );
-    }
-  }
-
-  // Get earnings history
-  async getEarningsHistory(req, res) {
-    try {
-      const { page, limit, startDate, endDate } = req.query;
-
-      const result = await mentorService.getEarningsHistory(req.user.id, {
-        page: parseInt(page) || 1,
-        limit: parseInt(limit) || 20,
-        startDate,
-        endDate,
-      });
-
-      res.status(200).json(
-        new ApiResponse(true, "Earnings history retrieved successfully", result)
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, error.message || "Failed to retrieve earnings history")
       );
     }
   }
@@ -417,49 +332,6 @@ class MentorController {
     } catch (error) {
       res.status(500).json(
         new ApiError(500, error.message || "Failed to retrieve withdrawals")
-      );
-    }
-  }
-
-  ///////////////////////////
-  // INCENTIVES
-  ///////////////////////////
-
-  // Get incentives
-  async getIncentives(req, res) {
-    try {
-      const { page, limit, status, type } = req.query;
-
-      const result = await mentorService.getIncentives(req.user.id, {
-        page: parseInt(page) || 1,
-        limit: parseInt(limit) || 20,
-        status,
-        type,
-      });
-
-      res.status(200).json(
-        new ApiResponse(true, "Incentives retrieved successfully", result)
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, error.message || "Failed to retrieve incentives")
-      );
-    }
-  }
-
-  // Claim incentive
-  async claimIncentive(req, res) {
-    try {
-      const { incentiveId } = req.params;
-
-      const result = await mentorService.claimIncentive(req.user.id, incentiveId);
-
-      res.status(200).json(
-        new ApiResponse(true, "Incentive claimed successfully", result)
-      );
-    } catch (error) {
-      res.status(400).json(
-        new ApiError(400, error.message || "Failed to claim incentive")
       );
     }
   }

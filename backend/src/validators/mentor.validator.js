@@ -37,40 +37,43 @@ const certificationSchema = z.union([
   })
 ]);
 
+// Exam score schema
+const examSchema = z.object({
+  examName: z.string().min(1, 'Exam name is required'),
+  score: z.number().positive('Score must be positive'),
+  year: z.number().int().min(2000).max(new Date().getFullYear()),
+  percentile: z.number().min(0).max(100).optional(),
+});
+
 // Submit mentor application schema
 export const submitMentorApplicationSchema = z.object({
   // Step 1: Personal Details & Social Links
   bio: z.string({ required_error: 'Bio is required' }).min(10, 'Bio must be at least 10 characters'),
   headline: z.string().optional(),
   phone: z.string().optional(),
+  gender: z.enum(['MALE', 'FEMALE', 'OTHER']).optional(),
   location: z.string().optional(),
   socialLinks: z.array(socialLinkSchema).max(5, 'Maximum 5 social links allowed').optional().default([]),
+  verificationIds: z.array(z.string()).optional().default([]),
 
   // Step 2: Expertise
   expertise: z.array(z.string()).min(1, 'At least one expertise is required'),
 
   // Step 3: Education
-  education10th: educationSchema,
-  education12th: educationSchema,
   bachelors: educationSchema,
   masters: educationSchema,
 
   // Step 4: Work Experience
   workExperience: z.array(workExperienceSchema).optional().default([]),
 
-  // Step 5: CAT Score
-  catScore: z.number().positive().optional().nullable(),
-  catYear: z.number().int().min(2000).max(new Date().getFullYear()).optional().nullable(),
-  catPercentile: z.number().min(0).max(100).optional().nullable(),
+  // Step 5: Exam Scores
+  exams: z.array(examSchema).optional().default([]),
 
   // Step 6: Certifications
   certifications: z.array(certificationSchema).optional().default([]),
 
   // Step 7: Resumes
   resumes: z.array(resumeSchema).optional().default([]),
-
-  // Pricing
-  pricePerSession: z.coerce.number({ required_error: 'Price per session is required' }).positive('Price must be positive'),
 });
 
 // Update mentor application schema (partial)
@@ -83,60 +86,52 @@ export const updateMentorProfileSchema = z.object({
   bio: z.string().min(10, 'Bio must be at least 10 characters').optional(),
   headline: z.string().optional(),
   phone: z.string().optional(),
+  gender: z.enum(['MALE', 'FEMALE', 'OTHER']).optional(),
   location: z.string().optional(),
   socialLinks: z.array(socialLinkSchema).max(5, 'Maximum 5 social links allowed').optional(),
+  verificationIds: z.array(z.string()).optional(),
   expertise: z.array(z.string()).min(1, 'At least one expertise is required').optional(),
   certifications: z.array(certificationSchema).optional(),
-  pricePerSession: z.coerce.number().positive('Price must be positive').optional(),
   reschedulePolicy: z.coerce.number().int().positive('Reschedule policy must be a positive number').optional(),
   cancellationPolicy: z.coerce.number().int().positive('Cancellation policy must be a positive number').optional(),
   refundPolicy: z.string().optional(),
   workExperience: z.array(workExperienceSchema).optional(),
-  education10th: educationSchema,
-  education12th: educationSchema,
   bachelors: educationSchema,
   masters: educationSchema,
-  catScore: z.number().positive().optional().nullable(),
-  catYear: z.number().int().min(2000).max(new Date().getFullYear()).optional().nullable(),
-  catPercentile: z.number().min(0).max(100).optional().nullable(),
+  exams: z.array(examSchema).optional(),
 });
 
-// Slot schema
-const slotSchema = z.object({
-  startTime: z.string().or(z.date()),
-  endTime: z.string().or(z.date()),
+// Service schemas
+export const createServiceSchema = z.object({
+  title: z.string().min(3, 'Title must be at least 3 characters').max(100, 'Title too long'),
+  shortDescription: z.string().min(10, 'Description must be at least 10 characters').max(200, 'Description must be less than 200 characters'),
+  longDescription: z.string().max(2000, 'Long description must be less than 2000 characters').optional(),
+  price: z.number().positive('Price must be a positive number'),
+  duration: z.number().int().min(15, 'Duration must be at least 15 minutes').max(240, 'Duration cannot exceed 240 minutes'),
+  status: z.enum(['ACTIVE', 'INACTIVE', 'DRAFT']).optional().default('DRAFT'),
+  tags: z.array(z.string()).max(10, 'Maximum 10 tags allowed').optional().default([]),
+  category: z.string().optional(),
 });
 
-// Create slots schema
-export const createSlotsSchema = z.object({
-  slots: z.array(slotSchema).min(1, 'At least one slot is required'),
+export const updateServiceSchema = z.object({
+  title: z.string().min(3, 'Title must be at least 3 characters').max(100, 'Title too long').optional(),
+  shortDescription: z.string().min(10, 'Description must be at least 10 characters').max(200, 'Description must be less than 200 characters').optional(),
+  longDescription: z.string().max(2000, 'Long description must be less than 2000 characters').optional(),
+  price: z.number().positive('Price must be a positive number').optional(),
+  duration: z.number().int().min(15, 'Duration must be at least 15 minutes').max(240, 'Duration cannot exceed 240 minutes').optional(),
+  tags: z.array(z.string()).max(10, 'Maximum 10 tags allowed').optional(),
+  category: z.string().optional(),
 });
 
-// Update slot schema
-export const updateSlotSchema = z.object({
-  startTime: z.string().or(z.date()).optional(),
-  endTime: z.string().or(z.date()).optional(),
-  status: z.enum(['AVAILABLE', 'BOOKED', 'CANCELLED']).optional(),
+export const toggleServiceStatusSchema = z.object({
+  status: z.enum(['ACTIVE', 'INACTIVE', 'DRAFT'], { required_error: 'Status is required' }),
 });
 
-// Get slots query schema
-export const getSlotsQuerySchema = z.object({
-  status: z.enum(['AVAILABLE', 'BOOKED', 'CANCELLED']).optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
-});
-
-// Get bookings query schema
-export const getBookingsQuerySchema = z.object({
-  status: z.enum(['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'RESCHEDULED']).optional(),
+export const getServicesQuerySchema = z.object({
+  status: z.enum(['ACTIVE', 'INACTIVE', 'DRAFT']).optional(),
+  category: z.string().optional(),
   page: z.coerce.number().int().positive().optional().default(1),
-  limit: z.coerce.number().int().positive().max(100).optional().default(10),
-});
-
-// Reschedule booking schema
-export const rescheduleBookingSchema = z.object({
-  newSlotId: z.string({ required_error: 'New slot ID is required' }),
-  reason: z.string().optional(),
+  limit: z.coerce.number().int().positive().max(100).optional().default(20),
 });
 
 // Validate function helper
@@ -144,26 +139,25 @@ export const validateMentor = {
   submitApplication: (data) => submitMentorApplicationSchema.parse(data),
   updateApplication: (data) => updateMentorApplicationSchema.parse(data),
   updateProfile: (data) => updateMentorProfileSchema.parse(data),
-  createSlots: (data) => createSlotsSchema.parse(data),
-  updateSlot: (data) => updateSlotSchema.parse(data),
-  getSlotsQuery: (data) => getSlotsQuerySchema.parse(data),
-  getBookingsQuery: (data) => getBookingsQuerySchema.parse(data),
-  rescheduleBooking: (data) => rescheduleBookingSchema.parse(data),
+  createService: (data) => createServiceSchema.parse(data),
+  updateService: (data) => updateServiceSchema.parse(data),
+  toggleServiceStatus: (data) => toggleServiceStatusSchema.parse(data),
+  getServicesQuery: (data) => getServicesQuerySchema.parse(data),
 };
 
 export default {
   submitMentorApplicationSchema,
   updateMentorApplicationSchema,
   updateMentorProfileSchema,
-  createSlotsSchema,
-  updateSlotSchema,
-  getSlotsQuerySchema,
-  getBookingsQuerySchema,
-  rescheduleBookingSchema,
+  createServiceSchema,
+  updateServiceSchema,
+  toggleServiceStatusSchema,
+  getServicesQuerySchema,
   validateMentor,
   socialLinkSchema,
   workExperienceSchema,
   resumeSchema,
   certificationSchema,
   educationSchema,
+  examSchema,
 };

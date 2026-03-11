@@ -31,8 +31,6 @@ router.get('/', (req, res) => {
         earnings: 'GET /api/mentor/earnings',
         transactions: 'GET /api/mentor/transactions',
         withdrawals: 'GET/POST /api/mentor/withdrawals',
-        incentives: 'GET /api/mentor/incentives',
-        claimIncentive: 'PATCH /api/mentor/incentives/:id/claim',
         ratings: 'GET /api/mentor/ratings',
         resumes: 'GET/POST/DELETE /api/mentor/resumes',
       },

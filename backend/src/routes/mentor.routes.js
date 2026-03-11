@@ -15,40 +15,27 @@ const router = express.Router();
 // - PUT /api/users/profile/mentor/:userId (update mentor profile)
 ///////////////////////////
 
-// Check if mentor can accept bookings
-router.get('/can-accept-bookings', authenticateJWT, authorizeRoles('MENTOR'), mentorController.canAcceptBookings);
-
 ///////////////////////////
-// SLOT MANAGEMENT (Mentor only)
+// SERVICE MANAGEMENT (Mentor only)
 ///////////////////////////
 
-// Create slots
-router.post('/slots', authenticateJWT, authorizeRoles('MENTOR'), mentorController.createSlots);
+// Create a service
+router.post('/services', authenticateJWT, authorizeRoles('MENTOR'), mentorController.createService);
 
-// Get slots
-router.get('/slots', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getSlots);
+// Get all mentor's services
+router.get('/services', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getServices);
 
-// Update slot
-router.patch('/slots/:slotId', authenticateJWT, authorizeRoles('MENTOR'), mentorController.updateSlot);
+// Get a specific service
+router.get('/services/:serviceId', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getService);
 
-// Delete slot
-router.delete('/slots/:slotId', authenticateJWT, authorizeRoles('MENTOR'), mentorController.deleteSlot);
+// Update a service
+router.patch('/services/:serviceId', authenticateJWT, authorizeRoles('MENTOR'), mentorController.updateService);
 
-///////////////////////////
-// BOOKING ROUTES (Mentor only)
-///////////////////////////
+// Delete a service
+router.delete('/services/:serviceId', authenticateJWT, authorizeRoles('MENTOR'), mentorController.deleteService);
 
-// Get bookings
-router.get('/bookings', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getBookings);
-
-// Reschedule booking
-router.patch('/bookings/:bookingId/reschedule', authenticateJWT, authorizeRoles('MENTOR'), mentorController.rescheduleBooking);
-
-// Cancel booking
-router.patch('/bookings/:bookingId/cancel', authenticateJWT, authorizeRoles('MENTOR'), mentorController.cancelBooking);
-
-// Complete booking
-router.patch('/bookings/:bookingId/complete', authenticateJWT, authorizeRoles('MENTOR'), mentorController.completeBooking);
+// Toggle service status
+router.patch('/services/:serviceId/status', authenticateJWT, authorizeRoles('MENTOR'), mentorController.toggleServiceStatus);
 
 ///////////////////////////
 // DASHBOARD & ANALYTICS (Mentor only)
@@ -56,9 +43,6 @@ router.patch('/bookings/:bookingId/complete', authenticateJWT, authorizeRoles('M
 
 // Get dashboard stats
 router.get('/dashboard', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getDashboardStats);
-
-// Get earnings history
-router.get('/earnings', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getEarningsHistory);
 
 // Get transactions
 router.get('/transactions', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getTransactions);
@@ -72,16 +56,6 @@ router.post('/withdrawals', authenticateJWT, authorizeRoles('MENTOR'), mentorCon
 
 // Get withdrawals
 router.get('/withdrawals', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getWithdrawals);
-
-///////////////////////////
-// INCENTIVE ROUTES (Mentor only)
-///////////////////////////
-
-// Get incentives
-router.get('/incentives', authenticateJWT, authorizeRoles('MENTOR'), mentorController.getIncentives);
-
-// Claim incentive
-router.patch('/incentives/:incentiveId/claim', authenticateJWT, authorizeRoles('MENTOR'), mentorController.claimIncentive);
 
 ///////////////////////////
 // RATINGS & REVIEWS (Mentor only)

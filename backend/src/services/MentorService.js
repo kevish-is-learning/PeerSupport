@@ -36,34 +36,29 @@ class MentorService {
       bio,
       headline,
       phone,
+      gender,
       location,
       socialLinks, // Array of {platform, url} - max 5
+      verificationIds, // Array of verification document IDs
       
       // Step 2: Expertise
       expertise,
       
       // Step 3: Education
-      education10th,
-      education12th,
       bachelors,
       masters,
       
       // Step 4: Work Experience
       workExperience, // Array of {company, role, startDate, endDate, description}
       
-      // Step 5: CAT Score
-      catScore,
-      catYear,
-      catPercentile,
+      // Step 5: Exam Scores
+      exams, // Array of {examName, score, year, percentile}
       
       // Step 6: Certifications
       certifications,
       
       // Step 7: Resumes
       resumes, // Array of {name, fileUrl}
-      
-      // Pricing
-      pricePerSession,
     } = validatedData;
 
     // Check if user already has a pending/approved application
@@ -99,20 +94,17 @@ class MentorService {
         bio,
         headline,
         phone,
+        gender,
         location,
         socialLinks: socialLinks || [],
+        verificationIds: verificationIds || [],
         expertise,
-        education10th: education10th || [],
-        education12th: education12th || [],
         bachelors: bachelors || [],
         masters: masters || [],
         workExperience: workExperience || [],
-        catScore,
-        catYear,
-        catPercentile,
+        exams: exams || [],
         certifications: certifications || [],
         resumes: resumes || [],
-        pricePerSession: parseFloat(pricePerSession),
       },
       include: {
         user: {
@@ -151,22 +143,17 @@ class MentorService {
     if (validatedData.bio !== undefined) updateData.bio = validatedData.bio;
     if (validatedData.headline !== undefined) updateData.headline = validatedData.headline;
     if (validatedData.phone !== undefined) updateData.phone = validatedData.phone;
+    if (validatedData.gender !== undefined) updateData.gender = validatedData.gender;
     if (validatedData.location !== undefined) updateData.location = validatedData.location;
     if (validatedData.socialLinks !== undefined) updateData.socialLinks = validatedData.socialLinks;
+    if (validatedData.verificationIds !== undefined) updateData.verificationIds = validatedData.verificationIds;
     if (validatedData.expertise !== undefined) updateData.expertise = validatedData.expertise;
-    if (validatedData.education10th !== undefined) updateData.education10th = validatedData.education10th;
-    if (validatedData.education12th !== undefined) updateData.education12th = validatedData.education12th;
     if (validatedData.bachelors !== undefined) updateData.bachelors = validatedData.bachelors;
     if (validatedData.masters !== undefined) updateData.masters = validatedData.masters;
     if (validatedData.workExperience !== undefined) updateData.workExperience = validatedData.workExperience;
-    if (validatedData.catScore !== undefined) updateData.catScore = validatedData.catScore;
-    if (validatedData.catYear !== undefined) updateData.catYear = validatedData.catYear;
-    if (validatedData.catPercentile !== undefined) updateData.catPercentile = validatedData.catPercentile;
+    if (validatedData.exams !== undefined) updateData.exams = validatedData.exams;
     if (validatedData.certifications !== undefined) updateData.certifications = validatedData.certifications;
     if (validatedData.resumes !== undefined) updateData.resumes = validatedData.resumes;
-    if (validatedData.pricePerSession !== undefined) {
-      updateData.pricePerSession = parseFloat(validatedData.pricePerSession);
-    }
 
     const updatedApplication = await prisma.mentorApplication.update({
       where: { id: application.id },
@@ -230,19 +217,16 @@ class MentorService {
           bio: application.bio,
           headline: application.headline,
           phone: application.phone,
+          gender: application.gender,
           location: application.location,
           socialLinks: application.socialLinks,
+          verificationIds: application.verificationIds || [],
           expertise: application.expertise,
-          education10th: application.education10th || [],
-          education12th: application.education12th || [],
           bachelors: application.bachelors || [],
           masters: application.masters || [],
           workExperience: application.workExperience,
-          catScore: application.catScore,
-          catYear: application.catYear,
-          catPercentile: application.catPercentile,
+          exams: application.exams,
           certifications: application.certifications,
-          pricePerSession: application.pricePerSession,
           verificationStatus: 'APPROVED',
         },
       });
@@ -325,22 +309,19 @@ class MentorService {
         ...(validatedData.bio !== undefined && { bio: validatedData.bio }),
         ...(validatedData.headline !== undefined && { headline: validatedData.headline }),
         ...(validatedData.phone !== undefined && { phone: validatedData.phone }),
+        ...(validatedData.gender !== undefined && { gender: validatedData.gender }),
         ...(validatedData.location !== undefined && { location: validatedData.location }),
         ...(validatedData.socialLinks !== undefined && { socialLinks: validatedData.socialLinks }),
+        ...(validatedData.verificationIds !== undefined && { verificationIds: validatedData.verificationIds }),
         ...(validatedData.expertise !== undefined && { expertise: validatedData.expertise }),
         ...(validatedData.certifications !== undefined && { certifications: validatedData.certifications }),
-        ...(validatedData.pricePerSession !== undefined && { pricePerSession: validatedData.pricePerSession }),
         ...(validatedData.reschedulePolicy !== undefined && { reschedulePolicy: validatedData.reschedulePolicy }),
         ...(validatedData.cancellationPolicy !== undefined && { cancellationPolicy: validatedData.cancellationPolicy }),
         ...(validatedData.refundPolicy !== undefined && { refundPolicy: validatedData.refundPolicy }),
         ...(validatedData.workExperience !== undefined && { workExperience: validatedData.workExperience }),
-        ...(validatedData.education10th !== undefined && { education10th: validatedData.education10th }),
-        ...(validatedData.education12th !== undefined && { education12th: validatedData.education12th }),
         ...(validatedData.bachelors !== undefined && { bachelors: validatedData.bachelors }),
         ...(validatedData.masters !== undefined && { masters: validatedData.masters }),
-        ...(validatedData.catScore !== undefined && { catScore: validatedData.catScore }),
-        ...(validatedData.catYear !== undefined && { catYear: validatedData.catYear }),
-        ...(validatedData.catPercentile !== undefined && { catPercentile: validatedData.catPercentile }),
+        ...(validatedData.exams !== undefined && { exams: validatedData.exams }),
       },
       include: {
         user: {
@@ -353,32 +334,42 @@ class MentorService {
     return updatedProfile;
   }
 
-  // Check if mentor can accept bookings (approved status)
-  async canAcceptBookings(userId) {
+  ///////////////////////////
+  // SERVICE MANAGEMENT
+  ///////////////////////////
+
+  // Create a new service
+  async createService(userId, serviceData) {
     const profile = await prisma.mentorProfile.findUnique({
       where: { userId },
     });
 
     if (!profile) {
-      return { canAccept: false, reason: 'Mentor profile not found' };
+      throw new Error('Mentor profile not found');
     }
 
     if (profile.verificationStatus !== 'APPROVED') {
-      return { 
-        canAccept: false, 
-        reason: 'Your mentor application is still pending approval' 
-      };
+      throw new Error('Your mentor application must be approved before creating services');
     }
 
-    return { canAccept: true };
+    const service = await prisma.service.create({
+      data: {
+        mentorId: profile.id,
+        title: serviceData.title,
+        shortDescription: serviceData.shortDescription,
+        longDescription: serviceData.longDescription || null,
+        price: serviceData.price,
+        duration: serviceData.duration,
+        status: serviceData.status || 'DRAFT',
+        tags: serviceData.tags || [],
+      },
+    });
+
+    return service;
   }
 
-  ///////////////////////////
-  // SLOT MANAGEMENT
-  ///////////////////////////
-
-  // Create slots
-  async createSlots(userId, slots) {
+  // Get mentor's services
+  async getServices(userId, filters = {}) {
     const profile = await prisma.mentorProfile.findUnique({
       where: { userId },
     });
@@ -387,167 +378,38 @@ class MentorService {
       throw new Error('Mentor profile not found');
     }
 
-    // Check if mentor can accept bookings
-    const { canAccept, reason } = await this.canAcceptBookings(userId);
-    if (!canAccept) {
-      throw new Error(reason);
-    }
-
-    const createdSlots = await prisma.$transaction(
-      slots.map((slot) =>
-        prisma.slot.create({
-          data: {
-            mentorId: profile.id,
-            startTime: new Date(slot.startTime),
-            endTime: new Date(slot.endTime),
-            status: 'AVAILABLE',
-          },
-        })
-      )
-    );
-
-    return createdSlots;
-  }
-
-  // Get mentor slots
-  async getSlots(userId, filters = {}) {
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-    });
-
-    if (!profile) {
-      throw new Error('Mentor profile not found');
-    }
-
-    const { status, startDate, endDate } = filters;
+    const { status, category, page = 1, limit = 20 } = filters;
+    const skip = (page - 1) * limit;
 
     const where = {
       mentorId: profile.id,
       ...(status && { status }),
-      ...(startDate && { startTime: { gte: new Date(startDate) } }),
-      ...(endDate && { endTime: { lte: new Date(endDate) } }),
+      ...(category && { category }),
     };
 
-    const slots = await prisma.slot.findMany({
-      where,
-      orderBy: { startTime: 'asc' },
-      include: {
-        booking: {
-          include: {
-            mentee: {
-              select: this.userSelect,
-            },
-          },
-        },
-      },
-    });
-
-    return slots;
-  }
-
-  // Update slot
-  async updateSlot(userId, slotId, updateData) {
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-    });
-
-    if (!profile) {
-      throw new Error('Mentor profile not found');
-    }
-
-    const slot = await prisma.slot.findUnique({
-      where: { id: slotId },
-      include: { booking: true },
-    });
-
-    if (!slot) {
-      throw new Error('Slot not found');
-    }
-
-    if (slot.mentorId !== profile.id) {
-      throw new Error('Unauthorized to update this slot');
-    }
-
-    // Can't update booked slots
-    if (slot.status === 'BOOKED' && updateData.status !== 'CANCELLED') {
-      throw new Error('Cannot modify a booked slot');
-    }
-
-    const updatedSlot = await prisma.slot.update({
-      where: { id: slotId },
-      data: updateData,
-    });
-
-    return updatedSlot;
-  }
-
-  // Delete slot
-  async deleteSlot(userId, slotId) {
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-    });
-
-    if (!profile) {
-      throw new Error('Mentor profile not found');
-    }
-
-    const slot = await prisma.slot.findUnique({
-      where: { id: slotId },
-    });
-
-    if (!slot) {
-      throw new Error('Slot not found');
-    }
-
-    if (slot.mentorId !== profile.id) {
-      throw new Error('Unauthorized to delete this slot');
-    }
-
-    if (slot.status === 'BOOKED') {
-      throw new Error('Cannot delete a booked slot. Cancel the booking first.');
-    }
-
-    await prisma.slot.delete({
-      where: { id: slotId },
-    });
-
-    return { message: 'Slot deleted successfully' };
-  }
-
-  ///////////////////////////
-  // BOOKINGS
-  ///////////////////////////
-
-  // Get mentor's bookings
-  async getBookings(userId, filters = {}) {
-    const { status, page = 1, limit = 10 } = filters;
-    const skip = (page - 1) * limit;
-
-    const where = {
-      mentorId: userId,
-      ...(status && { status }),
-    };
-
-    const [bookings, total] = await Promise.all([
-      prisma.booking.findMany({
+    const [services, total] = await Promise.all([
+      prisma.service.findMany({
         where,
         include: {
-          mentee: {
-            select: this.userSelect,
+          reviews: {
+            take: 5,
+            orderBy: { createdAt: 'desc' },
+            include: {
+              mentee: {
+                select: this.userSelect,
+              },
+            },
           },
-          slot: true,
-          payment: true,
-          feedback: true,
         },
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
       }),
-      prisma.booking.count({ where }),
+      prisma.service.count({ where }),
     ]);
 
     return {
-      bookings,
+      services,
       pagination: {
         page,
         limit,
@@ -557,8 +419,8 @@ class MentorService {
     };
   }
 
-  // Reschedule booking
-  async rescheduleBooking(userId, bookingId, newSlotId, reason) {
+  // Get a specific service by ID
+  async getServiceById(userId, serviceId) {
     const profile = await prisma.mentorProfile.findUnique({
       where: { userId },
     });
@@ -567,206 +429,146 @@ class MentorService {
       throw new Error('Mentor profile not found');
     }
 
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: { slot: true },
-    });
-
-    if (!booking) {
-      throw new Error('Booking not found');
-    }
-
-    if (booking.mentorId !== userId) {
-      throw new Error('Unauthorized to reschedule this booking');
-    }
-
-    if (!['PENDING', 'CONFIRMED'].includes(booking.status)) {
-      throw new Error('Cannot reschedule this booking');
-    }
-
-    // Check if new slot is available
-    const newSlot = await prisma.slot.findUnique({
-      where: { id: newSlotId },
-    });
-
-    if (!newSlot || newSlot.status !== 'AVAILABLE') {
-      throw new Error('Selected slot is not available');
-    }
-
-    if (newSlot.mentorId !== profile.id) {
-      throw new Error('Selected slot does not belong to you');
-    }
-
-    // Perform reschedule in transaction
-    const result = await prisma.$transaction(async (tx) => {
-      // Mark old slot as available
-      await tx.slot.update({
-        where: { id: booking.slotId },
-        data: { status: 'AVAILABLE' },
-      });
-
-      // Mark new slot as booked
-      await tx.slot.update({
-        where: { id: newSlotId },
-        data: { status: 'BOOKED' },
-      });
-
-      // Update booking
-      const updatedBooking = await tx.booking.update({
-        where: { id: bookingId },
-        data: {
-          slotId: newSlotId,
-          rescheduledFrom: booking.slotId,
-          rescheduledAt: new Date(),
-          rescheduledBy: userId,
-          rescheduleReason: reason,
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
+      include: {
+        reviews: {
+          include: {
+            mentee: {
+              select: this.userSelect,
+            },
+          },
+          orderBy: { createdAt: 'desc' },
         },
-        include: {
-          slot: true,
-          mentee: {
-            select: this.userSelect,
+        mentor: {
+          select: {
+            id: true,
+            userId: true,
+            bio: true,
+            headline: true,
+            expertise: true,
+            totalReviews: true,
+            verificationStatus: true,
           },
         },
-      });
-
-      return updatedBooking;
+      },
     });
 
-    return result;
+    if (!service) {
+      throw new Error('Service not found');
+    }
+
+    if (service.mentorId !== profile.id) {
+      throw new Error('Unauthorized to access this service');
+    }
+
+    return service;
   }
 
-  // Cancel booking
-  async cancelBooking(userId, bookingId, reason) {
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: { slot: true, payment: true },
-    });
-
-    if (!booking) {
-      throw new Error('Booking not found');
-    }
-
-    if (booking.mentorId !== userId) {
-      throw new Error('Unauthorized to cancel this booking');
-    }
-
-    if (!['PENDING', 'CONFIRMED'].includes(booking.status)) {
-      throw new Error('Cannot cancel this booking');
-    }
-
-    // Check cancellation policy
+  // Update a service
+  async updateService(userId, serviceId, updateData) {
     const profile = await prisma.mentorProfile.findUnique({
       where: { userId },
     });
 
-    const hoursUntilSession = (new Date(booking.slot.startTime) - new Date()) / (1000 * 60 * 60);
-    const refundEligible = hoursUntilSession >= (profile?.cancellationPolicy || 24);
+    if (!profile) {
+      throw new Error('Mentor profile not found');
+    }
 
-    // Perform cancellation in transaction
-    const result = await prisma.$transaction(async (tx) => {
-      // Mark slot as available
-      await tx.slot.update({
-        where: { id: booking.slotId },
-        data: { status: 'AVAILABLE' },
-      });
-
-      // Update booking
-      const updatedBooking = await tx.booking.update({
-        where: { id: bookingId },
-        data: {
-          status: 'CANCELLED',
-          cancelledAt: new Date(),
-          cancelledBy: userId,
-          cancellationReason: reason,
-          refundInitiated: refundEligible && !!booking.payment,
-        },
-        include: {
-          slot: true,
-          mentee: {
-            select: this.userSelect,
-          },
-        },
-      });
-
-      return { booking: updatedBooking, refundEligible };
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
     });
 
-    return result;
+    if (!service) {
+      throw new Error('Service not found');
+    }
+
+    if (service.mentorId !== profile.id) {
+      throw new Error('Unauthorized to update this service');
+    }
+
+    const updatedService = await prisma.service.update({
+      where: { id: serviceId },
+      data: {
+        ...(updateData.title && { title: updateData.title }),
+        ...(updateData.shortDescription && { shortDescription: updateData.shortDescription }),
+        ...(updateData.longDescription !== undefined && { longDescription: updateData.longDescription }),
+        ...(updateData.price !== undefined && { price: updateData.price }),
+        ...(updateData.duration !== undefined && { duration: updateData.duration }),
+        ...(updateData.tags && { tags: updateData.tags }),
+        ...(updateData.category !== undefined && { category: updateData.category }),
+      },
+    });
+
+    return updatedService;
   }
 
-  // Complete booking
-  async completeBooking(bookingId, mentorNotes) {
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: { slot: true, payment: true },
-    });
-
-    if (!booking) {
-      throw new Error('Booking not found');
-    }
-
-    if (booking.status !== 'CONFIRMED') {
-      throw new Error('Only confirmed bookings can be completed');
-    }
-
+  // Delete a service
+  async deleteService(userId, serviceId) {
     const profile = await prisma.mentorProfile.findUnique({
-      where: { userId: booking.mentorId },
+      where: { userId },
     });
 
-    // Calculate earnings
-    const amount = booking.payment?.amount || profile.pricePerSession;
-    const platformFee = (amount * this.PLATFORM_FEE_PERCENTAGE) / 100;
-    const netAmount = amount - platformFee;
+    if (!profile) {
+      throw new Error('Mentor profile not found');
+    }
 
-    // Complete booking and record earnings
-    const result = await prisma.$transaction(async (tx) => {
-      // Update booking
-      const updatedBooking = await tx.booking.update({
-        where: { id: bookingId },
-        data: {
-          status: 'COMPLETED',
-          mentorNotes,
-        },
-      });
-
-      // Record earnings
-      const earning = await tx.earnings.create({
-        data: {
-          mentorId: profile.id,
-          bookingId,
-          amount,
-          platformFee,
-          netAmount,
-          status: 'PENDING', // Will be cleared after some time
-        },
-      });
-
-      // Update pending earnings in profile
-      await tx.mentorProfile.update({
-        where: { id: profile.id },
-        data: {
-          pendingEarnings: { increment: netAmount },
-        },
-      });
-
-      // Record transaction
-      const transaction = await tx.transaction.create({
-        data: {
-          mentorId: profile.id,
-          type: 'EARNING',
-          amount: netAmount,
-          balanceBefore: profile.balance,
-          balanceAfter: profile.balance, // Pending doesn't affect balance yet
-          reference: bookingId,
-          description: `Earning from booking #${bookingId.slice(-6)}`,
-          metadata: { bookingId, platformFee, originalAmount: amount },
-        },
-      });
-
-      return { booking: updatedBooking, earning, transaction };
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
     });
 
-    return result;
+    if (!service) {
+      throw new Error('Service not found');
+    }
+
+    if (service.mentorId !== profile.id) {
+      throw new Error('Unauthorized to delete this service');
+    }
+
+    // Don't allow deletion if service has bookings
+    if (service.totalBookings > 0) {
+      throw new Error('Cannot delete a service that has been booked. Set it to INACTIVE instead.');
+    }
+
+    await prisma.service.delete({
+      where: { id: serviceId },
+    });
+
+    return { message: 'Service deleted successfully' };
+  }
+
+  // Toggle service status (ACTIVE, INACTIVE, DRAFT)
+  async toggleServiceStatus(userId, serviceId, status) {
+    const profile = await prisma.mentorProfile.findUnique({
+      where: { userId },
+    });
+
+    if (!profile) {
+      throw new Error('Mentor profile not found');
+    }
+
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
+    });
+
+    if (!service) {
+      throw new Error('Service not found');
+    }
+
+    if (service.mentorId !== profile.id) {
+      throw new Error('Unauthorized to update this service');
+    }
+
+    if (!['ACTIVE', 'INACTIVE', 'DRAFT'].includes(status)) {
+      throw new Error('Invalid status. Must be ACTIVE, INACTIVE, or DRAFT');
+    }
+
+    const updatedService = await prisma.service.update({
+      where: { id: serviceId },
+      data: { status },
+    });
+
+    return updatedService;
   }
 
   ///////////////////////////
@@ -775,116 +577,66 @@ class MentorService {
 
   // Get dashboard stats
   async getDashboardStats(userId) {
-    console.log(userId)
     const profile = await prisma.mentorProfile.findUnique({
       where: { userId },
+      include: {
+        services: {
+          select: {
+            id: true,
+            totalBookings: true,
+            totalRevenue: true,
+            averageRating: true,
+            totalReviews: true,
+            status: true,
+          },
+        },
+      },
     });
 
     if (!profile) {
       throw new Error('Mentor profile not found');
     }
 
-    // Get various stats
-    const [
-      totalBookings,
-      completedBookings,
-      pendingBookings,
-      cancelledBookings,
-      totalEarnings,
-      thisMonthEarnings,
-      ratings,
-      incentives,
-    ] = await Promise.all([
-      prisma.booking.count({ where: { mentorId: userId } }),
-      prisma.booking.count({ where: { mentorId: userId, status: 'COMPLETED' } }),
-      prisma.booking.count({ where: { mentorId: userId, status: { in: ['PENDING', 'CONFIRMED'] } } }),
-      prisma.booking.count({ where: { mentorId: userId, status: 'CANCELLED' } }),
-      prisma.earnings.aggregate({
-        where: { mentorId: profile.id },
-        _sum: { netAmount: true },
-      }),
-      prisma.earnings.aggregate({
-        where: {
-          mentorId: profile.id,
-          createdAt: {
-            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-          },
-        },
-        _sum: { netAmount: true },
-      }),
-      prisma.review.findMany({
-        where: {
-          booking: { mentorId: userId },
-        },
-        select: { rating: true },
-      }),
-      prisma.incentive.aggregate({
-        where: { mentorId: profile.id, status: 'COMPLETED' },
-        _sum: { amount: true },
-      }),
-    ]);
+    // Calculate aggregate service stats
+    const totalServices = profile.services.length;
+    const activeServices = profile.services.filter(s => s.status === 'ACTIVE').length;
+    const totalServiceBookings = profile.services.reduce((sum, s) => sum + (s.totalBookings || 0), 0);
+    const totalServiceRevenue = profile.services.reduce((sum, s) => sum + (s.totalRevenue || 0), 0);
+    const totalServiceReviews = profile.services.reduce((sum, s) => sum + (s.totalReviews || 0), 0);
 
-    const avgRating = ratings.length > 0
-      ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
+    // Calculate average rating across all services
+    const servicesWithRatings = profile.services.filter(s => s.averageRating > 0);
+    const avgRating = servicesWithRatings.length > 0
+      ? servicesWithRatings.reduce((sum, s) => sum + s.averageRating, 0) / servicesWithRatings.length
       : 0;
+
+    // Get this month's earnings from transactions
+    const thisMonthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const thisMonthEarnings = await prisma.transaction.aggregate({
+      where: {
+        mentorId: profile.id,
+        type: 'EARNING',
+        createdAt: { gte: thisMonthStart },
+      },
+      _sum: { amount: true },
+    });
 
     return {
       balance: profile.balance,
       pendingEarnings: profile.pendingEarnings,
       totalEarnings: profile.totalEarnings,
-      thisMonthEarnings: thisMonthEarnings._sum.netAmount || 0,
-      totalIncentives: incentives._sum.amount || 0,
-      bookings: {
-        total: totalBookings,
-        completed: completedBookings,
-        pending: pendingBookings,
-        cancelled: cancelledBookings,
+      thisMonthEarnings: thisMonthEarnings._sum.amount || 0,
+      services: {
+        total: totalServices,
+        active: activeServices,
+        totalBookings: totalServiceBookings,
+        totalRevenue: totalServiceRevenue,
       },
       rating: {
         average: Math.round(avgRating * 10) / 10,
-        count: profile.totalReviews,
+        count: totalServiceReviews,
       },
       verificationStatus: profile.verificationStatus,
-    };
-  }
-
-  // Get earnings history
-  async getEarningsHistory(userId, filters = {}) {
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-    });
-
-    if (!profile) {
-      throw new Error('Mentor profile not found');
-    }
-
-    const { page = 1, limit = 20, startDate, endDate } = filters;
-    const skip = (page - 1) * limit;
-
-    const where = {
-      mentorId: profile.id,
-      ...(startDate && { createdAt: { gte: new Date(startDate) } }),
-      ...(endDate && { createdAt: { lte: new Date(endDate) } }),
-    };
-
-    const [earnings, total] = await Promise.all([
-      prisma.earnings.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit,
-      }),
-      prisma.earnings.count({ where }),
-    ]);
-
-    return {
-      earnings,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
     };
   }
 
@@ -1059,140 +811,38 @@ class MentorService {
   }
 
   ///////////////////////////
-  // INCENTIVES
-  ///////////////////////////
-
-  // Get incentives
-  async getIncentives(userId, filters = {}) {
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-    });
-
-    if (!profile) {
-      throw new Error('Mentor profile not found');
-    }
-
-    const { page = 1, limit = 20, status, type } = filters;
-    const skip = (page - 1) * limit;
-
-    const where = {
-      mentorId: profile.id,
-      ...(status && { status }),
-      ...(type && { type }),
-    };
-
-    const [incentives, total] = await Promise.all([
-      prisma.incentive.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: limit,
-      }),
-      prisma.incentive.count({ where }),
-    ]);
-
-    return {
-      incentives,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  }
-
-  // Claim incentive
-  async claimIncentive(userId, incentiveId) {
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-    });
-
-    if (!profile) {
-      throw new Error('Mentor profile not found');
-    }
-
-    const incentive = await prisma.incentive.findUnique({
-      where: { id: incentiveId },
-    });
-
-    if (!incentive) {
-      throw new Error('Incentive not found');
-    }
-
-    if (incentive.mentorId !== profile.id) {
-      throw new Error('Unauthorized to claim this incentive');
-    }
-
-    if (incentive.status !== 'PENDING') {
-      throw new Error('Incentive has already been claimed or expired');
-    }
-
-    if (incentive.expiresAt && new Date(incentive.expiresAt) < new Date()) {
-      throw new Error('Incentive has expired');
-    }
-
-    // Claim incentive
-    const result = await prisma.$transaction(async (tx) => {
-      // Update incentive
-      const claimedIncentive = await tx.incentive.update({
-        where: { id: incentiveId },
-        data: {
-          status: 'COMPLETED',
-          claimedAt: new Date(),
-        },
-      });
-
-      // Add to balance
-      await tx.mentorProfile.update({
-        where: { id: profile.id },
-        data: {
-          balance: { increment: incentive.amount },
-          totalEarnings: { increment: incentive.amount },
-        },
-      });
-
-      // Record transaction
-      await tx.transaction.create({
-        data: {
-          mentorId: profile.id,
-          type: 'INCENTIVE',
-          amount: incentive.amount,
-          balanceBefore: profile.balance,
-          balanceAfter: profile.balance + incentive.amount,
-          reference: incentiveId,
-          description: `Incentive: ${incentive.title}`,
-        },
-      });
-
-      return claimedIncentive;
-    });
-
-    return result;
-  }
-
-  ///////////////////////////
   // RATINGS & REVIEWS
   ///////////////////////////
 
-  // Get ratings and feedback
+  // Get ratings and feedback for mentor's services
   async getRatingsAndFeedback(userId, filters = {}) {
-    const { page = 1, limit = 20 } = filters;
+    const profile = await prisma.mentorProfile.findUnique({
+      where: { userId },
+    });
+
+    if (!profile) {
+      throw new Error('Mentor profile not found');
+    }
+
+    const { page = 1, limit = 20, serviceId } = filters;
     const skip = (page - 1) * limit;
 
+    const where = {
+      service: { mentorId: profile.id },
+      ...(serviceId && { serviceId }),
+    };
+
     const [reviews, total] = await Promise.all([
-      prisma.review.findMany({
-        where: {
-          booking: { mentorId: userId },
-        },
+      prisma.serviceReview.findMany({
+        where,
         include: {
-          booking: {
+          mentee: {
+            select: this.userSelect,
+          },
+          service: {
             select: {
               id: true,
-              createdAt: true,
-              mentee: {
-                select: this.userSelect,
-              },
+              title: true,
             },
           },
         },
@@ -1200,11 +850,7 @@ class MentorService {
         skip,
         take: limit,
       }),
-      prisma.review.count({
-        where: {
-          booking: { mentorId: userId },
-        },
-      }),
+      prisma.serviceReview.count({ where }),
     ]);
 
     return {
