@@ -24,37 +24,10 @@ enum Gender {
   OTHER
 }
 
-enum SlotStatus {
-  AVAILABLE
-  BOOKED
-  BLOCKED
-  CANCELLED
-}
-
-enum BookingStatus {
-  PENDING
-  CONFIRMED
-  COMPLETED
-  CANCELLED
-  REFUNDED
-}
-
-enum PaymentStatus {
-  CREATED
-  SUCCESS
-  FAILED
-  REFUNDED
-}
-
-enum SessionMode {
-  VIDEO
-  AUDIO
-  CHAT
-}
-
-enum SessionType {
-  ONE_ON_ONE
-  GROUP
+enum ServiceStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
 }
 
 enum VerificationStatus {
@@ -72,36 +45,6 @@ enum ApplicationStatus {
   PENDING
   APPROVED
   REJECTED
-}
-
-enum TransactionType {
-  EARNING
-  WITHDRAWAL
-  PAYOUT
-  REFUND
-  INCENTIVE
-  PLATFORM_FEE
-}
-
-enum TransactionStatus {
-  PENDING
-  COMPLETED
-  FAILED
-  CANCELLED
-}
-
-enum WithdrawalStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  REJECTED
-}
-
-enum PayoutStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
 }
 
 ///////////////////////////
@@ -123,23 +66,33 @@ model User {
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
 
-  mentorProfile        MentorProfile?
-  menteeProfile        MenteeProfile?
-  adminProfile         AdminProfile?
-  mentorApplications   MentorApplication[]
-  bookingsAsMentor     Booking[]             @relation("MentorBookings")
-  bookingsAsMentee     Booking[]             @relation("MenteeBookings")
-  verification         VerificationDocument?
-  webinarRegistrations WebinarRegistration[]
+  mentorProfile      MentorProfile?
+  menteeProfile      MenteeProfile?
+  adminProfile       AdminProfile?
+  mentorApplications MentorApplication[]
+  verification       VerificationDocument?
 
   @@index([role])
   @@index([email])
 }
 
 ///////////////////////////
-// MENTOR PROFILE
+// VERIFICATION DOCUMENTS
 ///////////////////////////
 
+model VerificationDocument {
+  id          String             @id @default(uuid())
+  userId      String             @unique
+  documentUrl String
+  status      VerificationStatus @default(PENDING)
+  createdAt   DateTime           @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+///////////////////////////
+// MENTOR PROFILE
+///////////////////////////
 model MentorProfile {
   id                 String             @id @default(uuid())
   userId             String             @unique
@@ -147,35 +100,27 @@ model MentorProfile {
   headline           String?
   expertise          String[]
   certifications     String[]
-  pricePerSession    Float
   rating             Float              @default(0)
   totalReviews       Int                @default(0)
   verificationStatus VerificationStatus @default(PENDING)
   verifiedBadge      Boolean            @default(false)
 
   // Personal Details
-  phone       String?
-  location    String?
-  socialLinks Json? // [{platform: string, url: string}]
+  phone           String?
+  gender          Gender?
+  location        String?
+  socialLinks     Json? // [{platform: string, url: string}]
+  verificationIds String[] // IDs for verification documents
 
   // Education
-  education10th String[] // [instituteName, score, yearOfPassout]
-  education12th String[] // [instituteName, score, yearOfPassout]
-  bachelors     String[] // [degree, instituteName, score, yearOfPassout]
-  masters       String[] // [degree, instituteName, score, yearOfPassout]
+  bachelors String[] // [degree, instituteName, score, yearOfPassout]
+  masters   String[] // [degree, instituteName, score, yearOfPassout]
 
   // Work Experience (JSON array)
-  workExperience Json? // [{company, role, startDate, endDate, description}]
+  workExperience Json? // [{company, companyType, startDate, endDate, description}]
 
-  // CAT Score
-  catScore      Float?
-  catYear       Int?
-  catPercentile Float?
-
-  // Booking Policies
-  reschedulePolicy   Int     @default(24) // Hours before session for reschedule
-  cancellationPolicy Int     @default(24) // Hours before session for cancellation
-  refundPolicy       String? // Custom policy text
+  // Exam Scores (JSON array)
+  exams Json? // [{examName, score, year}]
 
   // Earnings
   balance         Float @default(0) // Current withdrawable balance
@@ -186,16 +131,10 @@ model MentorProfile {
   updatedAt DateTime @updatedAt
 
   user          User             @relation(fields: [userId], references: [id])
-  slots         Slot[]
+  services      Service[]
   feedbackGiven MentorFeedback[]
-  earnings      Earnings[]
-  transactions  Transaction[]
-  withdrawals   Withdrawal[]
-  payouts       Payout[]
-  incentives    Incentive[]
   resumes       MentorResume[]
 
-  @@index([pricePerSession])
   @@index([rating])
 }
 
@@ -210,8 +149,6 @@ model MenteeProfile {
   phone          String?
   location       String?
   gender         Gender?
-  education10th  String[]
-  education12th  String[]
   bachelors      String[]
   masters        String[]
   workExperience String?
@@ -249,37 +186,32 @@ model MentorApplication {
   userId String
 
   // Step 1: Personal Details & Social Links
-  bio         String
-  headline    String?
-  phone       String?
-  location    String?
-  socialLinks Json? // [{platform: string, url: string}] max 5
+  bio             String
+  headline        String?
+  phone           String?
+  gender          Gender?
+  location        String?
+  socialLinks     Json? // [{platform: string, url: string}] max 5
+  verificationIds String[] // IDs for verification documents
 
   // Step 2: Expertise
   expertise String[]
 
   // Step 3: Education
-  education10th String[] // [instituteName, score, yearOfPassout]
-  education12th String[] // [instituteName, score, yearOfPassout]
-  bachelors     String[] // [degree, instituteName, score, yearOfPassout]
-  masters       String[] // [degree, instituteName, score, yearOfPassout]
+  bachelors String[] // [degree, instituteName, score, yearOfPassout]
+  masters   String[] // [degree, instituteName, score, yearOfPassout]
 
   // Step 4: Work Experience
   workExperience Json? // [{company, role, startDate, endDate, description}]
 
-  // Step 5: CAT Score
-  catScore      Float?
-  catYear       Int?
-  catPercentile Float?
+  // Step 5: Exam Scores
+  exams Json? // [{examName, score, year, percentile}]
 
   // Step 6: Certifications
   certifications String[]
 
   // Step 7: Resumes
   resumes Json? // [{name, fileUrl}]
-
-  // Pricing
-  pricePerSession Float
 
   // Application Status
   status          ApplicationStatus @default(PENDING)
@@ -323,314 +255,77 @@ model MentorResume {
 }
 
 ///////////////////////////
-// SLOT MANAGEMENT
+// MENTOR SERVICES
 ///////////////////////////
 
-model Slot {
-  id        String     @id @default(uuid())
-  mentorId  String
-  startTime DateTime
-  endTime   DateTime
-  status    SlotStatus @default(AVAILABLE)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+model Service {
+  id               String        @id @default(uuid())
+  mentorId         String
+  title            String
+  shortDescription String
+  longDescription  String? // Optional detailed description
+  price            Float
+  duration         Int // Duration in minutes
+  status           ServiceStatus @default(DRAFT)
 
-  mentor  MentorProfile @relation(fields: [mentorId], references: [id])
-  booking Booking?
+  // Analytics & Tracking
+  totalBookings Int   @default(0)
+  totalRevenue  Float @default(0)
+  averageRating Float @default(0)
+  totalReviews  Int   @default(0)
+  viewCount     Int   @default(0) // How many times service was viewed
 
-  @@unique([mentorId, startTime, endTime])
-  @@index([mentorId])
-  @@index([startTime])
-}
-
-///////////////////////////
-// BOOKING SYSTEM
-///////////////////////////
-
-model Booking {
-  id           String        @id @default(uuid())
-  mentorId     String
-  menteeId     String
-  slotId       String        @unique
-  status       BookingStatus @default(PENDING)
-  sessionMode  SessionMode
-  sessionType  SessionType   @default(ONE_ON_ONE)
-  purpose      String
-  shareProfile Boolean       @default(false)
-  meetingLink  String?
-
-  // Reschedule tracking
-  rescheduledFrom  String? // Original slot ID if rescheduled
-  rescheduledAt    DateTime?
-  rescheduledBy    String? // User ID who initiated reschedule
-  rescheduleReason String?
-
-  // Cancellation tracking
-  cancelledAt        DateTime?
-  cancelledBy        String? // User ID who cancelled
-  cancellationReason String?
-  refundInitiated    Boolean   @default(false)
-
-  // Notes
-  mentorNotes String? // Private notes from mentor
+  // Metadata
+  tags      String[] // For categorization and search
+  category  String? // Main category
+  isPopular Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  mentor   User     @relation("MentorBookings", fields: [mentorId], references: [id])
-  mentee   User     @relation("MenteeBookings", fields: [menteeId], references: [id])
-  slot     Slot     @relation(fields: [slotId], references: [id])
-  payment  Payment?
-  feedback Review?
+  mentor  MentorProfile   @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  reviews ServiceReview[]
 
   @@index([mentorId])
-  @@index([menteeId])
   @@index([status])
+  @@index([category])
+  @@index([isPopular])
 }
 
 ///////////////////////////
-// PAYMENTS
+// SERVICE REVIEWS
 ///////////////////////////
 
-model Payment {
-  id                String        @id @default(uuid())
-  bookingId         String        @unique
-  razorpayOrderId   String        @unique
-  razorpayPaymentId String?
-  amount            Float
-  currency          String        @default("INR")
-  status            PaymentStatus @default(CREATED)
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
+model ServiceReview {
+  id         String   @id @default(uuid())
+  serviceId  String
+  menteeId   String // User ID who left the review
+  menteeName String // Name at time of review
+  rating     Int
+  comment    String?
+  isVerified Boolean  @default(false) // Whether booking was actually completed
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  booking Booking @relation(fields: [bookingId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId])
+  @@index([menteeId])
 }
 
 ///////////////////////////
-// REVIEWS & FEEDBACK
+// MENTOR FEEDBACK (General)
 ///////////////////////////
-
-model Review {
-  id        String   @id @default(uuid())
-  bookingId String   @unique
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-
-  booking Booking @relation(fields: [bookingId], references: [id])
-}
 
 model MentorFeedback {
   id             String   @id @default(uuid())
   mentorId       String
-  bookingId      String   @unique
+  sessionId      String? // Reference to external session/booking system if needed
   feedbackPdfUrl String?
+  notes          String? // General notes about the feedback
   createdAt      DateTime @default(now())
 
-  mentor MentorProfile @relation(fields: [mentorId], references: [id])
-}
-
-///////////////////////////
-// EARNINGS TRACKING
-///////////////////////////
-
-model Earnings {
-  id          String            @id @default(uuid())
-  mentorId    String
-  bookingId   String            @unique
-  amount      Float
-  platformFee Float             @default(0) // Platform commission
-  netAmount   Float // Amount after platform fee
-  status      TransactionStatus @default(PENDING)
-  clearedAt   DateTime? // When earnings become available
-  createdAt   DateTime          @default(now())
-
-  mentor MentorProfile @relation(fields: [mentorId], references: [id])
+  mentor MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
 
   @@index([mentorId])
-  @@index([status])
-}
-
-///////////////////////////
-// TRANSACTIONS LOG
-///////////////////////////
-
-model Transaction {
-  id            String            @id @default(uuid())
-  mentorId      String
-  type          TransactionType
-  amount        Float
-  balanceBefore Float
-  balanceAfter  Float
-  status        TransactionStatus @default(COMPLETED)
-  reference     String? // Reference to booking/withdrawal/payout ID
-  description   String
-  metadata      Json? // Additional data
-  createdAt     DateTime          @default(now())
-
-  mentor MentorProfile @relation(fields: [mentorId], references: [id])
-
-  @@index([mentorId])
-  @@index([type])
-  @@index([createdAt])
-}
-
-///////////////////////////
-// WITHDRAWALS
-///////////////////////////
-
-model Withdrawal {
-  id              String           @id @default(uuid())
-  mentorId        String
-  amount          Float
-  status          WithdrawalStatus @default(PENDING)
-  bankDetails     Json? // {accountNumber, ifsc, accountName, bankName}
-  upiId           String?
-  paymentMethod   String           @default("bank_transfer") // bank_transfer, upi
-  processedAt     DateTime?
-  rejectionReason String?
-  transactionRef  String? // Bank/UPI transaction reference
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-
-  mentor MentorProfile @relation(fields: [mentorId], references: [id])
-
-  @@index([mentorId])
-  @@index([status])
-}
-
-///////////////////////////
-// PAYOUTS (Admin initiated)
-///////////////////////////
-
-model Payout {
-  id             String       @id @default(uuid())
-  mentorId       String
-  amount         Float
-  status         PayoutStatus @default(PENDING)
-  paymentMethod  String // bank_transfer, upi, razorpay
-  transactionRef String?
-  processedBy    String? // Admin user ID
-  processedAt    DateTime?
-  failureReason  String?
-  metadata       Json?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-
-  mentor MentorProfile @relation(fields: [mentorId], references: [id])
-
-  @@index([mentorId])
-  @@index([status])
-}
-
-///////////////////////////
-// INCENTIVES & REWARDS
-///////////////////////////
-
-model Incentive {
-  id          String            @id @default(uuid())
-  mentorId    String
-  type        String // bonus, referral, achievement, milestone
-  title       String
-  description String?
-  amount      Float
-  status      TransactionStatus @default(PENDING)
-  criteria    Json? // Conditions that triggered this incentive
-  expiresAt   DateTime?
-  claimedAt   DateTime?
-  createdAt   DateTime          @default(now())
-
-  mentor MentorProfile @relation(fields: [mentorId], references: [id])
-
-  @@index([mentorId])
-  @@index([status])
-  @@index([type])
-}
-
-///////////////////////////
-// WEBINARS
-///////////////////////////
-
-model Webinar {
-  id          String      @id @default(uuid())
-  title       String
-  description String
-  price       Float?
-  type        WebinarType
-  startTime   DateTime
-  endTime     DateTime
-  meetingLink String?
-  createdAt   DateTime    @default(now())
-
-  registrations WebinarRegistration[]
-}
-
-model WebinarRegistration {
-  id        String   @id @default(uuid())
-  webinarId String
-  userId    String
-  paymentId String?
-  createdAt DateTime @default(now())
-
-  webinar Webinar @relation(fields: [webinarId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
-}
-
-///////////////////////////
-// VERIFICATION DOCUMENTS
-///////////////////////////
-
-model VerificationDocument {
-  id          String             @id @default(uuid())
-  userId      String             @unique
-  documentUrl String
-  status      VerificationStatus @default(PENDING)
-  createdAt   DateTime           @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-}
-
-///////////////////////////
-// CATEGORIES & BADGES
-///////////////////////////
-
-model Category {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  slug        String   @unique
-  description String?
-  icon        String?
-  color       String?
-  sortOrder   Int      @default(0)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([slug])
-  @@index([sortOrder])
-}
-
-model Badge {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String?
-  icon        String?
-  criteria    String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  userBadges UserBadge[]
-}
-
-model UserBadge {
-  id        String   @id @default(uuid())
-  odlUserId String
-  badgeId   String
-  awardedAt DateTime @default(now())
-
-  badge Badge @relation(fields: [badgeId], references: [id])
-
-  @@unique([odlUserId, badgeId])
-  @@index([odlUserId])
 }

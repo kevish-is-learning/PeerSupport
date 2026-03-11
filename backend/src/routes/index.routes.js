@@ -4,7 +4,6 @@ import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import menteeRoutes from './mentee.routes.js';
 import mentorRoutes from './mentor.routes.js';
-import paymentRoutes from './payment.routes.js';
 
 const router = Router();
 
@@ -21,14 +20,9 @@ router.get('/', (req, res) => {
         logout: 'POST /api/auth/logout',
       },
       mentor: {
-        canAcceptBookings: 'GET /api/mentor/can-accept-bookings',
         dashboard: 'GET /api/mentor/dashboard',
-        slots: 'GET/POST/PATCH/DELETE /api/mentor/slots',
-        bookings: 'GET /api/mentor/bookings',
-        rescheduleBooking: 'PATCH /api/mentor/bookings/:id/reschedule',
-        cancelBooking: 'PATCH /api/mentor/bookings/:id/cancel',
-        completeBooking: 'PATCH /api/mentor/bookings/:id/complete',
-        earnings: 'GET /api/mentor/earnings',
+        services: 'GET/POST/PATCH/DELETE /api/mentor/services',
+        serviceStatus: 'PATCH /api/mentor/services/:id/status',
         transactions: 'GET /api/mentor/transactions',
         withdrawals: 'GET/POST /api/mentor/withdrawals',
         ratings: 'GET /api/mentor/ratings',
@@ -38,12 +32,9 @@ router.get('/', (req, res) => {
         dashboard: 'GET /api/mentee/dashboard/stats',
         mentors: 'GET /api/mentee/mentors',
         mentorById: 'GET /api/mentee/mentors/:id',
-        bookings: 'GET/POST /api/mentee/bookings',
-        cancelBooking: 'PATCH /api/mentee/bookings/:id/cancel',
-        submitReview: 'POST /api/mentee/bookings/:id/review',
+        mentorServices: 'GET /api/mentee/mentors/:id/services',
         webinars: 'GET /api/mentee/webinars',
         registerWebinar: 'POST /api/mentee/webinars/:id/register',
-        notifications: 'GET /api/mentee/notifications',
       },
       users: {
         getCurrentUser: 'GET /api/users/me',
@@ -95,6 +86,5 @@ router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/mentee', menteeRoutes);
 router.use('/mentor', mentorRoutes);
-router.use('/payments', paymentRoutes);
 
 export default router;

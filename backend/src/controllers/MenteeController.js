@@ -1,8 +1,6 @@
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { PrismaClient } from "../generated/prisma/index.js";
-import { createBookingSchema } from "../validators/mentee.validator.js";
-import { ZodError } from "zod";
 import { deleteFile } from "../middleware/upload.middleware.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -124,30 +122,37 @@ class MenteeController {
     }
   }
 
-  // Get mentor slots
-  async getMentorSlots(req, res) {
+  // Get mentor services
+  async getMentorServices(req, res) {
     try {
       const { mentorId } = req.params;
 
-      const slots = await prisma.slot.findMany({
+      // Verify mentor exists
+      const mentor = await prisma.user.findUnique({
+        where: { id: mentorId },
+        include: { mentorProfile: true },
+      });
+
+      if (!mentor || !mentor.mentorProfile) {
+        return res.status(404).json(new ApiError(404, "Mentor not found"));
+      }
+
+      const services = await prisma.service.findMany({
         where: {
           mentorId,
-          status: 'AVAILABLE',
-          startTime: {
-            gte: new Date(),
-          },
+          isActive: true,
         },
         orderBy: {
-          startTime: 'asc',
+          createdAt: 'desc',
         },
       });
 
       res.status(200).json(
-        new ApiResponse(true, "Slots retrieved successfully", { slots })
+        new ApiResponse(true, "Services retrieved successfully", { services })
       );
     } catch (error) {
       res.status(500).json(
-        new ApiError(500, "Failed to retrieve slots", error.message)
+        new ApiError(500, "Failed to retrieve services", error.message)
       );
     }
   }
@@ -157,22 +162,32 @@ class MenteeController {
     try {
       const { mentorId } = req.params;
 
-      const reviews = await prisma.review.findMany({
+      // Get all services for this mentor
+      const services = await prisma.service.findMany({
+        where: { mentorId },
+        select: { id: true },
+      });
+
+      const serviceIds = services.map(s => s.id);
+
+      const reviews = await prisma.serviceReview.findMany({
         where: {
-          booking: {
-            mentorId,
+          serviceId: {
+            in: serviceIds,
           },
         },
         include: {
-          booking: {
-            include: {
-              mentee: {
-                select: {
-                  id: true,
-                  name: true,
-                  profilePicture: true,
-                },
-              },
+          mentee: {
+            select: {
+              id: true,
+              name: true,
+              profilePicture: true,
+            },
+          },
+          service: {
+            select: {
+              id: true,
+              title: true,
             },
           },
         },
@@ -188,309 +203,6 @@ class MenteeController {
     } catch (error) {
       res.status(500).json(
         new ApiError(500, "Failed to retrieve reviews", error.message)
-      );
-    }
-  }
-
-  // Get my bookings (as mentee)
-  async getMyBookings(req, res) {
-    try {
-      const { status, page = 1, limit = 10 } = req.query;
-      const skip = (parseInt(page) - 1) * parseInt(limit);
-
-      const where = {
-        menteeId: req.user.id,
-      };
-
-      if (status) {
-        where.status = status;
-      }
-
-      const bookings = await prisma.booking.findMany({
-        where,
-        include: {
-          mentor: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              profilePicture: true,
-            },
-          },
-          slot: true,
-          payment: true,
-          feedback: true,
-        },
-        skip,
-        take: parseInt(limit),
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
-
-      const total = await prisma.booking.count({ where });
-
-      res.status(200).json(
-        new ApiResponse(true, "Bookings retrieved successfully", {
-          bookings,
-          pagination: {
-            page: parseInt(page),
-            limit: parseInt(limit),
-            total,
-            totalPages: Math.ceil(total / parseInt(limit)),
-          },
-        })
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, "Failed to retrieve bookings", error.message)
-      );
-    }
-  }
-
-  // Get booking by ID
-  async getBookingById(req, res) {
-    try {
-      const { bookingId } = req.params;
-
-      const booking = await prisma.booking.findFirst({
-        where: {
-          id: bookingId,
-          menteeId: req.user.id,
-        },
-        include: {
-          mentor: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              profilePicture: true,
-              mentorProfile: true,
-            },
-          },
-          slot: true,
-          payment: true,
-          feedback: true,
-        },
-      });
-
-      if (!booking) {
-        return res.status(404).json(new ApiError(404, "Booking not found"));
-      }
-
-      res.status(200).json(
-        new ApiResponse(true, "Booking retrieved successfully", booking)
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, "Failed to retrieve booking", error.message)
-      );
-    }
-  }
-
-  // Create booking
-  async createBooking(req, res) {
-    try {
-      // Validate input using Zod
-      const { mentorId, slotId, sessionMode, purpose, shareProfile } = createBookingSchema.parse(req.body);
-
-      // Check if slot exists and is available
-      const slot = await prisma.slot.findUnique({
-        where: { id: slotId },
-        include: {
-          mentor: true,
-        },
-      });
-
-      if (!slot || slot.status !== 'AVAILABLE') {
-        return res.status(400).json(
-          new ApiError(400, "Slot not available")
-        );
-      }
-
-      // Verify mentor exists
-      const mentor = await prisma.user.findUnique({
-        where: { id: mentorId },
-        include: { mentorProfile: true },
-      });
-
-      if (!mentor || !mentor.mentorProfile) {
-        return res.status(404).json(
-          new ApiError(404, "Mentor not found")
-        );
-      }
-
-      // Create booking
-      const booking = await prisma.booking.create({
-        data: {
-          mentorId,
-          menteeId: req.user.id,
-          slotId,
-          sessionMode,
-          purpose,
-          shareProfile,
-          status: 'PENDING',
-          sessionType: 'ONE_ON_ONE',
-        },
-        include: {
-          mentor: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              mentorProfile: true,
-            },
-          },
-          mentee: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-          slot: true,
-        },
-      });
-
-      // Update slot status
-      await prisma.slot.update({
-        where: { id: slotId },
-        data: { status: 'BOOKED' },
-      });
-
-      res.status(201).json(
-        new ApiResponse(true, "Booking created successfully. Proceed to payment.", {
-          booking,
-          paymentRequired: true,
-          amount: mentor.mentorProfile.pricePerSession,
-        })
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, "Failed to create booking", error.message)
-      );
-    }
-  }
-
-  // Cancel booking
-  async cancelBooking(req, res) {
-    try {
-      const { bookingId } = req.params;
-
-      const booking = await prisma.booking.findFirst({
-        where: {
-          id: bookingId,
-          menteeId: req.user.id,
-        },
-        include: {
-          slot: true,
-        },
-      });
-
-      if (!booking) {
-        return res.status(404).json(new ApiError(404, "Booking not found"));
-      }
-
-      if (booking.status === 'COMPLETED' || booking.status === 'CANCELLED') {
-        return res.status(400).json(
-          new ApiError(400, "Cannot cancel this booking")
-        );
-      }
-
-      // Update booking status
-      const updatedBooking = await prisma.booking.update({
-        where: { id: bookingId },
-        data: { status: 'CANCELLED' },
-      });
-
-      // Free up the slot
-      await prisma.slot.update({
-        where: { id: booking.slotId },
-        data: { status: 'AVAILABLE' },
-      });
-
-      res.status(200).json(
-        new ApiResponse(true, "Booking cancelled successfully", updatedBooking)
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, "Failed to cancel booking", error.message)
-      );
-    }
-  }
-
-  // Submit review for booking
-  async submitReview(req, res) {
-    try {
-      const { bookingId } = req.params;
-      const { rating, comment } = req.body;
-
-      const booking = await prisma.booking.findFirst({
-        where: {
-          id: bookingId,
-          menteeId: req.user.id,
-          status: 'COMPLETED',
-        },
-      });
-
-      if (!booking) {
-        return res.status(404).json(
-          new ApiError(404, "Booking not found or not completed")
-        );
-      }
-
-      // Check if review already exists
-      const existingReview = await prisma.review.findUnique({
-        where: { bookingId },
-      });
-
-      if (existingReview) {
-        return res.status(400).json(
-          new ApiError(400, "Review already submitted")
-        );
-      }
-
-      // Create review
-      const review = await prisma.review.create({
-        data: {
-          bookingId,
-          rating,
-          comment,
-        },
-      });
-
-      // Update mentor's rating
-      const mentor = await prisma.user.findUnique({
-        where: { id: booking.mentorId },
-        include: { mentorProfile: true },
-      });
-
-      if (mentor?.mentorProfile) {
-        const allReviews = await prisma.review.findMany({
-          where: {
-            booking: {
-              mentorId: booking.mentorId,
-            },
-          },
-        });
-
-        const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
-
-        await prisma.mentorProfile.update({
-          where: { id: mentor.mentorProfile.id },
-          data: {
-            rating: avgRating,
-            totalReviews: allReviews.length,
-          },
-        });
-      }
-
-      res.status(201).json(
-        new ApiResponse(true, "Review submitted successfully", review)
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, "Failed to submit review", error.message)
       );
     }
   }
@@ -641,41 +353,21 @@ class MenteeController {
       const userId = req.user.id;
 
       const [
-        upcomingBookings,
-        completedBookings,
-        pendingBookings,
+        totalServiceReviews,
         totalSpent,
         upcomingWebinars,
+        totalWebinarsAttended,
       ] = await Promise.all([
-        prisma.booking.count({
+        prisma.serviceReview.count({
           where: {
             menteeId: userId,
-            status: 'CONFIRMED',
-            slot: {
-              startTime: {
-                gte: new Date(),
-              },
-            },
           },
         }),
-        prisma.booking.count({
+        prisma.transaction.aggregate({
           where: {
-            menteeId: userId,
+            userId,
+            type: 'DEBIT',
             status: 'COMPLETED',
-          },
-        }),
-        prisma.booking.count({
-          where: {
-            menteeId: userId,
-            status: 'PENDING',
-          },
-        }),
-        prisma.payment.aggregate({
-          where: {
-            booking: {
-              menteeId: userId,
-            },
-            status: 'SUCCESS',
           },
           _sum: {
             amount: true,
@@ -691,15 +383,24 @@ class MenteeController {
             },
           },
         }),
+        prisma.webinarRegistration.count({
+          where: {
+            userId,
+            webinar: {
+              startTime: {
+                lt: new Date(),
+              },
+            },
+          },
+        }),
       ]);
 
       res.status(200).json(
         new ApiResponse(true, "Dashboard stats retrieved successfully", {
-          upcomingBookings,
-          completedBookings,
-          pendingBookings,
+          totalServiceReviews,
           totalSpent: totalSpent._sum.amount || 0,
           upcomingWebinars,
+          totalWebinarsAttended,
         })
       );
     } catch (error) {

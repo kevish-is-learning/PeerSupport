@@ -15,17 +15,8 @@ router.get('/dashboard/stats', menteeController.getDashboardStats);
 // Mentors
 router.get('/mentors', menteeController.getAllMentors);
 router.get('/mentors/:mentorId', menteeController.getMentorById);
-router.get('/mentors/:mentorId/slots', menteeController.getMentorSlots);
-router.get('/mentors/:mentorId/reviews', menteeController.getMentorReviews); 
-
-// Bookings
-router.get('/bookings', menteeController.getMyBookings);
-router.get('/bookings/:bookingId', menteeController.getBookingById);
-router.post('/bookings', menteeController.createBooking);
-router.patch('/bookings/:bookingId/cancel', menteeController.cancelBooking);
-
-// Reviews
-router.post('/bookings/:bookingId/review', menteeController.submitReview);
+router.get('/mentors/:mentorId/services', menteeController.getMentorServices);
+router.get('/mentors/:mentorId/reviews', menteeController.getMentorReviews);
 
 // Webinars
 router.get('/webinars', menteeController.getAllWebinars);

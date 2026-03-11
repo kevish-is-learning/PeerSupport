@@ -15,26 +15,20 @@ async function main() {
   console.log('Deleting VerificationDocuments...');
   await prisma.verificationDocument.deleteMany({});
   
+  console.log('Deleting ServiceReviews...');
+  await prisma.serviceReview.deleteMany({});
+  
+  console.log('Deleting Services...');
+  await prisma.service.deleteMany({});
+  
   console.log('Deleting MentorFeedback...');
   await prisma.mentorFeedback.deleteMany({});
   
-  console.log('Deleting Earnings...');
-  await prisma.earnings.deleteMany({});
+  console.log('Deleting MenteeResumes...');
+  await prisma.menteeResume.deleteMany({});
   
-  console.log('Deleting Reviews...');
-  await prisma.review.deleteMany({});
-  
-  console.log('Deleting Payments...');
-  await prisma.payment.deleteMany({});
-  
-  console.log('Deleting Bookings...');
-  await prisma.booking.deleteMany({});
-  
-  console.log('Deleting Slots...');
-  await prisma.slot.deleteMany({});
-  
-  console.log('Deleting Resumes...');
-  await prisma.resume.deleteMany({});
+  console.log('Deleting MentorResumes...');
+  await prisma.mentorResume.deleteMany({});
   
   console.log('Deleting MentorApplications...');
   await prisma.mentorApplication.deleteMany({});
