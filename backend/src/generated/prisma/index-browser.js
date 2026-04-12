@@ -138,158 +138,9 @@ exports.Prisma.UserScalarFieldEnum = {
   deletedAt: 'deletedAt'
 };
 
-exports.Prisma.VerificationDocumentScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  documentUrl: 'documentUrl',
-  status: 'status',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.MentorProfileScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  bio: 'bio',
-  headline: 'headline',
-  expertise: 'expertise',
-  certifications: 'certifications',
-  rating: 'rating',
-  totalReviews: 'totalReviews',
-  verificationStatus: 'verificationStatus',
-  verifiedBadge: 'verifiedBadge',
-  phone: 'phone',
-  gender: 'gender',
-  location: 'location',
-  socialLinks: 'socialLinks',
-  verificationIds: 'verificationIds',
-  bachelors: 'bachelors',
-  masters: 'masters',
-  workExperience: 'workExperience',
-  exams: 'exams',
-  balance: 'balance',
-  totalEarnings: 'totalEarnings',
-  pendingEarnings: 'pendingEarnings',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.MenteeProfileScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  dob: 'dob',
-  phone: 'phone',
-  location: 'location',
-  gender: 'gender',
-  bachelors: 'bachelors',
-  masters: 'masters',
-  workExperience: 'workExperience',
-  certifications: 'certifications',
-  catAttempts: 'catAttempts',
-  expectations: 'expectations',
-  targetColleges: 'targetColleges',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.AdminProfileScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  lastLoginAt: 'lastLoginAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.MentorApplicationScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  bio: 'bio',
-  headline: 'headline',
-  phone: 'phone',
-  gender: 'gender',
-  location: 'location',
-  socialLinks: 'socialLinks',
-  verificationIds: 'verificationIds',
-  expertise: 'expertise',
-  bachelors: 'bachelors',
-  masters: 'masters',
-  workExperience: 'workExperience',
-  exams: 'exams',
-  certifications: 'certifications',
-  resumes: 'resumes',
-  status: 'status',
-  rejectionReason: 'rejectionReason',
-  reviewedAt: 'reviewedAt',
-  reviewedBy: 'reviewedBy',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.MenteeResumeScalarFieldEnum = {
-  id: 'id',
-  menteeId: 'menteeId',
-  name: 'name',
-  fileUrl: 'fileUrl',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.MentorResumeScalarFieldEnum = {
-  id: 'id',
-  mentorId: 'mentorId',
-  name: 'name',
-  fileUrl: 'fileUrl',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.ServiceScalarFieldEnum = {
-  id: 'id',
-  mentorId: 'mentorId',
-  title: 'title',
-  shortDescription: 'shortDescription',
-  longDescription: 'longDescription',
-  price: 'price',
-  duration: 'duration',
-  status: 'status',
-  totalBookings: 'totalBookings',
-  totalRevenue: 'totalRevenue',
-  averageRating: 'averageRating',
-  totalReviews: 'totalReviews',
-  viewCount: 'viewCount',
-  tags: 'tags',
-  category: 'category',
-  isPopular: 'isPopular',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ServiceReviewScalarFieldEnum = {
-  id: 'id',
-  serviceId: 'serviceId',
-  menteeId: 'menteeId',
-  menteeName: 'menteeName',
-  rating: 'rating',
-  comment: 'comment',
-  isVerified: 'isVerified',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.MentorFeedbackScalarFieldEnum = {
-  id: 'id',
-  mentorId: 'mentorId',
-  sessionId: 'sessionId',
-  feedbackPdfUrl: 'feedbackPdfUrl',
-  notes: 'notes',
-  createdAt: 'createdAt'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
-};
-
-exports.Prisma.NullableJsonNullValueInput = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -301,54 +152,14 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
-exports.Prisma.JsonNullValueFilter = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull,
-  AnyNull: Prisma.AnyNull
-};
 exports.Role = exports.$Enums.Role = {
   MENTOR: 'MENTOR',
   MENTEE: 'MENTEE',
   ADMIN: 'ADMIN'
 };
 
-exports.VerificationStatus = exports.$Enums.VerificationStatus = {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
-};
-
-exports.Gender = exports.$Enums.Gender = {
-  MALE: 'MALE',
-  FEMALE: 'FEMALE',
-  OTHER: 'OTHER'
-};
-
-exports.ApplicationStatus = exports.$Enums.ApplicationStatus = {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
-};
-
-exports.ServiceStatus = exports.$Enums.ServiceStatus = {
-  ACTIVE: 'ACTIVE',
-  INACTIVE: 'INACTIVE',
-  DRAFT: 'DRAFT'
-};
-
 exports.Prisma.ModelName = {
-  User: 'User',
-  VerificationDocument: 'VerificationDocument',
-  MentorProfile: 'MentorProfile',
-  MenteeProfile: 'MenteeProfile',
-  AdminProfile: 'AdminProfile',
-  MentorApplication: 'MentorApplication',
-  MenteeResume: 'MenteeResume',
-  MentorResume: 'MentorResume',
-  Service: 'Service',
-  ServiceReview: 'ServiceReview',
-  MentorFeedback: 'MentorFeedback'
+  User: 'User'
 };
 
 /**
