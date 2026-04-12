@@ -22,9 +22,11 @@ export default function HeaderAuthButton() {
   }
 
   if (user) {
+    const targetPath = user.role === "MENTEE" && !user.onboardingCompleted ? "/onboarding" : "/profile";
+
     return (
       <Link
-        href="/auth"
+        href={targetPath}
         className="inline-flex h-11 min-w-37.5 items-center justify-center rounded-full border-2 border-black bg-[#c6f6d5] px-5 text-sm font-semibold shadow-[3px_3px_0_rgba(0,0,0,1)] transition-all hover:translate-y-0.5 hover:shadow-[0px_0px_0_rgba(0,0,0,1)]"
       >
         {user.name || user.email}

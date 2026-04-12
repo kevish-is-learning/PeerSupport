@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import authRoutes from './auth.routes.js';
+import menteeProfileRoutes from './menteeProfile.routes.js';
 
 const router = Router();
 
@@ -17,6 +18,12 @@ router.get('/', (req, res) => {
         changePassword: 'POST /api/auth/change-password',
         logout: 'POST /api/auth/logout',
       },
+      menteeProfile: {
+        get: 'GET /api/mentee-profile',
+        create: 'POST /api/mentee-profile',
+        update: 'PUT /api/mentee-profile',
+        delete: 'DELETE /api/mentee-profile',
+      },
     },
   });
 });
@@ -32,5 +39,6 @@ router.get('/health', (_req, res) => {
 
 // Mount route groups
 router.use('/auth', authRoutes);
+router.use('/mentee-profile', menteeProfileRoutes);
 
 export default router;

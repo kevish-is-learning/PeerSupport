@@ -26,7 +26,7 @@ async function apiRequest(path, options = {}) {
 
   const payload = await parseResponse(response);
   if (!response.ok) {
-    const errorMessage = payload?.errors || "Request failed";
+    const errorMessage = payload?.message || payload?.errors || "Request failed";
     const requestError = new Error(errorMessage);
     requestError.status = response.status;
     requestError.payload = payload;
@@ -60,6 +60,21 @@ export const authApi = {
   },
   googleAuthUrl() {
     return `${API_BASE_URL}/auth/google`;
+  },
+};
+
+export const menteeProfileApi = {
+  getMine() {
+    return apiRequest('/mentee-profile');
+  },
+  create(data) {
+    return apiRequest('/mentee-profile', { method: 'POST', body: data });
+  },
+  update(data) {
+    return apiRequest('/mentee-profile', { method: 'PUT', body: data });
+  },
+  remove() {
+    return apiRequest('/mentee-profile', { method: 'DELETE' });
   },
 };
 

@@ -138,6 +138,23 @@ exports.Prisma.UserScalarFieldEnum = {
   deletedAt: 'deletedAt'
 };
 
+exports.Prisma.MenteeProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  dateOfBirth: 'dateOfBirth',
+  education10: 'education10',
+  education12: 'education12',
+  bachelors: 'bachelors',
+  masters: 'masters',
+  workExperience: 'workExperience',
+  certifications: 'certifications',
+  skillsets: 'skillsets',
+  catHistory: 'catHistory',
+  resumeUrl: 'resumeUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -159,7 +176,8 @@ exports.Role = exports.$Enums.Role = {
 };
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  MenteeProfile: 'MenteeProfile'
 };
 
 /**

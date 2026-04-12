@@ -11,7 +11,19 @@ const defaultForm = {
   password: "",
 };
 
-export default function AuthPanel({ initialMode = "login", redirectTo = "/" }) {
+const getPostAuthRoute = (user, fallbackRoute) => {
+  if (!user) {
+    return fallbackRoute;
+  }
+
+  if (user.role === "MENTEE" && !user.onboardingCompleted) {
+    return "/onboarding";
+  }
+
+  return fallbackRoute;
+};
+
+export default function AuthPanel({ initialMode = "login", redirectTo = "/profile", guestOnly = false }) {
   const [mode, setMode] = useState(initialMode === "register" ? "register" : "login");
   const [form, setForm] = useState(defaultForm);
   const router = useRouter();
@@ -40,6 +52,12 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/" }) {
     setMode(initialMode === "register" ? "register" : "login");
   }, [initialMode]);
 
+  useEffect(() => {
+    if (guestOnly && hasCheckedSession && user) {
+      router.replace(getPostAuthRoute(user, redirectTo));
+    }
+  }, [guestOnly, hasCheckedSession, user, redirectTo, router]);
+
   const healthLabel = useMemo(() => {
     if (isConnected === null) return "Checking backend...";
     return isConnected ? "Backend connected" : "Backend offline";
@@ -55,13 +73,17 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/" }) {
     clearError();
 
     try {
+      let result;
+
       if (mode === "login") {
-        await login({ email: form.email, password: form.password });
+        result = await login({ email: form.email, password: form.password });
       } else {
-        await register({ name: form.name, email: form.email, password: form.password });
+        result = await register({ name: form.name, email: form.email, password: form.password });
       }
+
       setForm(defaultForm);
-      router.push(redirectTo);
+      const signedInUser = result?.data?.user;
+      router.replace(getPostAuthRoute(signedInUser, redirectTo));
     } catch (_error) {
       // Handled by store.
     }
@@ -75,6 +97,14 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/" }) {
       // Handled by store.
     }
   };
+
+  if (guestOnly && hasCheckedSession && user) {
+    return (
+      <div className="mx-auto mt-8 w-full max-w-2xl rounded-[1.75rem] border-2 border-black bg-white p-5 text-left shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-6">
+        <p className="text-lg font-semibold">You are already logged in. Redirecting to profile...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto mt-8 w-full max-w-2xl rounded-[1.75rem] border-2 border-black bg-white p-5 text-left shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-6">
@@ -165,7 +195,7 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/" }) {
           <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => router.push(redirectTo)}
+              onClick={() => router.replace(redirectTo)}
               className="rounded-xl border-2 border-black bg-[#5f6cf3] px-4 py-2 text-sm font-bold text-white"
             >
               Continue

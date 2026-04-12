@@ -35,6 +35,11 @@ const authenticateJWT = async (req, res, next) => {
         isVerified: true,
         isActive: true,
         createdAt: true,
+        menteeProfile: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
@@ -63,7 +68,12 @@ const authenticateJWT = async (req, res, next) => {
         );
     }
 
-    req.user = user;
+    const { menteeProfile, ...safeUser } = user;
+
+    req.user = {
+      ...safeUser,
+      onboardingCompleted: Boolean(menteeProfile),
+    };
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
@@ -105,11 +115,21 @@ const optionalAuth = async (req, res, next) => {
           profilePicture: true,
           isVerified: true,
           isActive: true,
+          menteeProfile: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
 
       if (user && user.isActive) {
-        req.user = user;
+        const { menteeProfile, ...safeUser } = user;
+
+        req.user = {
+          ...safeUser,
+          onboardingCompleted: Boolean(menteeProfile),
+        };
       }
     }
 

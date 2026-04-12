@@ -64,7 +64,7 @@ class AuthController {
   }
 
   // Google OAuth Callback Handler
-  googleCallback(req, res) {
+  async googleCallback(req, res) {
     try {
       const frontendUrl = process.env.FRONTEND_URL || `http://localhost:${process.env.PORT || 5000}`;
       
@@ -85,8 +85,10 @@ class AuthController {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
+      const postAuthRedirectPath = await authService.getPostAuthRedirectPath(req.user.id);
+
       // Redirect to frontend without token in URL
-      res.redirect(`${frontendUrl}/?success=true`);
+      res.redirect(`${frontendUrl}${postAuthRedirectPath}?success=true`);
     } catch (error) {
       const frontendUrl = process.env.FRONTEND_URL || `http://localhost:${process.env.PORT || 5000}`;
       res.redirect(`${frontendUrl}/?error=server_error`);

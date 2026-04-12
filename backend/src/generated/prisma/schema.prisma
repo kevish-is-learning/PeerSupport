@@ -15,20 +15,42 @@ enum Role {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  email          String    @unique
+  id             String         @id @default(uuid())
+  email          String         @unique
   password       String?
-  googleId       String?   @unique
+  googleId       String?        @unique
   name           String?
   profilePicture String?
-  provider       String    @default("local")
-  role           Role      @default(MENTEE)
-  isVerified     Boolean   @default(false)
-  isActive       Boolean   @default(true)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  provider       String         @default("local")
+  role           Role           @default(MENTEE)
+  isVerified     Boolean        @default(false)
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   deletedAt      DateTime?
+  menteeProfile  MenteeProfile?
 
   @@index([role])
   @@index([email])
+}
+
+model MenteeProfile {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  dateOfBirth    DateTime @db.Date
+  education10    String?
+  education12    String?
+  bachelors      String?
+  masters        String?
+  workExperience String?
+  certifications String?
+  skillsets      String[] @default([])
+  catHistory     String?
+  resumeUrl      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

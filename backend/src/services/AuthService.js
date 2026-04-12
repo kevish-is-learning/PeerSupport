@@ -13,6 +13,29 @@ class AuthService {
     );
   }
 
+  async getPostAuthRedirectPath(userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        menteeProfile: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return '/profile';
+    }
+
+    if (user.role === 'MENTEE' && !user.menteeProfile) {
+      return '/onboarding';
+    }
+
+    return '/profile';
+  }
+
   // Register with Email/Password
   async register(data) {
     // Validate input using Zod
@@ -56,7 +79,13 @@ class AuthService {
     // Generate token
     const token = this.generateToken(user.id);
 
-    return { user, token };
+    return {
+      user: {
+        ...user,
+        onboardingCompleted: false,
+      },
+      token,
+    };
   }
 
   // Login with Email/Password
@@ -67,6 +96,13 @@ class AuthService {
     // Find user
     const user = await prisma.user.findUnique({
       where: { email },
+      include: {
+        menteeProfile: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -88,9 +124,15 @@ class AuthService {
     const token = this.generateToken(user.id);
 
     // Return user without password
-    const { password: _, ...userWithoutPassword } = user;
+    const { password: _, menteeProfile, ...userWithoutPassword } = user;
 
-    return { user: userWithoutPassword, token };
+    return {
+      user: {
+        ...userWithoutPassword,
+        onboardingCompleted: Boolean(menteeProfile),
+      },
+      token,
+    };
   }
 
   // Change password (for local users only)

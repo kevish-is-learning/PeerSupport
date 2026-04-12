@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
+/**
+ * Model MenteeProfile
+ * 
+ */
+export type MenteeProfile = $Result.DefaultSelection<Prisma.$MenteeProfilePayload>
 
 /**
  * Enums
@@ -169,6 +174,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs>;
+
+  /**
+   * `prisma.menteeProfile`: Exposes CRUD operations for the **MenteeProfile** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MenteeProfiles
+    * const menteeProfiles = await prisma.menteeProfile.findMany()
+    * ```
+    */
+  get menteeProfile(): Prisma.MenteeProfileDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -610,7 +625,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    User: 'User'
+    User: 'User',
+    MenteeProfile: 'MenteeProfile'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -626,7 +642,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user"
+      modelProps: "user" | "menteeProfile"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -697,6 +713,76 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      MenteeProfile: {
+        payload: Prisma.$MenteeProfilePayload<ExtArgs>
+        fields: Prisma.MenteeProfileFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MenteeProfileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MenteeProfileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload>
+          }
+          findFirst: {
+            args: Prisma.MenteeProfileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MenteeProfileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload>
+          }
+          findMany: {
+            args: Prisma.MenteeProfileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload>[]
+          }
+          create: {
+            args: Prisma.MenteeProfileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload>
+          }
+          createMany: {
+            args: Prisma.MenteeProfileCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MenteeProfileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload>[]
+          }
+          delete: {
+            args: Prisma.MenteeProfileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload>
+          }
+          update: {
+            args: Prisma.MenteeProfileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload>
+          }
+          deleteMany: {
+            args: Prisma.MenteeProfileDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MenteeProfileUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MenteeProfileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MenteeProfilePayload>
+          }
+          aggregate: {
+            args: Prisma.MenteeProfileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMenteeProfile>
+          }
+          groupBy: {
+            args: Prisma.MenteeProfileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MenteeProfileGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MenteeProfileCountArgs<ExtArgs>
+            result: $Utils.Optional<MenteeProfileCountAggregateOutputType> | number
           }
         }
       }
@@ -1089,6 +1175,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
+    menteeProfile?: boolean | User$menteeProfileArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1123,10 +1210,16 @@ export namespace Prisma {
     deletedAt?: boolean
   }
 
+  export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    menteeProfile?: boolean | User$menteeProfileArgs<ExtArgs>
+  }
+  export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
-    objects: {}
+    objects: {
+      menteeProfile: Prisma.$MenteeProfilePayload<ExtArgs> | null
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       email: string
@@ -1505,6 +1598,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    menteeProfile<T extends User$menteeProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$menteeProfileArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1560,6 +1654,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which User to fetch.
      */
     where: UserWhereUniqueInput
@@ -1574,6 +1672,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which User to fetch.
      */
     where: UserWhereUniqueInput
@@ -1587,6 +1689,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
     /**
      * Filter, which User to fetch.
      */
@@ -1632,6 +1738,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which User to fetch.
      */
     where?: UserWhereInput
@@ -1676,6 +1786,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which Users to fetch.
      */
     where?: UserWhereInput
@@ -1714,6 +1828,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
     /**
      * The data needed to create a User.
      */
@@ -1755,6 +1873,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * The data needed to update a User.
      */
     data: XOR<UserUpdateInput, UserUncheckedUpdateInput>
@@ -1787,6 +1909,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * The filter to search for the User to update in case it exists.
      */
     where: UserWhereUniqueInput
@@ -1809,6 +1935,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter which User to delete.
      */
     where: UserWhereUniqueInput
@@ -1825,6 +1955,21 @@ export namespace Prisma {
   }
 
   /**
+   * User.menteeProfile
+   */
+  export type User$menteeProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    where?: MenteeProfileWhereInput
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1832,6 +1977,1047 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MenteeProfile
+   */
+
+  export type AggregateMenteeProfile = {
+    _count: MenteeProfileCountAggregateOutputType | null
+    _min: MenteeProfileMinAggregateOutputType | null
+    _max: MenteeProfileMaxAggregateOutputType | null
+  }
+
+  export type MenteeProfileMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    dateOfBirth: Date | null
+    education10: string | null
+    education12: string | null
+    bachelors: string | null
+    masters: string | null
+    workExperience: string | null
+    certifications: string | null
+    catHistory: string | null
+    resumeUrl: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MenteeProfileMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    dateOfBirth: Date | null
+    education10: string | null
+    education12: string | null
+    bachelors: string | null
+    masters: string | null
+    workExperience: string | null
+    certifications: string | null
+    catHistory: string | null
+    resumeUrl: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MenteeProfileCountAggregateOutputType = {
+    id: number
+    userId: number
+    dateOfBirth: number
+    education10: number
+    education12: number
+    bachelors: number
+    masters: number
+    workExperience: number
+    certifications: number
+    skillsets: number
+    catHistory: number
+    resumeUrl: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MenteeProfileMinAggregateInputType = {
+    id?: true
+    userId?: true
+    dateOfBirth?: true
+    education10?: true
+    education12?: true
+    bachelors?: true
+    masters?: true
+    workExperience?: true
+    certifications?: true
+    catHistory?: true
+    resumeUrl?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MenteeProfileMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    dateOfBirth?: true
+    education10?: true
+    education12?: true
+    bachelors?: true
+    masters?: true
+    workExperience?: true
+    certifications?: true
+    catHistory?: true
+    resumeUrl?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MenteeProfileCountAggregateInputType = {
+    id?: true
+    userId?: true
+    dateOfBirth?: true
+    education10?: true
+    education12?: true
+    bachelors?: true
+    masters?: true
+    workExperience?: true
+    certifications?: true
+    skillsets?: true
+    catHistory?: true
+    resumeUrl?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MenteeProfileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MenteeProfile to aggregate.
+     */
+    where?: MenteeProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MenteeProfiles to fetch.
+     */
+    orderBy?: MenteeProfileOrderByWithRelationInput | MenteeProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MenteeProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MenteeProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MenteeProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MenteeProfiles
+    **/
+    _count?: true | MenteeProfileCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MenteeProfileMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MenteeProfileMaxAggregateInputType
+  }
+
+  export type GetMenteeProfileAggregateType<T extends MenteeProfileAggregateArgs> = {
+        [P in keyof T & keyof AggregateMenteeProfile]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMenteeProfile[P]>
+      : GetScalarType<T[P], AggregateMenteeProfile[P]>
+  }
+
+
+
+
+  export type MenteeProfileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MenteeProfileWhereInput
+    orderBy?: MenteeProfileOrderByWithAggregationInput | MenteeProfileOrderByWithAggregationInput[]
+    by: MenteeProfileScalarFieldEnum[] | MenteeProfileScalarFieldEnum
+    having?: MenteeProfileScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MenteeProfileCountAggregateInputType | true
+    _min?: MenteeProfileMinAggregateInputType
+    _max?: MenteeProfileMaxAggregateInputType
+  }
+
+  export type MenteeProfileGroupByOutputType = {
+    id: string
+    userId: string
+    dateOfBirth: Date
+    education10: string | null
+    education12: string | null
+    bachelors: string | null
+    masters: string | null
+    workExperience: string | null
+    certifications: string | null
+    skillsets: string[]
+    catHistory: string | null
+    resumeUrl: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: MenteeProfileCountAggregateOutputType | null
+    _min: MenteeProfileMinAggregateOutputType | null
+    _max: MenteeProfileMaxAggregateOutputType | null
+  }
+
+  type GetMenteeProfileGroupByPayload<T extends MenteeProfileGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MenteeProfileGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MenteeProfileGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MenteeProfileGroupByOutputType[P]>
+            : GetScalarType<T[P], MenteeProfileGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MenteeProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    dateOfBirth?: boolean
+    education10?: boolean
+    education12?: boolean
+    bachelors?: boolean
+    masters?: boolean
+    workExperience?: boolean
+    certifications?: boolean
+    skillsets?: boolean
+    catHistory?: boolean
+    resumeUrl?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["menteeProfile"]>
+
+  export type MenteeProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    dateOfBirth?: boolean
+    education10?: boolean
+    education12?: boolean
+    bachelors?: boolean
+    masters?: boolean
+    workExperience?: boolean
+    certifications?: boolean
+    skillsets?: boolean
+    catHistory?: boolean
+    resumeUrl?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["menteeProfile"]>
+
+  export type MenteeProfileSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    dateOfBirth?: boolean
+    education10?: boolean
+    education12?: boolean
+    bachelors?: boolean
+    masters?: boolean
+    workExperience?: boolean
+    certifications?: boolean
+    skillsets?: boolean
+    catHistory?: boolean
+    resumeUrl?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MenteeProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type MenteeProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $MenteeProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MenteeProfile"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      dateOfBirth: Date
+      education10: string | null
+      education12: string | null
+      bachelors: string | null
+      masters: string | null
+      workExperience: string | null
+      certifications: string | null
+      skillsets: string[]
+      catHistory: string | null
+      resumeUrl: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["menteeProfile"]>
+    composites: {}
+  }
+
+  type MenteeProfileGetPayload<S extends boolean | null | undefined | MenteeProfileDefaultArgs> = $Result.GetResult<Prisma.$MenteeProfilePayload, S>
+
+  type MenteeProfileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<MenteeProfileFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: MenteeProfileCountAggregateInputType | true
+    }
+
+  export interface MenteeProfileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MenteeProfile'], meta: { name: 'MenteeProfile' } }
+    /**
+     * Find zero or one MenteeProfile that matches the filter.
+     * @param {MenteeProfileFindUniqueArgs} args - Arguments to find a MenteeProfile
+     * @example
+     * // Get one MenteeProfile
+     * const menteeProfile = await prisma.menteeProfile.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MenteeProfileFindUniqueArgs>(args: SelectSubset<T, MenteeProfileFindUniqueArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one MenteeProfile that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {MenteeProfileFindUniqueOrThrowArgs} args - Arguments to find a MenteeProfile
+     * @example
+     * // Get one MenteeProfile
+     * const menteeProfile = await prisma.menteeProfile.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MenteeProfileFindUniqueOrThrowArgs>(args: SelectSubset<T, MenteeProfileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first MenteeProfile that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MenteeProfileFindFirstArgs} args - Arguments to find a MenteeProfile
+     * @example
+     * // Get one MenteeProfile
+     * const menteeProfile = await prisma.menteeProfile.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MenteeProfileFindFirstArgs>(args?: SelectSubset<T, MenteeProfileFindFirstArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first MenteeProfile that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MenteeProfileFindFirstOrThrowArgs} args - Arguments to find a MenteeProfile
+     * @example
+     * // Get one MenteeProfile
+     * const menteeProfile = await prisma.menteeProfile.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MenteeProfileFindFirstOrThrowArgs>(args?: SelectSubset<T, MenteeProfileFindFirstOrThrowArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more MenteeProfiles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MenteeProfileFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MenteeProfiles
+     * const menteeProfiles = await prisma.menteeProfile.findMany()
+     * 
+     * // Get first 10 MenteeProfiles
+     * const menteeProfiles = await prisma.menteeProfile.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const menteeProfileWithIdOnly = await prisma.menteeProfile.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MenteeProfileFindManyArgs>(args?: SelectSubset<T, MenteeProfileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a MenteeProfile.
+     * @param {MenteeProfileCreateArgs} args - Arguments to create a MenteeProfile.
+     * @example
+     * // Create one MenteeProfile
+     * const MenteeProfile = await prisma.menteeProfile.create({
+     *   data: {
+     *     // ... data to create a MenteeProfile
+     *   }
+     * })
+     * 
+     */
+    create<T extends MenteeProfileCreateArgs>(args: SelectSubset<T, MenteeProfileCreateArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many MenteeProfiles.
+     * @param {MenteeProfileCreateManyArgs} args - Arguments to create many MenteeProfiles.
+     * @example
+     * // Create many MenteeProfiles
+     * const menteeProfile = await prisma.menteeProfile.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MenteeProfileCreateManyArgs>(args?: SelectSubset<T, MenteeProfileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MenteeProfiles and returns the data saved in the database.
+     * @param {MenteeProfileCreateManyAndReturnArgs} args - Arguments to create many MenteeProfiles.
+     * @example
+     * // Create many MenteeProfiles
+     * const menteeProfile = await prisma.menteeProfile.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MenteeProfiles and only return the `id`
+     * const menteeProfileWithIdOnly = await prisma.menteeProfile.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MenteeProfileCreateManyAndReturnArgs>(args?: SelectSubset<T, MenteeProfileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a MenteeProfile.
+     * @param {MenteeProfileDeleteArgs} args - Arguments to delete one MenteeProfile.
+     * @example
+     * // Delete one MenteeProfile
+     * const MenteeProfile = await prisma.menteeProfile.delete({
+     *   where: {
+     *     // ... filter to delete one MenteeProfile
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MenteeProfileDeleteArgs>(args: SelectSubset<T, MenteeProfileDeleteArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one MenteeProfile.
+     * @param {MenteeProfileUpdateArgs} args - Arguments to update one MenteeProfile.
+     * @example
+     * // Update one MenteeProfile
+     * const menteeProfile = await prisma.menteeProfile.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MenteeProfileUpdateArgs>(args: SelectSubset<T, MenteeProfileUpdateArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more MenteeProfiles.
+     * @param {MenteeProfileDeleteManyArgs} args - Arguments to filter MenteeProfiles to delete.
+     * @example
+     * // Delete a few MenteeProfiles
+     * const { count } = await prisma.menteeProfile.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MenteeProfileDeleteManyArgs>(args?: SelectSubset<T, MenteeProfileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MenteeProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MenteeProfileUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MenteeProfiles
+     * const menteeProfile = await prisma.menteeProfile.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MenteeProfileUpdateManyArgs>(args: SelectSubset<T, MenteeProfileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MenteeProfile.
+     * @param {MenteeProfileUpsertArgs} args - Arguments to update or create a MenteeProfile.
+     * @example
+     * // Update or create a MenteeProfile
+     * const menteeProfile = await prisma.menteeProfile.upsert({
+     *   create: {
+     *     // ... data to create a MenteeProfile
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MenteeProfile we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MenteeProfileUpsertArgs>(args: SelectSubset<T, MenteeProfileUpsertArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of MenteeProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MenteeProfileCountArgs} args - Arguments to filter MenteeProfiles to count.
+     * @example
+     * // Count the number of MenteeProfiles
+     * const count = await prisma.menteeProfile.count({
+     *   where: {
+     *     // ... the filter for the MenteeProfiles we want to count
+     *   }
+     * })
+    **/
+    count<T extends MenteeProfileCountArgs>(
+      args?: Subset<T, MenteeProfileCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MenteeProfileCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MenteeProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MenteeProfileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MenteeProfileAggregateArgs>(args: Subset<T, MenteeProfileAggregateArgs>): Prisma.PrismaPromise<GetMenteeProfileAggregateType<T>>
+
+    /**
+     * Group by MenteeProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MenteeProfileGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MenteeProfileGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MenteeProfileGroupByArgs['orderBy'] }
+        : { orderBy?: MenteeProfileGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MenteeProfileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMenteeProfileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MenteeProfile model
+   */
+  readonly fields: MenteeProfileFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MenteeProfile.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MenteeProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MenteeProfile model
+   */ 
+  interface MenteeProfileFieldRefs {
+    readonly id: FieldRef<"MenteeProfile", 'String'>
+    readonly userId: FieldRef<"MenteeProfile", 'String'>
+    readonly dateOfBirth: FieldRef<"MenteeProfile", 'DateTime'>
+    readonly education10: FieldRef<"MenteeProfile", 'String'>
+    readonly education12: FieldRef<"MenteeProfile", 'String'>
+    readonly bachelors: FieldRef<"MenteeProfile", 'String'>
+    readonly masters: FieldRef<"MenteeProfile", 'String'>
+    readonly workExperience: FieldRef<"MenteeProfile", 'String'>
+    readonly certifications: FieldRef<"MenteeProfile", 'String'>
+    readonly skillsets: FieldRef<"MenteeProfile", 'String[]'>
+    readonly catHistory: FieldRef<"MenteeProfile", 'String'>
+    readonly resumeUrl: FieldRef<"MenteeProfile", 'String'>
+    readonly createdAt: FieldRef<"MenteeProfile", 'DateTime'>
+    readonly updatedAt: FieldRef<"MenteeProfile", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MenteeProfile findUnique
+   */
+  export type MenteeProfileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MenteeProfile to fetch.
+     */
+    where: MenteeProfileWhereUniqueInput
+  }
+
+  /**
+   * MenteeProfile findUniqueOrThrow
+   */
+  export type MenteeProfileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MenteeProfile to fetch.
+     */
+    where: MenteeProfileWhereUniqueInput
+  }
+
+  /**
+   * MenteeProfile findFirst
+   */
+  export type MenteeProfileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MenteeProfile to fetch.
+     */
+    where?: MenteeProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MenteeProfiles to fetch.
+     */
+    orderBy?: MenteeProfileOrderByWithRelationInput | MenteeProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MenteeProfiles.
+     */
+    cursor?: MenteeProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MenteeProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MenteeProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MenteeProfiles.
+     */
+    distinct?: MenteeProfileScalarFieldEnum | MenteeProfileScalarFieldEnum[]
+  }
+
+  /**
+   * MenteeProfile findFirstOrThrow
+   */
+  export type MenteeProfileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MenteeProfile to fetch.
+     */
+    where?: MenteeProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MenteeProfiles to fetch.
+     */
+    orderBy?: MenteeProfileOrderByWithRelationInput | MenteeProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MenteeProfiles.
+     */
+    cursor?: MenteeProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MenteeProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MenteeProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MenteeProfiles.
+     */
+    distinct?: MenteeProfileScalarFieldEnum | MenteeProfileScalarFieldEnum[]
+  }
+
+  /**
+   * MenteeProfile findMany
+   */
+  export type MenteeProfileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MenteeProfiles to fetch.
+     */
+    where?: MenteeProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MenteeProfiles to fetch.
+     */
+    orderBy?: MenteeProfileOrderByWithRelationInput | MenteeProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MenteeProfiles.
+     */
+    cursor?: MenteeProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MenteeProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MenteeProfiles.
+     */
+    skip?: number
+    distinct?: MenteeProfileScalarFieldEnum | MenteeProfileScalarFieldEnum[]
+  }
+
+  /**
+   * MenteeProfile create
+   */
+  export type MenteeProfileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MenteeProfile.
+     */
+    data: XOR<MenteeProfileCreateInput, MenteeProfileUncheckedCreateInput>
+  }
+
+  /**
+   * MenteeProfile createMany
+   */
+  export type MenteeProfileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MenteeProfiles.
+     */
+    data: MenteeProfileCreateManyInput | MenteeProfileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MenteeProfile createManyAndReturn
+   */
+  export type MenteeProfileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many MenteeProfiles.
+     */
+    data: MenteeProfileCreateManyInput | MenteeProfileCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MenteeProfile update
+   */
+  export type MenteeProfileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MenteeProfile.
+     */
+    data: XOR<MenteeProfileUpdateInput, MenteeProfileUncheckedUpdateInput>
+    /**
+     * Choose, which MenteeProfile to update.
+     */
+    where: MenteeProfileWhereUniqueInput
+  }
+
+  /**
+   * MenteeProfile updateMany
+   */
+  export type MenteeProfileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MenteeProfiles.
+     */
+    data: XOR<MenteeProfileUpdateManyMutationInput, MenteeProfileUncheckedUpdateManyInput>
+    /**
+     * Filter which MenteeProfiles to update
+     */
+    where?: MenteeProfileWhereInput
+  }
+
+  /**
+   * MenteeProfile upsert
+   */
+  export type MenteeProfileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MenteeProfile to update in case it exists.
+     */
+    where: MenteeProfileWhereUniqueInput
+    /**
+     * In case the MenteeProfile found by the `where` argument doesn't exist, create a new MenteeProfile with this data.
+     */
+    create: XOR<MenteeProfileCreateInput, MenteeProfileUncheckedCreateInput>
+    /**
+     * In case the MenteeProfile was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MenteeProfileUpdateInput, MenteeProfileUncheckedUpdateInput>
+  }
+
+  /**
+   * MenteeProfile delete
+   */
+  export type MenteeProfileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
+    /**
+     * Filter which MenteeProfile to delete.
+     */
+    where: MenteeProfileWhereUniqueInput
+  }
+
+  /**
+   * MenteeProfile deleteMany
+   */
+  export type MenteeProfileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MenteeProfiles to delete
+     */
+    where?: MenteeProfileWhereInput
+  }
+
+  /**
+   * MenteeProfile without action
+   */
+  export type MenteeProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MenteeProfile
+     */
+    select?: MenteeProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MenteeProfileInclude<ExtArgs> | null
   }
 
 
@@ -1866,6 +3052,26 @@ export namespace Prisma {
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const MenteeProfileScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    dateOfBirth: 'dateOfBirth',
+    education10: 'education10',
+    education12: 'education12',
+    bachelors: 'bachelors',
+    masters: 'masters',
+    workExperience: 'workExperience',
+    certifications: 'certifications',
+    skillsets: 'skillsets',
+    catHistory: 'catHistory',
+    resumeUrl: 'resumeUrl',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MenteeProfileScalarFieldEnum = (typeof MenteeProfileScalarFieldEnum)[keyof typeof MenteeProfileScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -1980,6 +3186,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    menteeProfile?: XOR<MenteeProfileNullableRelationFilter, MenteeProfileWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -1996,6 +3203,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
+    menteeProfile?: MenteeProfileOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -2015,6 +3223,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    menteeProfile?: XOR<MenteeProfileNullableRelationFilter, MenteeProfileWhereInput> | null
   }, "id" | "email" | "googleId">
 
   export type UserOrderByWithAggregationInput = {
@@ -2055,6 +3264,106 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   }
 
+  export type MenteeProfileWhereInput = {
+    AND?: MenteeProfileWhereInput | MenteeProfileWhereInput[]
+    OR?: MenteeProfileWhereInput[]
+    NOT?: MenteeProfileWhereInput | MenteeProfileWhereInput[]
+    id?: StringFilter<"MenteeProfile"> | string
+    userId?: StringFilter<"MenteeProfile"> | string
+    dateOfBirth?: DateTimeFilter<"MenteeProfile"> | Date | string
+    education10?: StringNullableFilter<"MenteeProfile"> | string | null
+    education12?: StringNullableFilter<"MenteeProfile"> | string | null
+    bachelors?: StringNullableFilter<"MenteeProfile"> | string | null
+    masters?: StringNullableFilter<"MenteeProfile"> | string | null
+    workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
+    certifications?: StringNullableFilter<"MenteeProfile"> | string | null
+    skillsets?: StringNullableListFilter<"MenteeProfile">
+    catHistory?: StringNullableFilter<"MenteeProfile"> | string | null
+    resumeUrl?: StringNullableFilter<"MenteeProfile"> | string | null
+    createdAt?: DateTimeFilter<"MenteeProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"MenteeProfile"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type MenteeProfileOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    dateOfBirth?: SortOrder
+    education10?: SortOrderInput | SortOrder
+    education12?: SortOrderInput | SortOrder
+    bachelors?: SortOrderInput | SortOrder
+    masters?: SortOrderInput | SortOrder
+    workExperience?: SortOrderInput | SortOrder
+    certifications?: SortOrderInput | SortOrder
+    skillsets?: SortOrder
+    catHistory?: SortOrderInput | SortOrder
+    resumeUrl?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type MenteeProfileWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId?: string
+    AND?: MenteeProfileWhereInput | MenteeProfileWhereInput[]
+    OR?: MenteeProfileWhereInput[]
+    NOT?: MenteeProfileWhereInput | MenteeProfileWhereInput[]
+    dateOfBirth?: DateTimeFilter<"MenteeProfile"> | Date | string
+    education10?: StringNullableFilter<"MenteeProfile"> | string | null
+    education12?: StringNullableFilter<"MenteeProfile"> | string | null
+    bachelors?: StringNullableFilter<"MenteeProfile"> | string | null
+    masters?: StringNullableFilter<"MenteeProfile"> | string | null
+    workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
+    certifications?: StringNullableFilter<"MenteeProfile"> | string | null
+    skillsets?: StringNullableListFilter<"MenteeProfile">
+    catHistory?: StringNullableFilter<"MenteeProfile"> | string | null
+    resumeUrl?: StringNullableFilter<"MenteeProfile"> | string | null
+    createdAt?: DateTimeFilter<"MenteeProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"MenteeProfile"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id" | "userId">
+
+  export type MenteeProfileOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    dateOfBirth?: SortOrder
+    education10?: SortOrderInput | SortOrder
+    education12?: SortOrderInput | SortOrder
+    bachelors?: SortOrderInput | SortOrder
+    masters?: SortOrderInput | SortOrder
+    workExperience?: SortOrderInput | SortOrder
+    certifications?: SortOrderInput | SortOrder
+    skillsets?: SortOrder
+    catHistory?: SortOrderInput | SortOrder
+    resumeUrl?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MenteeProfileCountOrderByAggregateInput
+    _max?: MenteeProfileMaxOrderByAggregateInput
+    _min?: MenteeProfileMinOrderByAggregateInput
+  }
+
+  export type MenteeProfileScalarWhereWithAggregatesInput = {
+    AND?: MenteeProfileScalarWhereWithAggregatesInput | MenteeProfileScalarWhereWithAggregatesInput[]
+    OR?: MenteeProfileScalarWhereWithAggregatesInput[]
+    NOT?: MenteeProfileScalarWhereWithAggregatesInput | MenteeProfileScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MenteeProfile"> | string
+    userId?: StringWithAggregatesFilter<"MenteeProfile"> | string
+    dateOfBirth?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
+    education10?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    education12?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    bachelors?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    masters?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    workExperience?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    certifications?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    skillsets?: StringNullableListFilter<"MenteeProfile">
+    catHistory?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    resumeUrl?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -2069,6 +3378,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -2085,6 +3395,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -2101,6 +3412,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -2117,6 +3429,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -2165,6 +3478,124 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MenteeProfileCreateInput = {
+    id?: string
+    dateOfBirth: Date | string
+    education10?: string | null
+    education12?: string | null
+    bachelors?: string | null
+    masters?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    skillsets?: MenteeProfileCreateskillsetsInput | string[]
+    catHistory?: string | null
+    resumeUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMenteeProfileInput
+  }
+
+  export type MenteeProfileUncheckedCreateInput = {
+    id?: string
+    userId: string
+    dateOfBirth: Date | string
+    education10?: string | null
+    education12?: string | null
+    bachelors?: string | null
+    masters?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    skillsets?: MenteeProfileCreateskillsetsInput | string[]
+    catHistory?: string | null
+    resumeUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MenteeProfileUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    education10?: NullableStringFieldUpdateOperationsInput | string | null
+    education12?: NullableStringFieldUpdateOperationsInput | string | null
+    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
+    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
+    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMenteeProfileNestedInput
+  }
+
+  export type MenteeProfileUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    education10?: NullableStringFieldUpdateOperationsInput | string | null
+    education12?: NullableStringFieldUpdateOperationsInput | string | null
+    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
+    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
+    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MenteeProfileCreateManyInput = {
+    id?: string
+    userId: string
+    dateOfBirth: Date | string
+    education10?: string | null
+    education12?: string | null
+    bachelors?: string | null
+    masters?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    skillsets?: MenteeProfileCreateskillsetsInput | string[]
+    catHistory?: string | null
+    resumeUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MenteeProfileUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    education10?: NullableStringFieldUpdateOperationsInput | string | null
+    education12?: NullableStringFieldUpdateOperationsInput | string | null
+    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
+    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
+    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MenteeProfileUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    education10?: NullableStringFieldUpdateOperationsInput | string | null
+    education12?: NullableStringFieldUpdateOperationsInput | string | null
+    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
+    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
+    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2229,6 +3660,11 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type MenteeProfileNullableRelationFilter = {
+    is?: MenteeProfileWhereInput | null
+    isNot?: MenteeProfileWhereInput | null
   }
 
   export type SortOrderInput = {
@@ -2366,6 +3802,80 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type MenteeProfileCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    dateOfBirth?: SortOrder
+    education10?: SortOrder
+    education12?: SortOrder
+    bachelors?: SortOrder
+    masters?: SortOrder
+    workExperience?: SortOrder
+    certifications?: SortOrder
+    skillsets?: SortOrder
+    catHistory?: SortOrder
+    resumeUrl?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MenteeProfileMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    dateOfBirth?: SortOrder
+    education10?: SortOrder
+    education12?: SortOrder
+    bachelors?: SortOrder
+    masters?: SortOrder
+    workExperience?: SortOrder
+    certifications?: SortOrder
+    catHistory?: SortOrder
+    resumeUrl?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MenteeProfileMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    dateOfBirth?: SortOrder
+    education10?: SortOrder
+    education12?: SortOrder
+    bachelors?: SortOrder
+    masters?: SortOrder
+    workExperience?: SortOrder
+    certifications?: SortOrder
+    catHistory?: SortOrder
+    resumeUrl?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MenteeProfileCreateNestedOneWithoutUserInput = {
+    create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
+    connect?: MenteeProfileWhereUniqueInput
+  }
+
+  export type MenteeProfileUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
+    connect?: MenteeProfileWhereUniqueInput
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -2388,6 +3898,49 @@ export namespace Prisma {
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type MenteeProfileUpdateOneWithoutUserNestedInput = {
+    create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
+    upsert?: MenteeProfileUpsertWithoutUserInput
+    disconnect?: MenteeProfileWhereInput | boolean
+    delete?: MenteeProfileWhereInput | boolean
+    connect?: MenteeProfileWhereUniqueInput
+    update?: XOR<XOR<MenteeProfileUpdateToOneWithWhereWithoutUserInput, MenteeProfileUpdateWithoutUserInput>, MenteeProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MenteeProfileUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
+    upsert?: MenteeProfileUpsertWithoutUserInput
+    disconnect?: MenteeProfileWhereInput | boolean
+    delete?: MenteeProfileWhereInput | boolean
+    connect?: MenteeProfileWhereUniqueInput
+    update?: XOR<XOR<MenteeProfileUpdateToOneWithWhereWithoutUserInput, MenteeProfileUpdateWithoutUserInput>, MenteeProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MenteeProfileCreateskillsetsInput = {
+    set: string[]
+  }
+
+  export type UserCreateNestedOneWithoutMenteeProfileInput = {
+    create?: XOR<UserCreateWithoutMenteeProfileInput, UserUncheckedCreateWithoutMenteeProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMenteeProfileInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type MenteeProfileUpdateskillsetsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdateOneRequiredWithoutMenteeProfileNestedInput = {
+    create?: XOR<UserCreateWithoutMenteeProfileInput, UserUncheckedCreateWithoutMenteeProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMenteeProfileInput
+    upsert?: UserUpsertWithoutMenteeProfileInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMenteeProfileInput, UserUpdateWithoutMenteeProfileInput>, UserUncheckedUpdateWithoutMenteeProfileInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -2554,6 +4107,166 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type MenteeProfileCreateWithoutUserInput = {
+    id?: string
+    dateOfBirth: Date | string
+    education10?: string | null
+    education12?: string | null
+    bachelors?: string | null
+    masters?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    skillsets?: MenteeProfileCreateskillsetsInput | string[]
+    catHistory?: string | null
+    resumeUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MenteeProfileUncheckedCreateWithoutUserInput = {
+    id?: string
+    dateOfBirth: Date | string
+    education10?: string | null
+    education12?: string | null
+    bachelors?: string | null
+    masters?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    skillsets?: MenteeProfileCreateskillsetsInput | string[]
+    catHistory?: string | null
+    resumeUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MenteeProfileCreateOrConnectWithoutUserInput = {
+    where: MenteeProfileWhereUniqueInput
+    create: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
+  }
+
+  export type MenteeProfileUpsertWithoutUserInput = {
+    update: XOR<MenteeProfileUpdateWithoutUserInput, MenteeProfileUncheckedUpdateWithoutUserInput>
+    create: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
+    where?: MenteeProfileWhereInput
+  }
+
+  export type MenteeProfileUpdateToOneWithWhereWithoutUserInput = {
+    where?: MenteeProfileWhereInput
+    data: XOR<MenteeProfileUpdateWithoutUserInput, MenteeProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MenteeProfileUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    education10?: NullableStringFieldUpdateOperationsInput | string | null
+    education12?: NullableStringFieldUpdateOperationsInput | string | null
+    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
+    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
+    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MenteeProfileUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    education10?: NullableStringFieldUpdateOperationsInput | string | null
+    education12?: NullableStringFieldUpdateOperationsInput | string | null
+    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
+    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
+    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateWithoutMenteeProfileInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    name?: string | null
+    profilePicture?: string | null
+    provider?: string
+    role?: $Enums.Role
+    isVerified?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type UserUncheckedCreateWithoutMenteeProfileInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    name?: string | null
+    profilePicture?: string | null
+    provider?: string
+    role?: $Enums.Role
+    isVerified?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type UserCreateOrConnectWithoutMenteeProfileInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMenteeProfileInput, UserUncheckedCreateWithoutMenteeProfileInput>
+  }
+
+  export type UserUpsertWithoutMenteeProfileInput = {
+    update: XOR<UserUpdateWithoutMenteeProfileInput, UserUncheckedUpdateWithoutMenteeProfileInput>
+    create: XOR<UserCreateWithoutMenteeProfileInput, UserUncheckedCreateWithoutMenteeProfileInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMenteeProfileInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMenteeProfileInput, UserUncheckedUpdateWithoutMenteeProfileInput>
+  }
+
+  export type UserUpdateWithoutMenteeProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type UserUncheckedUpdateWithoutMenteeProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
 
 
   /**
@@ -2563,6 +4276,10 @@ export namespace Prisma {
      * @deprecated Use UserDefaultArgs instead
      */
     export type UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use MenteeProfileDefaultArgs instead
+     */
+    export type MenteeProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MenteeProfileDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

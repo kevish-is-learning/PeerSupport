@@ -17,7 +17,7 @@ export default function AuthPage({ searchParams }) {
         </p>
       </div>
 
-      <AuthPanel initialMode={mode} redirectTo="/" />
+      <AuthPanel initialMode={mode} redirectTo="/profile" guestOnly />
     </main>
   );
 }
