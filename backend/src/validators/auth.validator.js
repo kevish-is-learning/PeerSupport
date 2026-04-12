@@ -24,12 +24,6 @@ export const loginSchema = z.object({
   password: z.string({ required_error: 'Password is required' }).min(6, 'Password must be at least 6 characters long'),
 });
 
-// Update profile validation schema
-export const updateProfileSchema = z.object({
-  name: z.string().nullable(),
-  profilePicture: z.string().url('Invalid URL format').optional().nullable(),
-});
-
 // Change password validation schema
 export const changePasswordSchema = z.object({
   currentPassword: z.string({ required_error: 'Current password is required' }).min(6, 'Current password must be at least 6 characters long'),
@@ -40,14 +34,12 @@ export const changePasswordSchema = z.object({
 export const validateAuth = {
   register: (data) => registerSchema.parse(data),
   login: (data) => loginSchema.parse(data),
-  updateProfile: (data) => updateProfileSchema.parse(data),
   changePassword: (data) => changePasswordSchema.parse(data),
 };
 
 export default {
   registerSchema,
   loginSchema,
-  updateProfileSchema,
   changePasswordSchema,
   validateAuth,
 };

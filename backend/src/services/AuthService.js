@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../config/database.js';
-import { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema } from '../validators/auth.validator.js';
+import { registerSchema, loginSchema, changePasswordSchema } from '../validators/auth.validator.js';
 
 class AuthService {
   // Generate JWT Token
@@ -91,58 +91,6 @@ class AuthService {
     const { password: _, ...userWithoutPassword } = user;
 
     return { user: userWithoutPassword, token };
-  }
-
-  // Get user profile
-  async getProfile(userId) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        provider: true,
-        role: true,
-        profilePicture: true,
-        isVerified: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    return user;
-  }
-
-  // Update user profile
-  async updateProfile(userId, data) {
-    // Validate input using Zod
-    const { name, profilePicture } = updateProfileSchema.parse(data);
-    
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: {
-        ...(name !== undefined && { name }),
-        ...(profilePicture !== undefined && { profilePicture }),
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        provider: true,
-        role: true,
-        profilePicture: true,
-        isVerified: true,
-        isActive: true,
-        updatedAt: true,
-      },
-    });
-
-    return user;
   }
 
   // Change password (for local users only)

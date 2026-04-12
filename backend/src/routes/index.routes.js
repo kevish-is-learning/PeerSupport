@@ -1,72 +1,21 @@
 import { Router } from 'express';
 
 import authRoutes from './auth.routes.js';
-import userRoutes from './user.routes.js';
-import menteeRoutes from './mentee.routes.js';
-import mentorRoutes from './mentor.routes.js';
 
 const router = Router();
 
 router.get('/', (req, res) => {
   res.json({
-    message: 'Authentication API',
+    message: 'Auth API',
     version: '1.0.0',
     endpoints: {
       auth: {
         register: 'POST /api/auth/register',
         login: 'POST /api/auth/login',
         googleAuth: 'GET /api/auth/google',
+        googleCallback: 'GET /api/auth/google/callback',
         changePassword: 'POST /api/auth/change-password',
         logout: 'POST /api/auth/logout',
-      },
-      mentor: {
-        dashboard: 'GET /api/mentor/dashboard',
-        services: 'GET/POST/PATCH/DELETE /api/mentor/services',
-        serviceStatus: 'PATCH /api/mentor/services/:id/status',
-        transactions: 'GET /api/mentor/transactions',
-        withdrawals: 'GET/POST /api/mentor/withdrawals',
-        ratings: 'GET /api/mentor/ratings',
-        resumes: 'GET/POST/DELETE /api/mentor/resumes',
-      },
-      mentee: {
-        dashboard: 'GET /api/mentee/dashboard/stats',
-        mentors: 'GET /api/mentee/mentors',
-        mentorById: 'GET /api/mentee/mentors/:id',
-        mentorServices: 'GET /api/mentee/mentors/:id/services',
-        webinars: 'GET /api/mentee/webinars',
-        registerWebinar: 'POST /api/mentee/webinars/:id/register',
-      },
-      users: {
-        getCurrentUser: 'GET /api/users/me',
-        updateCurrentUser: 'PUT /api/users/me',
-        deleteCurrentUser: 'DELETE /api/users/me',
-        checkEmail: 'GET /api/users/check-email?email=',
-        // Profile Management (Role-based)
-        menteeProfile: 'GET/POST/PUT/DELETE /api/users/profile/mentee',
-        mentorProfile: 'GET/POST/PUT/DELETE /api/users/profile/mentor',
-        adminProfile: 'GET/POST/PUT/DELETE /api/users/profile/admin (admin)',
-        // Mentee Resumes
-        resumes: 'GET/POST/DELETE /api/users/resumes (mentee)',
-        // Mentor Applications
-        submitApplication: 'POST /api/users/mentor-applications',
-        updateApplication: 'PUT /api/users/mentor-applications',
-        getMyApplication: 'GET /api/users/mentor-applications/my',
-        getAllApplications: 'GET /api/users/mentor-applications (admin)',
-        getApplicationById: 'GET /api/users/mentor-applications/:id (admin)',
-        approveApplication: 'PATCH /api/users/mentor-applications/:id/approve (admin)',
-        rejectApplication: 'PATCH /api/users/mentor-applications/:id/reject (admin)',
-        // Admin User Management
-        getAllUsers: 'GET /api/users (admin)',
-        getUsersByRole: 'GET /api/users/role/:role (admin)',
-        createUser: 'POST /api/users (admin)',
-        getUserById: 'GET /api/users/:id (admin)',
-        updateUser: 'PUT /api/users/:id (admin)',
-        updateRole: 'PATCH /api/users/:id/role (admin)',
-        toggleStatus: 'PATCH /api/users/:id/status (admin)',
-        verifyUser: 'PATCH /api/users/:id/verify (admin)',
-        deleteUser: 'DELETE /api/users/:id (admin)',
-        permanentDelete: 'DELETE /api/users/:id/permanent (admin)',
-        restoreUser: 'PATCH /api/users/:id/restore (admin)',
       },
     },
   });
@@ -83,8 +32,5 @@ router.get('/health', (_req, res) => {
 
 // Mount route groups
 router.use('/auth', authRoutes);
-router.use('/users', userRoutes);
-router.use('/mentee', menteeRoutes);
-router.use('/mentor', mentorRoutes);
 
 export default router;

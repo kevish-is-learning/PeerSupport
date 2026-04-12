@@ -14,7 +14,7 @@ class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 21 * 24 * 60 * 60 * 1000, // 21 days
       });
 
       // Return user data without token
@@ -77,41 +77,6 @@ class AuthController {
     } catch (error) {
       const frontendUrl = process.env.FRONTEND_URL || `http://localhost:${process.env.PORT || 5000}`;
       res.redirect(`${frontendUrl}/?error=server_error`);
-    }
-  }
-
-  // Get Current User Profile
-  async getProfile(req, res) {
-    try {
-      const user = await authService.getProfile(req.user.id);
-
-      res
-        .status(200)
-        .json(new ApiResponse(200, "Profile retrieved successfully", user));
-    } catch (error) {
-      res
-        .status(404)
-        .json(new ApiError(404, "Profile not found", error.message));
-    }
-  }
-
-  // Update User Profile
-  async updateProfile(req, res) {
-    try {
-      const { name, profilePicture } = req.body;
-
-      const user = await authService.updateProfile(req.user.id, {
-        name,
-        profilePicture,
-      });
-
-      res
-        .status(200)
-        .json(new ApiResponse(200, "Profile updated successfully", user));
-    } catch (error) {
-      res
-        .status(400)
-        .json(new ApiError(400, "Profile update failed", error.message));
     }
   }
 

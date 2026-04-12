@@ -9,10 +9,7 @@
     "dev": "nodemon src/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio",
-    "seed": "node src/seed-full.js",
-    "db:clear": "node src/clear-db.js",
-    "db:reset": "node src/clear-db.js && node src/seed-full.js"
+    "prisma:studio": "prisma studio"
   },
   "keywords": [
     "authentication",
@@ -33,12 +30,9 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
-    "multer": "^2.1.1",
-    "nodemailer": "^8.0.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
-    "razorpay": "^2.9.6",
     "zod": "^4.3.6"
   },
   "devDependencies": {

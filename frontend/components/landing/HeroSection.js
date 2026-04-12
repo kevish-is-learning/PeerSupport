@@ -36,7 +36,7 @@ function BrandMark() {
 export default function HeroSection() {
   return (
     <section className="min-h-screen flex flex-col">
-      <header className="mx-auto flex w-full flex-wrap items-center justify-between gap-4 border-b border-black/5 bg-[#ece9e7]/95 px-4 py-4 sm:px-6 lg:px-8">
+      <header className="mx-auto flex w-full flex-wrap items-center justify-between gap-4 border-b border-black/5 bg-[#FFFFFF]/95 px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <BrandMark />
           <div className="flex flex-col text-[1.5rem] font-extrabold leading-[0.95] tracking-[-0.05em] sm:text-[1.75rem]">
@@ -46,7 +46,7 @@ export default function HeroSection() {
         </div>
 
         <nav
-          className="order-3 flex w-full flex-wrap items-center justify-center gap-4 text-[0.95rem] font-medium sm:order-none sm:w-auto sm:gap-6 sm:text-[1rem]"
+          className="order-3 flex w-full flex-wrap items-center justify-center gap-4 text-[0.95rem] font-medium sm:order-0 sm:w-auto sm:gap-6 sm:text-[1rem]"
           aria-label="Primary"
         >
           {navItems.map((item) => (

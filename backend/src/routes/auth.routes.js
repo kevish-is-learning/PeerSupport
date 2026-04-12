@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import authController from '../controllers/AuthController.js';
-import { authenticateJWT, optionalAuth } from '../middleware/auth.js';
+import { authenticateJWT } from '../middleware/auth.js';
 
 const router = express.Router();
 
