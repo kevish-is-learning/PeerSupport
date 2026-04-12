@@ -55,8 +55,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Serve static files (test UI)
-app.use(express.static('public'));
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
