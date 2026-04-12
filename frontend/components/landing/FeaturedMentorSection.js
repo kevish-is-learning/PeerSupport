@@ -14,18 +14,18 @@ const mentor = {
 
 export default function FeaturedMentorSection() {
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-      <div className="relative rounded-[2rem] border-2 border-black bg-[#ffc20f] p-5 shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-6 lg:rounded-[2.5rem] lg:p-8">
-        <div className="absolute -top-12 left-0 rounded-t-[2rem] rounded-br-[1.5rem] border-2 border-black border-b-0 bg-[#f2b600] px-6 py-4 text-2xl font-extrabold tracking-[-0.02em] sm:text-3xl">
+    <section className="mx-auto w-full px-4 pb-16 sm:px-6 lg:px-8 mt-20">
+      <div className="relative rounded-4xl rounded-tl-none bg-[#FFB705] p-5 shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-6 lg:rounded-[2.5rem] lg:rounded-tl-none lg:p-8">
+        <div className="absolute -top-17 left-0 rounded-tl-4xl rounded-tr-4xl bg-[#F3AE04] px-6 py-4 text-2xl font-medium tracking-[-0.02em] sm:text-3xl">
           Learn from the BEST !
         </div>
 
         <div className="grid gap-6 pt-6 lg:grid-cols-[0.95fr_1fr] lg:items-stretch">
-          <div className="aspect-[4/3] w-full overflow-hidden rounded-[1.8rem] border-2 border-black">
+          <div className="relative aspect-4/3 w-full overflow-hidden rounded-[1.8rem] lg:aspect-auto lg:h-full lg:min-h-0">
             <img
               src={mentor.image}
               alt={mentor.name}
-              className="h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover"
             />
           </div>
 
@@ -50,11 +50,11 @@ export default function FeaturedMentorSection() {
               ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3 sm:gap-4">
-              <PillButton variant="primary" className="h-12 min-w-[210px] text-sm sm:text-lg">
+            <div className="mt-8 flex flex-wrap gap-3 items-center justify-around sm:gap-4">
+              <PillButton variant="primary" className="h-12 min-w-52.5 text-sm sm:text-lg">
                 Book a session &gt;
               </PillButton>
-              <PillButton variant="secondary" className="h-12 min-w-[210px] text-sm sm:text-lg">
+              <PillButton variant="secondary" className="h-12 min-w-52.5 text-sm sm:text-lg">
                 Explore Mentors &gt;
               </PillButton>
             </div>

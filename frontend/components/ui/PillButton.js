@@ -13,7 +13,7 @@ export default function PillButton({
   return (
     <a
       href={href}
-      className={`inline-flex h-11 min-w-[165px] items-center justify-center rounded-full border-2 border-black px-5 text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,1)] transition-transform hover:-translate-y-0.5 ${variants[variant]} ${className}`}
+      className={`inline-flex h-11 min-w-41.25 items-center justify-center rounded-full border-2 border-black px-5 text-sm font-semibold shadow-[6px_6px_0_rgba(0,0,0,1)] transition-transform hover:-translate-y-0.5 ${variants[variant]} ${className}`}
     >
       {children}
     </a>
