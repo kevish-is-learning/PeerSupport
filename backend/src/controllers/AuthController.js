@@ -2,6 +2,19 @@ import authService from "../services/AuthService.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 class AuthController {
+  // Get currently authenticated user
+  getMe(req, res) {
+    try {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Current user fetched", { user: req.user }));
+    } catch (error) {
+      return res
+        .status(500)
+        .json(new ApiError(500, "Failed to fetch current user", error.message));
+    }
+  }
+
   // Register with Email/Password
   async register(req, res) {
     try {

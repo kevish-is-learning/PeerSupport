@@ -1,4 +1,5 @@
 import PillButton from "../ui/PillButton";
+import HeaderAuthButton from "../auth/HeaderAuthButton";
 
 const navItems = ["Home", "Mentors", "Community", "Resources"];
 
@@ -54,9 +55,7 @@ export default function HeroSection() {
               {item}
             </a>
           ))}
-        <PillButton variant="primary" className="min-w-[150px]">
-          Primary CTA &gt;
-        </PillButton>
+          <HeaderAuthButton />
         </nav>
 
 
