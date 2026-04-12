@@ -81,6 +81,10 @@ class AuthService {
       return '/mentor/dashboard';
     }
 
+    if (user.role === 'MENTEE') {
+      return '/mentee/dashboard';
+    }
+
     return '/profile';
   }
 

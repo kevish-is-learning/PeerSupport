@@ -121,6 +121,10 @@ const getPostOnboardingRoute = (currentUser) => {
     return "/mentor/dashboard";
   }
 
+  if (currentUser?.role === "MENTEE") {
+    return "/mentee/dashboard";
+  }
+
   return "/profile";
 };
 
@@ -637,7 +641,7 @@ export default function OnboardingPage() {
               ) : null}
 
               <Link
-                href={selectedRole === "MENTOR" ? "/mentor/profile" : "/profile"}
+                href={selectedRole === "MENTOR" ? "/mentor/profile" : "/mentee/profile"}
                 className="rounded-xl border-2 border-black bg-[#ffc20f] px-4 py-2 text-sm font-bold text-black"
               >
                 Go to Profile

@@ -24,6 +24,10 @@ const getPostAuthRoute = (user, fallbackRoute) => {
     return "/mentor/dashboard";
   }
 
+  if (user.role === "MENTEE") {
+    return "/mentee/dashboard";
+  }
+
   return fallbackRoute;
 };
 
@@ -105,7 +109,7 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/profil
   if (guestOnly && hasCheckedSession && user) {
     return (
       <div className="mx-auto mt-8 w-full max-w-2xl rounded-[1.75rem] border-2 border-black bg-white p-5 text-left shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-6">
-        <p className="text-lg font-semibold">You are already logged in. Redirecting to profile...</p>
+        <p className="text-lg font-semibold">You are already logged in. Redirecting to your workspace...</p>
       </div>
     );
   }

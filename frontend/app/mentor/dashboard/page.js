@@ -1,7 +1,8 @@
 const quickStats = [
-  { label: "Today Sessions", value: "06" },
-  { label: "Active Requests", value: "14" },
-  { label: "Response Rate", value: "98%" },
+  { label: "Total Meetings", value: "42" },
+  { label: "Total Payouts", value: "$2,480" },
+  { label: "Avg. Rating", value: "4.8" },
+  { label: "Upcoming Sessions", value: "8" },
 ];
 
 const focusAreas = [
@@ -21,7 +22,7 @@ export default function MentorDashboardPage() {
         </p>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-3">
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {quickStats.map((stat) => (
           <article key={stat.label} className="rounded-2xl border border-black/10 bg-white p-4">
             <p className="text-xs uppercase tracking-[0.14em] text-black/50">{stat.label}</p>

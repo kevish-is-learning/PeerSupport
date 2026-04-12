@@ -41,7 +41,8 @@ export default function MentorSidebarShell({ children }) {
     }
 
     if (user.role !== "MENTOR") {
-      router.replace("/profile");
+      const targetPath = user.role === "MENTEE" ? "/mentee/dashboard" : "/profile";
+      router.replace(targetPath);
       return;
     }
 
@@ -81,7 +82,7 @@ export default function MentorSidebarShell({ children }) {
   if (!hasCheckedSession || isLoading) {
     return (
       <main className="min-h-screen bg-[#0a0c10] p-4 text-[#f7f8fb] sm:p-6 lg:p-8">
-        <div className="mx-auto flex min-h-[80vh] w-full max-w-7xl items-center justify-center rounded-[2rem] border border-white/20 bg-[#10131a] px-6 py-12">
+        <div className="mx-auto flex min-h-[80vh] w-full max-w-7xl items-center justify-center rounded-4xl border border-white/20 bg-[#10131a] px-6 py-12">
           <p className="text-lg font-semibold">Loading mentor workspace...</p>
         </div>
       </main>

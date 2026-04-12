@@ -27,6 +27,8 @@ export default function HeaderAuthButton() {
         ? "/onboarding"
         : user.role === "MENTOR"
           ? "/mentor/dashboard"
+          : user.role === "MENTEE"
+            ? "/mentee/dashboard"
           : "/profile";
 
     return (
