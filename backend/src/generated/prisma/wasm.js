@@ -131,6 +131,7 @@ exports.Prisma.UserScalarFieldEnum = {
   profilePicture: 'profilePicture',
   provider: 'provider',
   role: 'role',
+  isRoleSelected: 'isRoleSelected',
   isVerified: 'isVerified',
   isActive: 'isActive',
   createdAt: 'createdAt',
@@ -155,6 +156,25 @@ exports.Prisma.MenteeProfileScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.MentorProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  linkedInUrl: 'linkedInUrl',
+  bio: 'bio',
+  expertiseTags: 'expertiseTags',
+  ugCollegeProfile: 'ugCollegeProfile',
+  pgProfile: 'pgProfile',
+  workExperience: 'workExperience',
+  certifications: 'certifications',
+  profilePhotoUrl: 'profilePhotoUrl',
+  collegeDocumentUrl: 'collegeDocumentUrl',
+  isVerified: 'isVerified',
+  approvalStatus: 'approvalStatus',
+  adminReviewNotes: 'adminReviewNotes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -175,9 +195,16 @@ exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN'
 };
 
+exports.MentorApprovalStatus = exports.$Enums.MentorApprovalStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
-  MenteeProfile: 'MenteeProfile'
+  MenteeProfile: 'MenteeProfile',
+  MentorProfile: 'MentorProfile'
 };
 
 /**

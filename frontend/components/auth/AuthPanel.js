@@ -16,7 +16,7 @@ const getPostAuthRoute = (user, fallbackRoute) => {
     return fallbackRoute;
   }
 
-  if (user.role === "MENTEE" && !user.onboardingCompleted) {
+  if (user.role !== "ADMIN" && !user.onboardingCompleted) {
     return "/onboarding";
   }
 
@@ -195,7 +195,7 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/profil
           <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => router.replace(redirectTo)}
+              onClick={() => router.replace(getPostAuthRoute(user, redirectTo))}
               className="rounded-xl border-2 border-black bg-[#5f6cf3] px-4 py-2 text-sm font-bold text-white"
             >
               Continue

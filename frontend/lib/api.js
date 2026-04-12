@@ -13,15 +13,20 @@ async function parseResponse(response) {
 
 async function apiRequest(path, options = {}) {
   const { method = "GET", body, headers = {} } = options;
+  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
+
+  const requestHeaders = isFormData
+    ? { ...headers }
+    : {
+        "Content-Type": "application/json",
+        ...headers,
+      };
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method,
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
-    body: body ? JSON.stringify(body) : undefined,
+    headers: requestHeaders,
+    body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
   });
 
   const payload = await parseResponse(response);
@@ -52,6 +57,9 @@ export const authApi = {
   login(data) {
     return apiRequest("/auth/login", { method: "POST", body: data });
   },
+  selectRole(data) {
+    return apiRequest("/auth/select-role", { method: "POST", body: data });
+  },
   logout() {
     return apiRequest("/auth/logout", { method: "POST" });
   },
@@ -77,5 +85,33 @@ export const menteeProfileApi = {
     return apiRequest('/mentee-profile', { method: 'DELETE' });
   },
 };
+
+export const mentorProfileApi = {
+  getMine() {
+    return apiRequest('/mentor-profile');
+  },
+  create(data) {
+    return apiRequest('/mentor-profile', { method: 'POST', body: data });
+  },
+  update(data) {
+    return apiRequest('/mentor-profile', { method: 'PUT', body: data });
+  },
+  remove() {
+    return apiRequest('/mentor-profile', { method: 'DELETE' });
+  },
+};
+
+export function resolveUploadUrl(filePath) {
+  if (!filePath) {
+    return "";
+  }
+
+  if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
+    return filePath;
+  }
+
+  const apiOrigin = API_BASE_URL.replace(/\/api\/?$/, "");
+  return `${apiOrigin}${filePath}`;
+}
 
 export { API_BASE_URL };

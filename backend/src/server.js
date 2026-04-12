@@ -6,6 +6,7 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import session from 'express-session';
+import path from 'path';
 import passport from './config/passport.js';
 
 import { connectDatabase } from './config/database.js';
@@ -48,6 +49,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
 app.use("/api", routes);
 

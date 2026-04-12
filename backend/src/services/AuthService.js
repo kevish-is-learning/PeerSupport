@@ -1,7 +1,37 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { z } from 'zod';
 import { prisma } from '../config/database.js';
 import { registerSchema, loginSchema, changePasswordSchema } from '../validators/auth.validator.js';
+
+const selectRoleSchema = z.object({
+  role: z.enum(['MENTEE', 'MENTOR']),
+});
+
+const mapUserWithOnboardingState = (user) => {
+  const hasMenteeProfile = Boolean(user.menteeProfile);
+  const hasMentorProfile = Boolean(user.mentorProfile);
+  const isRoleSelected = Boolean(user.isRoleSelected);
+
+  const onboardingCompleted =
+    (user.role === 'MENTEE' && hasMenteeProfile) ||
+    (user.role === 'MENTOR' && hasMentorProfile) ||
+    user.role === 'ADMIN';
+
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    provider: user.provider,
+    role: user.role,
+    isRoleSelected,
+    isVerified: user.isVerified,
+    createdAt: user.createdAt,
+    onboardingCompleted: isRoleSelected && onboardingCompleted,
+    mentorApprovalStatus: user.mentorProfile?.approvalStatus || null,
+    mentorIsVerified: Boolean(user.mentorProfile?.isVerified),
+  };
+};
 
 class AuthService {
   // Generate JWT Token
@@ -17,6 +47,12 @@ class AuthService {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
+        mentorProfile: {
+          select: {
+            id: true,
+            isVerified: true,
+          },
+        },
         menteeProfile: {
           select: {
             id: true,
@@ -29,7 +65,15 @@ class AuthService {
       return '/profile';
     }
 
+    if (!user.isRoleSelected) {
+      return '/onboarding';
+    }
+
     if (user.role === 'MENTEE' && !user.menteeProfile) {
+      return '/onboarding';
+    }
+
+    if (user.role === 'MENTOR' && !user.mentorProfile) {
       return '/onboarding';
     }
 
@@ -64,15 +108,21 @@ class AuthService {
         name: name || null,
         provider: 'local',
         role: 'MENTEE',
+        isRoleSelected: false,
       },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        provider: true,
-        role: true,
-        isVerified: true,
-        createdAt: true,
+      include: {
+        menteeProfile: {
+          select: {
+            id: true,
+          },
+        },
+        mentorProfile: {
+          select: {
+            id: true,
+            approvalStatus: true,
+            isVerified: true,
+          },
+        },
       },
     });
 
@@ -80,10 +130,7 @@ class AuthService {
     const token = this.generateToken(user.id);
 
     return {
-      user: {
-        ...user,
-        onboardingCompleted: false,
-      },
+      user: mapUserWithOnboardingState(user),
       token,
     };
   }
@@ -97,6 +144,13 @@ class AuthService {
     const user = await prisma.user.findUnique({
       where: { email },
       include: {
+        mentorProfile: {
+          select: {
+            approvalStatus: true,
+            id: true,
+            isVerified: true,
+          },
+        },
         menteeProfile: {
           select: {
             id: true,
@@ -124,15 +178,40 @@ class AuthService {
     const token = this.generateToken(user.id);
 
     // Return user without password
-    const { password: _, menteeProfile, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = user;
 
     return {
-      user: {
-        ...userWithoutPassword,
-        onboardingCompleted: Boolean(menteeProfile),
-      },
+      user: mapUserWithOnboardingState(userWithoutPassword),
       token,
     };
+  }
+
+  async selectRole(userId, data) {
+    const { role } = selectRoleSchema.parse(data);
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        role,
+        isRoleSelected: true,
+      },
+      include: {
+        mentorProfile: {
+          select: {
+            approvalStatus: true,
+            id: true,
+            isVerified: true,
+          },
+        },
+        menteeProfile: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    return mapUserWithOnboardingState(updatedUser);
   }
 
   // Change password (for local users only)

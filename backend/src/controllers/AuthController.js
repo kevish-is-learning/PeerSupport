@@ -63,6 +63,25 @@ class AuthController {
     }
   }
 
+  // Select onboarding role (MENTEE or MENTOR)
+  async selectRole(req, res) {
+    try {
+      const { role } = req.body;
+
+      const user = await authService.selectRole(req.user.id, { role });
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Role selected successfully", { user }));
+    } catch (error) {
+      const statusCode = error?.name === "ZodError" ? 400 : 500;
+      return res.status(statusCode).json({
+        success: false,
+        message: error.message || "Failed to select role",
+      });
+    }
+  }
+
   // Google OAuth Callback Handler
   async googleCallback(req, res) {
     try {

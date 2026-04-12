@@ -11,6 +11,8 @@ router.post('/register', authController.register);
 
 router.post('/login', authController.login);
 
+router.post('/select-role', authenticateJWT, authController.selectRole);
+
 router.get(
   '/google',
   passport.authenticate('google', {

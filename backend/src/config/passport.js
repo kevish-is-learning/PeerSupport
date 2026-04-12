@@ -99,6 +99,7 @@ passport.use(
             googleId: profile.id,
             provider: 'google',
             profilePicture: profile.photos[0]?.value,
+            isRoleSelected: false,
             isVerified: true, // Google accounts are verified
           },
         });

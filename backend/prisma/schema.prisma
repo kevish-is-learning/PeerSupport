@@ -14,6 +14,12 @@ enum Role {
   ADMIN
 }
 
+enum MentorApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id             String   @id @default(uuid())
   email          String   @unique
@@ -23,12 +29,14 @@ model User {
   profilePicture String?
   provider       String   @default("local")
   role           Role     @default(MENTEE)
+  isRoleSelected Boolean  @default(true)
   isVerified     Boolean  @default(false)
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   deletedAt      DateTime?
   menteeProfile  MenteeProfile?
+  mentorProfile  MentorProfile?
 
   @@index([role])
   @@index([email])
@@ -53,4 +61,28 @@ model MenteeProfile {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model MentorProfile {
+  id               String               @id @default(uuid())
+  userId           String               @unique
+  linkedInUrl      String
+  bio              String
+  expertiseTags    String[]
+  ugCollegeProfile String?
+  pgProfile        String?
+  workExperience   String?
+  certifications   String?
+  profilePhotoUrl  String?
+  collegeDocumentUrl String?
+  isVerified       Boolean              @default(false)
+  approvalStatus   MentorApprovalStatus @default(PENDING)
+  adminReviewNotes String?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([approvalStatus])
 }

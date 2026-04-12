@@ -2,6 +2,27 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../config/database.js";
 import { ApiError } from "../utils/apiError.js";
 
+const mapRequestUser = (user) => {
+  const hasMenteeProfile = Boolean(user.menteeProfile);
+  const hasMentorProfile = Boolean(user.mentorProfile);
+  const isRoleSelected = Boolean(user.isRoleSelected);
+
+  const onboardingCompleted =
+    (user.role === "MENTEE" && hasMenteeProfile) ||
+    (user.role === "MENTOR" && hasMentorProfile) ||
+    user.role === "ADMIN";
+
+  const { menteeProfile, mentorProfile, ...safeUser } = user;
+
+  return {
+    ...safeUser,
+    isRoleSelected,
+    onboardingCompleted: isRoleSelected && onboardingCompleted,
+    mentorApprovalStatus: mentorProfile?.approvalStatus || null,
+    mentorIsVerified: Boolean(mentorProfile?.isVerified),
+  };
+};
+
 // JWT Authentication Middleware
 const authenticateJWT = async (req, res, next) => {
   try {
@@ -30,11 +51,19 @@ const authenticateJWT = async (req, res, next) => {
         email: true,
         name: true,
         role: true,
+        isRoleSelected: true,
         provider: true,
         profilePicture: true,
         isVerified: true,
         isActive: true,
         createdAt: true,
+        mentorProfile: {
+          select: {
+            id: true,
+            approvalStatus: true,
+            isVerified: true,
+          },
+        },
         menteeProfile: {
           select: {
             id: true,
@@ -68,12 +97,7 @@ const authenticateJWT = async (req, res, next) => {
         );
     }
 
-    const { menteeProfile, ...safeUser } = user;
-
-    req.user = {
-      ...safeUser,
-      onboardingCompleted: Boolean(menteeProfile),
-    };
+    req.user = mapRequestUser(user);
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
@@ -111,10 +135,18 @@ const optionalAuth = async (req, res, next) => {
           email: true,
           name: true,
           role: true,
+          isRoleSelected: true,
           provider: true,
           profilePicture: true,
           isVerified: true,
           isActive: true,
+          mentorProfile: {
+            select: {
+              id: true,
+              approvalStatus: true,
+              isVerified: true,
+            },
+          },
           menteeProfile: {
             select: {
               id: true,
@@ -124,12 +156,7 @@ const optionalAuth = async (req, res, next) => {
       });
 
       if (user && user.isActive) {
-        const { menteeProfile, ...safeUser } = user;
-
-        req.user = {
-          ...safeUser,
-          onboardingCompleted: Boolean(menteeProfile),
-        };
+        req.user = mapRequestUser(user);
       }
     }
 

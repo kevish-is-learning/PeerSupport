@@ -6,9 +6,14 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import useAuthStore from "../../store/useAuthStore";
-import { menteeProfileApi } from "../../lib/api";
+import {
+  authApi,
+  menteeProfileApi,
+  mentorProfileApi,
+  resolveUploadUrl,
+} from "../../lib/api";
 
-const emptyForm = {
+const emptyMenteeForm = {
   dateOfBirth: "",
   education10: "",
   education12: "",
@@ -21,7 +26,25 @@ const emptyForm = {
   resumeUrl: "",
 };
 
-const mapProfileToForm = (profile) => ({
+const emptyMentorForm = {
+  linkedInUrl: "",
+  bio: "",
+  expertiseTags: "",
+  ugCollegeProfile: "",
+  pgProfile: "",
+  workExperience: "",
+  certifications: "",
+  profilePhotoUrl: "",
+  collegeDocumentUrl: "",
+  isVerified: false,
+};
+
+const emptyMentorFiles = {
+  profilePhoto: null,
+  collegeDocument: null,
+};
+
+const mapMenteeProfileToForm = (profile) => ({
   dateOfBirth: profile?.dateOfBirth || "",
   education10: profile?.education10 || "",
   education12: profile?.education12 || "",
@@ -34,7 +57,20 @@ const mapProfileToForm = (profile) => ({
   resumeUrl: profile?.resumeUrl || "",
 });
 
-const buildPayload = (form) => ({
+const mapMentorProfileToForm = (profile) => ({
+  linkedInUrl: profile?.linkedInUrl || "",
+  bio: profile?.bio || "",
+  expertiseTags: profile?.expertiseTags?.join(", ") || "",
+  ugCollegeProfile: profile?.ugCollegeProfile || "",
+  pgProfile: profile?.pgProfile || "",
+  workExperience: profile?.workExperience || "",
+  certifications: profile?.certifications || "",
+  profilePhotoUrl: profile?.profilePhotoUrl || "",
+  collegeDocumentUrl: profile?.collegeDocumentUrl || "",
+  isVerified: Boolean(profile?.isVerified),
+});
+
+const buildMenteePayload = (form) => ({
   dateOfBirth: form.dateOfBirth,
   education10: form.education10,
   education12: form.education12,
@@ -50,10 +86,49 @@ const buildPayload = (form) => ({
   resumeUrl: form.resumeUrl,
 });
 
+const buildMentorFormData = (form, files) => {
+  const formData = new FormData();
+
+  formData.append("linkedInUrl", form.linkedInUrl);
+  formData.append("bio", form.bio);
+
+  const tags = form.expertiseTags
+    .split(/[,\n]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  formData.append("expertiseTags", JSON.stringify(tags));
+
+  formData.append("ugCollegeProfile", form.ugCollegeProfile);
+  formData.append("pgProfile", form.pgProfile);
+  formData.append("workExperience", form.workExperience);
+  formData.append("certifications", form.certifications);
+
+  if (files.profilePhoto) {
+    formData.append("profilePhoto", files.profilePhoto);
+  }
+
+  if (files.collegeDocument) {
+    formData.append("collegeDocument", files.collegeDocument);
+  }
+
+  return formData;
+};
+
+const roleCardBaseClass = "rounded-2xl border-2 p-4 text-left transition-all sm:p-5";
+
 export default function OnboardingPage() {
   const router = useRouter();
-  const [form, setForm] = useState(emptyForm);
-  const [profileExists, setProfileExists] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  const [menteeForm, setMenteeForm] = useState(emptyMenteeForm);
+  const [mentorForm, setMentorForm] = useState(emptyMentorForm);
+  const [mentorFiles, setMentorFiles] = useState(emptyMentorFiles);
+
+  const [menteeProfileExists, setMenteeProfileExists] = useState(false);
+  const [mentorProfileExists, setMentorProfileExists] = useState(false);
+  const [mentorApprovalStatus, setMentorApprovalStatus] = useState(null);
+
+  const [isSelectingRole, setIsSelectingRole] = useState(false);
   const [isFetchingProfile, setIsFetchingProfile] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -72,24 +147,65 @@ export default function OnboardingPage() {
         return;
       }
 
-      if (user.role !== "MENTEE") {
+      if (user.role === "ADMIN") {
         router.replace("/profile");
         return;
       }
 
+      if (user.onboardingCompleted) {
+        router.replace("/profile");
+        return;
+      }
+
+      if (!user.isRoleSelected) {
+        setSelectedRole(null);
+        setMenteeProfileExists(false);
+        setMentorProfileExists(false);
+        setMentorApprovalStatus(null);
+        setMenteeForm(emptyMenteeForm);
+        setMentorForm(emptyMentorForm);
+        setMentorFiles(emptyMentorFiles);
+        return;
+      }
+
+      setSelectedRole(user.role);
       setIsFetchingProfile(true);
       setError("");
 
       try {
-        const result = await menteeProfileApi.getMine();
-        const profile = result?.data?.profile;
+        if (user.role === "MENTEE") {
+          const result = await menteeProfileApi.getMine();
+          const profile = result?.data?.profile;
 
-        setProfileExists(true);
-        setForm(mapProfileToForm(profile));
+          setMenteeProfileExists(true);
+          setMenteeForm(mapMenteeProfileToForm(profile));
+          setMentorProfileExists(false);
+          setMentorApprovalStatus(null);
+          setMentorFiles(emptyMentorFiles);
+        }
+
+        if (user.role === "MENTOR") {
+          const result = await mentorProfileApi.getMine();
+          const profile = result?.data?.profile;
+
+          setMentorProfileExists(true);
+          setMentorForm(mapMentorProfileToForm(profile));
+          setMentorApprovalStatus(profile?.approvalStatus || "PENDING");
+          setMentorFiles(emptyMentorFiles);
+          setMenteeProfileExists(false);
+        }
       } catch (apiError) {
         if (apiError?.status === 404) {
-          setProfileExists(false);
-          setForm(emptyForm);
+          if (user.role === "MENTEE") {
+            setMenteeProfileExists(false);
+            setMenteeForm(emptyMenteeForm);
+          }
+          if (user.role === "MENTOR") {
+            setMentorProfileExists(false);
+            setMentorForm(emptyMentorForm);
+            setMentorApprovalStatus("PENDING");
+            setMentorFiles(emptyMentorFiles);
+          }
         } else {
           const message = apiError?.message || "Failed to fetch onboarding profile";
           setError(message);
@@ -111,27 +227,91 @@ export default function OnboardingPage() {
   const isBusy = isLoading || isFetchingProfile || isSubmitting;
 
   const headingLabel = useMemo(() => {
-    return profileExists ? "Update Your Onboarding" : "Complete Your Onboarding";
-  }, [profileExists]);
+    if (!selectedRole) {
+      return "Choose Your Role";
+    }
 
-  const onFieldChange = (event) => {
+    if (selectedRole === "MENTEE") {
+      return menteeProfileExists ? "Update Mentee Onboarding" : "Complete Mentee Onboarding";
+    }
+
+    return mentorProfileExists ? "Update Mentor Onboarding" : "Complete Mentor Onboarding";
+  }, [selectedRole, menteeProfileExists, mentorProfileExists]);
+
+  const onMenteeFieldChange = (event) => {
     const { name, value } = event.target;
-    setForm((previous) => ({ ...previous, [name]: value }));
+    setMenteeForm((previous) => ({ ...previous, [name]: value }));
   };
 
-  const onCreate = async (event) => {
+  const onMentorFieldChange = (event) => {
+    const { name, value } = event.target;
+    setMentorForm((previous) => ({ ...previous, [name]: value }));
+  };
+
+  const onMentorFileChange = (event) => {
+    const { name, files } = event.target;
+    const selectedFile = files?.[0] || null;
+
+    setMentorFiles((previous) => ({
+      ...previous,
+      [name]: selectedFile,
+    }));
+  };
+
+  const selectRole = async (role) => {
+    if (isBusy || isSelectingRole) {
+      return;
+    }
+
+    if (selectedRole === role && user?.isRoleSelected) {
+      return;
+    }
+
+    if (selectedRole && selectedRole !== role) {
+      const shouldSwitch = window.confirm(
+        `Switch to ${role}? This can change which onboarding form is shown.`
+      );
+
+      if (!shouldSwitch) {
+        return;
+      }
+    }
+
+    setIsSelectingRole(true);
+    setError("");
+
+    try {
+      const result = await authApi.selectRole({ role });
+      setSelectedRole(role);
+      setMenteeProfileExists(false);
+      setMentorProfileExists(false);
+      setMentorApprovalStatus(null);
+      setMentorForm(emptyMentorForm);
+      setMentorFiles(emptyMentorFiles);
+      await fetchCurrentUser();
+      toast.success(result?.message || "Role selected successfully");
+    } catch (apiError) {
+      const message = apiError?.message || "Failed to select role";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setIsSelectingRole(false);
+    }
+  };
+
+  const onMenteeCreate = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
     setError("");
 
     try {
-      const result = await menteeProfileApi.create(buildPayload(form));
-      setProfileExists(true);
-      setForm(mapProfileToForm(result?.data?.profile));
+      const result = await menteeProfileApi.create(buildMenteePayload(menteeForm));
+      setMenteeProfileExists(true);
+      setMenteeForm(mapMenteeProfileToForm(result?.data?.profile));
       await fetchCurrentUser();
-      toast.success(result?.message || "Onboarding profile created");
+      toast.success(result?.message || "Mentee onboarding profile created");
     } catch (apiError) {
-      const message = apiError?.message || "Failed to create onboarding profile";
+      const message = apiError?.message || "Failed to create mentee profile";
       setError(message);
       toast.error(message);
     } finally {
@@ -139,18 +319,18 @@ export default function OnboardingPage() {
     }
   };
 
-  const onUpdate = async (event) => {
+  const onMenteeUpdate = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
     setError("");
 
     try {
-      const result = await menteeProfileApi.update(buildPayload(form));
-      setForm(mapProfileToForm(result?.data?.profile));
+      const result = await menteeProfileApi.update(buildMenteePayload(menteeForm));
+      setMenteeForm(mapMenteeProfileToForm(result?.data?.profile));
       await fetchCurrentUser();
-      toast.success(result?.message || "Onboarding profile updated");
+      toast.success(result?.message || "Mentee onboarding profile updated");
     } catch (apiError) {
-      const message = apiError?.message || "Failed to update onboarding profile";
+      const message = apiError?.message || "Failed to update mentee profile";
       setError(message);
       toast.error(message);
     } finally {
@@ -158,8 +338,11 @@ export default function OnboardingPage() {
     }
   };
 
-  const onDelete = async () => {
-    const shouldDelete = window.confirm("Delete your onboarding profile? This will remove all saved mentee onboarding details.");
+  const onMenteeDelete = async () => {
+    const shouldDelete = window.confirm(
+      "Delete your mentee onboarding profile? This will remove saved mentee details."
+    );
+
     if (!shouldDelete) {
       return;
     }
@@ -169,12 +352,86 @@ export default function OnboardingPage() {
 
     try {
       const result = await menteeProfileApi.remove();
-      setProfileExists(false);
-      setForm(emptyForm);
+      setMenteeProfileExists(false);
+      setMenteeForm(emptyMenteeForm);
       await fetchCurrentUser();
-      toast.success(result?.message || "Onboarding profile deleted");
+      toast.success(result?.message || "Mentee onboarding profile deleted");
     } catch (apiError) {
-      const message = apiError?.message || "Failed to delete onboarding profile";
+      const message = apiError?.message || "Failed to delete mentee profile";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onMentorCreate = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const result = await mentorProfileApi.create(buildMentorFormData(mentorForm, mentorFiles));
+      const profile = result?.data?.profile;
+      setMentorProfileExists(true);
+      setMentorForm(mapMentorProfileToForm(profile));
+      setMentorFiles(emptyMentorFiles);
+      setMentorApprovalStatus(profile?.approvalStatus || "PENDING");
+      await fetchCurrentUser();
+      toast.success(result?.message || "Mentor onboarding profile created");
+    } catch (apiError) {
+      const message = apiError?.message || "Failed to create mentor profile";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onMentorUpdate = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const result = await mentorProfileApi.update(buildMentorFormData(mentorForm, mentorFiles));
+      const profile = result?.data?.profile;
+      setMentorForm(mapMentorProfileToForm(profile));
+      setMentorFiles(emptyMentorFiles);
+      setMentorApprovalStatus(profile?.approvalStatus || "PENDING");
+      await fetchCurrentUser();
+      toast.success(result?.message || "Mentor profile updated and sent for re-verification");
+    } catch (apiError) {
+      const message = apiError?.message || "Failed to update mentor profile";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onMentorDelete = async () => {
+    const shouldDelete = window.confirm(
+      "Delete your mentor onboarding profile? This will remove your waitlist entry."
+    );
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const result = await mentorProfileApi.remove();
+      setMentorProfileExists(false);
+      setMentorForm(emptyMentorForm);
+      setMentorFiles(emptyMentorFiles);
+      setMentorApprovalStatus(null);
+      await fetchCurrentUser();
+      toast.success(result?.message || "Mentor onboarding profile deleted");
+    } catch (apiError) {
+      const message = apiError?.message || "Failed to delete mentor profile";
       setError(message);
       toast.error(message);
     } finally {
@@ -192,7 +449,7 @@ export default function OnboardingPage() {
     );
   }
 
-  if (!user || user.role !== "MENTEE") {
+  if (!user || user.role === "ADMIN") {
     return null;
   }
 
@@ -201,7 +458,7 @@ export default function OnboardingPage() {
       <div className="mx-auto w-full max-w-4xl rounded-[1.75rem] border-2 border-black bg-white p-6 shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-8">
         <h1 className="text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl">{headingLabel}</h1>
         <p className="mt-2 text-[#66686d]">
-          Please add your DOB and optional academic details. Name and email are fetched from your sign-up account.
+          Select your role and complete onboarding. Name and email are fetched from your sign-up account.
         </p>
 
         {error ? (
@@ -210,142 +467,371 @@ export default function OnboardingPage() {
           </p>
         ) : null}
 
-        <form onSubmit={profileExists ? onUpdate : onCreate} className="mt-6 grid gap-6">
-          <section className="rounded-xl border border-black/20 bg-[#f7fafc] p-4">
-            <h2 className="text-lg font-bold">Basic Details</h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-semibold">Name</label>
+        <section className="mt-6 grid gap-3 sm:grid-cols-2">
+          <button
+            type="button"
+            disabled={isBusy || isSelectingRole}
+            onClick={() => selectRole("MENTEE")}
+            className={`${roleCardBaseClass} ${
+              selectedRole === "MENTEE"
+                ? "border-black bg-[#ffc20f]"
+                : "border-black/30 bg-[#f7fafc] hover:border-black"
+            }`}
+          >
+            <p className="text-base font-extrabold">I am a Mentee</p>
+            <p className="mt-1 text-sm text-black/70">Fill academic background, skills, CAT details, and resume.</p>
+          </button>
+
+          <button
+            type="button"
+            disabled={isBusy || isSelectingRole}
+            onClick={() => selectRole("MENTOR")}
+            className={`${roleCardBaseClass} ${
+              selectedRole === "MENTOR"
+                ? "border-black bg-[#5f6cf3] text-white"
+                : "border-black/30 bg-[#f7fafc] hover:border-black"
+            }`}
+          >
+            <p className="text-base font-extrabold">I am a Mentor</p>
+            <p className={`mt-1 text-sm ${selectedRole === "MENTOR" ? "text-white/80" : "text-black/70"}`}>
+              Add LinkedIn and career profile. Profile goes to admin waitlist after submission.
+            </p>
+          </button>
+        </section>
+
+        {selectedRole === "MENTEE" ? (
+          <form onSubmit={menteeProfileExists ? onMenteeUpdate : onMenteeCreate} className="mt-6 grid gap-6">
+            <section className="rounded-xl border border-black/20 bg-[#f7fafc] p-4">
+              <h2 className="text-lg font-bold">Mentee Basic Details</h2>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm font-semibold">Name</label>
+                  <input
+                    value={user.name || ""}
+                    disabled
+                    className="w-full rounded-xl border border-black/25 bg-[#edf2f7] px-3 py-2 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-semibold">Email</label>
+                  <input
+                    value={user.email}
+                    disabled
+                    className="w-full rounded-xl border border-black/25 bg-[#edf2f7] px-3 py-2 text-sm"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="dateOfBirth" className="mb-1 block text-sm font-semibold">Date of Birth *</label>
+                  <input
+                    id="dateOfBirth"
+                    type="date"
+                    name="dateOfBirth"
+                    value={menteeForm.dateOfBirth}
+                    onChange={onMenteeFieldChange}
+                    required
+                    className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section className="rounded-xl border border-black/20 bg-[#f7fafc] p-4">
+              <h2 className="text-lg font-bold">Education & Experience (Optional)</h2>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 <input
-                  value={user.name || ""}
-                  disabled
-                  className="w-full rounded-xl border border-black/25 bg-[#edf2f7] px-3 py-2 text-sm"
+                  name="education10"
+                  value={menteeForm.education10}
+                  onChange={onMenteeFieldChange}
+                  placeholder="Class 10 details"
+                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                />
+                <input
+                  name="education12"
+                  value={menteeForm.education12}
+                  onChange={onMenteeFieldChange}
+                  placeholder="Class 12 details"
+                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                />
+                <input
+                  name="bachelors"
+                  value={menteeForm.bachelors}
+                  onChange={onMenteeFieldChange}
+                  placeholder="Bachelors"
+                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                />
+                <input
+                  name="masters"
+                  value={menteeForm.masters}
+                  onChange={onMenteeFieldChange}
+                  placeholder="Masters"
+                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                 />
               </div>
-              <div>
-                <label className="mb-1 block text-sm font-semibold">Email</label>
-                <input
-                  value={user.email}
-                  disabled
-                  className="w-full rounded-xl border border-black/25 bg-[#edf2f7] px-3 py-2 text-sm"
-                />
-              </div>
-              <div>
-                <label htmlFor="dateOfBirth" className="mb-1 block text-sm font-semibold">Date of Birth *</label>
-                <input
-                  id="dateOfBirth"
-                  type="date"
-                  name="dateOfBirth"
-                  value={form.dateOfBirth}
-                  onChange={onFieldChange}
-                  required
-                  className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-              </div>
-            </div>
-          </section>
+              <textarea
+                name="workExperience"
+                value={menteeForm.workExperience}
+                onChange={onMenteeFieldChange}
+                placeholder="Work experience"
+                rows={3}
+                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+              />
+              <textarea
+                name="certifications"
+                value={menteeForm.certifications}
+                onChange={onMenteeFieldChange}
+                placeholder="Certifications"
+                rows={2}
+                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+              />
+              <textarea
+                name="skillsets"
+                value={menteeForm.skillsets}
+                onChange={onMenteeFieldChange}
+                placeholder="Skillsets (comma separated)"
+                rows={2}
+                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+              />
+              <textarea
+                name="catHistory"
+                value={menteeForm.catHistory}
+                onChange={onMenteeFieldChange}
+                placeholder="CAT history"
+                rows={2}
+                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+              />
+              <input
+                name="resumeUrl"
+                value={menteeForm.resumeUrl}
+                onChange={onMenteeFieldChange}
+                placeholder="Resume URL"
+                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+              />
+            </section>
 
-          <section className="rounded-xl border border-black/20 bg-[#f7fafc] p-4">
-            <h2 className="text-lg font-bold">Education & Experience (Optional)</h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <input
-                name="education10"
-                value={form.education10}
-                onChange={onFieldChange}
-                placeholder="Class 10 details"
-                className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-              <input
-                name="education12"
-                value={form.education12}
-                onChange={onFieldChange}
-                placeholder="Class 12 details"
-                className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-              <input
-                name="bachelors"
-                value={form.bachelors}
-                onChange={onFieldChange}
-                placeholder="Bachelors"
-                className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-              <input
-                name="masters"
-                value={form.masters}
-                onChange={onFieldChange}
-                placeholder="Masters"
-                className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-            </div>
-            <textarea
-              name="workExperience"
-              value={form.workExperience}
-              onChange={onFieldChange}
-              placeholder="Work experience"
-              rows={3}
-              className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-            />
-            <textarea
-              name="certifications"
-              value={form.certifications}
-              onChange={onFieldChange}
-              placeholder="Certifications"
-              rows={2}
-              className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-            />
-            <textarea
-              name="skillsets"
-              value={form.skillsets}
-              onChange={onFieldChange}
-              placeholder="Skillsets (comma separated)"
-              rows={2}
-              className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-            />
-            <textarea
-              name="catHistory"
-              value={form.catHistory}
-              onChange={onFieldChange}
-              placeholder="CAT history"
-              rows={2}
-              className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-            />
-            <input
-              name="resumeUrl"
-              value={form.resumeUrl}
-              onChange={onFieldChange}
-              placeholder="Resume URL"
-              className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-            />
-          </section>
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="submit"
-              disabled={isBusy}
-              className="rounded-xl border-2 border-black bg-[#5f6cf3] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isSubmitting ? "Saving..." : profileExists ? "Update Profile" : "Create Profile"}
-            </button>
-
-            {profileExists ? (
+            <div className="flex flex-wrap gap-3">
               <button
-                type="button"
-                onClick={onDelete}
+                type="submit"
                 disabled={isBusy}
-                className="rounded-xl border-2 border-black bg-[#f56565] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                className="rounded-xl border-2 border-black bg-[#5f6cf3] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
               >
-                Delete Profile
+                {isSubmitting ? "Saving..." : menteeProfileExists ? "Update Mentee Profile" : "Create Mentee Profile"}
               </button>
-            ) : null}
 
-            <Link
-              href="/profile"
-              className="rounded-xl border-2 border-black bg-[#ffc20f] px-4 py-2 text-sm font-bold text-black"
-            >
-              Go to Profile
-            </Link>
-          </div>
-        </form>
+              {menteeProfileExists ? (
+                <button
+                  type="button"
+                  onClick={onMenteeDelete}
+                  disabled={isBusy}
+                  className="rounded-xl border-2 border-black bg-[#f56565] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  Delete Mentee Profile
+                </button>
+              ) : null}
+
+              <Link
+                href="/profile"
+                className="rounded-xl border-2 border-black bg-[#ffc20f] px-4 py-2 text-sm font-bold text-black"
+              >
+                Go to Profile
+              </Link>
+            </div>
+          </form>
+        ) : null}
+
+        {selectedRole === "MENTOR" ? (
+          <form onSubmit={mentorProfileExists ? onMentorUpdate : onMentorCreate} className="mt-6 grid gap-6">
+            <section className="rounded-xl border border-black/20 bg-[#f7fafc] p-4">
+              <h2 className="text-lg font-bold">Mentor Required Details</h2>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm font-semibold">Name</label>
+                  <input
+                    value={user.name || ""}
+                    disabled
+                    className="w-full rounded-xl border border-black/25 bg-[#edf2f7] px-3 py-2 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-semibold">Email</label>
+                  <input
+                    value={user.email}
+                    disabled
+                    className="w-full rounded-xl border border-black/25 bg-[#edf2f7] px-3 py-2 text-sm"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="linkedInUrl" className="mb-1 block text-sm font-semibold">LinkedIn URL *</label>
+                  <input
+                    id="linkedInUrl"
+                    name="linkedInUrl"
+                    type="url"
+                    value={mentorForm.linkedInUrl}
+                    onChange={onMentorFieldChange}
+                    placeholder="https://www.linkedin.com/in/your-profile"
+                    required
+                    className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="bio" className="mb-1 block text-sm font-semibold">Bio *</label>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    value={mentorForm.bio}
+                    onChange={onMentorFieldChange}
+                    placeholder="Write a short mentor bio"
+                    rows={4}
+                    minLength={10}
+                    required
+                    className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="expertiseTags" className="mb-1 block text-sm font-semibold">
+                    Expertise Tags * (e.g., Verbal, Quant, DI/LR, PI)
+                  </label>
+                  <input
+                    id="expertiseTags"
+                    name="expertiseTags"
+                    value={mentorForm.expertiseTags}
+                    onChange={onMentorFieldChange}
+                    placeholder="Verbal, Quant, DI/LR, PI"
+                    required
+                    className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section className="rounded-xl border border-black/20 bg-[#f7fafc] p-4">
+              <h2 className="text-lg font-bold">Optional Details</h2>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <textarea
+                  name="ugCollegeProfile"
+                  value={mentorForm.ugCollegeProfile}
+                  onChange={onMentorFieldChange}
+                  placeholder="UG college profile"
+                  rows={3}
+                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                />
+                <textarea
+                  name="pgProfile"
+                  value={mentorForm.pgProfile}
+                  onChange={onMentorFieldChange}
+                  placeholder="PG profile"
+                  rows={3}
+                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                />
+              </div>
+              <textarea
+                name="workExperience"
+                value={mentorForm.workExperience}
+                onChange={onMentorFieldChange}
+                placeholder="Work experience"
+                rows={4}
+                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+              />
+              <textarea
+                name="certifications"
+                value={mentorForm.certifications}
+                onChange={onMentorFieldChange}
+                placeholder="Certifications"
+                rows={3}
+                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+              />
+
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="profilePhoto" className="mb-1 block text-sm font-semibold">
+                    Profile Photo (JPG/PNG/WEBP)
+                  </label>
+                  <input
+                    id="profilePhoto"
+                    name="profilePhoto"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={onMentorFileChange}
+                    className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm"
+                  />
+                  {mentorForm.profilePhotoUrl ? (
+                    <img
+                      src={resolveUploadUrl(mentorForm.profilePhotoUrl)}
+                      alt="Mentor avatar"
+                      className="mt-2 h-20 w-20 rounded-xl border border-black/20 object-cover"
+                    />
+                  ) : null}
+                </div>
+
+                <div>
+                  <label htmlFor="collegeDocument" className="mb-1 block text-sm font-semibold">
+                    College ID Card / Document Image
+                  </label>
+                  <input
+                    id="collegeDocument"
+                    name="collegeDocument"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={onMentorFileChange}
+                    className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm"
+                  />
+                  {mentorForm.collegeDocumentUrl ? (
+                    <a
+                      href={resolveUploadUrl(mentorForm.collegeDocumentUrl)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-2 inline-block text-sm font-semibold text-[#5f6cf3] underline"
+                    >
+                      View uploaded document
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            </section>
+
+            <section className="rounded-xl border border-black/20 bg-[#eef2ff] p-4">
+              <h2 className="text-lg font-bold">Mentor Status</h2>
+              <p className="mt-2 text-sm text-black/80">
+                Your mentor profile remains on waitlist until approved by admin.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <p className="inline-flex rounded-full border border-black bg-white px-3 py-1 text-sm font-bold">
+                  Waitlist: {mentorApprovalStatus || "Not submitted"}
+                </p>
+                <p className="inline-flex rounded-full border border-black bg-white px-3 py-1 text-sm font-bold">
+                  Verified: {mentorForm.isVerified ? "Yes" : "No"}
+                </p>
+              </div>
+            </section>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="submit"
+                disabled={isBusy}
+                className="rounded-xl border-2 border-black bg-[#5f6cf3] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSubmitting ? "Saving..." : mentorProfileExists ? "Update Mentor Profile" : "Create Mentor Profile"}
+              </button>
+
+              {mentorProfileExists ? (
+                <button
+                  type="button"
+                  onClick={onMentorDelete}
+                  disabled={isBusy}
+                  className="rounded-xl border-2 border-black bg-[#f56565] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  Delete Mentor Profile
+                </button>
+              ) : null}
+
+              <Link
+                href="/profile"
+                className="rounded-xl border-2 border-black bg-[#ffc20f] px-4 py-2 text-sm font-bold text-black"
+              >
+                Go to Profile
+              </Link>
+            </div>
+          </form>
+        ) : null}
       </div>
     </main>
   );

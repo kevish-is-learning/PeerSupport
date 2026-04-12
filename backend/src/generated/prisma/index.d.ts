@@ -23,6 +23,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  * 
  */
 export type MenteeProfile = $Result.DefaultSelection<Prisma.$MenteeProfilePayload>
+/**
+ * Model MentorProfile
+ * 
+ */
+export type MentorProfile = $Result.DefaultSelection<Prisma.$MentorProfilePayload>
 
 /**
  * Enums
@@ -36,11 +41,24 @@ export namespace $Enums {
 
 export type Role = (typeof Role)[keyof typeof Role]
 
+
+export const MentorApprovalStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type MentorApprovalStatus = (typeof MentorApprovalStatus)[keyof typeof MentorApprovalStatus]
+
 }
 
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
+
+export type MentorApprovalStatus = $Enums.MentorApprovalStatus
+
+export const MentorApprovalStatus: typeof $Enums.MentorApprovalStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -184,6 +202,16 @@ export class PrismaClient<
     * ```
     */
   get menteeProfile(): Prisma.MenteeProfileDelegate<ExtArgs>;
+
+  /**
+   * `prisma.mentorProfile`: Exposes CRUD operations for the **MentorProfile** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MentorProfiles
+    * const mentorProfiles = await prisma.mentorProfile.findMany()
+    * ```
+    */
+  get mentorProfile(): Prisma.MentorProfileDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -626,7 +654,8 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
-    MenteeProfile: 'MenteeProfile'
+    MenteeProfile: 'MenteeProfile',
+    MentorProfile: 'MentorProfile'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -642,7 +671,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "menteeProfile"
+      modelProps: "user" | "menteeProfile" | "mentorProfile"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -783,6 +812,76 @@ export namespace Prisma {
           count: {
             args: Prisma.MenteeProfileCountArgs<ExtArgs>
             result: $Utils.Optional<MenteeProfileCountAggregateOutputType> | number
+          }
+        }
+      }
+      MentorProfile: {
+        payload: Prisma.$MentorProfilePayload<ExtArgs>
+        fields: Prisma.MentorProfileFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MentorProfileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MentorProfileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload>
+          }
+          findFirst: {
+            args: Prisma.MentorProfileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MentorProfileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload>
+          }
+          findMany: {
+            args: Prisma.MentorProfileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload>[]
+          }
+          create: {
+            args: Prisma.MentorProfileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload>
+          }
+          createMany: {
+            args: Prisma.MentorProfileCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MentorProfileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload>[]
+          }
+          delete: {
+            args: Prisma.MentorProfileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload>
+          }
+          update: {
+            args: Prisma.MentorProfileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload>
+          }
+          deleteMany: {
+            args: Prisma.MentorProfileDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MentorProfileUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MentorProfileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorProfilePayload>
+          }
+          aggregate: {
+            args: Prisma.MentorProfileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMentorProfile>
+          }
+          groupBy: {
+            args: Prisma.MentorProfileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MentorProfileGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MentorProfileCountArgs<ExtArgs>
+            result: $Utils.Optional<MentorProfileCountAggregateOutputType> | number
           }
         }
       }
@@ -966,6 +1065,7 @@ export namespace Prisma {
     profilePicture: string | null
     provider: string | null
     role: $Enums.Role | null
+    isRoleSelected: boolean | null
     isVerified: boolean | null
     isActive: boolean | null
     createdAt: Date | null
@@ -982,6 +1082,7 @@ export namespace Prisma {
     profilePicture: string | null
     provider: string | null
     role: $Enums.Role | null
+    isRoleSelected: boolean | null
     isVerified: boolean | null
     isActive: boolean | null
     createdAt: Date | null
@@ -998,6 +1099,7 @@ export namespace Prisma {
     profilePicture: number
     provider: number
     role: number
+    isRoleSelected: number
     isVerified: number
     isActive: number
     createdAt: number
@@ -1016,6 +1118,7 @@ export namespace Prisma {
     profilePicture?: true
     provider?: true
     role?: true
+    isRoleSelected?: true
     isVerified?: true
     isActive?: true
     createdAt?: true
@@ -1032,6 +1135,7 @@ export namespace Prisma {
     profilePicture?: true
     provider?: true
     role?: true
+    isRoleSelected?: true
     isVerified?: true
     isActive?: true
     createdAt?: true
@@ -1048,6 +1152,7 @@ export namespace Prisma {
     profilePicture?: true
     provider?: true
     role?: true
+    isRoleSelected?: true
     isVerified?: true
     isActive?: true
     createdAt?: true
@@ -1137,6 +1242,7 @@ export namespace Prisma {
     profilePicture: string | null
     provider: string
     role: $Enums.Role
+    isRoleSelected: boolean
     isVerified: boolean
     isActive: boolean
     createdAt: Date
@@ -1170,12 +1276,14 @@ export namespace Prisma {
     profilePicture?: boolean
     provider?: boolean
     role?: boolean
+    isRoleSelected?: boolean
     isVerified?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
     menteeProfile?: boolean | User$menteeProfileArgs<ExtArgs>
+    mentorProfile?: boolean | User$mentorProfileArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1187,6 +1295,7 @@ export namespace Prisma {
     profilePicture?: boolean
     provider?: boolean
     role?: boolean
+    isRoleSelected?: boolean
     isVerified?: boolean
     isActive?: boolean
     createdAt?: boolean
@@ -1203,6 +1312,7 @@ export namespace Prisma {
     profilePicture?: boolean
     provider?: boolean
     role?: boolean
+    isRoleSelected?: boolean
     isVerified?: boolean
     isActive?: boolean
     createdAt?: boolean
@@ -1212,6 +1322,7 @@ export namespace Prisma {
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     menteeProfile?: boolean | User$menteeProfileArgs<ExtArgs>
+    mentorProfile?: boolean | User$mentorProfileArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
@@ -1219,6 +1330,7 @@ export namespace Prisma {
     name: "User"
     objects: {
       menteeProfile: Prisma.$MenteeProfilePayload<ExtArgs> | null
+      mentorProfile: Prisma.$MentorProfilePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1229,6 +1341,7 @@ export namespace Prisma {
       profilePicture: string | null
       provider: string
       role: $Enums.Role
+      isRoleSelected: boolean
       isVerified: boolean
       isActive: boolean
       createdAt: Date
@@ -1599,6 +1712,7 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     menteeProfile<T extends User$menteeProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$menteeProfileArgs<ExtArgs>>): Prisma__MenteeProfileClient<$Result.GetResult<Prisma.$MenteeProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    mentorProfile<T extends User$mentorProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$mentorProfileArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1636,6 +1750,7 @@ export namespace Prisma {
     readonly profilePicture: FieldRef<"User", 'String'>
     readonly provider: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
+    readonly isRoleSelected: FieldRef<"User", 'Boolean'>
     readonly isVerified: FieldRef<"User", 'Boolean'>
     readonly isActive: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
@@ -1967,6 +2082,21 @@ export namespace Prisma {
      */
     include?: MenteeProfileInclude<ExtArgs> | null
     where?: MenteeProfileWhereInput
+  }
+
+  /**
+   * User.mentorProfile
+   */
+  export type User$mentorProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    where?: MentorProfileWhereInput
   }
 
   /**
@@ -3022,6 +3152,1067 @@ export namespace Prisma {
 
 
   /**
+   * Model MentorProfile
+   */
+
+  export type AggregateMentorProfile = {
+    _count: MentorProfileCountAggregateOutputType | null
+    _min: MentorProfileMinAggregateOutputType | null
+    _max: MentorProfileMaxAggregateOutputType | null
+  }
+
+  export type MentorProfileMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    linkedInUrl: string | null
+    bio: string | null
+    ugCollegeProfile: string | null
+    pgProfile: string | null
+    workExperience: string | null
+    certifications: string | null
+    profilePhotoUrl: string | null
+    collegeDocumentUrl: string | null
+    isVerified: boolean | null
+    approvalStatus: $Enums.MentorApprovalStatus | null
+    adminReviewNotes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorProfileMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    linkedInUrl: string | null
+    bio: string | null
+    ugCollegeProfile: string | null
+    pgProfile: string | null
+    workExperience: string | null
+    certifications: string | null
+    profilePhotoUrl: string | null
+    collegeDocumentUrl: string | null
+    isVerified: boolean | null
+    approvalStatus: $Enums.MentorApprovalStatus | null
+    adminReviewNotes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorProfileCountAggregateOutputType = {
+    id: number
+    userId: number
+    linkedInUrl: number
+    bio: number
+    expertiseTags: number
+    ugCollegeProfile: number
+    pgProfile: number
+    workExperience: number
+    certifications: number
+    profilePhotoUrl: number
+    collegeDocumentUrl: number
+    isVerified: number
+    approvalStatus: number
+    adminReviewNotes: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MentorProfileMinAggregateInputType = {
+    id?: true
+    userId?: true
+    linkedInUrl?: true
+    bio?: true
+    ugCollegeProfile?: true
+    pgProfile?: true
+    workExperience?: true
+    certifications?: true
+    profilePhotoUrl?: true
+    collegeDocumentUrl?: true
+    isVerified?: true
+    approvalStatus?: true
+    adminReviewNotes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorProfileMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    linkedInUrl?: true
+    bio?: true
+    ugCollegeProfile?: true
+    pgProfile?: true
+    workExperience?: true
+    certifications?: true
+    profilePhotoUrl?: true
+    collegeDocumentUrl?: true
+    isVerified?: true
+    approvalStatus?: true
+    adminReviewNotes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorProfileCountAggregateInputType = {
+    id?: true
+    userId?: true
+    linkedInUrl?: true
+    bio?: true
+    expertiseTags?: true
+    ugCollegeProfile?: true
+    pgProfile?: true
+    workExperience?: true
+    certifications?: true
+    profilePhotoUrl?: true
+    collegeDocumentUrl?: true
+    isVerified?: true
+    approvalStatus?: true
+    adminReviewNotes?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MentorProfileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorProfile to aggregate.
+     */
+    where?: MentorProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorProfiles to fetch.
+     */
+    orderBy?: MentorProfileOrderByWithRelationInput | MentorProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MentorProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MentorProfiles
+    **/
+    _count?: true | MentorProfileCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MentorProfileMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MentorProfileMaxAggregateInputType
+  }
+
+  export type GetMentorProfileAggregateType<T extends MentorProfileAggregateArgs> = {
+        [P in keyof T & keyof AggregateMentorProfile]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMentorProfile[P]>
+      : GetScalarType<T[P], AggregateMentorProfile[P]>
+  }
+
+
+
+
+  export type MentorProfileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorProfileWhereInput
+    orderBy?: MentorProfileOrderByWithAggregationInput | MentorProfileOrderByWithAggregationInput[]
+    by: MentorProfileScalarFieldEnum[] | MentorProfileScalarFieldEnum
+    having?: MentorProfileScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MentorProfileCountAggregateInputType | true
+    _min?: MentorProfileMinAggregateInputType
+    _max?: MentorProfileMaxAggregateInputType
+  }
+
+  export type MentorProfileGroupByOutputType = {
+    id: string
+    userId: string
+    linkedInUrl: string
+    bio: string
+    expertiseTags: string[]
+    ugCollegeProfile: string | null
+    pgProfile: string | null
+    workExperience: string | null
+    certifications: string | null
+    profilePhotoUrl: string | null
+    collegeDocumentUrl: string | null
+    isVerified: boolean
+    approvalStatus: $Enums.MentorApprovalStatus
+    adminReviewNotes: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: MentorProfileCountAggregateOutputType | null
+    _min: MentorProfileMinAggregateOutputType | null
+    _max: MentorProfileMaxAggregateOutputType | null
+  }
+
+  type GetMentorProfileGroupByPayload<T extends MentorProfileGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MentorProfileGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MentorProfileGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MentorProfileGroupByOutputType[P]>
+            : GetScalarType<T[P], MentorProfileGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MentorProfileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    linkedInUrl?: boolean
+    bio?: boolean
+    expertiseTags?: boolean
+    ugCollegeProfile?: boolean
+    pgProfile?: boolean
+    workExperience?: boolean
+    certifications?: boolean
+    profilePhotoUrl?: boolean
+    collegeDocumentUrl?: boolean
+    isVerified?: boolean
+    approvalStatus?: boolean
+    adminReviewNotes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorProfile"]>
+
+  export type MentorProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    linkedInUrl?: boolean
+    bio?: boolean
+    expertiseTags?: boolean
+    ugCollegeProfile?: boolean
+    pgProfile?: boolean
+    workExperience?: boolean
+    certifications?: boolean
+    profilePhotoUrl?: boolean
+    collegeDocumentUrl?: boolean
+    isVerified?: boolean
+    approvalStatus?: boolean
+    adminReviewNotes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorProfile"]>
+
+  export type MentorProfileSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    linkedInUrl?: boolean
+    bio?: boolean
+    expertiseTags?: boolean
+    ugCollegeProfile?: boolean
+    pgProfile?: boolean
+    workExperience?: boolean
+    certifications?: boolean
+    profilePhotoUrl?: boolean
+    collegeDocumentUrl?: boolean
+    isVerified?: boolean
+    approvalStatus?: boolean
+    adminReviewNotes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MentorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type MentorProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $MentorProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MentorProfile"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      linkedInUrl: string
+      bio: string
+      expertiseTags: string[]
+      ugCollegeProfile: string | null
+      pgProfile: string | null
+      workExperience: string | null
+      certifications: string | null
+      profilePhotoUrl: string | null
+      collegeDocumentUrl: string | null
+      isVerified: boolean
+      approvalStatus: $Enums.MentorApprovalStatus
+      adminReviewNotes: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["mentorProfile"]>
+    composites: {}
+  }
+
+  type MentorProfileGetPayload<S extends boolean | null | undefined | MentorProfileDefaultArgs> = $Result.GetResult<Prisma.$MentorProfilePayload, S>
+
+  type MentorProfileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<MentorProfileFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: MentorProfileCountAggregateInputType | true
+    }
+
+  export interface MentorProfileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MentorProfile'], meta: { name: 'MentorProfile' } }
+    /**
+     * Find zero or one MentorProfile that matches the filter.
+     * @param {MentorProfileFindUniqueArgs} args - Arguments to find a MentorProfile
+     * @example
+     * // Get one MentorProfile
+     * const mentorProfile = await prisma.mentorProfile.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MentorProfileFindUniqueArgs>(args: SelectSubset<T, MentorProfileFindUniqueArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one MentorProfile that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {MentorProfileFindUniqueOrThrowArgs} args - Arguments to find a MentorProfile
+     * @example
+     * // Get one MentorProfile
+     * const mentorProfile = await prisma.mentorProfile.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MentorProfileFindUniqueOrThrowArgs>(args: SelectSubset<T, MentorProfileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first MentorProfile that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorProfileFindFirstArgs} args - Arguments to find a MentorProfile
+     * @example
+     * // Get one MentorProfile
+     * const mentorProfile = await prisma.mentorProfile.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MentorProfileFindFirstArgs>(args?: SelectSubset<T, MentorProfileFindFirstArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first MentorProfile that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorProfileFindFirstOrThrowArgs} args - Arguments to find a MentorProfile
+     * @example
+     * // Get one MentorProfile
+     * const mentorProfile = await prisma.mentorProfile.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MentorProfileFindFirstOrThrowArgs>(args?: SelectSubset<T, MentorProfileFindFirstOrThrowArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more MentorProfiles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorProfileFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MentorProfiles
+     * const mentorProfiles = await prisma.mentorProfile.findMany()
+     * 
+     * // Get first 10 MentorProfiles
+     * const mentorProfiles = await prisma.mentorProfile.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mentorProfileWithIdOnly = await prisma.mentorProfile.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MentorProfileFindManyArgs>(args?: SelectSubset<T, MentorProfileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a MentorProfile.
+     * @param {MentorProfileCreateArgs} args - Arguments to create a MentorProfile.
+     * @example
+     * // Create one MentorProfile
+     * const MentorProfile = await prisma.mentorProfile.create({
+     *   data: {
+     *     // ... data to create a MentorProfile
+     *   }
+     * })
+     * 
+     */
+    create<T extends MentorProfileCreateArgs>(args: SelectSubset<T, MentorProfileCreateArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many MentorProfiles.
+     * @param {MentorProfileCreateManyArgs} args - Arguments to create many MentorProfiles.
+     * @example
+     * // Create many MentorProfiles
+     * const mentorProfile = await prisma.mentorProfile.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MentorProfileCreateManyArgs>(args?: SelectSubset<T, MentorProfileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MentorProfiles and returns the data saved in the database.
+     * @param {MentorProfileCreateManyAndReturnArgs} args - Arguments to create many MentorProfiles.
+     * @example
+     * // Create many MentorProfiles
+     * const mentorProfile = await prisma.mentorProfile.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MentorProfiles and only return the `id`
+     * const mentorProfileWithIdOnly = await prisma.mentorProfile.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MentorProfileCreateManyAndReturnArgs>(args?: SelectSubset<T, MentorProfileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a MentorProfile.
+     * @param {MentorProfileDeleteArgs} args - Arguments to delete one MentorProfile.
+     * @example
+     * // Delete one MentorProfile
+     * const MentorProfile = await prisma.mentorProfile.delete({
+     *   where: {
+     *     // ... filter to delete one MentorProfile
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MentorProfileDeleteArgs>(args: SelectSubset<T, MentorProfileDeleteArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one MentorProfile.
+     * @param {MentorProfileUpdateArgs} args - Arguments to update one MentorProfile.
+     * @example
+     * // Update one MentorProfile
+     * const mentorProfile = await prisma.mentorProfile.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MentorProfileUpdateArgs>(args: SelectSubset<T, MentorProfileUpdateArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more MentorProfiles.
+     * @param {MentorProfileDeleteManyArgs} args - Arguments to filter MentorProfiles to delete.
+     * @example
+     * // Delete a few MentorProfiles
+     * const { count } = await prisma.mentorProfile.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MentorProfileDeleteManyArgs>(args?: SelectSubset<T, MentorProfileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MentorProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorProfileUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MentorProfiles
+     * const mentorProfile = await prisma.mentorProfile.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MentorProfileUpdateManyArgs>(args: SelectSubset<T, MentorProfileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MentorProfile.
+     * @param {MentorProfileUpsertArgs} args - Arguments to update or create a MentorProfile.
+     * @example
+     * // Update or create a MentorProfile
+     * const mentorProfile = await prisma.mentorProfile.upsert({
+     *   create: {
+     *     // ... data to create a MentorProfile
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MentorProfile we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MentorProfileUpsertArgs>(args: SelectSubset<T, MentorProfileUpsertArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of MentorProfiles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorProfileCountArgs} args - Arguments to filter MentorProfiles to count.
+     * @example
+     * // Count the number of MentorProfiles
+     * const count = await prisma.mentorProfile.count({
+     *   where: {
+     *     // ... the filter for the MentorProfiles we want to count
+     *   }
+     * })
+    **/
+    count<T extends MentorProfileCountArgs>(
+      args?: Subset<T, MentorProfileCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MentorProfileCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MentorProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorProfileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MentorProfileAggregateArgs>(args: Subset<T, MentorProfileAggregateArgs>): Prisma.PrismaPromise<GetMentorProfileAggregateType<T>>
+
+    /**
+     * Group by MentorProfile.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorProfileGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MentorProfileGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MentorProfileGroupByArgs['orderBy'] }
+        : { orderBy?: MentorProfileGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MentorProfileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMentorProfileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MentorProfile model
+   */
+  readonly fields: MentorProfileFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MentorProfile.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MentorProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MentorProfile model
+   */ 
+  interface MentorProfileFieldRefs {
+    readonly id: FieldRef<"MentorProfile", 'String'>
+    readonly userId: FieldRef<"MentorProfile", 'String'>
+    readonly linkedInUrl: FieldRef<"MentorProfile", 'String'>
+    readonly bio: FieldRef<"MentorProfile", 'String'>
+    readonly expertiseTags: FieldRef<"MentorProfile", 'String[]'>
+    readonly ugCollegeProfile: FieldRef<"MentorProfile", 'String'>
+    readonly pgProfile: FieldRef<"MentorProfile", 'String'>
+    readonly workExperience: FieldRef<"MentorProfile", 'String'>
+    readonly certifications: FieldRef<"MentorProfile", 'String'>
+    readonly profilePhotoUrl: FieldRef<"MentorProfile", 'String'>
+    readonly collegeDocumentUrl: FieldRef<"MentorProfile", 'String'>
+    readonly isVerified: FieldRef<"MentorProfile", 'Boolean'>
+    readonly approvalStatus: FieldRef<"MentorProfile", 'MentorApprovalStatus'>
+    readonly adminReviewNotes: FieldRef<"MentorProfile", 'String'>
+    readonly createdAt: FieldRef<"MentorProfile", 'DateTime'>
+    readonly updatedAt: FieldRef<"MentorProfile", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MentorProfile findUnique
+   */
+  export type MentorProfileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorProfile to fetch.
+     */
+    where: MentorProfileWhereUniqueInput
+  }
+
+  /**
+   * MentorProfile findUniqueOrThrow
+   */
+  export type MentorProfileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorProfile to fetch.
+     */
+    where: MentorProfileWhereUniqueInput
+  }
+
+  /**
+   * MentorProfile findFirst
+   */
+  export type MentorProfileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorProfile to fetch.
+     */
+    where?: MentorProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorProfiles to fetch.
+     */
+    orderBy?: MentorProfileOrderByWithRelationInput | MentorProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorProfiles.
+     */
+    cursor?: MentorProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorProfiles.
+     */
+    distinct?: MentorProfileScalarFieldEnum | MentorProfileScalarFieldEnum[]
+  }
+
+  /**
+   * MentorProfile findFirstOrThrow
+   */
+  export type MentorProfileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorProfile to fetch.
+     */
+    where?: MentorProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorProfiles to fetch.
+     */
+    orderBy?: MentorProfileOrderByWithRelationInput | MentorProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorProfiles.
+     */
+    cursor?: MentorProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorProfiles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorProfiles.
+     */
+    distinct?: MentorProfileScalarFieldEnum | MentorProfileScalarFieldEnum[]
+  }
+
+  /**
+   * MentorProfile findMany
+   */
+  export type MentorProfileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorProfiles to fetch.
+     */
+    where?: MentorProfileWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorProfiles to fetch.
+     */
+    orderBy?: MentorProfileOrderByWithRelationInput | MentorProfileOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MentorProfiles.
+     */
+    cursor?: MentorProfileWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorProfiles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorProfiles.
+     */
+    skip?: number
+    distinct?: MentorProfileScalarFieldEnum | MentorProfileScalarFieldEnum[]
+  }
+
+  /**
+   * MentorProfile create
+   */
+  export type MentorProfileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MentorProfile.
+     */
+    data: XOR<MentorProfileCreateInput, MentorProfileUncheckedCreateInput>
+  }
+
+  /**
+   * MentorProfile createMany
+   */
+  export type MentorProfileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MentorProfiles.
+     */
+    data: MentorProfileCreateManyInput | MentorProfileCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MentorProfile createManyAndReturn
+   */
+  export type MentorProfileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many MentorProfiles.
+     */
+    data: MentorProfileCreateManyInput | MentorProfileCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MentorProfile update
+   */
+  export type MentorProfileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MentorProfile.
+     */
+    data: XOR<MentorProfileUpdateInput, MentorProfileUncheckedUpdateInput>
+    /**
+     * Choose, which MentorProfile to update.
+     */
+    where: MentorProfileWhereUniqueInput
+  }
+
+  /**
+   * MentorProfile updateMany
+   */
+  export type MentorProfileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MentorProfiles.
+     */
+    data: XOR<MentorProfileUpdateManyMutationInput, MentorProfileUncheckedUpdateManyInput>
+    /**
+     * Filter which MentorProfiles to update
+     */
+    where?: MentorProfileWhereInput
+  }
+
+  /**
+   * MentorProfile upsert
+   */
+  export type MentorProfileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MentorProfile to update in case it exists.
+     */
+    where: MentorProfileWhereUniqueInput
+    /**
+     * In case the MentorProfile found by the `where` argument doesn't exist, create a new MentorProfile with this data.
+     */
+    create: XOR<MentorProfileCreateInput, MentorProfileUncheckedCreateInput>
+    /**
+     * In case the MentorProfile was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MentorProfileUpdateInput, MentorProfileUncheckedUpdateInput>
+  }
+
+  /**
+   * MentorProfile delete
+   */
+  export type MentorProfileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+    /**
+     * Filter which MentorProfile to delete.
+     */
+    where: MentorProfileWhereUniqueInput
+  }
+
+  /**
+   * MentorProfile deleteMany
+   */
+  export type MentorProfileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorProfiles to delete
+     */
+    where?: MentorProfileWhereInput
+  }
+
+  /**
+   * MentorProfile without action
+   */
+  export type MentorProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfile
+     */
+    select?: MentorProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorProfileInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -3044,6 +4235,7 @@ export namespace Prisma {
     profilePicture: 'profilePicture',
     provider: 'provider',
     role: 'role',
+    isRoleSelected: 'isRoleSelected',
     isVerified: 'isVerified',
     isActive: 'isActive',
     createdAt: 'createdAt',
@@ -3072,6 +4264,28 @@ export namespace Prisma {
   };
 
   export type MenteeProfileScalarFieldEnum = (typeof MenteeProfileScalarFieldEnum)[keyof typeof MenteeProfileScalarFieldEnum]
+
+
+  export const MentorProfileScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    linkedInUrl: 'linkedInUrl',
+    bio: 'bio',
+    expertiseTags: 'expertiseTags',
+    ugCollegeProfile: 'ugCollegeProfile',
+    pgProfile: 'pgProfile',
+    workExperience: 'workExperience',
+    certifications: 'certifications',
+    profilePhotoUrl: 'profilePhotoUrl',
+    collegeDocumentUrl: 'collegeDocumentUrl',
+    isVerified: 'isVerified',
+    approvalStatus: 'approvalStatus',
+    adminReviewNotes: 'adminReviewNotes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MentorProfileScalarFieldEnum = (typeof MentorProfileScalarFieldEnum)[keyof typeof MentorProfileScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -3153,6 +4367,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'MentorApprovalStatus'
+   */
+  export type EnumMentorApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MentorApprovalStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'MentorApprovalStatus[]'
+   */
+  export type ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MentorApprovalStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -3181,12 +4409,14 @@ export namespace Prisma {
     profilePicture?: StringNullableFilter<"User"> | string | null
     provider?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
+    isRoleSelected?: BoolFilter<"User"> | boolean
     isVerified?: BoolFilter<"User"> | boolean
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     menteeProfile?: XOR<MenteeProfileNullableRelationFilter, MenteeProfileWhereInput> | null
+    mentorProfile?: XOR<MentorProfileNullableRelationFilter, MentorProfileWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -3198,12 +4428,14 @@ export namespace Prisma {
     profilePicture?: SortOrderInput | SortOrder
     provider?: SortOrder
     role?: SortOrder
+    isRoleSelected?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
     menteeProfile?: MenteeProfileOrderByWithRelationInput
+    mentorProfile?: MentorProfileOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -3218,12 +4450,14 @@ export namespace Prisma {
     profilePicture?: StringNullableFilter<"User"> | string | null
     provider?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
+    isRoleSelected?: BoolFilter<"User"> | boolean
     isVerified?: BoolFilter<"User"> | boolean
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     menteeProfile?: XOR<MenteeProfileNullableRelationFilter, MenteeProfileWhereInput> | null
+    mentorProfile?: XOR<MentorProfileNullableRelationFilter, MentorProfileWhereInput> | null
   }, "id" | "email" | "googleId">
 
   export type UserOrderByWithAggregationInput = {
@@ -3235,6 +4469,7 @@ export namespace Prisma {
     profilePicture?: SortOrderInput | SortOrder
     provider?: SortOrder
     role?: SortOrder
+    isRoleSelected?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
@@ -3257,6 +4492,7 @@ export namespace Prisma {
     profilePicture?: StringNullableWithAggregatesFilter<"User"> | string | null
     provider?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
+    isRoleSelected?: BoolWithAggregatesFilter<"User"> | boolean
     isVerified?: BoolWithAggregatesFilter<"User"> | boolean
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -3364,6 +4600,116 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
   }
 
+  export type MentorProfileWhereInput = {
+    AND?: MentorProfileWhereInput | MentorProfileWhereInput[]
+    OR?: MentorProfileWhereInput[]
+    NOT?: MentorProfileWhereInput | MentorProfileWhereInput[]
+    id?: StringFilter<"MentorProfile"> | string
+    userId?: StringFilter<"MentorProfile"> | string
+    linkedInUrl?: StringFilter<"MentorProfile"> | string
+    bio?: StringFilter<"MentorProfile"> | string
+    expertiseTags?: StringNullableListFilter<"MentorProfile">
+    ugCollegeProfile?: StringNullableFilter<"MentorProfile"> | string | null
+    pgProfile?: StringNullableFilter<"MentorProfile"> | string | null
+    workExperience?: StringNullableFilter<"MentorProfile"> | string | null
+    certifications?: StringNullableFilter<"MentorProfile"> | string | null
+    profilePhotoUrl?: StringNullableFilter<"MentorProfile"> | string | null
+    collegeDocumentUrl?: StringNullableFilter<"MentorProfile"> | string | null
+    isVerified?: BoolFilter<"MentorProfile"> | boolean
+    approvalStatus?: EnumMentorApprovalStatusFilter<"MentorProfile"> | $Enums.MentorApprovalStatus
+    adminReviewNotes?: StringNullableFilter<"MentorProfile"> | string | null
+    createdAt?: DateTimeFilter<"MentorProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorProfile"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type MentorProfileOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    linkedInUrl?: SortOrder
+    bio?: SortOrder
+    expertiseTags?: SortOrder
+    ugCollegeProfile?: SortOrderInput | SortOrder
+    pgProfile?: SortOrderInput | SortOrder
+    workExperience?: SortOrderInput | SortOrder
+    certifications?: SortOrderInput | SortOrder
+    profilePhotoUrl?: SortOrderInput | SortOrder
+    collegeDocumentUrl?: SortOrderInput | SortOrder
+    isVerified?: SortOrder
+    approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type MentorProfileWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId?: string
+    AND?: MentorProfileWhereInput | MentorProfileWhereInput[]
+    OR?: MentorProfileWhereInput[]
+    NOT?: MentorProfileWhereInput | MentorProfileWhereInput[]
+    linkedInUrl?: StringFilter<"MentorProfile"> | string
+    bio?: StringFilter<"MentorProfile"> | string
+    expertiseTags?: StringNullableListFilter<"MentorProfile">
+    ugCollegeProfile?: StringNullableFilter<"MentorProfile"> | string | null
+    pgProfile?: StringNullableFilter<"MentorProfile"> | string | null
+    workExperience?: StringNullableFilter<"MentorProfile"> | string | null
+    certifications?: StringNullableFilter<"MentorProfile"> | string | null
+    profilePhotoUrl?: StringNullableFilter<"MentorProfile"> | string | null
+    collegeDocumentUrl?: StringNullableFilter<"MentorProfile"> | string | null
+    isVerified?: BoolFilter<"MentorProfile"> | boolean
+    approvalStatus?: EnumMentorApprovalStatusFilter<"MentorProfile"> | $Enums.MentorApprovalStatus
+    adminReviewNotes?: StringNullableFilter<"MentorProfile"> | string | null
+    createdAt?: DateTimeFilter<"MentorProfile"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorProfile"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id" | "userId">
+
+  export type MentorProfileOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    linkedInUrl?: SortOrder
+    bio?: SortOrder
+    expertiseTags?: SortOrder
+    ugCollegeProfile?: SortOrderInput | SortOrder
+    pgProfile?: SortOrderInput | SortOrder
+    workExperience?: SortOrderInput | SortOrder
+    certifications?: SortOrderInput | SortOrder
+    profilePhotoUrl?: SortOrderInput | SortOrder
+    collegeDocumentUrl?: SortOrderInput | SortOrder
+    isVerified?: SortOrder
+    approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MentorProfileCountOrderByAggregateInput
+    _max?: MentorProfileMaxOrderByAggregateInput
+    _min?: MentorProfileMinOrderByAggregateInput
+  }
+
+  export type MentorProfileScalarWhereWithAggregatesInput = {
+    AND?: MentorProfileScalarWhereWithAggregatesInput | MentorProfileScalarWhereWithAggregatesInput[]
+    OR?: MentorProfileScalarWhereWithAggregatesInput[]
+    NOT?: MentorProfileScalarWhereWithAggregatesInput | MentorProfileScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MentorProfile"> | string
+    userId?: StringWithAggregatesFilter<"MentorProfile"> | string
+    linkedInUrl?: StringWithAggregatesFilter<"MentorProfile"> | string
+    bio?: StringWithAggregatesFilter<"MentorProfile"> | string
+    expertiseTags?: StringNullableListFilter<"MentorProfile">
+    ugCollegeProfile?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    pgProfile?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    workExperience?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    certifications?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    profilePhotoUrl?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    collegeDocumentUrl?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    isVerified?: BoolWithAggregatesFilter<"MentorProfile"> | boolean
+    approvalStatus?: EnumMentorApprovalStatusWithAggregatesFilter<"MentorProfile"> | $Enums.MentorApprovalStatus
+    adminReviewNotes?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MentorProfile"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MentorProfile"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -3373,12 +4719,14 @@ export namespace Prisma {
     profilePicture?: string | null
     provider?: string
     role?: $Enums.Role
+    isRoleSelected?: boolean
     isVerified?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -3390,12 +4738,14 @@ export namespace Prisma {
     profilePicture?: string | null
     provider?: string
     role?: $Enums.Role
+    isRoleSelected?: boolean
     isVerified?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -3407,12 +4757,14 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isRoleSelected?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -3424,12 +4776,14 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isRoleSelected?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -3441,6 +4795,7 @@ export namespace Prisma {
     profilePicture?: string | null
     provider?: string
     role?: $Enums.Role
+    isRoleSelected?: boolean
     isVerified?: boolean
     isActive?: boolean
     createdAt?: Date | string
@@ -3457,6 +4812,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isRoleSelected?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3473,6 +4829,7 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isRoleSelected?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3598,6 +4955,138 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MentorProfileCreateInput = {
+    id?: string
+    linkedInUrl: string
+    bio: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    profilePhotoUrl?: string | null
+    collegeDocumentUrl?: string | null
+    isVerified?: boolean
+    approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMentorProfileInput
+  }
+
+  export type MentorProfileUncheckedCreateInput = {
+    id?: string
+    userId: string
+    linkedInUrl: string
+    bio: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    profilePhotoUrl?: string | null
+    collegeDocumentUrl?: string | null
+    isVerified?: boolean
+    approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorProfileUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMentorProfileNestedInput
+  }
+
+  export type MentorProfileUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorProfileCreateManyInput = {
+    id?: string
+    userId: string
+    linkedInUrl: string
+    bio: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    profilePhotoUrl?: string | null
+    collegeDocumentUrl?: string | null
+    isVerified?: boolean
+    approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorProfileUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorProfileUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -3667,6 +5156,11 @@ export namespace Prisma {
     isNot?: MenteeProfileWhereInput | null
   }
 
+  export type MentorProfileNullableRelationFilter = {
+    is?: MentorProfileWhereInput | null
+    isNot?: MentorProfileWhereInput | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -3681,6 +5175,7 @@ export namespace Prisma {
     profilePicture?: SortOrder
     provider?: SortOrder
     role?: SortOrder
+    isRoleSelected?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
@@ -3697,6 +5192,7 @@ export namespace Prisma {
     profilePicture?: SortOrder
     provider?: SortOrder
     role?: SortOrder
+    isRoleSelected?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
@@ -3713,6 +5209,7 @@ export namespace Prisma {
     profilePicture?: SortOrder
     provider?: SortOrder
     role?: SortOrder
+    isRoleSelected?: SortOrder
     isVerified?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
@@ -3864,16 +5361,100 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type EnumMentorApprovalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MentorApprovalStatus | EnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MentorApprovalStatus[] | ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MentorApprovalStatus[] | ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMentorApprovalStatusFilter<$PrismaModel> | $Enums.MentorApprovalStatus
+  }
+
+  export type MentorProfileCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    linkedInUrl?: SortOrder
+    bio?: SortOrder
+    expertiseTags?: SortOrder
+    ugCollegeProfile?: SortOrder
+    pgProfile?: SortOrder
+    workExperience?: SortOrder
+    certifications?: SortOrder
+    profilePhotoUrl?: SortOrder
+    collegeDocumentUrl?: SortOrder
+    isVerified?: SortOrder
+    approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorProfileMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    linkedInUrl?: SortOrder
+    bio?: SortOrder
+    ugCollegeProfile?: SortOrder
+    pgProfile?: SortOrder
+    workExperience?: SortOrder
+    certifications?: SortOrder
+    profilePhotoUrl?: SortOrder
+    collegeDocumentUrl?: SortOrder
+    isVerified?: SortOrder
+    approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorProfileMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    linkedInUrl?: SortOrder
+    bio?: SortOrder
+    ugCollegeProfile?: SortOrder
+    pgProfile?: SortOrder
+    workExperience?: SortOrder
+    certifications?: SortOrder
+    profilePhotoUrl?: SortOrder
+    collegeDocumentUrl?: SortOrder
+    isVerified?: SortOrder
+    approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumMentorApprovalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MentorApprovalStatus | EnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MentorApprovalStatus[] | ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MentorApprovalStatus[] | ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMentorApprovalStatusWithAggregatesFilter<$PrismaModel> | $Enums.MentorApprovalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMentorApprovalStatusFilter<$PrismaModel>
+    _max?: NestedEnumMentorApprovalStatusFilter<$PrismaModel>
+  }
+
   export type MenteeProfileCreateNestedOneWithoutUserInput = {
     create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
     connect?: MenteeProfileWhereUniqueInput
   }
 
+  export type MentorProfileCreateNestedOneWithoutUserInput = {
+    create?: XOR<MentorProfileCreateWithoutUserInput, MentorProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutUserInput
+    connect?: MentorProfileWhereUniqueInput
+  }
+
   export type MenteeProfileUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
     connect?: MenteeProfileWhereUniqueInput
+  }
+
+  export type MentorProfileUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<MentorProfileCreateWithoutUserInput, MentorProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutUserInput
+    connect?: MentorProfileWhereUniqueInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -3910,6 +5491,16 @@ export namespace Prisma {
     update?: XOR<XOR<MenteeProfileUpdateToOneWithWhereWithoutUserInput, MenteeProfileUpdateWithoutUserInput>, MenteeProfileUncheckedUpdateWithoutUserInput>
   }
 
+  export type MentorProfileUpdateOneWithoutUserNestedInput = {
+    create?: XOR<MentorProfileCreateWithoutUserInput, MentorProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutUserInput
+    upsert?: MentorProfileUpsertWithoutUserInput
+    disconnect?: MentorProfileWhereInput | boolean
+    delete?: MentorProfileWhereInput | boolean
+    connect?: MentorProfileWhereUniqueInput
+    update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutUserInput, MentorProfileUpdateWithoutUserInput>, MentorProfileUncheckedUpdateWithoutUserInput>
+  }
+
   export type MenteeProfileUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
@@ -3918,6 +5509,16 @@ export namespace Prisma {
     delete?: MenteeProfileWhereInput | boolean
     connect?: MenteeProfileWhereUniqueInput
     update?: XOR<XOR<MenteeProfileUpdateToOneWithWhereWithoutUserInput, MenteeProfileUpdateWithoutUserInput>, MenteeProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MentorProfileUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<MentorProfileCreateWithoutUserInput, MentorProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutUserInput
+    upsert?: MentorProfileUpsertWithoutUserInput
+    disconnect?: MentorProfileWhereInput | boolean
+    delete?: MentorProfileWhereInput | boolean
+    connect?: MentorProfileWhereUniqueInput
+    update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutUserInput, MentorProfileUpdateWithoutUserInput>, MentorProfileUncheckedUpdateWithoutUserInput>
   }
 
   export type MenteeProfileCreateskillsetsInput = {
@@ -3941,6 +5542,33 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutMenteeProfileInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMenteeProfileInput, UserUpdateWithoutMenteeProfileInput>, UserUncheckedUpdateWithoutMenteeProfileInput>
+  }
+
+  export type MentorProfileCreateexpertiseTagsInput = {
+    set: string[]
+  }
+
+  export type UserCreateNestedOneWithoutMentorProfileInput = {
+    create?: XOR<UserCreateWithoutMentorProfileInput, UserUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMentorProfileInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type MentorProfileUpdateexpertiseTagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type EnumMentorApprovalStatusFieldUpdateOperationsInput = {
+    set?: $Enums.MentorApprovalStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutMentorProfileNestedInput = {
+    create?: XOR<UserCreateWithoutMentorProfileInput, UserUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMentorProfileInput
+    upsert?: UserUpsertWithoutMentorProfileInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMentorProfileInput, UserUpdateWithoutMentorProfileInput>, UserUncheckedUpdateWithoutMentorProfileInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -4107,6 +5735,23 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumMentorApprovalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MentorApprovalStatus | EnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MentorApprovalStatus[] | ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MentorApprovalStatus[] | ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMentorApprovalStatusFilter<$PrismaModel> | $Enums.MentorApprovalStatus
+  }
+
+  export type NestedEnumMentorApprovalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MentorApprovalStatus | EnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MentorApprovalStatus[] | ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MentorApprovalStatus[] | ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMentorApprovalStatusWithAggregatesFilter<$PrismaModel> | $Enums.MentorApprovalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMentorApprovalStatusFilter<$PrismaModel>
+    _max?: NestedEnumMentorApprovalStatusFilter<$PrismaModel>
+  }
+
   export type MenteeProfileCreateWithoutUserInput = {
     id?: string
     dateOfBirth: Date | string
@@ -4142,6 +5787,47 @@ export namespace Prisma {
   export type MenteeProfileCreateOrConnectWithoutUserInput = {
     where: MenteeProfileWhereUniqueInput
     create: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
+  }
+
+  export type MentorProfileCreateWithoutUserInput = {
+    id?: string
+    linkedInUrl: string
+    bio: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    profilePhotoUrl?: string | null
+    collegeDocumentUrl?: string | null
+    isVerified?: boolean
+    approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorProfileUncheckedCreateWithoutUserInput = {
+    id?: string
+    linkedInUrl: string
+    bio: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    profilePhotoUrl?: string | null
+    collegeDocumentUrl?: string | null
+    isVerified?: boolean
+    approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorProfileCreateOrConnectWithoutUserInput = {
+    where: MentorProfileWhereUniqueInput
+    create: XOR<MentorProfileCreateWithoutUserInput, MentorProfileUncheckedCreateWithoutUserInput>
   }
 
   export type MenteeProfileUpsertWithoutUserInput = {
@@ -4187,6 +5873,53 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MentorProfileUpsertWithoutUserInput = {
+    update: XOR<MentorProfileUpdateWithoutUserInput, MentorProfileUncheckedUpdateWithoutUserInput>
+    create: XOR<MentorProfileCreateWithoutUserInput, MentorProfileUncheckedCreateWithoutUserInput>
+    where?: MentorProfileWhereInput
+  }
+
+  export type MentorProfileUpdateToOneWithWhereWithoutUserInput = {
+    where?: MentorProfileWhereInput
+    data: XOR<MentorProfileUpdateWithoutUserInput, MentorProfileUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MentorProfileUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorProfileUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateWithoutMenteeProfileInput = {
     id?: string
     email: string
@@ -4196,11 +5929,13 @@ export namespace Prisma {
     profilePicture?: string | null
     provider?: string
     role?: $Enums.Role
+    isRoleSelected?: boolean
     isVerified?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMenteeProfileInput = {
@@ -4212,11 +5947,13 @@ export namespace Prisma {
     profilePicture?: string | null
     provider?: string
     role?: $Enums.Role
+    isRoleSelected?: boolean
     isVerified?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMenteeProfileInput = {
@@ -4244,11 +5981,13 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isRoleSelected?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMenteeProfileInput = {
@@ -4260,11 +5999,101 @@ export namespace Prisma {
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     provider?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isRoleSelected?: BoolFieldUpdateOperationsInput | boolean
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutMentorProfileInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    name?: string | null
+    profilePicture?: string | null
+    provider?: string
+    role?: $Enums.Role
+    isRoleSelected?: boolean
+    isVerified?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutMentorProfileInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    name?: string | null
+    profilePicture?: string | null
+    provider?: string
+    role?: $Enums.Role
+    isRoleSelected?: boolean
+    isVerified?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutMentorProfileInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMentorProfileInput, UserUncheckedCreateWithoutMentorProfileInput>
+  }
+
+  export type UserUpsertWithoutMentorProfileInput = {
+    update: XOR<UserUpdateWithoutMentorProfileInput, UserUncheckedUpdateWithoutMentorProfileInput>
+    create: XOR<UserCreateWithoutMentorProfileInput, UserUncheckedCreateWithoutMentorProfileInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMentorProfileInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMentorProfileInput, UserUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type UserUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isRoleSelected?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isRoleSelected?: BoolFieldUpdateOperationsInput | boolean
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
 
@@ -4280,6 +6109,10 @@ export namespace Prisma {
      * @deprecated Use MenteeProfileDefaultArgs instead
      */
     export type MenteeProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MenteeProfileDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use MentorProfileDefaultArgs instead
+     */
+    export type MentorProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorProfileDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany
