@@ -20,6 +20,10 @@ const getPostAuthRoute = (user, fallbackRoute) => {
     return "/onboarding";
   }
 
+  if (user.role === "MENTOR") {
+    return "/mentor/dashboard";
+  }
+
   return fallbackRoute;
 };
 

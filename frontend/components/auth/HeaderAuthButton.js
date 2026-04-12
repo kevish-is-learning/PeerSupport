@@ -22,7 +22,12 @@ export default function HeaderAuthButton() {
   }
 
   if (user) {
-    const targetPath = user.role !== "ADMIN" && !user.onboardingCompleted ? "/onboarding" : "/profile";
+    const targetPath =
+      user.role !== "ADMIN" && !user.onboardingCompleted
+        ? "/onboarding"
+        : user.role === "MENTOR"
+          ? "/mentor/dashboard"
+          : "/profile";
 
     return (
       <Link

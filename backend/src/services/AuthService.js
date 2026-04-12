@@ -77,6 +77,10 @@ class AuthService {
       return '/onboarding';
     }
 
+    if (user.role === 'MENTOR') {
+      return '/mentor/dashboard';
+    }
+
     return '/profile';
   }
 

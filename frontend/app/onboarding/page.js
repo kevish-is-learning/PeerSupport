@@ -116,6 +116,14 @@ const buildMentorFormData = (form, files) => {
 
 const roleCardBaseClass = "rounded-2xl border-2 p-4 text-left transition-all sm:p-5";
 
+const getPostOnboardingRoute = (currentUser) => {
+  if (currentUser?.role === "MENTOR") {
+    return "/mentor/dashboard";
+  }
+
+  return "/profile";
+};
+
 export default function OnboardingPage() {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState(null);
@@ -148,12 +156,12 @@ export default function OnboardingPage() {
       }
 
       if (user.role === "ADMIN") {
-        router.replace("/profile");
+        router.replace(getPostOnboardingRoute(user));
         return;
       }
 
       if (user.onboardingCompleted) {
-        router.replace("/profile");
+        router.replace(getPostOnboardingRoute(user));
         return;
       }
 
@@ -629,7 +637,7 @@ export default function OnboardingPage() {
               ) : null}
 
               <Link
-                href="/profile"
+                href={selectedRole === "MENTOR" ? "/mentor/profile" : "/profile"}
                 className="rounded-xl border-2 border-black bg-[#ffc20f] px-4 py-2 text-sm font-bold text-black"
               >
                 Go to Profile
@@ -824,7 +832,7 @@ export default function OnboardingPage() {
               ) : null}
 
               <Link
-                href="/profile"
+                href="/mentor/profile"
                 className="rounded-xl border-2 border-black bg-[#ffc20f] px-4 py-2 text-sm font-bold text-black"
               >
                 Go to Profile
