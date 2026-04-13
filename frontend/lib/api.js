@@ -101,6 +101,18 @@ export const mentorProfileApi = {
   },
 };
 
+export const adminMentorApi = {
+  getWaitlist() {
+    return apiRequest('/admin/mentor-waitlist');
+  },
+  updateApproval(profileId, data) {
+    return apiRequest(`/admin/mentor-waitlist/${profileId}`, {
+      method: 'PATCH',
+      body: data,
+    });
+  },
+};
+
 export function resolveUploadUrl(filePath) {
   if (!filePath) {
     return "";

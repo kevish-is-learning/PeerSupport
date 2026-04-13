@@ -28,6 +28,10 @@ const getPostAuthRoute = (user, fallbackRoute) => {
     return "/mentee/dashboard";
   }
 
+  if (user.role === "ADMIN") {
+    return "/admin/dashboard";
+  }
+
   return fallbackRoute;
 };
 

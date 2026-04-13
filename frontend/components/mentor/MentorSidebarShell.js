@@ -41,7 +41,12 @@ export default function MentorSidebarShell({ children }) {
     }
 
     if (user.role !== "MENTOR") {
-      const targetPath = user.role === "MENTEE" ? "/mentee/dashboard" : "/profile";
+      const targetPath =
+        user.role === "MENTEE"
+          ? "/mentee/dashboard"
+          : user.role === "ADMIN"
+            ? "/admin/dashboard"
+            : "/profile";
       router.replace(targetPath);
       return;
     }

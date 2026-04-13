@@ -24,5 +24,9 @@ export const getWorkspaceRouteByRole = (role) => {
     return "/mentee/dashboard";
   }
 
+  if (role === "ADMIN") {
+    return "/admin/dashboard";
+  }
+
   return "/profile";
 };

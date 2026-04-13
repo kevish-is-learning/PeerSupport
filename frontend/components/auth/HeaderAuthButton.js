@@ -29,7 +29,9 @@ export default function HeaderAuthButton() {
           ? "/mentor/dashboard"
           : user.role === "MENTEE"
             ? "/mentee/dashboard"
-          : "/profile";
+          : user.role === "ADMIN"
+            ? "/admin/dashboard"
+            : "/profile";
 
     return (
       <Link

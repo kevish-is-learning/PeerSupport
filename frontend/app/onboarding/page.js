@@ -170,7 +170,12 @@ export default function OnboardingPage() {
         return;
       }
 
-      if (user.role === "ADMIN" || user.onboardingCompleted) {
+      if (user.role === "ADMIN") {
+        router.replace("/admin/dashboard");
+        return;
+      }
+
+      if (user.onboardingCompleted) {
         router.replace("/profile");
         return;
       }
