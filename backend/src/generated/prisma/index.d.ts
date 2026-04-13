@@ -2120,18 +2120,30 @@ export namespace Prisma {
 
   export type AggregateMenteeProfile = {
     _count: MenteeProfileCountAggregateOutputType | null
+    _avg: MenteeProfileAvgAggregateOutputType | null
+    _sum: MenteeProfileSumAggregateOutputType | null
     _min: MenteeProfileMinAggregateOutputType | null
     _max: MenteeProfileMaxAggregateOutputType | null
+  }
+
+  export type MenteeProfileAvgAggregateOutputType = {
+    otherMbaScore: number | null
+  }
+
+  export type MenteeProfileSumAggregateOutputType = {
+    otherMbaScore: number | null
   }
 
   export type MenteeProfileMinAggregateOutputType = {
     id: string | null
     userId: string | null
     dateOfBirth: Date | null
+    contactNumber: string | null
     education10: string | null
     education12: string | null
     bachelors: string | null
     masters: string | null
+    otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
     catHistory: string | null
@@ -2144,10 +2156,12 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     dateOfBirth: Date | null
+    contactNumber: string | null
     education10: string | null
     education12: string | null
     bachelors: string | null
     masters: string | null
+    otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
     catHistory: string | null
@@ -2160,10 +2174,12 @@ export namespace Prisma {
     id: number
     userId: number
     dateOfBirth: number
+    contactNumber: number
     education10: number
     education12: number
     bachelors: number
     masters: number
+    otherMbaScore: number
     workExperience: number
     certifications: number
     skillsets: number
@@ -2175,14 +2191,24 @@ export namespace Prisma {
   }
 
 
+  export type MenteeProfileAvgAggregateInputType = {
+    otherMbaScore?: true
+  }
+
+  export type MenteeProfileSumAggregateInputType = {
+    otherMbaScore?: true
+  }
+
   export type MenteeProfileMinAggregateInputType = {
     id?: true
     userId?: true
     dateOfBirth?: true
+    contactNumber?: true
     education10?: true
     education12?: true
     bachelors?: true
     masters?: true
+    otherMbaScore?: true
     workExperience?: true
     certifications?: true
     catHistory?: true
@@ -2195,10 +2221,12 @@ export namespace Prisma {
     id?: true
     userId?: true
     dateOfBirth?: true
+    contactNumber?: true
     education10?: true
     education12?: true
     bachelors?: true
     masters?: true
+    otherMbaScore?: true
     workExperience?: true
     certifications?: true
     catHistory?: true
@@ -2211,10 +2239,12 @@ export namespace Prisma {
     id?: true
     userId?: true
     dateOfBirth?: true
+    contactNumber?: true
     education10?: true
     education12?: true
     bachelors?: true
     masters?: true
+    otherMbaScore?: true
     workExperience?: true
     certifications?: true
     skillsets?: true
@@ -2263,6 +2293,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: MenteeProfileAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MenteeProfileSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: MenteeProfileMinAggregateInputType
@@ -2293,6 +2335,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: MenteeProfileCountAggregateInputType | true
+    _avg?: MenteeProfileAvgAggregateInputType
+    _sum?: MenteeProfileSumAggregateInputType
     _min?: MenteeProfileMinAggregateInputType
     _max?: MenteeProfileMaxAggregateInputType
   }
@@ -2301,10 +2345,12 @@ export namespace Prisma {
     id: string
     userId: string
     dateOfBirth: Date
+    contactNumber: string
     education10: string | null
     education12: string | null
     bachelors: string | null
     masters: string | null
+    otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
     skillsets: string[]
@@ -2313,6 +2359,8 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     _count: MenteeProfileCountAggregateOutputType | null
+    _avg: MenteeProfileAvgAggregateOutputType | null
+    _sum: MenteeProfileSumAggregateOutputType | null
     _min: MenteeProfileMinAggregateOutputType | null
     _max: MenteeProfileMaxAggregateOutputType | null
   }
@@ -2335,10 +2383,12 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     dateOfBirth?: boolean
+    contactNumber?: boolean
     education10?: boolean
     education12?: boolean
     bachelors?: boolean
     masters?: boolean
+    otherMbaScore?: boolean
     workExperience?: boolean
     certifications?: boolean
     skillsets?: boolean
@@ -2353,10 +2403,12 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     dateOfBirth?: boolean
+    contactNumber?: boolean
     education10?: boolean
     education12?: boolean
     bachelors?: boolean
     masters?: boolean
+    otherMbaScore?: boolean
     workExperience?: boolean
     certifications?: boolean
     skillsets?: boolean
@@ -2371,10 +2423,12 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     dateOfBirth?: boolean
+    contactNumber?: boolean
     education10?: boolean
     education12?: boolean
     bachelors?: boolean
     masters?: boolean
+    otherMbaScore?: boolean
     workExperience?: boolean
     certifications?: boolean
     skillsets?: boolean
@@ -2400,10 +2454,12 @@ export namespace Prisma {
       id: string
       userId: string
       dateOfBirth: Date
+      contactNumber: string
       education10: string | null
       education12: string | null
       bachelors: string | null
       masters: string | null
+      otherMbaScore: number | null
       workExperience: string | null
       certifications: string | null
       skillsets: string[]
@@ -2808,10 +2864,12 @@ export namespace Prisma {
     readonly id: FieldRef<"MenteeProfile", 'String'>
     readonly userId: FieldRef<"MenteeProfile", 'String'>
     readonly dateOfBirth: FieldRef<"MenteeProfile", 'DateTime'>
+    readonly contactNumber: FieldRef<"MenteeProfile", 'String'>
     readonly education10: FieldRef<"MenteeProfile", 'String'>
     readonly education12: FieldRef<"MenteeProfile", 'String'>
     readonly bachelors: FieldRef<"MenteeProfile", 'String'>
     readonly masters: FieldRef<"MenteeProfile", 'String'>
+    readonly otherMbaScore: FieldRef<"MenteeProfile", 'Float'>
     readonly workExperience: FieldRef<"MenteeProfile", 'String'>
     readonly certifications: FieldRef<"MenteeProfile", 'String'>
     readonly skillsets: FieldRef<"MenteeProfile", 'String[]'>
@@ -3165,6 +3223,7 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     linkedInUrl: string | null
+    contactNumber: string | null
     bio: string | null
     ugCollegeProfile: string | null
     pgProfile: string | null
@@ -3183,6 +3242,7 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     linkedInUrl: string | null
+    contactNumber: string | null
     bio: string | null
     ugCollegeProfile: string | null
     pgProfile: string | null
@@ -3201,6 +3261,7 @@ export namespace Prisma {
     id: number
     userId: number
     linkedInUrl: number
+    contactNumber: number
     bio: number
     expertiseTags: number
     ugCollegeProfile: number
@@ -3222,6 +3283,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     linkedInUrl?: true
+    contactNumber?: true
     bio?: true
     ugCollegeProfile?: true
     pgProfile?: true
@@ -3240,6 +3302,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     linkedInUrl?: true
+    contactNumber?: true
     bio?: true
     ugCollegeProfile?: true
     pgProfile?: true
@@ -3258,6 +3321,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     linkedInUrl?: true
+    contactNumber?: true
     bio?: true
     expertiseTags?: true
     ugCollegeProfile?: true
@@ -3350,6 +3414,7 @@ export namespace Prisma {
     id: string
     userId: string
     linkedInUrl: string
+    contactNumber: string
     bio: string
     expertiseTags: string[]
     ugCollegeProfile: string | null
@@ -3386,6 +3451,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     linkedInUrl?: boolean
+    contactNumber?: boolean
     bio?: boolean
     expertiseTags?: boolean
     ugCollegeProfile?: boolean
@@ -3406,6 +3472,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     linkedInUrl?: boolean
+    contactNumber?: boolean
     bio?: boolean
     expertiseTags?: boolean
     ugCollegeProfile?: boolean
@@ -3426,6 +3493,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     linkedInUrl?: boolean
+    contactNumber?: boolean
     bio?: boolean
     expertiseTags?: boolean
     ugCollegeProfile?: boolean
@@ -3457,6 +3525,7 @@ export namespace Prisma {
       id: string
       userId: string
       linkedInUrl: string
+      contactNumber: string
       bio: string
       expertiseTags: string[]
       ugCollegeProfile: string | null
@@ -3867,6 +3936,7 @@ export namespace Prisma {
     readonly id: FieldRef<"MentorProfile", 'String'>
     readonly userId: FieldRef<"MentorProfile", 'String'>
     readonly linkedInUrl: FieldRef<"MentorProfile", 'String'>
+    readonly contactNumber: FieldRef<"MentorProfile", 'String'>
     readonly bio: FieldRef<"MentorProfile", 'String'>
     readonly expertiseTags: FieldRef<"MentorProfile", 'String[]'>
     readonly ugCollegeProfile: FieldRef<"MentorProfile", 'String'>
@@ -4250,10 +4320,12 @@ export namespace Prisma {
     id: 'id',
     userId: 'userId',
     dateOfBirth: 'dateOfBirth',
+    contactNumber: 'contactNumber',
     education10: 'education10',
     education12: 'education12',
     bachelors: 'bachelors',
     masters: 'masters',
+    otherMbaScore: 'otherMbaScore',
     workExperience: 'workExperience',
     certifications: 'certifications',
     skillsets: 'skillsets',
@@ -4270,6 +4342,7 @@ export namespace Prisma {
     id: 'id',
     userId: 'userId',
     linkedInUrl: 'linkedInUrl',
+    contactNumber: 'contactNumber',
     bio: 'bio',
     expertiseTags: 'expertiseTags',
     ugCollegeProfile: 'ugCollegeProfile',
@@ -4363,6 +4436,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -4507,10 +4594,12 @@ export namespace Prisma {
     id?: StringFilter<"MenteeProfile"> | string
     userId?: StringFilter<"MenteeProfile"> | string
     dateOfBirth?: DateTimeFilter<"MenteeProfile"> | Date | string
+    contactNumber?: StringFilter<"MenteeProfile"> | string
     education10?: StringNullableFilter<"MenteeProfile"> | string | null
     education12?: StringNullableFilter<"MenteeProfile"> | string | null
     bachelors?: StringNullableFilter<"MenteeProfile"> | string | null
     masters?: StringNullableFilter<"MenteeProfile"> | string | null
+    otherMbaScore?: FloatNullableFilter<"MenteeProfile"> | number | null
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableFilter<"MenteeProfile"> | string | null
     skillsets?: StringNullableListFilter<"MenteeProfile">
@@ -4525,10 +4614,12 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     dateOfBirth?: SortOrder
+    contactNumber?: SortOrder
     education10?: SortOrderInput | SortOrder
     education12?: SortOrderInput | SortOrder
     bachelors?: SortOrderInput | SortOrder
     masters?: SortOrderInput | SortOrder
+    otherMbaScore?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     skillsets?: SortOrder
@@ -4546,10 +4637,12 @@ export namespace Prisma {
     OR?: MenteeProfileWhereInput[]
     NOT?: MenteeProfileWhereInput | MenteeProfileWhereInput[]
     dateOfBirth?: DateTimeFilter<"MenteeProfile"> | Date | string
+    contactNumber?: StringFilter<"MenteeProfile"> | string
     education10?: StringNullableFilter<"MenteeProfile"> | string | null
     education12?: StringNullableFilter<"MenteeProfile"> | string | null
     bachelors?: StringNullableFilter<"MenteeProfile"> | string | null
     masters?: StringNullableFilter<"MenteeProfile"> | string | null
+    otherMbaScore?: FloatNullableFilter<"MenteeProfile"> | number | null
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableFilter<"MenteeProfile"> | string | null
     skillsets?: StringNullableListFilter<"MenteeProfile">
@@ -4564,10 +4657,12 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     dateOfBirth?: SortOrder
+    contactNumber?: SortOrder
     education10?: SortOrderInput | SortOrder
     education12?: SortOrderInput | SortOrder
     bachelors?: SortOrderInput | SortOrder
     masters?: SortOrderInput | SortOrder
+    otherMbaScore?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     skillsets?: SortOrder
@@ -4576,8 +4671,10 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: MenteeProfileCountOrderByAggregateInput
+    _avg?: MenteeProfileAvgOrderByAggregateInput
     _max?: MenteeProfileMaxOrderByAggregateInput
     _min?: MenteeProfileMinOrderByAggregateInput
+    _sum?: MenteeProfileSumOrderByAggregateInput
   }
 
   export type MenteeProfileScalarWhereWithAggregatesInput = {
@@ -4587,10 +4684,12 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"MenteeProfile"> | string
     userId?: StringWithAggregatesFilter<"MenteeProfile"> | string
     dateOfBirth?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
+    contactNumber?: StringWithAggregatesFilter<"MenteeProfile"> | string
     education10?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     education12?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     bachelors?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     masters?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    otherMbaScore?: FloatNullableWithAggregatesFilter<"MenteeProfile"> | number | null
     workExperience?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     skillsets?: StringNullableListFilter<"MenteeProfile">
@@ -4607,6 +4706,7 @@ export namespace Prisma {
     id?: StringFilter<"MentorProfile"> | string
     userId?: StringFilter<"MentorProfile"> | string
     linkedInUrl?: StringFilter<"MentorProfile"> | string
+    contactNumber?: StringFilter<"MentorProfile"> | string
     bio?: StringFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
     ugCollegeProfile?: StringNullableFilter<"MentorProfile"> | string | null
@@ -4627,6 +4727,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     linkedInUrl?: SortOrder
+    contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
     ugCollegeProfile?: SortOrderInput | SortOrder
@@ -4650,6 +4751,7 @@ export namespace Prisma {
     OR?: MentorProfileWhereInput[]
     NOT?: MentorProfileWhereInput | MentorProfileWhereInput[]
     linkedInUrl?: StringFilter<"MentorProfile"> | string
+    contactNumber?: StringFilter<"MentorProfile"> | string
     bio?: StringFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
     ugCollegeProfile?: StringNullableFilter<"MentorProfile"> | string | null
@@ -4670,6 +4772,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     linkedInUrl?: SortOrder
+    contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
     ugCollegeProfile?: SortOrderInput | SortOrder
@@ -4695,6 +4798,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"MentorProfile"> | string
     userId?: StringWithAggregatesFilter<"MentorProfile"> | string
     linkedInUrl?: StringWithAggregatesFilter<"MentorProfile"> | string
+    contactNumber?: StringWithAggregatesFilter<"MentorProfile"> | string
     bio?: StringWithAggregatesFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
     ugCollegeProfile?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
@@ -4840,10 +4944,12 @@ export namespace Prisma {
   export type MenteeProfileCreateInput = {
     id?: string
     dateOfBirth: Date | string
+    contactNumber: string
     education10?: string | null
     education12?: string | null
     bachelors?: string | null
     masters?: string | null
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     skillsets?: MenteeProfileCreateskillsetsInput | string[]
@@ -4858,10 +4964,12 @@ export namespace Prisma {
     id?: string
     userId: string
     dateOfBirth: Date | string
+    contactNumber: string
     education10?: string | null
     education12?: string | null
     bachelors?: string | null
     masters?: string | null
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     skillsets?: MenteeProfileCreateskillsetsInput | string[]
@@ -4874,10 +4982,12 @@ export namespace Prisma {
   export type MenteeProfileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     education10?: NullableStringFieldUpdateOperationsInput | string | null
     education12?: NullableStringFieldUpdateOperationsInput | string | null
     bachelors?: NullableStringFieldUpdateOperationsInput | string | null
     masters?: NullableStringFieldUpdateOperationsInput | string | null
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     skillsets?: MenteeProfileUpdateskillsetsInput | string[]
@@ -4892,10 +5002,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     education10?: NullableStringFieldUpdateOperationsInput | string | null
     education12?: NullableStringFieldUpdateOperationsInput | string | null
     bachelors?: NullableStringFieldUpdateOperationsInput | string | null
     masters?: NullableStringFieldUpdateOperationsInput | string | null
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     skillsets?: MenteeProfileUpdateskillsetsInput | string[]
@@ -4909,10 +5021,12 @@ export namespace Prisma {
     id?: string
     userId: string
     dateOfBirth: Date | string
+    contactNumber: string
     education10?: string | null
     education12?: string | null
     bachelors?: string | null
     masters?: string | null
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     skillsets?: MenteeProfileCreateskillsetsInput | string[]
@@ -4925,10 +5039,12 @@ export namespace Prisma {
   export type MenteeProfileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     education10?: NullableStringFieldUpdateOperationsInput | string | null
     education12?: NullableStringFieldUpdateOperationsInput | string | null
     bachelors?: NullableStringFieldUpdateOperationsInput | string | null
     masters?: NullableStringFieldUpdateOperationsInput | string | null
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     skillsets?: MenteeProfileUpdateskillsetsInput | string[]
@@ -4942,10 +5058,12 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     education10?: NullableStringFieldUpdateOperationsInput | string | null
     education12?: NullableStringFieldUpdateOperationsInput | string | null
     bachelors?: NullableStringFieldUpdateOperationsInput | string | null
     masters?: NullableStringFieldUpdateOperationsInput | string | null
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     skillsets?: MenteeProfileUpdateskillsetsInput | string[]
@@ -4958,6 +5076,7 @@ export namespace Prisma {
   export type MentorProfileCreateInput = {
     id?: string
     linkedInUrl: string
+    contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
     ugCollegeProfile?: string | null
@@ -4978,6 +5097,7 @@ export namespace Prisma {
     id?: string
     userId: string
     linkedInUrl: string
+    contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
     ugCollegeProfile?: string | null
@@ -4996,6 +5116,7 @@ export namespace Prisma {
   export type MentorProfileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     linkedInUrl?: StringFieldUpdateOperationsInput | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5016,6 +5137,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     linkedInUrl?: StringFieldUpdateOperationsInput | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5035,6 +5157,7 @@ export namespace Prisma {
     id?: string
     userId: string
     linkedInUrl: string
+    contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
     ugCollegeProfile?: string | null
@@ -5053,6 +5176,7 @@ export namespace Prisma {
   export type MentorProfileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     linkedInUrl?: StringFieldUpdateOperationsInput | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5072,6 +5196,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     linkedInUrl?: StringFieldUpdateOperationsInput | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5299,6 +5424,17 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type StringNullableListFilter<$PrismaModel = never> = {
     equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     has?: string | StringFieldRefInput<$PrismaModel> | null
@@ -5316,10 +5452,12 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     dateOfBirth?: SortOrder
+    contactNumber?: SortOrder
     education10?: SortOrder
     education12?: SortOrder
     bachelors?: SortOrder
     masters?: SortOrder
+    otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
     skillsets?: SortOrder
@@ -5329,14 +5467,20 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type MenteeProfileAvgOrderByAggregateInput = {
+    otherMbaScore?: SortOrder
+  }
+
   export type MenteeProfileMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
     dateOfBirth?: SortOrder
+    contactNumber?: SortOrder
     education10?: SortOrder
     education12?: SortOrder
     bachelors?: SortOrder
     masters?: SortOrder
+    otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
     catHistory?: SortOrder
@@ -5349,16 +5493,38 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     dateOfBirth?: SortOrder
+    contactNumber?: SortOrder
     education10?: SortOrder
     education12?: SortOrder
     bachelors?: SortOrder
     masters?: SortOrder
+    otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
     catHistory?: SortOrder
     resumeUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type MenteeProfileSumOrderByAggregateInput = {
+    otherMbaScore?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type EnumMentorApprovalStatusFilter<$PrismaModel = never> = {
@@ -5372,6 +5538,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     linkedInUrl?: SortOrder
+    contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
     ugCollegeProfile?: SortOrder
@@ -5391,6 +5558,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     linkedInUrl?: SortOrder
+    contactNumber?: SortOrder
     bio?: SortOrder
     ugCollegeProfile?: SortOrder
     pgProfile?: SortOrder
@@ -5409,6 +5577,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     linkedInUrl?: SortOrder
+    contactNumber?: SortOrder
     bio?: SortOrder
     ugCollegeProfile?: SortOrder
     pgProfile?: SortOrder
@@ -5529,6 +5698,14 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutMenteeProfileInput, UserUncheckedCreateWithoutMenteeProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutMenteeProfileInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type MenteeProfileUpdateskillsetsInput = {
@@ -5735,6 +5912,33 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedEnumMentorApprovalStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.MentorApprovalStatus | EnumMentorApprovalStatusFieldRefInput<$PrismaModel>
     in?: $Enums.MentorApprovalStatus[] | ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel>
@@ -5755,10 +5959,12 @@ export namespace Prisma {
   export type MenteeProfileCreateWithoutUserInput = {
     id?: string
     dateOfBirth: Date | string
+    contactNumber: string
     education10?: string | null
     education12?: string | null
     bachelors?: string | null
     masters?: string | null
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     skillsets?: MenteeProfileCreateskillsetsInput | string[]
@@ -5771,10 +5977,12 @@ export namespace Prisma {
   export type MenteeProfileUncheckedCreateWithoutUserInput = {
     id?: string
     dateOfBirth: Date | string
+    contactNumber: string
     education10?: string | null
     education12?: string | null
     bachelors?: string | null
     masters?: string | null
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     skillsets?: MenteeProfileCreateskillsetsInput | string[]
@@ -5792,6 +6000,7 @@ export namespace Prisma {
   export type MentorProfileCreateWithoutUserInput = {
     id?: string
     linkedInUrl: string
+    contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
     ugCollegeProfile?: string | null
@@ -5810,6 +6019,7 @@ export namespace Prisma {
   export type MentorProfileUncheckedCreateWithoutUserInput = {
     id?: string
     linkedInUrl: string
+    contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
     ugCollegeProfile?: string | null
@@ -5844,10 +6054,12 @@ export namespace Prisma {
   export type MenteeProfileUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     education10?: NullableStringFieldUpdateOperationsInput | string | null
     education12?: NullableStringFieldUpdateOperationsInput | string | null
     bachelors?: NullableStringFieldUpdateOperationsInput | string | null
     masters?: NullableStringFieldUpdateOperationsInput | string | null
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     skillsets?: MenteeProfileUpdateskillsetsInput | string[]
@@ -5860,10 +6072,12 @@ export namespace Prisma {
   export type MenteeProfileUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     education10?: NullableStringFieldUpdateOperationsInput | string | null
     education12?: NullableStringFieldUpdateOperationsInput | string | null
     bachelors?: NullableStringFieldUpdateOperationsInput | string | null
     masters?: NullableStringFieldUpdateOperationsInput | string | null
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     skillsets?: MenteeProfileUpdateskillsetsInput | string[]
@@ -5887,6 +6101,7 @@ export namespace Prisma {
   export type MentorProfileUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     linkedInUrl?: StringFieldUpdateOperationsInput | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5905,6 +6120,7 @@ export namespace Prisma {
   export type MentorProfileUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     linkedInUrl?: StringFieldUpdateOperationsInput | string
+    contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null

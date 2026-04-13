@@ -42,6 +42,7 @@ const mapProfile = (profile) => ({
   name: profile.user.name || null,
   email: profile.user.email,
   linkedInUrl: profile.linkedInUrl,
+  contactNumber: profile.contactNumber,
   bio: profile.bio,
   expertiseTags: profile.expertiseTags,
   ugCollegeProfile: profile.ugCollegeProfile,

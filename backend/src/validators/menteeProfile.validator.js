@@ -19,36 +19,141 @@ const dateOfBirthSchema = z
   })
   .refine((value) => value <= new Date(), 'Date of birth cannot be in the future');
 
-const skillsetsSchema = z
-  .array(z.string().trim().min(1, 'Skill cannot be empty'))
-  .max(100, 'Too many skills provided')
+const contactNumberSchema = z
+  .string({ required_error: 'Contact number is required' })
+  .trim()
+  .min(7, 'Contact number must be at least 7 characters long')
+  .max(20, 'Contact number must be at most 20 characters long')
+  .refine((value) => /^[+0-9()\-\s]+$/.test(value), 'Contact number can only include digits and +()- characters');
+
+const otherMbaScoreSchema = z.preprocess(
+  (value) => {
+    if (typeof value === 'undefined' || value === null || value === '') {
+      return undefined;
+    }
+
+    const parsed = Number(value);
+    return Number.isNaN(parsed) ? value : parsed;
+  },
+  z
+    .number({ invalid_type_error: 'Other MBA score must be a number' })
+    .min(0, 'Other MBA cumulative score must be >= 0')
+    .max(100, 'Other MBA cumulative score must be <= 100')
+    .optional()
+);
+
+const optionalResumePathSchema = z
+  .union([z.string().trim(), z.null()])
   .optional()
-  .transform((value) => value ?? []);
+  .refine(
+    (value) => {
+      if (typeof value === 'undefined' || value === null) {
+        return true;
+      }
+
+      return value.startsWith('/uploads/') || /^https?:\/\//i.test(value);
+    },
+    'Resume must be a valid URL or uploaded file path'
+  );
+
+const skillsetsSchema = z.preprocess(
+  (value) => {
+    if (typeof value === 'undefined' || value === null || value === '') {
+      return [];
+    }
+
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed.length) {
+        return [];
+      }
+
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      } catch (_error) {
+        // Fall back to comma-separated parsing.
+      }
+
+      return trimmed.split(',').map((item) => item.trim());
+    }
+
+    return value;
+  },
+  z.array(z.string().trim().min(1, 'Skill cannot be empty')).max(100, 'Too many skills provided')
+);
+
+const updateSkillsetsSchema = z.preprocess(
+  (value) => {
+    if (typeof value === 'undefined') {
+      return undefined;
+    }
+
+    if (value === null || value === '') {
+      return [];
+    }
+
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed.length) {
+        return [];
+      }
+
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      } catch (_error) {
+        // Fall back to comma-separated parsing.
+      }
+
+      return trimmed.split(',').map((item) => item.trim());
+    }
+
+    return value;
+  },
+  z.array(z.string().trim().min(1, 'Skill cannot be empty')).max(100, 'Too many skills provided').optional()
+);
 
 export const createMenteeProfileSchema = z.object({
   dateOfBirth: dateOfBirthSchema,
+  contactNumber: contactNumberSchema,
   education10: normalizeOptionalText,
   education12: normalizeOptionalText,
   bachelors: normalizeOptionalText,
   masters: normalizeOptionalText,
+  otherMbaScore: otherMbaScoreSchema,
   workExperience: normalizeOptionalText,
   certifications: normalizeOptionalText,
   skillsets: skillsetsSchema,
   catHistory: normalizeOptionalText,
-  resumeUrl: normalizeOptionalText,
+  resumeUrl: optionalResumePathSchema,
 });
 
 export const updateMenteeProfileSchema = z.object({
   dateOfBirth: dateOfBirthSchema.optional(),
+  contactNumber: contactNumberSchema.optional(),
   education10: normalizeOptionalText,
   education12: normalizeOptionalText,
   bachelors: normalizeOptionalText,
   masters: normalizeOptionalText,
+  otherMbaScore: otherMbaScoreSchema,
   workExperience: normalizeOptionalText,
   certifications: normalizeOptionalText,
-  skillsets: z.array(z.string().trim().min(1, 'Skill cannot be empty')).max(100, 'Too many skills provided').optional(),
+  skillsets: updateSkillsetsSchema,
   catHistory: normalizeOptionalText,
-  resumeUrl: normalizeOptionalText,
+  resumeUrl: optionalResumePathSchema,
 });
 
 export default {

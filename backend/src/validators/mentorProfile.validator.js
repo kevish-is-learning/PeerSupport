@@ -17,6 +17,13 @@ const linkedInUrlSchema = z
   .url('LinkedIn URL must be a valid URL')
   .refine((value) => value.includes('linkedin.com'), 'LinkedIn URL must be from linkedin.com');
 
+const contactNumberSchema = z
+  .string({ required_error: 'Contact number is required' })
+  .trim()
+  .min(7, 'Contact number must be at least 7 characters long')
+  .max(20, 'Contact number must be at most 20 characters long')
+  .refine((value) => /^[+0-9()\-\s]+$/.test(value), 'Contact number can only include digits and +()- characters');
+
 const bioSchema = z
   .string({ required_error: 'Bio is required' })
   .trim()
@@ -70,6 +77,7 @@ const optionalUrlSchema = z
 
 export const createMentorProfileSchema = z.object({
   linkedInUrl: linkedInUrlSchema,
+  contactNumber: contactNumberSchema,
   bio: bioSchema,
   expertiseTags: expertiseTagsSchema,
   ugCollegeProfile: normalizeOptionalText,

@@ -95,7 +95,7 @@ export default function MentorSidebarShell({ children }) {
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_20%_10%,#1f2432_0%,#0b0d12_42%,#06080d_100%)] p-3 text-[#f5f6f8] sm:p-6">
-      <div className="mx-auto grid w-full max-w-7xl gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-6">
+      <div className="mx-auto grid w-full gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-6">
         <aside className="rounded-[1.75rem] border border-white/35 bg-[#11141c] p-4 shadow-[0_14px_45px_rgba(0,0,0,0.45)] sm:p-5 lg:min-h-[calc(100vh-3rem)] lg:sticky lg:top-6">
           <div className="flex items-center justify-between border-b border-white/15 pb-4">
             <div>

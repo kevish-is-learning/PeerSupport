@@ -10,10 +10,12 @@ import { menteeProfileApi, mentorProfileApi, resolveUploadUrl } from "../../lib/
 
 const emptyMenteeForm = {
   dateOfBirth: "",
+  contactNumber: "",
   education10: "",
   education12: "",
   bachelors: "",
   masters: "",
+  otherMbaScore: "",
   workExperience: "",
   certifications: "",
   skillsets: "",
@@ -23,6 +25,7 @@ const emptyMenteeForm = {
 
 const emptyMentorForm = {
   linkedInUrl: "",
+  contactNumber: "",
   bio: "",
   expertiseTags: "",
   ugCollegeProfile: "",
@@ -41,10 +44,13 @@ const emptyMentorFiles = {
 
 const mapMenteeProfileToForm = (profile) => ({
   dateOfBirth: profile?.dateOfBirth || "",
+  contactNumber: profile?.contactNumber || "",
   education10: profile?.education10 || "",
   education12: profile?.education12 || "",
   bachelors: profile?.bachelors || "",
   masters: profile?.masters || "",
+  otherMbaScore:
+    typeof profile?.otherMbaScore === "number" ? String(profile.otherMbaScore) : "",
   workExperience: profile?.workExperience || "",
   certifications: profile?.certifications || "",
   skillsets: profile?.skillsets?.join(", ") || "",
@@ -54,6 +60,7 @@ const mapMenteeProfileToForm = (profile) => ({
 
 const mapMentorProfileToForm = (profile) => ({
   linkedInUrl: profile?.linkedInUrl || "",
+  contactNumber: profile?.contactNumber || "",
   bio: profile?.bio || "",
   expertiseTags: profile?.expertiseTags?.join(", ") || "",
   ugCollegeProfile: profile?.ugCollegeProfile || "",
@@ -65,26 +72,41 @@ const mapMentorProfileToForm = (profile) => ({
   isVerified: Boolean(profile?.isVerified),
 });
 
-const buildMenteePayload = (form) => ({
-  dateOfBirth: form.dateOfBirth,
-  education10: form.education10,
-  education12: form.education12,
-  bachelors: form.bachelors,
-  masters: form.masters,
-  workExperience: form.workExperience,
-  certifications: form.certifications,
-  skillsets: form.skillsets
-    .split(/[,\n]/)
-    .map((item) => item.trim())
-    .filter(Boolean),
-  catHistory: form.catHistory,
-  resumeUrl: form.resumeUrl,
-});
+const buildMenteeFormData = (form, resumeFile) => {
+  const formData = new FormData();
+
+  formData.append("dateOfBirth", form.dateOfBirth);
+  formData.append("contactNumber", form.contactNumber);
+  formData.append("education10", form.education10);
+  formData.append("education12", form.education12);
+  formData.append("bachelors", form.bachelors);
+  formData.append("masters", form.masters);
+  formData.append("otherMbaScore", form.otherMbaScore);
+  formData.append("workExperience", form.workExperience);
+  formData.append("certifications", form.certifications);
+  formData.append(
+    "skillsets",
+    JSON.stringify(
+      form.skillsets
+        .split(/[,\n]/)
+        .map((item) => item.trim())
+        .filter(Boolean)
+    )
+  );
+  formData.append("catHistory", form.catHistory);
+
+  if (resumeFile) {
+    formData.append("resume", resumeFile);
+  }
+
+  return formData;
+};
 
 const buildMentorFormData = (form, files) => {
   const formData = new FormData();
 
   formData.append("linkedInUrl", form.linkedInUrl);
+  formData.append("contactNumber", form.contactNumber);
   formData.append("bio", form.bio);
 
   const tags = form.expertiseTags
@@ -124,6 +146,7 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
 
   const [menteeForm, setMenteeForm] = useState(emptyMenteeForm);
+  const [menteeResumeFile, setMenteeResumeFile] = useState(null);
   const [mentorForm, setMentorForm] = useState(emptyMentorForm);
   const [mentorFiles, setMentorFiles] = useState(emptyMentorFiles);
   const [mentorApprovalStatus, setMentorApprovalStatus] = useState(null);
@@ -159,6 +182,7 @@ export default function ProfilePage() {
         if (user.role === "MENTEE") {
           const result = await menteeProfileApi.getMine();
           setMenteeForm(mapMenteeProfileToForm(result?.data?.profile));
+          setMenteeResumeFile(null);
         }
 
         if (user.role === "MENTOR") {
@@ -220,8 +244,9 @@ export default function ProfilePage() {
     setError("");
 
     try {
-      const result = await menteeProfileApi.update(buildMenteePayload(menteeForm));
+      const result = await menteeProfileApi.update(buildMenteeFormData(menteeForm, menteeResumeFile));
       setMenteeForm(mapMenteeProfileToForm(result?.data?.profile));
+      setMenteeResumeFile(null);
       await fetchCurrentUser();
       toast.success(result?.message || "Mentee profile updated successfully");
     } catch (apiError) {
@@ -317,6 +342,33 @@ export default function ProfilePage() {
                     className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                   />
                 </div>
+                <div>
+                  <label htmlFor="contactNumber" className="mb-1 block text-sm font-semibold">Contact Number *</label>
+                  <input
+                    id="contactNumber"
+                    name="contactNumber"
+                    value={menteeForm.contactNumber}
+                    onChange={onMenteeFieldChange}
+                    placeholder="Contact number"
+                    required
+                    className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="otherMbaScore" className="mb-1 block text-sm font-semibold">Other MBA Score (Cumulative)</label>
+                  <input
+                    id="otherMbaScore"
+                    name="otherMbaScore"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    value={menteeForm.otherMbaScore}
+                    onChange={onMenteeFieldChange}
+                    placeholder="e.g. 76.45"
+                    className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                  />
+                </div>
                 <input
                   name="education10"
                   value={menteeForm.education10}
@@ -379,12 +431,22 @@ export default function ProfilePage() {
                 className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
               />
               <input
-                name="resumeUrl"
-                value={menteeForm.resumeUrl}
-                onChange={onMenteeFieldChange}
-                placeholder="Resume URL"
-                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                name="resume"
+                type="file"
+                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                onChange={(event) => setMenteeResumeFile(event.target.files?.[0] || null)}
+                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm"
               />
+              {menteeForm.resumeUrl ? (
+                <a
+                  href={resolveUploadUrl(menteeForm.resumeUrl)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 inline-block text-sm font-semibold text-[#5f6cf3] underline"
+                >
+                  View uploaded resume
+                </a>
+              ) : null}
             </section>
 
             <div className="flex flex-wrap gap-3">
@@ -412,6 +474,18 @@ export default function ProfilePage() {
                     type="url"
                     value={mentorForm.linkedInUrl}
                     onChange={onMentorFieldChange}
+                    required
+                    className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="contactNumber" className="mb-1 block text-sm font-semibold">Contact Number *</label>
+                  <input
+                    id="contactNumber"
+                    name="contactNumber"
+                    value={mentorForm.contactNumber}
+                    onChange={onMentorFieldChange}
+                    placeholder="Contact number"
                     required
                     className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                   />

@@ -29,7 +29,10 @@ class MenteeProfileController {
 
   async createMyProfile(req, res) {
     try {
-      const profile = await menteeProfileService.create(req.user.id, req.body);
+      const profile = await menteeProfileService.create(req.user.id, {
+        ...req.body,
+        ...req.uploadedFiles,
+      });
       return res.status(201).json(new ApiResponse(201, 'Mentee profile created successfully', { profile }));
     } catch (error) {
       const statusCode = getStatusCode(error);
@@ -42,7 +45,10 @@ class MenteeProfileController {
 
   async updateMyProfile(req, res) {
     try {
-      const profile = await menteeProfileService.update(req.user.id, req.body);
+      const profile = await menteeProfileService.update(req.user.id, {
+        ...req.body,
+        ...req.uploadedFiles,
+      });
       return res.status(200).json(new ApiResponse(200, 'Mentee profile updated successfully', { profile }));
     } catch (error) {
       const statusCode = getStatusCode(error);

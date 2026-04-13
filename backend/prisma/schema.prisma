@@ -46,10 +46,12 @@ model MenteeProfile {
   id             String   @id @default(uuid())
   userId         String   @unique
   dateOfBirth    DateTime @db.Date
+  contactNumber  String
   education10    String?
   education12    String?
   bachelors      String?
   masters        String?
+  otherMbaScore  Float?
   workExperience String?
   certifications String?
   skillsets      String[] @default([])
@@ -67,6 +69,7 @@ model MentorProfile {
   id               String               @id @default(uuid())
   userId           String               @unique
   linkedInUrl      String
+  contactNumber    String
   bio              String
   expertiseTags    String[]
   ugCollegeProfile String?

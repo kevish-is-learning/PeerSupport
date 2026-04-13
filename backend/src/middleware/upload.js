@@ -15,7 +15,16 @@ const normalizePublicPath = (absoluteFilePath) => {
 
 const storage = multer.diskStorage({
   destination: (_req, file, callback) => {
-    const folderName = file.fieldname === 'profilePhoto' ? 'mentor-avatars' : 'mentor-documents';
+    let folderName = 'mentor-documents';
+
+    if (file.fieldname === 'profilePhoto') {
+      folderName = 'mentor-avatars';
+    }
+
+    if (file.fieldname === 'resume') {
+      folderName = 'mentee-resumes';
+    }
+
     const destinationDir = path.join(uploadsRoot, folderName);
     ensureDir(destinationDir);
     callback(null, destinationDir);
@@ -27,29 +36,42 @@ const storage = multer.diskStorage({
   },
 });
 
-const allowedMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const createUploader = (allowedMimeTypes, errorMessage) =>
+  multer({
+    storage,
+    fileFilter: (_req, file, callback) => {
+      if (!allowedMimeTypes.has(file.mimetype)) {
+        callback(new Error(errorMessage));
+        return;
+      }
 
-const fileFilter = (_req, file, callback) => {
-  if (!allowedMimeTypes.has(file.mimetype)) {
-    callback(new Error('Only JPG, PNG, and WEBP image uploads are allowed'));
-    return;
-  }
+      callback(null, true);
+    },
+    limits: {
+      fileSize: 10 * 1024 * 1024,
+    },
+  });
 
-  callback(null, true);
-};
+const mentorUpload = createUploader(
+  new Set(['image/jpeg', 'image/png', 'image/webp']),
+  'Only JPG, PNG, and WEBP image uploads are allowed'
+);
 
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-  },
-});
+const menteeUpload = createUploader(
+  new Set([
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  ]),
+  'Only PDF, DOC, and DOCX files are allowed for resume upload'
+);
 
-const mentorUploadFieldsHandler = upload.fields([
+const mentorUploadFieldsHandler = mentorUpload.fields([
   { name: 'profilePhoto', maxCount: 1 },
   { name: 'collegeDocument', maxCount: 1 },
 ]);
+
+const menteeUploadFieldsHandler = menteeUpload.fields([{ name: 'resume', maxCount: 1 }]);
 
 const mentorProfileUpload = (req, res, next) => {
   mentorUploadFieldsHandler(req, res, (error) => {
@@ -72,4 +94,23 @@ const mentorProfileUpload = (req, res, next) => {
   });
 };
 
-export { mentorProfileUpload };
+const menteeProfileUpload = (req, res, next) => {
+  menteeUploadFieldsHandler(req, res, (error) => {
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message || 'File upload failed',
+      });
+    }
+
+    const resume = req.files?.resume?.[0];
+
+    req.uploadedFiles = {
+      resumeUrl: resume ? normalizePublicPath(resume.path) : undefined,
+    };
+
+    next();
+  });
+};
+
+export { mentorProfileUpload, menteeProfileUpload };
