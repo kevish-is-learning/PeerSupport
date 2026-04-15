@@ -4,7 +4,10 @@ const serviceCards = [1, 2, 3];
 
 export default function CuratedServicesSection() {
   return (
-    <section className="mx-auto w-full px-4 pb-24 pt-6 text-center sm:px-6 lg:px-8">
+    <section
+      id="services"
+      className="mx-auto w-full scroll-mt-24 px-4 pb-24 pt-6 text-center sm:px-6 lg:px-8"
+    >
       <h2 className="text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl md:text-5xl">
         Get mentors from colleges you dream of
       </h2>

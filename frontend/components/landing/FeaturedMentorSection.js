@@ -14,7 +14,10 @@ const mentor = {
 
 export default function FeaturedMentorSection() {
   return (
-    <section className="mx-auto w-full px-4 pb-16 sm:px-6 lg:px-8 mt-20">
+    <section
+      id="how-it-works"
+      className="mx-auto mt-20 w-full scroll-mt-24 px-4 pb-16 sm:px-6 lg:px-8"
+    >
       <div className="relative rounded-4xl rounded-tl-none bg-[#FFB705] p-5 shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-6 lg:rounded-[2.5rem] lg:rounded-tl-none lg:p-8">
         <div className="absolute -top-17 left-0 rounded-tl-4xl rounded-tr-4xl bg-[#F3AE04] px-6 py-4 text-2xl font-medium tracking-[-0.02em] sm:text-3xl">
           Learn from the BEST !

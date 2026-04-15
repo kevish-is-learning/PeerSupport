@@ -4,6 +4,11 @@ import { useEffect } from "react";
 import Link from "next/link";
 import useAuthStore from "../../store/useAuthStore";
 
+const outlineBtn =
+  "inline-flex h-11 items-center justify-center rounded-full border border-black bg-white px-5 text-sm font-bold text-[#0d0d0f] transition-colors hover:bg-neutral-50";
+const exploreBtn =
+  "inline-flex h-11 items-center justify-center rounded-full border-2 border-black bg-[#2563eb] px-5 text-sm font-bold text-white shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_#1a1a1a]";
+
 export default function HeaderAuthButton() {
   const { user, hasCheckedSession, fetchCurrentUser } = useAuthStore();
 
@@ -13,11 +18,18 @@ export default function HeaderAuthButton() {
     }
   }, [hasCheckedSession, fetchCurrentUser]);
 
+  const exploreMentors = (
+    <Link href="/mentee/find-mentors" className={exploreBtn}>
+      Explore Mentors
+    </Link>
+  );
+
   if (!hasCheckedSession) {
     return (
-      <span className="inline-flex h-11 min-w-37.5 items-center justify-center rounded-full border-2 border-black bg-[#f3f0ee] px-5 text-sm font-semibold">
-        Loading...
-      </span>
+      <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+        <span className="inline-flex h-11 min-w-[5.5rem] animate-pulse rounded-full border border-black/20 bg-white/80" />
+        <span className="inline-flex h-11 min-w-[8.5rem] animate-pulse rounded-full border-2 border-black/20 bg-[#2563eb]/40" />
+      </div>
     );
   }
 
@@ -29,26 +41,26 @@ export default function HeaderAuthButton() {
           ? "/mentor/dashboard"
           : user.role === "MENTEE"
             ? "/mentee/dashboard"
-          : user.role === "ADMIN"
-            ? "/admin/dashboard"
-            : "/profile";
+            : user.role === "ADMIN"
+              ? "/admin/dashboard"
+              : "/profile";
 
     return (
-      <Link
-        href={targetPath}
-        className="inline-flex h-11 min-w-37.5 items-center justify-center rounded-full border-2 border-black bg-[#c6f6d5] px-5 text-sm font-semibold shadow-[3px_3px_0_rgba(0,0,0,1)] transition-all hover:translate-y-0.5 hover:shadow-[0px_0px_0_rgba(0,0,0,1)]"
-      >
-        {user.name || user.email}
-      </Link>
+      <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+        <Link href={targetPath} className={outlineBtn}>
+          {user.name || user.email}
+        </Link>
+        {exploreMentors}
+      </div>
     );
   }
 
   return (
-    <Link
-      href="/auth?mode=login"
-      className="inline-flex h-11 min-w-37.5 items-center justify-center rounded-full border-2 border-black bg-[#5f6cf3] px-5 text-sm font-semibold text-[#f8f8ff] shadow-[3px_3px_0_rgba(0,0,0,1)] transition-all hover:translate-y-0.5 hover:shadow-[0px_0px_0_rgba(0,0,0,1)]"
-    >
-      Login / Sign up
-    </Link>
+    <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+      <Link href="/auth?mode=login" className={outlineBtn}>
+        Sign In
+      </Link>
+      {exploreMentors}
+    </div>
   );
 }

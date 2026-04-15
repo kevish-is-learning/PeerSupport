@@ -4,7 +4,7 @@ import CuratedServicesSection from "../components/landing/CuratedServicesSection
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#FFFFFF] bg-grid-paper text-[#0d0d0f]">
+    <main id="about" className="min-h-screen scroll-mt-24 bg-[#FFFFFF] bg-grid-paper text-[#0d0d0f]">
       <HeroSection />
       <FeaturedMentorSection />
       <CuratedServicesSection />
