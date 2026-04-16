@@ -6,7 +6,7 @@ import FooterSection from "../components/landing/FooterSection";
 
 export default function HomePage() {
   return (
-    <main id="about" className="min-h-screen scroll-mt-24 bg-[#FFFFFF] bg-grid-paper text-[#0d0d0f]">
+    <main id="about" className="min-h-screen scroll-mt-24 bg-[#FFFFFF]  text-[#0d0d0f]">
       <HeroSection />
       <FeaturedMentorSection />
       <CuratedServicesSection />

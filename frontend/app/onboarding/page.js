@@ -346,7 +346,7 @@ export default function OnboardingPage() {
 
   if (!hasCheckedSession || isLoading || isFetchingProfile) {
     return (
-      <main className="min-h-screen bg-[#FFFFFF] bg-grid-paper px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-[#FFFFFF]  px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-4xl rounded-[1.75rem] border-2 border-black bg-white p-6 shadow-[6px_6px_0_rgba(0,0,0,1)]">
           <p className="text-lg font-semibold">Loading onboarding...</p>
         </div>
@@ -359,7 +359,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FFFFFF] bg-grid-paper px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#FFFFFF]  px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-4xl rounded-[1.75rem] border-2 border-black bg-white p-6 shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-8">
         <h1 className="text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl">{headingLabel}</h1>
         <p className="mt-2 text-[#66686d]">Complete your onboarding to continue.</p>

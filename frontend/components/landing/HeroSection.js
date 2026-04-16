@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HeaderAuthButton from "../auth/HeaderAuthButton";
+import HighlightPill from "../ui/HighlightPill";
 
 const navItems = [
   { label: "Find Mentors", href: "/mentee/find-mentors" },
@@ -33,14 +34,6 @@ function BrandMark() {
         />
       </svg>
     </div>
-  );
-}
-
-function SparkleIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="white" aria-hidden="true">
-      <path d="M12 2l2.09 6.26L21 10l-6.26 2.09L12 22l-2.09-6.26L3 14l6.26-2.09z" />
-    </svg>
   );
 }
 
@@ -91,23 +84,18 @@ function MentorCardIllustration() {
         </div>
 
         {/* Floating: 2000+ Students */}
-        <div
-          className="absolute -top-5 right-2 whitespace-nowrap rounded-full border-2 border-[#1a1a1a] bg-[#F9C41A] px-4 py-1.5 text-[13px] font-bold shadow-[3px_3px_0_0_#1a1a1a]"
-          style={{ zIndex: 5 }}
-        >
-          2000+ Students
-        </div>
+        <HighlightPill
+          text="2000+ Students"
+          variant="secondary"
+          className="absolute -top-20 left-5 z-10"
+        />
 
         {/* Floating: 85% Success Rate */}
-        <div
-          className="absolute -bottom-5 left-0 flex items-center gap-2 whitespace-nowrap rounded-full border-2 border-[#1a1a1a] bg-[#0f172a] px-4 py-1.5 text-[13px] font-bold text-white shadow-[3px_3px_0_0_#1a1a1a]"
-          style={{ zIndex: 5 }}
-        >
-          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#f87171] text-[9px] font-black leading-none text-white">
-            ✦
-          </span>
-          85% Success Rate
-        </div>
+        <HighlightPill
+          text="85% Success Rate"
+          variant="primary"
+          className="absolute bottom-0 -left-35 z-10"
+        />
       </div>
     </div>
   );
@@ -160,10 +148,10 @@ export default function HeroSection() {
           <div className="flex flex-col items-start">
 
             {/* Badge */}
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#3730a3] px-4 py-2 text-sm font-semibold text-white">
-              <SparkleIcon />
-              India&#39;s #1 MBA Mentorship Platform
-            </span>
+            <HighlightPill
+              text="India's #1 MBA Mentorship Platform"
+              variant="primary"
+            />
 
             {/* Heading */}
             <h1 className="mt-5 text-[2.8rem] font-extrabold leading-[1.1] tracking-[-0.03em] text-[#0d0d0f] sm:text-[3.4rem] lg:text-[3.8rem]">
@@ -189,7 +177,7 @@ export default function HeroSection() {
             {/* CTA */}
             <Link
               href="/mentee/find-mentors"
-              className="mt-8 inline-flex items-center gap-2.5 rounded-full border-[2.5px] border-[#1a1a1a] bg-[#F9C41A] px-7 py-3.5 text-[0.95rem] font-bold text-[#0d0d0f] shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_0_#1a1a1a]"
+              className="mt-8 inline-flex items-center gap-2.5 rounded-full border-[2.5px] border-[#1a1a1a] bg-[#FFB705] px-7 py-3.5 text-[0.95rem] font-bold text-[#0d0d0f] shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_0_#1a1a1a]"
             >
               Find Your Mentor
               <span aria-hidden="true" className="text-lg">→</span>

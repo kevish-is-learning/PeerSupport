@@ -282,7 +282,7 @@ export default function ProfilePage() {
 
   if (!hasCheckedSession || isLoading || isFetchingDetails) {
     return (
-      <main className="min-h-screen bg-[#FFFFFF] bg-grid-paper px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-[#FFFFFF]  px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-4xl rounded-[1.75rem] border-2 border-black bg-white p-6 shadow-[6px_6px_0_rgba(0,0,0,1)]">
           <p className="text-lg font-semibold">Loading profile...</p>
         </div>
@@ -295,7 +295,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FFFFFF] bg-grid-paper px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#FFFFFF]  px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-4xl rounded-[1.75rem] border-2 border-black bg-white p-6 shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-8">
         <h1 className="text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl">Your Profile</h1>
         <p className="mt-2 text-[#66686d]">Manage your profile details from this page.</p>
