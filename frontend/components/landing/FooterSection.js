@@ -162,21 +162,20 @@ function BrandMark() {
 
 export default function FooterSection() {
   return (
-    <footer className="bg-[#1a1a2e] text-white">
+    <footer className="bg-[#2E2E2E] text-white">
       {/* Top Section */}
-      <div className="mx-auto max-w-7xl px-6 pt-16 pb-10 lg:px-10">
+      <div className="mx-auto px-6 pt-16 pb-10 lg:px-10">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-20">
           {/* Left — Brand & Contact */}
           <div>
             <Link href="/" className="flex items-center gap-3">
               <BrandMark />
               <div className="flex flex-col text-[1.35rem] font-bold leading-[0.95] tracking-[-0.04em]">
-                <span>Peer</span>
-                <span>Support</span>
+                <span>Peer Support</span>
               </div>
             </Link>
 
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-gray-400">
+            <p className="mt-5 text-sm leading-relaxed text-gray-400">
               India&apos;s leading mentorship marketplace connecting MBA aspirants with
               experienced professionals from IIMs, FMS, and other premier business schools.
             </p>
@@ -243,12 +242,12 @@ export default function FooterSection() {
       </div>
 
       {/* Divider */}
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto px-6 lg:px-10">
         <hr className="border-gray-800" />
       </div>
 
       {/* Links Section */}
-      <div className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
+      <div className="mx-auto px-6 py-10 lg:px-10">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {footerLinks.map((section) => (
             <div key={section.title}>
@@ -271,12 +270,12 @@ export default function FooterSection() {
       </div>
 
       {/* Divider */}
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto px-6 lg:px-10">
         <hr className="border-gray-800" />
       </div>
 
       {/* B-Schools */}
-      <div className="mx-auto max-w-7xl px-6 py-8 text-center lg:px-10">
+      <div className="mx-auto px-6 py-8 text-center lg:px-10">
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">
           Mentors from Top B-Schools
         </p>
@@ -293,12 +292,12 @@ export default function FooterSection() {
       </div>
 
       {/* Divider */}
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto px-6 lg:px-10">
         <hr className="border-gray-800" />
       </div>
 
       {/* Bottom Bar */}
-      <div className="mx-auto max-w-7xl px-6 py-6 lg:px-10">
+      <div className="mx-auto px-6 py-6 lg:px-10">
         <div className="flex flex-col items-center justify-between gap-4 text-xs text-gray-500 sm:flex-row">
           <p>© 2026 PeerSupport. All rights reserved.</p>
           <p>

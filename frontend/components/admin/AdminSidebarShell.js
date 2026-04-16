@@ -79,7 +79,7 @@ export default function AdminSidebarShell({ children }) {
   if (!hasCheckedSession || isLoading) {
     return (
       <main className="min-h-screen bg-[#0f141e] p-4 text-[#f7f8fb] sm:p-6 lg:p-8">
-        <div className="mx-auto flex min-h-[80vh] w-full max-w-7xl items-center justify-center rounded-4xl border border-white/20 bg-[#141b28] px-6 py-12">
+        <div className="mx-auto flex min-h-[80vh] w-full items-center justify-center rounded-4xl border border-white/20 bg-[#141b28] px-6 py-12">
           <p className="text-lg font-semibold">Loading admin workspace...</p>
         </div>
       </main>

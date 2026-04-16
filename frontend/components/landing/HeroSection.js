@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HeaderAuthButton from "../auth/HeaderAuthButton";
+import BecomeMentorHeroButton from "./BecomeMentorHeroButton";
 import HighlightPill from "../ui/HighlightPill";
 
 const navItems = [
@@ -110,12 +111,11 @@ export default function HeroSection() {
         className="w-full border-b border-black px-4 py-3.5 sm:px-6 lg:px-10"
         style={{ backgroundColor: BRAND_BG }}
       >
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-2 items-center gap-y-4 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-8 md:gap-y-0">
+        <div className="mx-auto grid w-full grid-cols-2 items-center gap-y-4 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-8 md:gap-y-0">
           <Link href="/" className="flex min-w-0 items-center gap-3">
             <BrandMark />
             <div className="flex flex-col text-[1.35rem] font-bold leading-[0.95] tracking-[-0.04em] text-[#0d0d0f] sm:text-[1.5rem]">
-              <span>Peer</span>
-              <span>Support</span>
+              <span>Peer Support</span>
             </div>
           </Link>
 
@@ -124,7 +124,7 @@ export default function HeroSection() {
           </div>
 
           <nav
-            className="col-span-2 row-start-2 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[0.9rem] font-bold text-[#0d0d0f] sm:gap-x-7 sm:text-[0.95rem] md:col-span-1 md:col-start-2 md:row-start-1 md:justify-center"
+            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[0.9rem] font-semibold text-black sm:gap-x-7 sm:text-[0.95rem] md:col-span-1 md:col-start-2 md:row-start-1 md:justify-center"
             aria-label="Primary"
           >
             {navItems.map((item) => (
@@ -141,7 +141,7 @@ export default function HeroSection() {
       </header>
 
       {/* ── HERO BODY ─────────────────────────────────────── */}
-      <div className="mx-auto flex w-full max-w-7xl flex-1 items-center px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
+      <div className="mx-auto flex w-full flex-1 items-center px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
         <div className="grid w-full items-center gap-10 lg:grid-cols-2 lg:gap-6">
 
           {/* Left — copy */}
@@ -175,13 +175,18 @@ export default function HeroSection() {
             </p>
 
             {/* CTA */}
-            <Link
-              href="/mentee/find-mentors"
-              className="mt-8 inline-flex items-center gap-2.5 rounded-full border-[2.5px] border-[#1a1a1a] bg-[#FFB705] px-7 py-3.5 text-[0.95rem] font-bold text-[#0d0d0f] shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_0_#1a1a1a]"
-            >
-              Find Your Mentor
-              <span aria-hidden="true" className="text-lg">→</span>
-            </Link>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link
+                href="/mentee/find-mentors"
+                className="inline-flex items-center gap-2.5 rounded-full border-[2.5px] border-[#1a1a1a] bg-[#FFB705] px-7 py-3.5 text-[0.95rem] font-bold text-[#0d0d0f] shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_0_#1a1a1a]"
+              >
+                Find Your Mentor
+                <span aria-hidden="true" className="text-lg">
+                  →
+                </span>
+              </Link>
+              <BecomeMentorHeroButton />
+            </div>
 
             {/* Social proof */}
             <div className="mt-8 flex flex-wrap items-center gap-6">

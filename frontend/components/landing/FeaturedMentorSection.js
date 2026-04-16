@@ -1,4 +1,6 @@
 import Link from "next/link";
+import HighlightPill from "../ui/HighlightPill";
+import PillButton from "../ui/PillButton";
 
 const mentors = [
   {
@@ -9,7 +11,7 @@ const mentors = [
     hours: "250+",
     image:
       "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
-    accent: "#2563eb",
+    accent: "#5763E6",
     ctaColor: "bg-[#F9C41A] text-[#0d0d0f]"
   },
   {
@@ -20,7 +22,7 @@ const mentors = [
     hours: "180+",
     image:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
-    accent: "#7c3aed",
+    accent: "#FFB705",
     ctaColor: "bg-[#F9C41A] text-[#0d0d0f]"
   },
   {
@@ -31,18 +33,11 @@ const mentors = [
     hours: "320+",
     image:
       "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80",
-    accent: "#ef4444",
+    accent: "#EF4444",
     ctaColor: "bg-[#ef4444] text-white"
   }
 ];
 
-function SparkleIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="white" aria-hidden="true">
-      <path d="M12 2l2.09 6.26L21 10l-6.26 2.09L12 22l-2.09-6.26L3 14l6.26-2.09z" />
-    </svg>
-  );
-}
 
 function StarIcon({ className }) {
   return (
@@ -63,17 +58,13 @@ function ClockIcon() {
 
 function MentorCard({ mentor }) {
   return (
-    <article className="flex flex-col rounded-[22px] border-[2.5px] border-[#1a1a1a] bg-white shadow-[5px_5px_0_0_#1a1a1a] transition-transform hover:-translate-y-1">
-      {/* Photo with accent border */}
-      <div className="relative m-3 mb-0 aspect-4/3.5 overflow-hidden rounded-[14px]">
-        <div
-          className="absolute inset-0 rounded-[14px] ring-4 ring-inset"
-          style={{ "--tw-ring-color": mentor.accent }}
-        />
+    <article className="flex flex-col rounded-[22px] border-4 bg-white shadow-[5px_5px_0_0_#1a1a1a]">
+      {/* Photo */}
+      <div className={`relative m-3 mb-0 aspect-4/3.5 overflow-hidden rounded-xl border-t-8`} style={{ borderColor: mentor.accent }}>
         <img
           src={mentor.image}
           alt={mentor.name}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-top"
           loading="lazy"
         />
       </div>
@@ -109,7 +100,7 @@ function MentorCard({ mentor }) {
         {/* CTA */}
         <Link
           href="/mentee/find-mentors"
-          className={`mt-4 flex items-center justify-center gap-2 rounded-full border-[2.5px] border-[#1a1a1a] px-5 py-2.5 text-sm font-bold shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#1a1a1a] ${mentor.ctaColor}`}
+          className={`mt-4 flex items-center justify-center gap-2 rounded-full border-[2.5px] border-[#1a1a1a] px-5 py-2.5 text-sm font-bold shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#1a1a1a] bg-[${mentor.accent}]`}
         >
           Book Session
           <span aria-hidden="true">→</span>
@@ -140,10 +131,7 @@ export default function FeaturedMentorSection() {
       <div className="relative mx-auto max-w-6xl">
         {/* Badge */}
         <div className="flex justify-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#F9C41A] px-4 py-2 text-sm font-bold text-[#0d0d0f] shadow-[3px_3px_0_0_#1a1a1a]">
-            <SparkleIcon />
-            Top Mentors
-          </span>
+          <HighlightPill text="Top Mentors" variant="secondary" />
         </div>
 
         {/* Heading */}
@@ -165,13 +153,10 @@ export default function FeaturedMentorSection() {
 
         {/* Bottom CTA */}
         <div className="mt-12 flex justify-center">
-          <Link
-            href="/mentee/find-mentors"
-            className="inline-flex items-center gap-2.5 rounded-full border-[2.5px] border-[#1a1a1a] bg-[#F9C41A] px-7 py-3.5 text-[0.95rem] font-bold text-[#0d0d0f] shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_0_#1a1a1a]"
-          >
+          <PillButton href="/mentee/find-mentors" variant="accent">
             Explore all our Mentors
             <span aria-hidden="true" className="text-lg">→</span>
-          </Link>
+          </PillButton>
         </div>
       </div>
     </section>

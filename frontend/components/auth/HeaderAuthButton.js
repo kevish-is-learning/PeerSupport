@@ -5,7 +5,7 @@ import Link from "next/link";
 import useAuthStore from "../../store/useAuthStore";
 
 const outlineBtn =
-  "inline-flex h-11 items-center justify-center rounded-full border border-black bg-white px-5 text-sm font-bold text-[#0d0d0f] transition-colors hover:bg-neutral-50";
+  "inline-flex h-11 items-center justify-center rounded-full border-2 border-black bg-white px-5 text-sm font-bold text-[#0d0d0f] transition-colors hover:bg-neutral-50";
 const exploreBtn =
   "inline-flex h-11 items-center justify-center rounded-full border-2 border-black bg-[#2563eb] px-5 text-sm font-bold text-white shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_#1a1a1a]";
 
@@ -19,8 +19,8 @@ export default function HeaderAuthButton() {
   }, [hasCheckedSession, fetchCurrentUser]);
 
   const exploreMentors = (
-    <Link href="/mentee/find-mentors" className={exploreBtn}>
-      Explore Mentors
+    <Link href="/explore-mentor" className={exploreBtn}>
+      Book a Session
     </Link>
   );
 
