@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import useAuthStore from "../../store/useAuthStore";
 import PillButton from "../ui/PillButton";
+import { ArrowRight } from "lucide-react";
 
 export default function BecomeMentorHeroButton() {
   const { user, hasCheckedSession, fetchCurrentUser } = useAuthStore();
@@ -25,8 +26,9 @@ export default function BecomeMentorHeroButton() {
   const href = user ? "/mentor/dashboard" : "/auth?mode=register";
 
   return (
-    <PillButton href={href} variant="secondary">
+    <PillButton href={href} variant="primary">
       Become a Mentor
+      <ArrowRight size={16} className="ml-2"/>
     </PillButton>
   );
 }

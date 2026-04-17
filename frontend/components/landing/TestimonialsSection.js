@@ -1,4 +1,5 @@
 import { Star, Quote, Award } from "lucide-react";
+import HighlightPill from "../ui/HighlightPill";
 
 const PRIMARY_BLUE = "#5061E4";
 
@@ -72,11 +73,11 @@ function Stars({ count }) {
 function TestimonialCard({ t }) {
   return (
     <article
-      className="relative flex flex-col rounded-[24px] border-[3px] bg-[#FAF0E8] p-7 pt-8 shadow-[6px_6px_0_0_#5061E4] sm:rounded-[28px] sm:p-8 sm:pt-9"
+      className="relative flex flex-col rounded-3xl border-[3px] bg-[#FAF0E8] p-7 pt-8 shadow-[6px_6px_0_0_#5061E4] sm:rounded-[28px] sm:p-8 sm:pt-9"
       style={{ borderColor: PRIMARY_BLUE }}
     >
       <Quote
-        size={112}
+        size={75}
         className="pointer-events-none absolute right-4 top-4 z-0 text-[#5061E4]/20 sm:right-5 sm:top-5"
         strokeWidth={0}
         fill="currentColor"
@@ -92,7 +93,7 @@ function TestimonialCard({ t }) {
         </span>
       </div>
 
-      <div className="relative z-10 flex flex-col gap-5 pr-1 sm:pr-28">
+      <div className="relative z-10 flex flex-col gap-5 pr-1">
         <div className="flex gap-4">
           <div className="relative shrink-0">
             <div
@@ -129,7 +130,7 @@ export default function TestimonialsSection() {
       style={{ backgroundColor: "#FFF8F4" }}
     >
       <div
-        className="absolute left-4 top-10 h-20 w-20 rotate-45 rounded-[6px] bg-[#FFB800] sm:left-10 sm:top-14 sm:h-24 sm:w-24"
+        className="absolute left-4 top-10 h-20 w-20 rotate-45 rounded-md bg-[#FFB800] sm:left-10 sm:top-14 sm:h-24 sm:w-24"
         aria-hidden
       />
 
@@ -141,20 +142,13 @@ export default function TestimonialsSection() {
 
       <div className="relative mx-auto max-w-5xl">
         <div className="flex justify-center">
-          <span className="inline-flex items-center gap-2 rounded-full border-[2px] border-[#1f2937] bg-[#F59E0B] px-4 py-2 text-sm font-bold text-white shadow-[3px_3px_0_0_#1f2937]">
-            <Quote size={16} fill="currentColor" strokeWidth={0} className="opacity-95" />
-            Success Stories
-          </span>
+          <HighlightPill text="Success Stories" variant="orange" icon={<Quote size={16}/>}/>
         </div>
 
-        <h2 className="mt-6 text-center text-[2rem] font-extrabold leading-tight tracking-[-0.03em] text-[#1f2937] sm:text-[2.65rem]">
+        <h2 className="mt-6 text-center text-[2rem] font-extrabold leading-tight tracking-[-0.03em] text-[#1f2937] sm:text-[3.5rem]">
           <span className="block">Real People.</span>
           <span className="relative mt-1 inline-block">
             <span className="relative z-10">Real Results.</span>
-            <span
-              className="absolute -bottom-0.5 left-0 right-0 z-0 h-[7px] rounded-sm bg-[#FFB800]"
-              aria-hidden
-            />
           </span>
         </h2>
 

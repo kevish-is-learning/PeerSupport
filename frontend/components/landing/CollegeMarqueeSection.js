@@ -24,8 +24,7 @@ export default function CollegeMarqueeSection() {
       aria-label="Partner business schools"
     >
       <p className="mb-6 flex items-center justify-center gap-2 px-4 text-center text-sm font-medium text-white sm:text-[0.95rem]">
-        <span>Mentors from colleges students dream of</span>
-        <Sparkles className="h-4 w-4 shrink-0 text-[#F9C41A]" strokeWidth={2} aria-hidden />
+        <span>Mentors from colleges students dream of Aspirants</span>
       </p>
 
       <div className="college-marquee-fade relative overflow-hidden">

@@ -1,6 +1,6 @@
 import HighlightPill from "../ui/HighlightPill";
 import CircularFeatureCard from "../ui/CircularFeatureCard";
-import { CircleDot, Clock, Map, XCircle, CheckCircle2, Sparkles, Trophy, Rocket } from "lucide-react";
+import { CircleDot, Clock, Map, XCircle, CheckCircle2, Sparkles, Trophy, Rocket, Target } from "lucide-react";
 
 const problems = [
   {
@@ -72,7 +72,7 @@ function JourneyRing() {
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[600px]">
+    <div className="mx-auto w-full max-w-150">
       <svg
         className="h-auto w-full text-[#d1d5db]"
         viewBox={`0 0 ${VB} ${VB}`}
@@ -121,20 +121,12 @@ export default function ProblemsSolutionsSection() {
 
       <div className="relative mx-auto max-w-5xl pb-14">
         <div className="flex flex-col items-center text-center">
-          <HighlightPill variant="primary" className="gap-2 border-[#1f2937] font-semibold">
-            <CircleDot className="h-4 w-4 shrink-0" strokeWidth={2.5} />
-            About Us
+          <HighlightPill text="About Us" variant="primary" icon={<Target />}>
           </HighlightPill>
 
           <h2 className="mt-6 max-w-3xl text-3xl font-extrabold leading-[1.15] tracking-[-0.03em] text-[#1f2937] sm:text-4xl lg:text-[2.5rem]">
             From Problems to{" "}
-            <span className="relative inline-block">
-              <span className="relative z-10">Solutions</span>
-              <span
-                className="absolute -bottom-1 left-0 right-0 z-0 h-1.5 rounded-sm bg-[#FFB800]"
-                aria-hidden
-              />
-            </span>
+            <span className="">Solutions</span>
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-[0.95rem] leading-relaxed text-[#6b7280] sm:text-[1.05rem]">
@@ -151,10 +143,6 @@ export default function ProblemsSolutionsSection() {
         </div>
       </div>
 
-      <div
-        className="h-1.5 w-full bg-linear-to-r from-[#F59E0B] via-[#FFB800] to-[#5061E4]"
-        aria-hidden
-      />
     </section>
   );
 }

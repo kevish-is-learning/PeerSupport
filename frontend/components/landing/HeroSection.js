@@ -2,27 +2,30 @@ import Link from "next/link";
 import HeaderAuthButton from "../auth/HeaderAuthButton";
 import BecomeMentorHeroButton from "./BecomeMentorHeroButton";
 import HighlightPill from "../ui/HighlightPill";
+import PillButton from "../ui/PillButton";
+
+import { ArrowRight, Sparkles } from "lucide-react";
 
 const navItems = [
   { label: "Find Mentors", href: "/mentee/find-mentors" },
   { label: "Services", href: "#services" },
   { label: "How It Works", href: "#how-it-works" },
-  { label: "About", href: "#about" }
+  { label: "About", href: "#about" },
 ];
 
 const stats = [
   { value: "400+", label: "Happy Mentees" },
   { value: "50+", label: "B-Schools" },
   { value: "1000+", label: "Hrs of sessions" },
-  { value: "4.8", label: "Rating on Google" }
+  { value: "4.8", label: "Rating on Google" },
 ];
 
-const BRAND_BG = "#fdf5f2";
+const BRAND_BG = "#FDF5F3";
 
 function BrandMark() {
   return (
     <div
-      className="flex h-10 w-10 shrink-0 -rotate-6 items-center justify-center rounded-[3px] border-[3px] border-[#1a1a1a] bg-[#2563eb]"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[3px] border-[3px] border-[#1a1a1a] bg-[#2563eb]"
       aria-hidden="true"
     >
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -31,7 +34,6 @@ function BrandMark() {
           stroke="white"
           strokeWidth="3"
           strokeLinecap="round"
-          strokeLinejoin="round"
         />
       </svg>
     </div>
@@ -41,29 +43,28 @@ function BrandMark() {
 function MentorCardIllustration() {
   return (
     <div className="relative flex items-center justify-center py-10 lg:py-4">
-      <div className="relative h-[310px] w-[360px]">
-
+      <div className="relative h-69.5 w-52.5">
         {/* Blue card — furthest back */}
         <div
-          className="absolute left-[110px] top-[10px] h-[278px] w-[210px] rotate-14 rounded-[26px] border-[3px] border-[#1a1a1a] bg-[#2563eb]"
+          className="absolute left-27.5 top-2.5 h-69.5 w-52.5 rotate-14 rounded-[26px] border-[3px] border-[#1a1a1a] bg-[#2563eb]"
           style={{ zIndex: 1 }}
         />
 
         {/* Red card */}
         <div
-          className="absolute left-[70px] top-[6px] h-[278px] w-[210px] rotate-[7deg] rounded-[26px] border-[3px] border-[#1a1a1a] bg-[#ef4444]"
+          className="absolute left-17.5 top-1.5 h-69.5 w-52.5 rotate-[7deg] rounded-[26px] border-[3px] border-[#1a1a1a] bg-[#ef4444]"
           style={{ zIndex: 2 }}
         />
 
         {/* Peach / tan card */}
         <div
-          className="absolute left-[32px] top-[4px] h-[278px] w-[210px] rotate-3 rounded-[26px] border-[3px] border-[#1a1a1a] bg-[#f5c6aa]"
+          className="absolute left-8 top-1 h-69.5 w-52.5 rotate-3 rounded-[26px] border-[3px] border-[#1a1a1a] bg-[#f5c6aa]"
           style={{ zIndex: 3 }}
         />
 
         {/* White front card */}
         <div
-          className="absolute left-0 top-0 flex h-[278px] w-[210px] flex-col rounded-[26px] border-[3px] border-[#1a1a1a] bg-white p-5 shadow-[6px_6px_0_0_#1a1a1a]"
+          className="absolute left-0 top-0 flex h-69.5 w-52.5 flex-col rounded-[26px] border-[3px] border-[#1a1a1a] bg-white p-5 shadow-[6px_6px_0_0_#1a1a1a]"
           style={{ zIndex: 4 }}
         >
           {/* Avatar circle */}
@@ -84,16 +85,14 @@ function MentorCardIllustration() {
           </div>
         </div>
 
-        {/* Floating: 2000+ Students */}
         <HighlightPill
-          text="2000+ Students"
+          text="⚡️ 2000+ Students"
           variant="secondary"
           className="absolute -top-20 left-5 z-10"
         />
 
-        {/* Floating: 85% Success Rate */}
         <HighlightPill
-          text="85% Success Rate"
+          text="🎯 85% Success Rate"
           variant="primary"
           className="absolute bottom-0 -left-35 z-10"
         />
@@ -104,8 +103,10 @@ function MentorCardIllustration() {
 
 export default function HeroSection() {
   return (
-    <section className="flex min-h-screen flex-col" style={{ backgroundColor: BRAND_BG }}>
-
+    <section
+      className="flex min-h-screen flex-col"
+      style={{ backgroundColor: BRAND_BG }}
+    >
       {/* ── HEADER ───────────────────────────────────────── */}
       <header
         className="w-full border-b border-black px-4 py-3.5 sm:px-6 lg:px-10"
@@ -143,94 +144,36 @@ export default function HeroSection() {
       {/* ── HERO BODY ─────────────────────────────────────── */}
       <div className="mx-auto flex w-full flex-1 items-center px-4 py-10 sm:px-6 sm:py-14 lg:px-30">
         <div className="grid w-full items-center gap-10 lg:grid-cols-2 lg:gap-6">
-
           {/* Left — copy */}
           <div className="flex flex-col items-start">
-
             {/* Badge */}
             <HighlightPill
               text="India's #1 MBA Mentorship Platform"
               variant="primary"
+              icon={<Sparkles size={18} />}
             />
 
             {/* Heading */}
             <h1 className="mt-5 text-[2.8rem] font-extrabold leading-[1.1] tracking-[-0.03em] text-[#0d0d0f] sm:text-[3.4rem] lg:text-[3.8rem]">
               Your Gateway to
               <br />
-              <span className="relative inline-block pb-1">
-                Top B&#8209;Schools
-                {/* Yellow underline */}
-                <span
-                  className="absolute -bottom-1 left-0 block h-[5px] w-full rounded-sm"
-                  style={{ backgroundColor: "#F9C41A" }}
-                  aria-hidden="true"
-                />
-              </span>
+              <span className="inline-block pb-1">Top B&#8209;Schools</span>
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-6 max-w-[480px] text-base leading-[1.75] text-[#5c5f69] sm:text-[1.05rem]">
-              Connect with experienced mentors from IIMs, FMS &amp; top B&#8209;schools.
-              Get personalized guidance, ace your interviews, and achieve your MBA dreams.
+            <p className="mt-6 max-w-120 text-base leading-[1.75] text-[#5c5f69] sm:text-[1.05rem]">
+              Connect with experienced mentors from IIMs, FMS &amp; top
+              B&#8209;schools. Get personalized guidance, ace your interviews,
+              and achieve your MBA dreams.
             </p>
 
             {/* CTA */}
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href="/mentee/find-mentors"
-                className="inline-flex items-center gap-2.5 rounded-full border-[2.5px] border-[#1a1a1a] bg-[#FFB705] px-7 py-3.5 text-[0.95rem] font-bold text-[#0d0d0f] shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0_0_#1a1a1a]"
-              >
+              <PillButton href="/mentee/find-mentors" variant="yellow">
                 Find Your Mentor
-                <span aria-hidden="true" className="text-lg">
-                  →
-                </span>
-              </Link>
+                <ArrowRight size={16} className="ml-2" />
+              </PillButton>
               <BecomeMentorHeroButton />
-            </div>
-
-            {/* Social proof */}
-            <div className="mt-8 flex flex-wrap items-center gap-6">
-              {/* Mentor avatars + count */}
-              <div className="flex items-center gap-3">
-                <div className="flex -space-x-2.5">
-                  {[0, 1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="h-9 w-9 rounded-full border-[2.5px] bg-[#2563eb]"
-                      style={{ borderColor: BRAND_BG }}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm font-bold text-[#0d0d0f]">500+ Mentors</span>
-              </div>
-
-              {/* Divider */}
-              <span className="hidden h-5 w-px bg-black/20 sm:block" aria-hidden="true" />
-
-              {/* Star rating */}
-              <div className="flex items-center gap-1.5">
-                <div className="flex text-[#F9C41A]" aria-label="4.9 out of 5 stars">
-                  {[0, 1, 2, 3].map((i) => (
-                    <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l2.09 6.26L21 10l-6.26 2.09L12 22l-2.09-6.26L3 14l6.26-2.09z" />
-                    </svg>
-                  ))}
-                  {/* Half star (4.9) */}
-                  <svg width="16" height="16" viewBox="0 0 24 24">
-                    <defs>
-                      <linearGradient id="halfStar">
-                        <stop offset="80%" stopColor="#F9C41A" />
-                        <stop offset="80%" stopColor="#d1d5db" />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      d="M12 2l2.09 6.26L21 10l-6.26 2.09L12 22l-2.09-6.26L3 14l6.26-2.09z"
-                      fill="url(#halfStar)"
-                    />
-                  </svg>
-                </div>
-                <span className="text-sm font-bold text-[#0d0d0f]">4.9/5 Rating</span>
-              </div>
             </div>
           </div>
 
@@ -252,12 +195,13 @@ export default function HeroSection() {
               <p className="text-[2.2rem] font-extrabold leading-none tracking-[-0.04em] text-[#0d0d0f] sm:text-[2.8rem]">
                 {stat.value}
               </p>
-              <p className="mt-2 text-sm text-[#5c5f69] sm:text-base">{stat.label}</p>
+              <p className="mt-2 text-sm text-[#5c5f69] sm:text-base">
+                {stat.label}
+              </p>
             </div>
           ))}
         </div>
       </div>
-
     </section>
   );
 }

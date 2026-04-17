@@ -95,6 +95,11 @@ function BrandMark() {
 
 export default function FooterSection() {
   return (
+    <>
+    <div
+        className="h-1.5 w-full bg-linear-to-r from-[#F59E0B] via-[#FFB800] to-[#5061E4]"
+        aria-hidden
+      />
     <footer className="bg-[#2d2d2d] text-white">
       <div className="mx-auto max-w-7xl px-6 pt-16 pb-12 lg:px-10">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-24">
@@ -105,7 +110,7 @@ export default function FooterSection() {
                 <span className="text-[1.35rem] font-bold leading-tight tracking-[-0.03em] text-white">
                   Peer Support
                 </span>
-                <span className="mt-1 text-sm font-medium text-gray-400">Your Path to Top B-Schools</span>
+                <span className="text-sm font-medium text-gray-400">Your Path to Top B-Schools</span>
               </div>
             </Link>
 
@@ -258,5 +263,6 @@ export default function FooterSection() {
         </div>
       </div>
     </footer>
+    </>
   );
 }

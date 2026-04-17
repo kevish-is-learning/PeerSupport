@@ -9,6 +9,7 @@ import {
   Rocket,
   Calendar
 } from "lucide-react";
+import HighlightPill from "../ui/HighlightPill";
 
 const features = [
   {
@@ -95,25 +96,14 @@ function StackedCommunityCards() {
           </div>
           <div className="mt-auto flex flex-wrap gap-2 pt-3">
             <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#FFB800] px-2 py-0.5 text-[10px] font-extrabold text-[#1f2937] shadow-[2px_2px_0_0_#1f2937]">
-              <Music size={11} strokeWidth={2.5} aria-hidden />
-              24
+              👍24
             </span>
             <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#E53E3E] px-2 py-0.5 text-[10px] font-extrabold text-white shadow-[2px_2px_0_0_#1f2937]">
-              <MessageCircle size={11} strokeWidth={2.5} className="text-white" aria-hidden />
-              12
+              💬12
             </span>
           </div>
         </div>
 
-        <div
-          className="absolute -bottom-1 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border-[3px] border-[#1f2937] bg-[#E53E3E] px-4 py-2 text-sm font-bold text-white shadow-[4px_4px_0_0_#1f2937]"
-        >
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-60" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-white" />
-          </span>
-          42 active now
-        </div>
       </div>
     </div>
   );
@@ -129,19 +119,12 @@ export default function CommunitySection() {
 
       <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
         <div className="max-w-xl lg:max-w-none">
-          <div className="inline-flex items-center gap-2 rounded-full border-[3px] border-[#1f2937] bg-[#F59E0B] px-4 py-2 text-sm font-extrabold text-white shadow-[4px_4px_0_0_#1f2937]">
-            <Users size={18} strokeWidth={2.5} aria-hidden />
-            5000+ Active Members
-          </div>
+          <HighlightPill text="5000+ Active Members" variant="secondary" icon={<Users size={16} />} />
 
           <h2 className="mt-6 text-3xl font-extrabold leading-[1.2] tracking-[-0.03em] text-white sm:text-4xl lg:text-[2.65rem]">
             Join Our Thriving{" "}
             <span className="relative inline-block">
               <span className="relative z-10">Community</span>
-              <span
-                className="absolute -bottom-1 left-0 right-0 z-0 h-[5px] rounded-sm bg-white/95"
-                aria-hidden
-              />
             </span>{" "}
             🚀
           </h2>

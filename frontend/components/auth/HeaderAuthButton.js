@@ -3,12 +3,10 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import useAuthStore from "../../store/useAuthStore";
+import PillButton from "../ui/PillButton";
 
 const outlineBtn =
-  "inline-flex h-11 items-center justify-center rounded-full border-2 border-black bg-white px-5 text-sm font-bold text-[#0d0d0f] transition-colors hover:bg-neutral-50";
-const exploreBtn =
-  "inline-flex h-11 items-center justify-center rounded-full border-2 border-black bg-[#2563eb] px-5 text-sm font-bold text-white shadow-[4px_4px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_#1a1a1a]";
-
+  "inline-flex h-11 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-white px-5 text-sm font-bold text-[#0d0d0f] transition-colors hover:bg-neutral-50";
 export default function HeaderAuthButton() {
   const { user, hasCheckedSession, fetchCurrentUser } = useAuthStore();
 
@@ -18,17 +16,17 @@ export default function HeaderAuthButton() {
     }
   }, [hasCheckedSession, fetchCurrentUser]);
 
-  const exploreMentors = (
-    <Link href="/explore-mentor" className={exploreBtn}>
+  const BookSession = (
+    <PillButton href="/mentors" variant="primary">
       Book a Session
-    </Link>
+    </PillButton>
   );
 
   if (!hasCheckedSession) {
     return (
       <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
-        <span className="inline-flex h-11 min-w-[5.5rem] animate-pulse rounded-full border border-black/20 bg-white/80" />
-        <span className="inline-flex h-11 min-w-[8.5rem] animate-pulse rounded-full border-2 border-black/20 bg-[#2563eb]/40" />
+        <span className="inline-flex h-11 min-w-22 animate-pulse rounded-full border border-black/20 bg-white/80" />
+        <span className="inline-flex h-11 min-w-34 animate-pulse rounded-full border-2 border-black/20 bg-[#2563eb]/40" />
       </div>
     );
   }
@@ -50,7 +48,7 @@ export default function HeaderAuthButton() {
         <Link href={targetPath} className={outlineBtn}>
           {user.name || user.email}
         </Link>
-        {exploreMentors}
+        {BookSession}
       </div>
     );
   }
@@ -60,7 +58,7 @@ export default function HeaderAuthButton() {
       <Link href="/auth?mode=login" className={outlineBtn}>
         Sign In
       </Link>
-      {exploreMentors}
+      {BookSession}
     </div>
   );
 }

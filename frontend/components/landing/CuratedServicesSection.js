@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Video, Users, BookOpen, ArrowRight, Sparkles } from "lucide-react";
+import HighlightPill from "../ui/HighlightPill";
 
 const services = [
   {
@@ -100,10 +101,7 @@ export default function CuratedServicesSection() {
         <div className="relative mx-auto max-w-6xl">
           {/* Badge */}
           <div className="flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full border-2 border-[#1a1a1a] bg-[#2563eb] px-5 py-2 text-sm font-semibold text-white shadow-[4px_4px_0_0_#1a1a1a]">
-              <Sparkles className="h-4 w-4 shrink-0" strokeWidth={2.2} aria-hidden />
-              Our Services
-            </div>
+            <HighlightPill text="Our Services" variant="accent" icon={<Sparkles size={16} />} />
           </div>
 
           <h2 className="mt-6 text-center text-[2.2rem] font-extrabold leading-[1.15] tracking-[-0.03em] text-[#0d0d0f] sm:text-[2.8rem]">
