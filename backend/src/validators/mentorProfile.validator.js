@@ -55,8 +55,8 @@ const expertiseTagsSchema = z.preprocess(
   },
   z
     .array(z.string().trim().min(1, 'Expertise tag cannot be empty'))
-    .min(1, 'At least one expertise tag is required')
-    .max(20, 'A maximum of 20 expertise tags are allowed')
+    .optional()
+    .default([])
 );
 
 const optionalUrlSchema = z

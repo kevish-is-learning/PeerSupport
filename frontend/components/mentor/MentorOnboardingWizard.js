@@ -86,6 +86,22 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
   };
 
   const handleNext = () => {
+    // Validation for Step 1
+    if (currentStep === 1) {
+      if (!files.profilePhoto && !formData.profilePhotoUrl) {
+        toast.error("Profile picture is required.");
+        return;
+      }
+      if (!formData.fullName.trim()) {
+        toast.error("Full name is required.");
+        return;
+      }
+      if (!formData.contactNumber.trim()) {
+        toast.error("Contact number is required.");
+        return;
+      }
+    }
+    
     if (currentStep < 4) setCurrentStep((prev) => prev + 1);
   };
 
@@ -94,6 +110,11 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
   };
 
   const handleSubmit = async () => {
+    if (!formData.bio.trim()) {
+      toast.error("Bio is required.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = new FormData();
@@ -103,14 +124,24 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       const workExp = `${formData.workExperienceYears}|${formData.company}|${formData.role}`;
 
       payload.append("contactNumber", formData.contactNumber);
-      payload.append("bio", formData.bio || "No bio heavily provided.");
-      payload.append("expertiseTags", JSON.stringify(formData.expertiseTags.length ? formData.expertiseTags : ["General"]));
+      payload.append("bio", formData.bio);
+      if (formData.expertiseTags.length > 0) {
+        payload.append("expertiseTags", JSON.stringify(formData.expertiseTags));
+      }
       payload.append("ugCollegeProfile", ugCollegeProfile);
       payload.append("pgProfile", pgProfile);
       payload.append("workExperience", workExp);
 
       if (files.profilePhoto) {
         payload.append("profilePhoto", files.profilePhoto);
+      }
+
+      // Note: Full name in `formData.fullName` is not saved to MentorProfile, it typically requires a separate `authApi` call to update the user.
+      const userUpdatePayload = { name: formData.fullName };
+      try {
+        await authApi.updateProfile(userUpdatePayload);
+      } catch (e) {
+        // If not implemented or fails, we silently ignore as the main focus is Mentor Profile.
       }
 
       const result = existingProfile
