@@ -96,6 +96,10 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
         toast.error("Full name is required.");
         return;
       }
+      if (!formData.email.trim()) {
+        toast.error("Email is required.");
+        return;
+      }
       if (!formData.contactNumber.trim()) {
         toast.error("Contact number is required.");
         return;
@@ -119,18 +123,25 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
     try {
       const payload = new FormData();
       
-      const pgProfile = `${formData.mbaCollege}|${formData.mbaSpecialization}|${formData.mbaYear}`;
-      const ugCollegeProfile = `${formData.ugCollege}|${formData.ugDegree}|${formData.ugSpecialization}|${formData.ugYear}`;
-      const workExp = `${formData.workExperienceYears}|${formData.company}|${formData.role}`;
+      const pgProfile = [formData.mbaCollege, formData.mbaSpecialization, formData.mbaYear].some(Boolean)
+        ? `${formData.mbaCollege}|${formData.mbaSpecialization}|${formData.mbaYear}`
+        : "";
+      const ugCollegeProfile = [formData.ugCollege, formData.ugDegree, formData.ugSpecialization, formData.ugYear].some(Boolean)
+        ? `${formData.ugCollege}|${formData.ugDegree}|${formData.ugSpecialization}|${formData.ugYear}`
+        : "";
+      const workExp = [formData.workExperienceYears, formData.company, formData.role].some(Boolean)
+        ? `${formData.workExperienceYears}|${formData.company}|${formData.role}`
+        : "";
 
       payload.append("contactNumber", formData.contactNumber);
       payload.append("bio", formData.bio);
       if (formData.expertiseTags.length > 0) {
         payload.append("expertiseTags", JSON.stringify(formData.expertiseTags));
       }
-      payload.append("ugCollegeProfile", ugCollegeProfile);
-      payload.append("pgProfile", pgProfile);
-      payload.append("workExperience", workExp);
+      
+      if (ugCollegeProfile) payload.append("ugCollegeProfile", ugCollegeProfile);
+      if (pgProfile) payload.append("pgProfile", pgProfile);
+      if (workExp) payload.append("workExperience", workExp);
 
       if (files.profilePhoto) {
         payload.append("profilePhoto", files.profilePhoto);
@@ -139,9 +150,11 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       // Note: Full name in `formData.fullName` is not saved to MentorProfile, it typically requires a separate `authApi` call to update the user.
       const userUpdatePayload = { name: formData.fullName };
       try {
-        await authApi.updateProfile(userUpdatePayload);
+        if (typeof authApi.updateProfile === "function") {
+          await authApi.updateProfile(userUpdatePayload);
+        }
       } catch (e) {
-        // If not implemented or fails, we silently ignore as the main focus is Mentor Profile.
+        // Silently ignore
       }
 
       const result = existingProfile

@@ -177,7 +177,13 @@ export default function OnboardingPage() {
       }
 
       if (user.onboardingCompleted) {
-        router.replace("/profile");
+        if (user.role === "MENTEE") {
+          router.replace("/mentee/profile");
+        } else if (user.role === "MENTOR") {
+          router.replace("/mentor/profile");
+        } else {
+          router.replace("/auth?mode=login");
+        }
         return;
       }
 
@@ -308,7 +314,7 @@ export default function OnboardingPage() {
       setMenteeResumeFile(null);
       await fetchCurrentUser();
       toast.success(result?.message || "Mentee profile saved");
-      router.replace("/profile");
+      router.replace("/mentee/profile");
     } catch (apiError) {
       const message = apiError?.message || "Failed to save mentee profile";
       setError(message);
@@ -335,7 +341,7 @@ export default function OnboardingPage() {
       setMentorFiles(emptyMentorFiles);
       await fetchCurrentUser();
       toast.success(result?.message || "Mentor profile saved");
-      router.replace("/profile");
+      router.replace("/mentor/profile");
     } catch (apiError) {
       const message = apiError?.message || "Failed to save mentor profile";
       setError(message);
@@ -366,7 +372,7 @@ export default function OnboardingPage() {
           existingProfile={mentorProfileExists ? mentorForm : null}
           onComplete={async () => {
             await fetchCurrentUser();
-            router.replace("/profile");
+            router.replace("/mentor/profile");
           }}
         />
       </main>

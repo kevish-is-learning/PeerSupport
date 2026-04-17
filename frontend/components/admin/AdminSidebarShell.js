@@ -28,7 +28,7 @@ const getRedirectRouteForUser = (user) => {
     return "/admin/dashboard";
   }
 
-  return "/profile";
+  return "/auth?mode=login";
 };
 
 export default function AdminSidebarShell({ children }) {

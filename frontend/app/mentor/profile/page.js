@@ -45,7 +45,7 @@ export default function MentorProfilePage() {
 
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
-            href="/profile"
+            href="/onboarding"
             className="rounded-xl border-2 border-black bg-[#111827] px-4 py-2 text-sm font-bold text-white"
           >
             Profile Editor

@@ -28,5 +28,5 @@ export const getWorkspaceRouteByRole = (role) => {
     return "/admin/dashboard";
   }
 
-  return "/profile";
+  return "/auth?mode=login";
 };

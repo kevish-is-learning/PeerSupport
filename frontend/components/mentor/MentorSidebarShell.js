@@ -46,7 +46,7 @@ export default function MentorSidebarShell({ children }) {
           ? "/mentee/dashboard"
           : user.role === "ADMIN"
             ? "/admin/dashboard"
-            : "/profile";
+            : "/auth?mode=login";
       router.replace(targetPath);
       return;
     }

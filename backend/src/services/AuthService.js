@@ -62,7 +62,7 @@ class AuthService {
     });
 
     if (!user) {
-      return '/profile';
+      return '/auth?mode=login';
     }
 
     if (!user.isRoleSelected) {
@@ -89,7 +89,7 @@ class AuthService {
       return '/admin/dashboard';
     }
 
-    return '/profile';
+    return '/onboarding';
   }
 
   // Register with Email/Password

@@ -43,7 +43,7 @@ export default function HeaderAuthButton() {
             ? "/mentee/dashboard"
             : user.role === "ADMIN"
               ? "/admin/dashboard"
-              : "/profile";
+              : "/auth?mode=login";
 
     return (
       <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">

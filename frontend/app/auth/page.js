@@ -45,7 +45,7 @@ export default function AuthPage({ searchParams }) {
       {/* Right side form */}
       <div className="w-full lg:w-1/2 bg-[#fdfaf7] flex text-left p-8 sm:p-12 lg:p-20 relative overflow-y-auto items-center justify-center">
         <div className="w-full max-w-[420px] mx-auto">
-          <AuthPanel initialMode={mode} redirectTo="/profile" guestOnly />
+          <AuthPanel initialMode={mode} redirectTo="/onboarding" guestOnly />
         </div>
       </div>
     </main>

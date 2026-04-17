@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const normalizeOptionalText = z
   .union([z.string(), z.null()])
   .optional()
   .transform((value) => {
-    if (typeof value === 'undefined') return undefined;
+    if (typeof value === "undefined") return undefined;
     if (value === null) return null;
 
     const trimmed = value.trim();
@@ -12,20 +12,23 @@ const normalizeOptionalText = z
   });
 
 const linkedInUrlSchema = normalizeOptionalText.pipe(
-  z.string().url('LinkedIn URL must be a valid URL').optional().nullable()
+  z.string().url("LinkedIn URL must be a valid URL").optional().nullable(),
 );
 
 const contactNumberSchema = z
-  .string({ required_error: 'Contact number is required' })
+  .string({ required_error: "Contact number is required" })
   .trim()
-  .min(7, 'Contact number must be at least 7 characters long')
-  .max(20, 'Contact number must be at most 20 characters long')
-  .refine((value) => /^[+0-9()\-\s]+$/.test(value), 'Contact number can only include digits and +()- characters');
+  .min(7, "Contact number must be at least 7 characters long")
+  .max(20, "Contact number must be at most 20 characters long")
+  .refine(
+    (value) => /^[+0-9()\-\s]+$/.test(value),
+    "Contact number can only include digits and +()- characters",
+  );
 
 const bioSchema = z
-  .string({ required_error: 'Bio is required' })
+  .string({ required_error: "Bio is required" })
   .trim()
-  .min(10, 'Bio must be at least 10 characters long');
+  .min(10, "Bio must be at least 10 characters long");
 
 const expertiseTagsSchema = z.preprocess(
   (value) => {
@@ -33,7 +36,7 @@ const expertiseTagsSchema = z.preprocess(
       return value;
     }
 
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       const trimmed = value.trim();
       if (!trimmed.length) {
         return [];
@@ -48,30 +51,27 @@ const expertiseTagsSchema = z.preprocess(
         // Fallback to comma-separated parsing.
       }
 
-      return trimmed.split(',').map((item) => item.trim());
+      return trimmed.split(",").map((item) => item.trim());
     }
 
     return value;
   },
   z
-    .array(z.string().trim().min(1, 'Expertise tag cannot be empty'))
+    .array(z.string().trim().min(1, "Expertise tag cannot be empty"))
     .optional()
-    .default([])
+    .default([]),
 );
 
 const optionalUrlSchema = z
   .union([z.string().trim(), z.null()])
   .optional()
-  .refine(
-    (value) => {
-      if (typeof value === 'undefined' || value === null) {
-        return true;
-      }
+  .refine((value) => {
+    if (typeof value === "undefined" || value === null) {
+      return true;
+    }
 
-      return value.startsWith('/uploads/') || /^https?:\/\//i.test(value);
-    },
-    'Must be a valid URL or uploaded file path'
-  );
+    return value.startsWith("/uploads/") || /^https?:\/\//i.test(value);
+  }, "Must be a valid URL or uploaded file path");
 
 export const createMentorProfileSchema = z.object({
   linkedInUrl: linkedInUrlSchema,
@@ -89,7 +89,7 @@ export const createMentorProfileSchema = z.object({
 export const updateMentorProfileSchema = createMentorProfileSchema;
 
 export const updateMentorApprovalSchema = z.object({
-  approvalStatus: z.enum(['APPROVED', 'REJECTED']),
+  approvalStatus: z.enum(["APPROVED", "REJECTED"]),
   adminReviewNotes: normalizeOptionalText,
 });
 
