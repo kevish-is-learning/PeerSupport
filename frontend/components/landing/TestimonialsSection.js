@@ -1,86 +1,67 @@
-"use client";
+import { Star, Quote, Award } from "lucide-react";
 
-import { useState } from "react";
-import { Star, Quote } from "lucide-react";
+const PRIMARY_BLUE = "#5061E4";
 
 const testimonials = [
   {
     name: "Priya Sharma",
-    role: "MBA Aspirant",
-    type: "mentee",
-    badge: { label: "IIM Convert", color: "bg-[#2563eb] text-white" },
+    role: "MBA Graduate",
+    badge: "IIM Lucknow",
     quote:
       "The mock interviews were a game-changer! My mentor from IIM-A gave me insights I could never find in books. Cleared my dream B-school interview!",
-    tag: "CAT 2025",
-    tagColor: "bg-[#fdf5f2] text-[#0d0d0f] border-[#e5e0dc]",
-    stars: 5
-  },
-  {
-    name: "Rahul Verma",
-    role: "IIM Bangalore Alum",
-    type: "mentor",
-    badge: { label: "Top Mentor", color: "bg-[#F9C41A] text-[#0d0d0f]" },
-    quote:
-      "Earning while helping aspiring students is incredibly fulfilling. The platform is seamless and I love the flexibility!",
-    tag: "Mentor",
-    tagColor: "bg-white text-[#0d0d0f] border-[#e5e0dc]",
+    tag: "IIM Indore",
     stars: 5
   },
   {
     name: "Ananya Gupta",
-    role: "MBA Aspirant",
-    type: "mentee",
-    badge: { label: "FMS Selected", color: "bg-[#F9C41A] text-[#0d0d0f]" },
+    role: "MBA Graduate",
+    badge: "FMS Delhi",
     quote:
-      "Group discussions here are so realistic! Practising with peers and getting instant feedback helped me ace my GD rounds.",
+      "Group discussions here are so realistic! Practicing with peers and getting instant feedback helped me ace my GD rounds.",
     tag: "FMS Delhi",
-    tagColor: "bg-[#fdf5f2] text-[#0d0d0f] border-[#e5e0dc]",
-    stars: 5
-  },
-  {
-    name: "Vikram Singh",
-    role: "IIM Ahmedabad Alum",
-    type: "mentor",
-    badge: { label: "Top Mentor", color: "bg-[#F9C41A] text-[#0d0d0f]" },
-    quote:
-      "Built my personal brand while giving back to the community. The dashboard makes scheduling super easy!",
-    tag: "Mentor",
-    tagColor: "bg-white text-[#0d0d0f] border-[#e5e0dc]",
     stars: 5
   },
   {
     name: "Sneha Patel",
-    role: "MBA Aspirant",
-    type: "mentee",
-    badge: { label: "XLRI Convert", color: "bg-[#2563eb] text-white" },
+    role: "MBA Graduate",
+    badge: "XLRI Jamshedpur",
     quote:
       "My mentor helped me craft a compelling story for my interview. The personalized attention made all the difference!",
     tag: "XLRI Jamshedpur",
-    tagColor: "bg-[#fdf5f2] text-[#0d0d0f] border-[#e5e0dc]",
     stars: 5
   },
   {
-    name: "Arjun Mehta",
-    role: "FMS Delhi Alum",
-    type: "mentor",
-    badge: { label: "Super Mentor", color: "bg-[#F9C41A] text-[#0d0d0f]" },
+    name: "Rajesh Kumar",
+    role: "MBA Graduate",
+    badge: "IIM Bangalore",
     quote:
-      "Love how I can set my own rates and availability. The students are genuinely motivated and it's amazing to see their growth!",
-    tag: "Mentor",
-    tagColor: "bg-white text-[#0d0d0f] border-[#e5e0dc]",
+      "The one-on-one sessions helped me identify and work on my weak areas. My mentor's guidance was invaluable!",
+    tag: "IIM Bangalore",
+    stars: 5
+  },
+  {
+    name: "Kavya Reddy",
+    role: "MBA Graduate",
+    badge: "ISB Hyderabad",
+    quote:
+      "The case study practice sessions were incredibly helpful. I felt fully prepared for my interviews thanks to my mentor.",
+    tag: "ISB Hyderabad",
+    stars: 5
+  },
+  {
+    name: "Arjun Malhotra",
+    role: "MBA Graduate",
+    badge: "SPJIMR Mumbai",
+    quote:
+      "Got personalized essay review and career counseling. The mentors really care about your success!",
+    tag: "SPJIMR Mumbai",
     stars: 5
   }
 ];
 
-const tabs = [
-  { key: "all", label: "All Stories" },
-  { key: "mentee", label: "Mentees" },
-  { key: "mentor", label: "Mentors" }
-];
-
 function Stars({ count }) {
   return (
-    <div className="flex gap-0.5 text-[#F9C41A]">
+    <div className="flex gap-0.5 text-[#FFB800]">
       {Array.from({ length: count }).map((_, i) => (
         <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
       ))}
@@ -88,137 +69,102 @@ function Stars({ count }) {
   );
 }
 
-function TestimonialCard({ t, className = "" }) {
+function TestimonialCard({ t }) {
   return (
     <article
-      className={`flex flex-col rounded-[20px] border-[2.5px] border-[#1a1a1a] bg-white p-5 shadow-[4px_4px_0_0_#1a1a1a] ${className}`}
+      className="relative flex flex-col rounded-[24px] border-[3px] bg-[#FAF0E8] p-7 pt-8 shadow-[6px_6px_0_0_#5061E4] sm:rounded-[28px] sm:p-8 sm:pt-9"
+      style={{ borderColor: PRIMARY_BLUE }}
     >
-      {/* Badge */}
-      <span
-        className={`mb-3 w-fit rounded-full px-3 py-1 text-[11px] font-bold ${t.badge.color}`}
-      >
-        {t.badge.label}
-      </span>
+      <Quote
+        size={112}
+        className="pointer-events-none absolute right-4 top-4 z-0 text-[#5061E4]/20 sm:right-5 sm:top-5"
+        strokeWidth={0}
+        fill="currentColor"
+        aria-hidden
+      />
 
-      {/* Author */}
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fdf5f2] text-sm font-bold text-[#0d0d0f]">
-          {t.name.charAt(0)}
+      <div className="absolute right-3 top-3 z-20 max-w-[min(52%,11rem)] sm:right-4 sm:top-4 sm:max-w-none">
+        <span
+          className="inline-block rounded-full border-[3px] px-3 py-1.5 text-center text-[10px] font-extrabold uppercase leading-tight tracking-wide text-white sm:text-[11px]"
+          style={{ borderColor: "#1f2937", backgroundColor: PRIMARY_BLUE }}
+        >
+          {t.badge}
+        </span>
+      </div>
+
+      <div className="relative z-10 flex flex-col gap-5 pr-1 sm:pr-28">
+        <div className="flex gap-4">
+          <div className="relative shrink-0">
+            <div
+              className="flex h-14 w-14 items-center justify-center rounded-full border-[3px] border-[#1f2937] bg-white text-base font-bold text-[#1f2937]"
+              aria-hidden
+            >
+              {t.name.charAt(0)}
+            </div>
+          </div>
+          <div className="min-w-0 pt-0.5">
+            <p className="text-[0.95rem] font-extrabold tracking-tight text-[#1f2937]">{t.name}</p>
+            <p className="mt-0.5 text-[0.8rem] text-[#6b7280]">{t.role}</p>
+            <div className="mt-2">
+              <Stars count={t.stars} />
+            </div>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-extrabold text-[#0d0d0f]">{t.name}</p>
-          <p className="text-xs text-[#5c5f69]">{t.role}</p>
-        </div>
-      </div>
 
-      {/* Stars */}
-      <div className="mt-3">
-        <Stars count={t.stars} />
-      </div>
+        <p className="text-[0.9rem] italic leading-[1.7] text-[#374151]">&ldquo;{t.quote}&rdquo;</p>
 
-      {/* Quote */}
-      <div className="relative mt-3 flex-1">
-        <Quote
-          size={18}
-          className="absolute -left-0.5 -top-1 rotate-180 text-[#F9C41A] opacity-50"
-          fill="currentColor"
-          strokeWidth={0}
-        />
-        <p className="pl-5 text-[0.82rem] leading-[1.65] text-[#3a3d45]">
-          &ldquo;{t.quote}&rdquo;
-        </p>
+        <span className="mt-auto inline-flex w-fit items-center gap-2 rounded-full border-[3px] border-[#1f2937] bg-white px-3.5 py-2 text-[11px] font-extrabold text-[#1f2937]">
+          <Award size={15} strokeWidth={2.4} className="shrink-0 text-[#5061E4]" aria-hidden />
+          {t.tag}
+        </span>
       </div>
-
-      {/* Tag pill */}
-      <span
-        className={`mt-4 w-fit rounded-full border px-3 py-1 text-[11px] font-bold ${t.tagColor}`}
-      >
-        {t.tag}
-      </span>
     </article>
   );
 }
 
 export default function TestimonialsSection() {
-  const [activeTab, setActiveTab] = useState("all");
-
-  const filtered =
-    activeTab === "all"
-      ? testimonials
-      : testimonials.filter((t) => t.type === activeTab);
-
   return (
-    <section className="relative w-full overflow-hidden px-4 py-20 sm:px-6 lg:px-10" style={{ backgroundColor: "#fdf5f2" }}>
-
-      {/* Decorative — orange diamond top-left */}
+    <section
+      className="relative w-full overflow-hidden px-4 py-20 sm:px-6 lg:px-10"
+      style={{ backgroundColor: "#FFF8F4" }}
+    >
       <div
-        className="absolute left-6 top-8 h-16 w-16 rotate-45 rounded-[5px] bg-[#F9C41A] sm:left-12 sm:h-20 sm:w-20"
-        aria-hidden="true"
-      />
-      {/* Smaller diamond overlapping */}
-      <div
-        className="absolute left-3 top-5 h-10 w-10 rotate-45 rounded-[3px] border-[3px] border-[#F9C41A] bg-transparent sm:left-8 sm:top-4 sm:h-12 sm:w-12"
-        aria-hidden="true"
+        className="absolute left-4 top-10 h-20 w-20 rotate-45 rounded-[6px] bg-[#FFB800] sm:left-10 sm:top-14 sm:h-24 sm:w-24"
+        aria-hidden
       />
 
-      {/* Decorative — red triangle shape top-right area */}
       <div
-        className="absolute right-10 top-[45%] h-10 w-10 rotate-12 bg-[#ef4444] sm:right-16 sm:h-14 sm:w-14"
-        style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)" }}
-        aria-hidden="true"
+        className="absolute -bottom-12 -right-12 h-52 w-52 rounded-full sm:-bottom-16 sm:-right-16 sm:h-72 sm:w-72"
+        style={{ backgroundColor: `${PRIMARY_BLUE}33` }}
+        aria-hidden
       />
 
-      {/* Decorative — yellow shape mid-left area */}
-      <div
-        className="absolute bottom-[30%] left-4 h-8 w-8 rotate-20 rounded-[3px] bg-[#F9C41A] opacity-60 sm:left-8 sm:h-10 sm:w-10"
-        aria-hidden="true"
-      />
-
-      <div className="relative mx-auto max-w-6xl">
-
-        {/* Badge */}
+      <div className="relative mx-auto max-w-5xl">
         <div className="flex justify-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#F9C41A] px-4 py-2 text-sm font-bold text-[#0d0d0f] shadow-[3px_3px_0_0_#1a1a1a]">
-            <Star size={14} fill="currentColor" strokeWidth={0} />
+          <span className="inline-flex items-center gap-2 rounded-full border-[2px] border-[#1f2937] bg-[#F59E0B] px-4 py-2 text-sm font-bold text-white shadow-[3px_3px_0_0_#1f2937]">
+            <Quote size={16} fill="currentColor" strokeWidth={0} className="opacity-95" />
             Success Stories
           </span>
         </div>
 
-        {/* Heading */}
-        <h2 className="mt-5 text-center text-[2.2rem] font-extrabold leading-[1.15] tracking-[-0.03em] text-[#0d0d0f] sm:text-[2.8rem]">
-          Real People.
-          <br />
-          Real Results.
+        <h2 className="mt-6 text-center text-[2rem] font-extrabold leading-tight tracking-[-0.03em] text-[#1f2937] sm:text-[2.65rem]">
+          <span className="block">Real People.</span>
+          <span className="relative mt-1 inline-block">
+            <span className="relative z-10">Real Results.</span>
+            <span
+              className="absolute -bottom-0.5 left-0 right-0 z-0 h-[7px] rounded-sm bg-[#FFB800]"
+              aria-hidden
+            />
+          </span>
         </h2>
 
-        {/* Subtitle */}
-        <p className="mx-auto mt-4 max-w-md text-center text-[0.95rem] leading-relaxed text-[#5c5f69]">
-          Don&#39;t just take our word for it — hear from those who&#39;ve transformed their careers!
+        <p className="mx-auto mt-4 max-w-xl text-center text-[0.95rem] leading-relaxed text-[#6b7280]">
+          Don&apos;t just take our word for it—hear from those who&apos;ve transformed their careers!
         </p>
 
-        {/* Tabs */}
-        <div className="mt-8 flex flex-wrap justify-center gap-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`rounded-full border-2 px-5 py-2 text-sm font-bold transition-colors ${
-                activeTab === tab.key
-                  ? "border-[#1a1a1a] bg-[#1a1a1a] text-white shadow-[2px_2px_0_0_#F9C41A]"
-                  : "border-[#1a1a1a] bg-white text-[#0d0d0f] hover:bg-[#f5f5f5]"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Masonry-ish grid */}
-        <div className="mt-12 columns-1 gap-5 sm:columns-2 lg:columns-3">
-          {filtered.map((t) => (
-            <div key={t.name} className="mb-5 break-inside-avoid">
-              <TestimonialCard t={t} />
-            </div>
+        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
+          {testimonials.map((t) => (
+            <TestimonialCard key={t.name} t={t} />
           ))}
         </div>
       </div>

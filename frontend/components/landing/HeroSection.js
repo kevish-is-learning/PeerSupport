@@ -141,7 +141,7 @@ export default function HeroSection() {
       </header>
 
       {/* ── HERO BODY ─────────────────────────────────────── */}
-      <div className="mx-auto flex w-full flex-1 items-center px-4 py-10 sm:px-6 sm:py-14 lg:px-10">
+      <div className="mx-auto flex w-full flex-1 items-center px-4 py-10 sm:px-6 sm:py-14 lg:px-30">
         <div className="grid w-full items-center gap-10 lg:grid-cols-2 lg:gap-6">
 
           {/* Left — copy */}

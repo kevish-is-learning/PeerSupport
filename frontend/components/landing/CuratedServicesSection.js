@@ -14,7 +14,7 @@ const services = [
       label: "Find Your Mentor",
       href: "/explore-mentor",
       className:
-        "inline-flex items-center gap-2 rounded-full border-2 border-[#1a1a1a] bg-[#2563eb] px-5 py-2.5 text-sm font-bold text-white shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#1a1a1a]",
+        "inline-flex items-center gap-2 justify-center rounded-full bg-[#2563eb] px-5 py-2.5 text-sm font-bold text-white transition-all hover:translate-x-px hover:translate-y-px",
       arrowClass: "text-white"
     }
   },
@@ -30,7 +30,7 @@ const services = [
       label: "Join a Session",
       href: "/mentee/find-mentors",
       className:
-        "inline-flex items-center gap-2 rounded-full border-2 border-[#1a1a1a] bg-[#F9C41A] px-5 py-2.5 text-sm font-bold text-[#0d0d0f] shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#1a1a1a]",
+        "inline-flex items-center justify-center gap-2 rounded-full bg-[#F9C41A] px-5 py-2.5 text-sm font-bold text-[#0d0d0f] transition-all hover:translate-x-px hover:translate-y-px",
       arrowClass: "text-[#0d0d0f]"
     }
   },
@@ -46,7 +46,7 @@ const services = [
       label: "Book Mock Interview",
       href: "/mentee/find-mentors",
       className:
-        "inline-flex items-center gap-2 rounded-full border-2 border-[#1a1a1a] bg-[#f97316] px-5 py-2.5 text-sm font-bold text-white shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#1a1a1a]",
+        "inline-flex items-center gap-2 justify-center rounded-full bg-[#f97316] px-5 py-2.5 text-sm font-bold text-white transition-all hover:translate-x-px hover:translate-y-px",
       arrowClass: "text-white"
     }
   }
@@ -73,7 +73,7 @@ function ServiceCard({ service }) {
         {service.description}
       </p>
 
-      <Link href={service.cta.href} className={`mt-6 w-fit ${service.cta.className}`}>
+      <Link href={service.cta.href} className={`mt-6 w-full text-center ${service.cta.className}`}>
         {service.cta.label}
         <ArrowRight size={16} strokeWidth={2.5} className={service.cta.arrowClass} aria-hidden />
       </Link>
