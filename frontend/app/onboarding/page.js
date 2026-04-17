@@ -11,6 +11,7 @@ import {
   mentorProfileApi,
   resolveUploadUrl,
 } from "../../lib/api";
+import MentorOnboardingWizard from "../../components/mentor/MentorOnboardingWizard";
 
 const emptyMenteeForm = {
   dateOfBirth: "",
@@ -358,6 +359,20 @@ export default function OnboardingPage() {
     return null;
   }
 
+  if (selectedRole === "MENTOR") {
+    return (
+      <main className="min-h-screen bg-[#FFFFFF] px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
+        <MentorOnboardingWizard
+          existingProfile={mentorProfileExists ? mentorForm : null}
+          onComplete={async () => {
+            await fetchCurrentUser();
+            router.replace("/profile");
+          }}
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#FFFFFF]  px-4 py-10 text-[#0d0d0f] sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-4xl rounded-[1.75rem] border-2 border-black bg-white p-6 shadow-[6px_6px_0_rgba(0,0,0,1)] sm:p-8">
@@ -511,126 +526,6 @@ export default function OnboardingPage() {
                   </a>
                 ) : null}
               </div>
-            </section>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="rounded-xl border-2 border-black bg-[#5f6cf3] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isSubmitting ? "Saving..." : "Save and Continue"}
-            </button>
-          </form>
-        ) : null}
-
-        {selectedRole === "MENTOR" ? (
-          <form onSubmit={onMentorSubmit} className="mt-6 grid gap-6">
-            <section className="rounded-xl border border-black/20 bg-[#f7fafc] p-4">
-              <h2 className="text-lg font-bold">Mentor Details</h2>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <input
-                  name="linkedInUrl"
-                  type="url"
-                  value={mentorForm.linkedInUrl}
-                  onChange={onMentorFieldChange}
-                  placeholder="LinkedIn URL"
-                  required
-                  className="sm:col-span-2 rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <input
-                  name="contactNumber"
-                  value={mentorForm.contactNumber}
-                  onChange={onMentorFieldChange}
-                  placeholder="Contact Number *"
-                  required
-                  className="sm:col-span-2 rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <textarea
-                  name="bio"
-                  value={mentorForm.bio}
-                  onChange={onMentorFieldChange}
-                  placeholder="Bio"
-                  rows={4}
-                  required
-                  className="sm:col-span-2 rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <input
-                  name="expertiseTags"
-                  value={mentorForm.expertiseTags}
-                  onChange={onMentorFieldChange}
-                  placeholder="Expertise tags"
-                  required
-                  className="sm:col-span-2 rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <textarea
-                  name="ugCollegeProfile"
-                  value={mentorForm.ugCollegeProfile}
-                  onChange={onMentorFieldChange}
-                  placeholder="UG college profile"
-                  rows={3}
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <textarea
-                  name="pgProfile"
-                  value={mentorForm.pgProfile}
-                  onChange={onMentorFieldChange}
-                  placeholder="PG profile"
-                  rows={3}
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-              </div>
-              <textarea
-                name="workExperience"
-                value={mentorForm.workExperience}
-                onChange={onMentorFieldChange}
-                placeholder="Work experience"
-                rows={4}
-                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-              <textarea
-                name="certifications"
-                value={mentorForm.certifications}
-                onChange={onMentorFieldChange}
-                placeholder="Certifications"
-                rows={3}
-                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <input
-                  name="profilePhoto"
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  onChange={onMentorFileChange}
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm"
-                />
-                <input
-                  name="collegeDocument"
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  onChange={onMentorFileChange}
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm"
-                />
-              </div>
-              {mentorForm.profilePhotoUrl ? (
-                <img
-                  src={resolveUploadUrl(mentorForm.profilePhotoUrl)}
-                  alt="Mentor avatar"
-                  className="mt-2 h-20 w-20 rounded-xl border border-black/20 object-cover"
-                />
-              ) : null}
-              {mentorForm.collegeDocumentUrl ? (
-                <a
-                  href={resolveUploadUrl(mentorForm.collegeDocumentUrl)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-2 inline-block text-sm font-semibold text-[#5f6cf3] underline"
-                >
-                  View uploaded document
-                </a>
-              ) : null}
-              {mentorApprovalStatus ? (
-                <p className="mt-3 text-sm font-semibold">Waitlist: {mentorApprovalStatus}</p>
-              ) : null}
             </section>
 
             <button

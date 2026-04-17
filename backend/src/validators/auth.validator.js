@@ -15,7 +15,8 @@ const passwordSchema = z
 export const registerSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
-  name: z.string().nullable(),
+  name: z.string().min(1, 'Name is required'),
+  role: z.enum(['MENTEE', 'MENTOR']),
 });
 
 // Login validation schema

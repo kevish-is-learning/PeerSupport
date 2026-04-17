@@ -11,11 +11,9 @@ const normalizeOptionalText = z
     return trimmed.length ? trimmed : null;
   });
 
-const linkedInUrlSchema = z
-  .string({ required_error: 'LinkedIn URL is required' })
-  .trim()
-  .url('LinkedIn URL must be a valid URL')
-  .refine((value) => value.includes('linkedin.com'), 'LinkedIn URL must be from linkedin.com');
+const linkedInUrlSchema = normalizeOptionalText.pipe(
+  z.string().url('LinkedIn URL must be a valid URL').optional().nullable()
+);
 
 const contactNumberSchema = z
   .string({ required_error: 'Contact number is required' })

@@ -3413,7 +3413,7 @@ export namespace Prisma {
   export type MentorProfileGroupByOutputType = {
     id: string
     userId: string
-    linkedInUrl: string
+    linkedInUrl: string | null
     contactNumber: string
     bio: string
     expertiseTags: string[]
@@ -3524,7 +3524,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      linkedInUrl: string
+      linkedInUrl: string | null
       contactNumber: string
       bio: string
       expertiseTags: string[]
@@ -4705,7 +4705,7 @@ export namespace Prisma {
     NOT?: MentorProfileWhereInput | MentorProfileWhereInput[]
     id?: StringFilter<"MentorProfile"> | string
     userId?: StringFilter<"MentorProfile"> | string
-    linkedInUrl?: StringFilter<"MentorProfile"> | string
+    linkedInUrl?: StringNullableFilter<"MentorProfile"> | string | null
     contactNumber?: StringFilter<"MentorProfile"> | string
     bio?: StringFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
@@ -4726,7 +4726,7 @@ export namespace Prisma {
   export type MentorProfileOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    linkedInUrl?: SortOrder
+    linkedInUrl?: SortOrderInput | SortOrder
     contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
@@ -4750,7 +4750,7 @@ export namespace Prisma {
     AND?: MentorProfileWhereInput | MentorProfileWhereInput[]
     OR?: MentorProfileWhereInput[]
     NOT?: MentorProfileWhereInput | MentorProfileWhereInput[]
-    linkedInUrl?: StringFilter<"MentorProfile"> | string
+    linkedInUrl?: StringNullableFilter<"MentorProfile"> | string | null
     contactNumber?: StringFilter<"MentorProfile"> | string
     bio?: StringFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
@@ -4771,7 +4771,7 @@ export namespace Prisma {
   export type MentorProfileOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    linkedInUrl?: SortOrder
+    linkedInUrl?: SortOrderInput | SortOrder
     contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
@@ -4797,7 +4797,7 @@ export namespace Prisma {
     NOT?: MentorProfileScalarWhereWithAggregatesInput | MentorProfileScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"MentorProfile"> | string
     userId?: StringWithAggregatesFilter<"MentorProfile"> | string
-    linkedInUrl?: StringWithAggregatesFilter<"MentorProfile"> | string
+    linkedInUrl?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     contactNumber?: StringWithAggregatesFilter<"MentorProfile"> | string
     bio?: StringWithAggregatesFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
@@ -5075,7 +5075,7 @@ export namespace Prisma {
 
   export type MentorProfileCreateInput = {
     id?: string
-    linkedInUrl: string
+    linkedInUrl?: string | null
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
@@ -5096,7 +5096,7 @@ export namespace Prisma {
   export type MentorProfileUncheckedCreateInput = {
     id?: string
     userId: string
-    linkedInUrl: string
+    linkedInUrl?: string | null
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
@@ -5115,7 +5115,7 @@ export namespace Prisma {
 
   export type MentorProfileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
@@ -5136,7 +5136,7 @@ export namespace Prisma {
   export type MentorProfileUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
@@ -5156,7 +5156,7 @@ export namespace Prisma {
   export type MentorProfileCreateManyInput = {
     id?: string
     userId: string
-    linkedInUrl: string
+    linkedInUrl?: string | null
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
@@ -5175,7 +5175,7 @@ export namespace Prisma {
 
   export type MentorProfileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
@@ -5195,7 +5195,7 @@ export namespace Prisma {
   export type MentorProfileUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
@@ -5999,7 +5999,7 @@ export namespace Prisma {
 
   export type MentorProfileCreateWithoutUserInput = {
     id?: string
-    linkedInUrl: string
+    linkedInUrl?: string | null
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
@@ -6018,7 +6018,7 @@ export namespace Prisma {
 
   export type MentorProfileUncheckedCreateWithoutUserInput = {
     id?: string
-    linkedInUrl: string
+    linkedInUrl?: string | null
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
@@ -6100,7 +6100,7 @@ export namespace Prisma {
 
   export type MentorProfileUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
@@ -6119,7 +6119,7 @@ export namespace Prisma {
 
   export type MentorProfileUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    linkedInUrl?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]

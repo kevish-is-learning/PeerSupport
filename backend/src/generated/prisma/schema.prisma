@@ -68,7 +68,7 @@ model MenteeProfile {
 model MentorProfile {
   id                 String               @id @default(uuid())
   userId             String               @unique
-  linkedInUrl        String
+  linkedInUrl        String?
   contactNumber      String
   bio                String
   expertiseTags      String[]

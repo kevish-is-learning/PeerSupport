@@ -95,7 +95,7 @@ class AuthService {
   // Register with Email/Password
   async register(data) {
     // Validate input using Zod
-    const { email, password, name } = registerSchema.parse(data);
+    const { email, password, name, role } = registerSchema.parse(data);
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -112,15 +112,15 @@ class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user with default role MENTEE
+    // Create user with selected role
     const user = await prisma.user.create({
       data: {
         email: email.toLowerCase(),
         password: hashedPassword,
         name: name || null,
         provider: 'local',
-        role: 'MENTEE',
-        isRoleSelected: false,
+        role: role || "MENTEE",
+        isRoleSelected: true,
       },
       include: {
         menteeProfile: {

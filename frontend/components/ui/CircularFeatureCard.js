@@ -22,9 +22,8 @@ export default function CircularFeatureCard({
     const ring = accent === "orange" ? orange : blue;
     return (
       <article
-        className="flex h-[118px] w-[118px] flex-col items-center justify-start rounded-full border-[2.5px] bg-white px-2 pb-3 pt-3 text-center sm:h-[128px] sm:w-[128px]"
+        className="flex h-[118px] w-[118px] flex-col items-center justify-start rounded-full border-2 border-[#1f2937] bg-white px-2 pb-3 pt-3 text-center sm:h-[132px] sm:w-[132px]"
         style={{
-          borderColor: ring,
           boxShadow: `4px 4px 0 0 ${ring}`
         }}
       >

@@ -10,13 +10,13 @@ const problems = [
   },
   {
     icon: XCircle,
-    title: "Limited Resources",
+    title: "Limited Mentor Access",
     description: "Hard to find experienced B-school mentors"
   },
   {
     icon: Clock,
-    title: "Mock Practice",
-    description: "Generic prep without realistic interview drills"
+    title: "Generic Preparation",
+    description: "One-size-fits-all courses don't work"
   }
 ];
 
@@ -38,17 +38,17 @@ const solutions = [
   }
 ];
 
-const VB = 400;
-const CX = 200;
-const CY = 200;
-const RING_R = 172;
-const NODE = 64;
+const VB = 540;
+const CX = 270;
+const CY = 270;
+const RING_R = 180;
+const NODE = 75;
 
 function JourneyCenter() {
   return (
     <div className="flex flex-col items-center">
       <div
-        className="flex h-[76px] w-[76px] items-center justify-center rounded-full border-[3px] border-[#1f2937] bg-white sm:h-[88px] sm:w-[88px]"
+        className="flex h-19 w-19 items-center justify-center rounded-full border-[3px] border-[#1f2937] bg-white sm:h-22 sm:w-22"
         style={{ boxShadow: "5px 5px 0 0 #FFB800" }}
       >
         <Rocket className="text-[#5061E4]" size={34} strokeWidth={2.25} aria-hidden />
@@ -63,24 +63,22 @@ function JourneyCenter() {
 /** Polar degrees: 0 = right; problems on top arc, solutions on bottom arc */
 function JourneyRing() {
   const angles = [
-    { item: problems[0], accent: "orange", deg: -150 },
-    { item: problems[1], accent: "orange", deg: -90 },
-    { item: problems[2], accent: "orange", deg: -30 },
-    { item: solutions[0], accent: "blue", deg: 30 },
-    { item: solutions[1], accent: "blue", deg: 90 },
-    { item: solutions[2], accent: "blue", deg: 150 }
+    { item: problems[1], accent: "orange", deg: -150 }, // Limited Mentor Access
+    { item: problems[2], accent: "orange", deg: -90 },  // Generic Preparation
+    { item: problems[0], accent: "orange", deg: -30 },  // Lack of Guidance
+    { item: solutions[0], accent: "blue", deg: 150 },   // Direct Access
+    { item: solutions[1], accent: "blue", deg: 90 },    // Personalized
+    { item: solutions[2], accent: "blue", deg: 30 }     // Proven Results
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[440px]">
+    <div className="mx-auto w-full max-w-[600px]">
       <svg
         className="h-auto w-full text-[#d1d5db]"
         viewBox={`0 0 ${VB} ${VB}`}
         role="img"
         aria-label="Problems and solutions journey"
       >
-        <circle cx={CX} cy={CY} r={RING_R} fill="none" stroke="currentColor" strokeWidth="2" />
-
         <foreignObject x={CX - 56} y={CY - 70} width="112" height="150">
           <div className="flex h-full w-full items-center justify-center" xmlns="http://www.w3.org/1999/xhtml">
             <JourneyCenter />
@@ -133,7 +131,7 @@ export default function ProblemsSolutionsSection() {
             <span className="relative inline-block">
               <span className="relative z-10">Solutions</span>
               <span
-                className="absolute -bottom-1 left-0 right-0 z-0 h-[6px] rounded-sm bg-[#FFB800]"
+                className="absolute -bottom-1 left-0 right-0 z-0 h-1.5 rounded-sm bg-[#FFB800]"
                 aria-hidden
               />
             </span>

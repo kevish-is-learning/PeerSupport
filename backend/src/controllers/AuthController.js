@@ -18,9 +18,9 @@ class AuthController {
   // Register with Email/Password
   async register(req, res) {
     try {
-      const { email, password, name } = req.body;
+      const { email, password, name, role } = req.body;
 
-      const result = await authService.register({ email, password, name });
+      const result = await authService.register({ email, password, name, role });
 
       // Set JWT token in HTTP-only cookie
       res.cookie('token', result.token, {
