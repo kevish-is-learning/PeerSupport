@@ -3,15 +3,15 @@
 import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, Check, Upload } from "lucide-react";
+import { ArrowLeft, Check, Upload, User, GraduationCap, Briefcase, BookOpen, CheckCircle } from "lucide-react";
 import useAuthStore from "../../store/useAuthStore";
 import { mentorProfileApi, resolveUploadUrl, authApi } from "../../lib/api";
 
 const STEPS = [
-  { id: 1, title: "Basic Information", icon: "user" },
-  { id: 2, title: "Education Details", icon: "graduation-cap" },
-  { id: 3, title: "Professional Background", icon: "briefcase" },
-  { id: 4, title: "Expertise & Profile", icon: "book-open" },
+  { id: 1, title: "Basic Information", icon: User },
+  { id: 2, title: "Education Details", icon: GraduationCap },
+  { id: 3, title: "Professional Background", icon: Briefcase },
+  { id: 4, title: "Expertise & Profile", icon: BookOpen },
 ];
 
 const EXPERTISE_OPTIONS = [
@@ -49,6 +49,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
     ugSpecialization: existingProfile?.ugCollegeProfile?.split("|")[2] || "",
     ugYear: existingProfile?.ugCollegeProfile?.split("|")[3] || "",
 
+    linkedInUrl: existingProfile?.linkedInUrl || "",
     workExperienceYears: existingProfile?.workExperience?.split("|")[0] || "",
     company: existingProfile?.workExperience?.split("|")[1] || "",
     role: existingProfile?.workExperience?.split("|")[2] || "",
@@ -135,16 +136,22 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
 
       payload.append("contactNumber", formData.contactNumber);
       payload.append("bio", formData.bio);
+      
       if (formData.expertiseTags.length > 0) {
         payload.append("expertiseTags", JSON.stringify(formData.expertiseTags));
+      } else {
+        payload.append("expertiseTags", "[]");
       }
       
-      if (ugCollegeProfile) payload.append("ugCollegeProfile", ugCollegeProfile);
-      if (pgProfile) payload.append("pgProfile", pgProfile);
-      if (workExp) payload.append("workExperience", workExp);
+      payload.append("ugCollegeProfile", ugCollegeProfile);
+      payload.append("pgProfile", pgProfile);
+      payload.append("workExperience", workExp);
+      payload.append("linkedInUrl", formData.linkedInUrl || "");
 
       if (files.profilePhoto) {
         payload.append("profilePhoto", files.profilePhoto);
+      } else if (formData.profilePhotoUrl) {
+        payload.append("profilePhotoUrl", formData.profilePhotoUrl);
       }
 
       // Note: Full name in `formData.fullName` is not saved to MentorProfile, it typically requires a separate `authApi` call to update the user.
@@ -208,7 +215,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                       : "border-gray-200 text-gray-400"
                   }`}
                 >
-                  {isCompleted ? <Check className="w-6 h-6" /> : <span className="font-bold">{step.id}</span>}
+                  {isCompleted ? <CheckCircle className="w-6 h-6" /> : <step.icon className="w-6 h-6" />}
                 </div>
                 <span
                   className={`text-xs font-bold text-center max-w-[80px] ${
@@ -416,7 +423,22 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
           {currentStep === 3 && (
             <div className="space-y-6">
               <div className="border border-yellow-400 bg-[#fffdf0] rounded-xl p-3 mb-6 text-sm text-gray-600">
-                <strong>Optional:</strong> Share your work experience to help mentees understand your background better
+                <strong>Optional:</strong> Share your work experience and LinkedIn profile to help mentees understand your background better
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">LinkedIn Profile URL</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-600 font-bold">in</span>
+                  <input
+                    type="url"
+                    name="linkedInUrl"
+                    value={formData.linkedInUrl}
+                    onChange={handleChange}
+                    placeholder="https://linkedin.com/in/your-profile"
+                    className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] pl-10 pr-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                  />
+                </div>
               </div>
 
               <div>
