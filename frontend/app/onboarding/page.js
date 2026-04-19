@@ -253,6 +253,11 @@ export default function OnboardingPage() {
 
   const onMenteeFieldChange = (event) => {
     const { name, value } = event.target;
+    if (name === "contactNumber") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 10);
+      setMenteeForm((previous) => ({ ...previous, [name]: numericValue }));
+      return;
+    }
     setMenteeForm((previous) => ({ ...previous, [name]: value }));
   };
 
@@ -432,15 +437,19 @@ export default function OnboardingPage() {
                   required
                   className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                 />
-                <input
-                  type="tel"
-                  name="contactNumber"
-                  value={menteeForm.contactNumber}
-                  onChange={onMenteeFieldChange}
-                  placeholder="Contact Number *"
-                  required
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 text-sm font-bold text-gray-500 bg-transparent">+91</span>
+                  <input
+                    type="tel"
+                    name="contactNumber"
+                    value={menteeForm.contactNumber}
+                    onChange={onMenteeFieldChange}
+                    maxLength="10"
+                    placeholder="9876543210 *"
+                    required
+                    className="w-full rounded-xl border border-black/30 pl-10 pr-3 py-2 text-sm outline-none focus:border-black"
+                  />
+                </div>
                 <input
                   name="otherMbaScore"
                   type="number"

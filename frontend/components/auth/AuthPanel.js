@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "../../store/useAuthStore";
 import { authApi } from "../../lib/api";
+import { Eye, EyeOff } from "lucide-react";
 
 const defaultForm = {
   name: "",
@@ -40,6 +41,8 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/onboar
   const [mode, setMode] = useState(initialMode === "register" ? "register" : "login");
   const [form, setForm] = useState(defaultForm);
   const [pwdError, setPwdError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
   const {
@@ -130,7 +133,6 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/onboar
                 }`}
                 style={form.role === "MENTEE" ? {} : { opacity: 0.7 }}
               >
-                {form.role === "MENTEE" && <span className="text-xs">✓</span>}
                 Signing up as a mentee.
               </button>
               <button
@@ -143,7 +145,6 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/onboar
                 }`}
                 style={form.role === "MENTOR" ? {} : { opacity: 0.7 }}
               >
-                {form.role === "MENTOR" && <span className="text-xs">✓</span>}
                 Signing up as a mentor.
               </button>
             </div>
@@ -185,15 +186,22 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/onboar
               <LockIcon />
             </div>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               value={form.password}
               onChange={onChange}
               placeholder="Password"
-              className="w-full rounded-2xl border-2 border-[#e6e2df] py-3.5 pl-12 pr-4 bg-white outline-none focus:border-black/50 transition-colors text-sm"
+              className="w-full rounded-2xl border-2 border-[#e6e2df] py-3.5 pl-12 pr-12 bg-white outline-none focus:border-black/50 transition-colors text-sm"
               minLength={6}
               required
             />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-black"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
 
           {!isLogin && (
@@ -202,15 +210,22 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/onboar
                 <LockIcon />
               </div>
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 value={form.confirmPassword}
                 onChange={onChange}
                 placeholder="Confirm password"
-                className="w-full rounded-2xl border-2 border-[#e6e2df] py-3.5 pl-12 pr-4 bg-white outline-none focus:border-black/50 transition-colors text-sm"
+                className="w-full rounded-2xl border-2 border-[#e6e2df] py-3.5 pl-12 pr-12 bg-white outline-none focus:border-black/50 transition-colors text-sm"
                 minLength={6}
                 required
               />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-black"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
           )}
 

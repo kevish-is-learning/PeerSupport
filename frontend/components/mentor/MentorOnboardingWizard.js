@@ -64,6 +64,11 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "contactNumber") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 10);
+      setFormData((prev) => ({ ...prev, [name]: numericValue }));
+      return;
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -104,6 +109,22 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       if (!formData.contactNumber.trim()) {
         toast.error("Contact number is required.");
         return;
+      }
+    }
+
+    // Validation for Step 3
+    if (currentStep === 3) {
+      if (formData.linkedInUrl.trim()) {
+        try {
+          new URL(formData.linkedInUrl);
+          if (!formData.linkedInUrl.toLowerCase().includes("linkedin.com")) {
+            toast.error("Please provide a valid LinkedIn URL.");
+            return;
+          }
+        } catch (_) {
+          toast.error("Please enter a valid URL including http/https.");
+          return;
+        }
       }
     }
     
@@ -304,14 +325,18 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
 
               <div>
                 <label className="block text-sm font-semibold mb-2">Contact Number</label>
-                <input
-                  type="tel"
-                  name="contactNumber"
-                  value={formData.contactNumber}
-                  onChange={handleChange}
-                  placeholder="+91 XXXXX XXXXX"
-                  className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
-                />
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 font-bold text-gray-500">+91</span>
+                  <input
+                    type="tel"
+                    name="contactNumber"
+                    value={formData.contactNumber}
+                    onChange={handleChange}
+                    maxLength="10"
+                    placeholder="9876543210"
+                    className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] pl-12 pr-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -442,9 +467,6 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
 
           {currentStep === 3 && (
             <div className="space-y-6">
-              <div className="border border-yellow-400 bg-[#fffdf0] rounded-xl p-3 mb-6 text-sm text-gray-600">
-                <strong>Optional:</strong> Share your work experience and LinkedIn profile to help mentees understand your background better
-              </div>
 
               <div>
                 <label className="block text-sm font-semibold mb-2">
@@ -516,14 +538,14 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-semibold mb-3">Areas of Expertise (Select all that apply)</label>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2 sm:gap-3">
                   {EXPERTISE_OPTIONS.map((opt) => {
                     const isSelected = formData.expertiseTags.includes(opt);
                     return (
                       <button
                         key={opt}
                         onClick={() => handleExpertiseToggle(opt)}
-                        className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-colors ${
+                        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold border-2 transition-colors ${
                           isSelected
                             ? "bg-[#5f6cf3] text-white border-[#5f6cf3]"
                             : "bg-white text-gray-700 border-gray-300 hover:border-black"
@@ -557,11 +579,11 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
         </div>
 
         {/* Footer Actions */}
-        <div className="mt-8 flex items-center justify-between pt-6 border-t border-gray-100">
+        <div className="mt-8 flex flex-row items-center justify-between pt-6 border-t border-gray-100">
           <button
             onClick={handlePrevious}
             disabled={currentStep === 1}
-            className={`px-6 py-2.5 rounded-full border-2 border-black font-bold transition-colors ${
+            className={`px-2 sm:px-6 py-2 sm:py-2.5 rounded-full border-1 sm:border-2 border-black font-bold text-xs sm:text-base transition-colors ${
               currentStep === 1 
                 ? "bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed" 
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -573,7 +595,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
           {currentStep < 4 ? (
             <button
               onClick={handleNext}
-              className="px-8 py-2.5 rounded-full border-2 border-black bg-[#5f6cf3] text-white font-bold hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all"
+              className="px-5 sm:px-8 py-2 sm:py-2.5 rounded-full border-1 sm:border-2 border-black bg-[#5f6cf3] text-white font-bold text-xs sm:text-base hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all"
             >
               Next &rarr;
             </button>
@@ -581,10 +603,11 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="px-8 py-2.5 rounded-full border-2 border-black bg-[#ffc20f] text-black font-bold hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all flex items-center"
+              className="px-4 sm:px-8 py-2 sm:py-2.5 rounded-full border-1 sm:border-2 border-black bg-[#ffc20f] text-black font-bold text-xs sm:text-base hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all flex items-center justify-center shrink-0"
             >
-              {isSubmitting ? "Requesting..." : "Request for Approval"}
-              {!isSubmitting && <Check className="w-5 h-5 ml-2" />}
+              <span className="hidden sm:inline">{isSubmitting ? "Requesting..." : "Request for Approval"}</span>
+              <span className="sm:hidden">{isSubmitting ? "Wait..." : "Request"}</span>
+              {!isSubmitting && <Check className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />}
             </button>
           )}
         </div>
