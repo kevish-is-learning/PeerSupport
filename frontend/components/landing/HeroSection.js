@@ -112,7 +112,7 @@ export default function HeroSection() {
         className="w-full border-b border-black px-4 py-3.5 sm:px-6 lg:px-10"
         style={{ backgroundColor: BRAND_BG }}
       >
-        <div className="mx-auto grid w-full grid-cols-2 items-center gap-y-4 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-8 md:gap-y-0">
+        <div className="mx-auto flex w-full flex-wrap items-center justify-between gap-y-4 md:flex-nowrap md:gap-x-8 md:gap-y-0">
           <Link href="/" className="flex min-w-0 items-center gap-3">
             <BrandMark />
             <div className="flex flex-col text-[1.35rem] font-bold leading-[0.95] tracking-[-0.04em] text-[#0d0d0f] sm:text-[1.5rem]">
@@ -120,12 +120,8 @@ export default function HeroSection() {
             </div>
           </Link>
 
-          <div className="col-start-2 row-start-1 justify-self-end md:col-start-3">
-            <HeaderAuthButton />
-          </div>
-
           <nav
-            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[0.9rem] font-semibold text-black sm:gap-x-7 sm:text-[0.95rem] md:col-span-1 md:col-start-2 md:row-start-1 md:justify-center"
+            className="order-last flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[0.9rem] font-semibold text-black sm:gap-x-7 sm:text-[0.95rem] md:order-none md:w-auto md:flex-1"
             aria-label="Primary"
           >
             {navItems.map((item) => (
@@ -138,6 +134,10 @@ export default function HeroSection() {
               </Link>
             ))}
           </nav>
+
+          <div className="flex items-center justify-end gap-3 md:w-auto">
+            <HeaderAuthButton />
+          </div>
         </div>
       </header>
 

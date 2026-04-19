@@ -193,50 +193,52 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       </button>
 
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Complete Your Mentor Profile</h1>
-        <p className="text-gray-500">Help us know you better to connect you with the right mentees</p>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">Complete Your Mentor Profile</h1>
+        <p className="text-sm sm:text-base text-gray-500">Help us know you better to connect you with the right mentees</p>
       </div>
 
       {/* Stepper Header */}
-      <div className="bg-white border-2 border-black rounded-2xl p-6 mb-6 shadow-[6px_6px_0_rgba(0,0,0,1)] flex items-center justify-between">
-        {STEPS.map((step, idx) => {
-          const isCompleted = step.id < currentStep;
-          const isActive = step.id === currentStep;
-          
-          return (
-            <React.Fragment key={step.id}>
-              <div className="flex flex-col items-center z-10 bg-white px-2">
-                <div
-                  className={`w-12 h-12 rounded-full border-2 flex items-center justify-center mb-2 transition-all ${
-                    isCompleted
-                      ? "border-yellow-400 bg-yellow-400 text-black"
-                      : isActive
-                      ? "border-[#5f6cf3] bg-[#5f6cf3] text-white"
-                      : "border-gray-200 text-gray-400"
-                  }`}
-                >
-                  {isCompleted ? <CheckCircle className="w-6 h-6" /> : <step.icon className="w-6 h-6" />}
+      <div className="bg-white border-2 border-black rounded-2xl p-4 sm:p-6 mb-6 shadow-[6px_6px_0_rgba(0,0,0,1)] flex items-center justify-between overflow-x-auto no-scrollbar">
+        <div className="flex w-full items-center justify-between min-w-[500px] sm:min-w-0">
+          {STEPS.map((step, idx) => {
+            const isCompleted = step.id < currentStep;
+            const isActive = step.id === currentStep;
+            
+            return (
+              <React.Fragment key={step.id}>
+                <div className="flex flex-col items-center z-10 bg-white px-1 sm:px-2 shrink-0">
+                  <div
+                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center mb-2 transition-all shrink-0 ${
+                      isCompleted
+                        ? "border-yellow-400 bg-yellow-400 text-black"
+                        : isActive
+                        ? "border-[#5f6cf3] bg-[#5f6cf3] text-white"
+                        : "border-gray-200 text-gray-400"
+                    }`}
+                  >
+                    {isCompleted ? <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6" /> : <step.icon className="w-5 h-5 sm:w-6 sm:h-6" />}
+                  </div>
+                  <span
+                    className={`text-[10px] sm:text-xs font-bold text-center max-w-[70px] sm:max-w-[80px] ${
+                      isActive || isCompleted ? "text-black" : "text-gray-400"
+                    }`}
+                  >
+                    {step.title}
+                  </span>
                 </div>
-                <span
-                  className={`text-xs font-bold text-center max-w-[80px] ${
-                    isActive || isCompleted ? "text-black" : "text-gray-400"
-                  }`}
-                >
-                  {step.title}
-                </span>
-              </div>
-              {idx < STEPS.length - 1 && (
-                <div className="flex-1 h-[2px] mx-2 relative top-[-16px]">
-                  <div className={`h-full ${isCompleted ? "bg-yellow-400" : "bg-gray-200"}`} />
-                </div>
-              )}
-            </React.Fragment>
-          );
-        })}
+                {idx < STEPS.length - 1 && (
+                  <div className="flex-1 min-w-[30px] sm:min-w-[40px] h-[2px] mx-1 sm:mx-2 relative top-[-10px] sm:top-[-16px]">
+                    <div className={`h-full ${isCompleted ? "bg-yellow-400" : "bg-gray-200"}`} />
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
 
       {/* Form Content Area */}
-      <div className="bg-white border-2 border-black rounded-2xl p-6 shadow-[8px_8px_0_rgba(79,70,229,0.8)] min-h-[400px] flex flex-col justify-between">
+      <div className="bg-white border-2 border-black rounded-2xl p-4 sm:p-6 shadow-[8px_8px_0_rgba(79,70,229,0.8)] min-h-[400px] flex flex-col justify-between">
         <div>
           <h2 className="text-xl font-bold mb-6">{STEPS[currentStep - 1].title}</h2>
 
@@ -244,8 +246,8 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-semibold mb-2">Profile Picture</label>
-                <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 rounded-full border border-dashed border-gray-400 flex items-center justify-center bg-gray-50 overflow-hidden">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="w-20 h-20 shrink-0 rounded-full border border-dashed border-gray-400 flex items-center justify-center bg-gray-50 overflow-hidden">
                     {(files.profilePhoto || formData.profilePhotoUrl) ? (
                       <img
                         src={files.profilePhoto ? URL.createObjectURL(files.profilePhoto) : resolveUploadUrl(formData.profilePhotoUrl)}
@@ -267,7 +269,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                     />
                     <label
                       htmlFor="profilePhoto"
-                      className="cursor-pointer inline-flex items-center bg-[#ffc20f] border-2 border-black px-4 py-2 rounded-xl font-bold hover:bg-[#e6ae0d] transition-colors shadow-[2px_2px_0_rgba(0,0,0,1)]"
+                      className="cursor-pointer inline-flex items-center bg-[#ffc20f] border-2 border-black px-4 py-2 rounded-xl font-bold text-sm hover:bg-[#e6ae0d] transition-colors shadow-[2px_2px_0_rgba(0,0,0,1)]"
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Photo
@@ -358,11 +360,13 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                         Graduation Year <span className="text-xs font-normal text-gray-400">(optional)</span>
                       </label>
                       <input 
-                        type="text"
+                        type="number"
+                        min="1950"
+                        max="2040"
                         name="mbaYear"
                         value={formData.mbaYear}
                         onChange={handleChange}
-                        placeholder="2024"
+                        placeholder="e.g., 2024"
                         className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black transition-all"
                       />
                     </div>
@@ -420,11 +424,13 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                         Year <span className="text-xs font-normal text-gray-400">(optional)</span>
                       </label>
                       <input 
-                        type="text"
+                        type="number"
+                        min="1950"
+                        max="2040"
                         name="ugYear"
                         value={formData.ugYear}
                         onChange={handleChange}
-                        placeholder="2020"
+                        placeholder="e.g., 2020"
                         className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black transition-all"
                       />
                     </div>
@@ -462,11 +468,13 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                   Years of Work Experience <span className="text-xs font-normal text-gray-400">(optional)</span>
                 </label>
                 <input
-                  type="text"
+                  type="number"
+                  min="0"
+                  step="0.5"
                   name="workExperienceYears"
                   value={formData.workExperienceYears}
                   onChange={handleChange}
-                  placeholder="e.g., 3 years"
+                  placeholder="e.g., 3"
                   className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                 />
               </div>
@@ -575,7 +583,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
               disabled={isSubmitting}
               className="px-8 py-2.5 rounded-full border-2 border-black bg-[#ffc20f] text-black font-bold hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all flex items-center"
             >
-              {isSubmitting ? "Completing..." : "Complete Profile"}
+              {isSubmitting ? "Requesting..." : "Request for Approval"}
               {!isSubmitting && <Check className="w-5 h-5 ml-2" />}
             </button>
           )}

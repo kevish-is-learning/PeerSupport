@@ -433,6 +433,7 @@ export default function OnboardingPage() {
                   className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                 />
                 <input
+                  type="tel"
                   name="contactNumber"
                   value={menteeForm.contactNumber}
                   onChange={onMenteeFieldChange}
@@ -480,12 +481,14 @@ export default function OnboardingPage() {
                   className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                 />
               </div>
-              <textarea
+              <input
+                type="number"
+                min="0"
+                step="0.5"
                 name="workExperience"
                 value={menteeForm.workExperience}
                 onChange={onMenteeFieldChange}
-                placeholder="Work experience (optional)"
-                rows={3}
+                placeholder="Work experience in years (optional)"
                 className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
               />
               <textarea

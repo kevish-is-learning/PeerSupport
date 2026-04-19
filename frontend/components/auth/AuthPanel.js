@@ -119,11 +119,11 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/onboar
 
         <form onSubmit={onSubmit} className="space-y-4">
           {!isLogin && (
-            <div className="flex gap-4 mb-2 text-sm font-semibold">
+            <div className="flex flex-col sm:flex-row gap-3 mb-4 text-sm font-semibold">
               <button
                 type="button"
                 onClick={() => setForm({ ...form, role: "MENTEE" })}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full border-2 transition-all ${
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-full border-2 transition-all whitespace-nowrap ${
                   form.role === "MENTEE"
                     ? "bg-[#596df2] text-white border-[#596df2]"
                     : "bg-white text-black border-black/80 shadow-[2px_2px_0px_rgba(0,0,0,0.8)]"
@@ -136,7 +136,7 @@ export default function AuthPanel({ initialMode = "login", redirectTo = "/onboar
               <button
                 type="button"
                 onClick={() => setForm({ ...form, role: "MENTOR" })}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full border-2 transition-all block ${
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-full border-2 transition-all whitespace-nowrap ${
                   form.role === "MENTOR"
                     ? "bg-[#f08849] text-white border-[#f08849]"
                     : "bg-white text-black border-black/80 shadow-[2px_2px_0px_rgba(0,0,0,0.8)]"

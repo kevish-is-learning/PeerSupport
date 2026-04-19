@@ -27,7 +27,6 @@ class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        domain: '.kevish.dev',
         maxAge: 21 * 24 * 60 * 60 * 1000, // 21 days
       });
 
@@ -54,7 +53,6 @@ class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        domain: '.kevish.dev',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
@@ -103,7 +101,6 @@ class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        domain: '.kevish.dev',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 

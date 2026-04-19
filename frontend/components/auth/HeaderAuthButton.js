@@ -54,7 +54,7 @@ export default function HeaderAuthButton() {
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+    <div className="flex flex-wrap items-center justify-end gap-2 sm:flex-nowrap sm:gap-3">
       <Link href="/auth?mode=login" className={outlineBtn}>
         Sign In
       </Link>
