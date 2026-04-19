@@ -448,35 +448,35 @@ export default function OnboardingPage() {
                   max="100"
                   value={menteeForm.otherMbaScore}
                   onChange={onMenteeFieldChange}
-                  placeholder="Other MBA Score (Cumulative)"
+                  placeholder="Other MBA Score (Cumulative) (optional)"
                   className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                 />
                 <input
                   name="education10"
                   value={menteeForm.education10}
                   onChange={onMenteeFieldChange}
-                  placeholder="Class 10 details"
+                  placeholder="Class 10 details (optional)"
                   className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                 />
                 <input
                   name="education12"
                   value={menteeForm.education12}
                   onChange={onMenteeFieldChange}
-                  placeholder="Class 12 details"
+                  placeholder="Class 12 details (optional)"
                   className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                 />
                 <input
                   name="bachelors"
                   value={menteeForm.bachelors}
                   onChange={onMenteeFieldChange}
-                  placeholder="Bachelors"
+                  placeholder="Bachelors (optional)"
                   className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                 />
                 <input
                   name="masters"
                   value={menteeForm.masters}
                   onChange={onMenteeFieldChange}
-                  placeholder="Masters"
+                  placeholder="Masters (optional)"
                   className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
                 />
               </div>
@@ -484,7 +484,7 @@ export default function OnboardingPage() {
                 name="workExperience"
                 value={menteeForm.workExperience}
                 onChange={onMenteeFieldChange}
-                placeholder="Work experience"
+                placeholder="Work experience (optional)"
                 rows={3}
                 className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
               />
@@ -492,7 +492,7 @@ export default function OnboardingPage() {
                 name="certifications"
                 value={menteeForm.certifications}
                 onChange={onMenteeFieldChange}
-                placeholder="Certifications"
+                placeholder="Certifications (optional)"
                 rows={2}
                 className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
               />
@@ -500,7 +500,7 @@ export default function OnboardingPage() {
                 name="skillsets"
                 value={menteeForm.skillsets}
                 onChange={onMenteeFieldChange}
-                placeholder="Skillsets (comma separated)"
+                placeholder="Skillsets (comma separated) (optional)"
                 rows={2}
                 className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
               />
@@ -508,12 +508,14 @@ export default function OnboardingPage() {
                 name="catHistory"
                 value={menteeForm.catHistory}
                 onChange={onMenteeFieldChange}
-                placeholder="CAT history"
+                placeholder="CAT history (optional)"
                 rows={2}
                 className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
               />
               <div className="mt-3">
-                <label className="mb-1 block text-sm font-semibold">Resume (PDF/DOC/DOCX)</label>
+                <label className="mb-1 block text-sm font-semibold">
+                  Resume (PDF/DOC/DOCX) <span className="text-xs font-normal text-gray-500">(optional)</span>
+                </label>
                 <input
                   name="resume"
                   type="file"

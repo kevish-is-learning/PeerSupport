@@ -187,7 +187,7 @@ export default function HeroSection() {
       {/* ── STATS ─────────────────────────────────────────── */}
       <div className="">
         <div
-          className="mx-auto grid w-full max-w-5xl grid-cols-2 gap-y-7 px-4 py-10 text-center sm:px-6 md:grid-cols-4 lg:px-8"
+          className="mx-auto grid w-full max-w-5xl grid-cols-2 gap-y-4 sm:gap-y-5 sm:grid-cols-2 px-4 py-10 text-center sm:px-6 md:grid-cols-4 md:gap-y-7 lg:px-8"
           aria-label="Platform highlights"
         >
           {stats.map((stat) => (

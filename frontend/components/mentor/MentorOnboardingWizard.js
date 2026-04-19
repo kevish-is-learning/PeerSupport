@@ -322,7 +322,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-600">MBA College/B-School</label>
+                    <label className="block text-sm font-medium mb-1 text-gray-600">
+                      MBA College/B-School <span className="text-xs font-normal text-gray-400">(optional)</span>
+                    </label>
                     <select
                       name="mbaCollege"
                       value={formData.mbaCollege}
@@ -339,7 +341,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">Specialization</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-600">
+                        Specialization <span className="text-xs font-normal text-gray-400">(optional)</span>
+                      </label>
                       <input 
                         type="text"
                         name="mbaSpecialization"
@@ -350,7 +354,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">Graduation Year</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-600">
+                        Graduation Year <span className="text-xs font-normal text-gray-400">(optional)</span>
+                      </label>
                       <input 
                         type="text"
                         name="mbaYear"
@@ -370,7 +376,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-600">College/University</label>
+                    <label className="block text-sm font-medium mb-1 text-gray-600">
+                      College/University <span className="text-xs font-normal text-gray-400">(optional)</span>
+                    </label>
                     <input
                       type="text"
                       name="ugCollege"
@@ -382,7 +390,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">Degree</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-600">
+                        Degree <span className="text-xs font-normal text-gray-400">(optional)</span>
+                      </label>
                       <input 
                         type="text"
                         name="ugDegree"
@@ -393,7 +403,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">Specialization</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-600">
+                        Specialization <span className="text-xs font-normal text-gray-400">(optional)</span>
+                      </label>
                       <input 
                         type="text"
                         name="ugSpecialization"
@@ -404,7 +416,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">Year</label>
+                      <label className="block text-sm font-medium mb-1 text-gray-600">
+                        Year <span className="text-xs font-normal text-gray-400">(optional)</span>
+                      </label>
                       <input 
                         type="text"
                         name="ugYear"
@@ -427,7 +441,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">LinkedIn Profile URL</label>
+                <label className="block text-sm font-semibold mb-2">
+                  LinkedIn Profile URL <span className="text-xs font-normal text-gray-400">(optional)</span>
+                </label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-600 font-bold">in</span>
                   <input
@@ -442,7 +458,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Years of Work Experience</label>
+                <label className="block text-sm font-semibold mb-2">
+                  Years of Work Experience <span className="text-xs font-normal text-gray-400">(optional)</span>
+                </label>
                 <input
                   type="text"
                   name="workExperienceYears"
@@ -454,7 +472,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Current/Previous Company</label>
+                <label className="block text-sm font-semibold mb-2">
+                  Current/Previous Company <span className="text-xs font-normal text-gray-400">(optional)</span>
+                </label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-400">🏢</span>
                   <input
@@ -469,7 +489,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Current/Previous Role</label>
+                <label className="block text-sm font-semibold mb-2">
+                  Current/Previous Role <span className="text-xs font-normal text-gray-400">(optional)</span>
+                </label>
                 <input
                   type="text"
                   name="role"
