@@ -178,7 +178,7 @@ export default function HeroSection() {
           </div>
 
           {/* Right — illustration */}
-          <div className="flex items-center justify-center lg:justify-end lg:pr-4">
+          <div className="hidden md:flex items-center justify-center lg:justify-end lg:pr-4">
             <MentorCardIllustration />
           </div>
         </div>
