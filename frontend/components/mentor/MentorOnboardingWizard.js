@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ArrowLeft, Check, Upload, User, GraduationCap, Briefcase, BookOpen, CheckCircle } from "lucide-react";
@@ -34,6 +34,32 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const stepsContainerRef = useRef(null);
+
+  useEffect(() => {
+    const container = stepsContainerRef.current;
+    if (!container) return;
+    
+    // Find the active step container element
+    const activeStepElement = container.querySelector('[data-active="true"]');
+    if (activeStepElement) {
+      const containerWidth = container.offsetWidth;
+      const elementOffset = activeStepElement.offsetLeft;
+      const elementWidth = activeStepElement.offsetWidth;
+      // Calculate scroll position to put item in center
+      const scrollPos = elementOffset - (containerWidth / 2) + (elementWidth / 2);
+      
+      container.scrollTo({
+        left: scrollPos,
+        behavior: "smooth",
+      });
+    }
+  }, [currentStep]);
+
+  const [hasWorkExperience, setHasWorkExperience] = useState(
+    existingProfile?.workExperience ? true : false
+  );
+
   const [formData, setFormData] = useState({
     profilePhotoUrl: existingProfile?.profilePhotoUrl || "",
     fullName: user?.name || "",
@@ -65,7 +91,10 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "contactNumber") {
-      const numericValue = value.replace(/\D/g, "").slice(0, 10);
+      let numericValue = value.replace(/\D/g, "").slice(0, 10);
+      if (numericValue.length > 5) {
+        numericValue = `${numericValue.slice(0, 5)} ${numericValue.slice(5)}`;
+      }
       setFormData((prev) => ({ ...prev, [name]: numericValue }));
       return;
     }
@@ -110,6 +139,12 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
         toast.error("Contact number is required.");
         return;
       }
+      
+      const cleanNumber = formData.contactNumber.replace(/\s/g, '');
+      if (cleanNumber.length !== 10) {
+        toast.error("Contact number must be exactly 10 digits.");
+        return;
+      }
     }
 
     // Validation for Step 3
@@ -151,11 +186,11 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       const ugCollegeProfile = [formData.ugCollege, formData.ugDegree, formData.ugSpecialization, formData.ugYear].some(Boolean)
         ? `${formData.ugCollege}|${formData.ugDegree}|${formData.ugSpecialization}|${formData.ugYear}`
         : "";
-      const workExp = [formData.workExperienceYears, formData.company, formData.role].some(Boolean)
+      const workExp = hasWorkExperience && [formData.workExperienceYears, formData.company, formData.role].some(Boolean)
         ? `${formData.workExperienceYears}|${formData.company}|${formData.role}`
         : "";
 
-      payload.append("contactNumber", formData.contactNumber);
+      payload.append("contactNumber", formData.contactNumber.replace(/\s/g, ''));
       payload.append("bio", formData.bio);
       
       if (formData.expertiseTags.length > 0) {
@@ -219,15 +254,23 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       </div>
 
       {/* Stepper Header */}
-      <div className="bg-white border-2 border-black rounded-2xl p-4 sm:p-6 mb-6 shadow-[6px_6px_0_rgba(0,0,0,1)] flex items-center justify-between overflow-x-auto no-scrollbar">
-        <div className="flex w-full items-center justify-between min-w-[500px] sm:min-w-0">
+      <div className="bg-white border-2 border-black rounded-2xl p-2 sm:p-6 mb-6 shadow-[6px_6px_0_rgba(0,0,0,1)] relative overflow-hidden">
+        <div 
+          ref={stepsContainerRef}
+          className="flex w-full items-center overflow-x-auto no-scrollbar scroll-smooth [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          <div className="flex w-full items-center justify-between min-w-[500px] sm:min-w-full px-2 py-1">
           {STEPS.map((step, idx) => {
             const isCompleted = step.id < currentStep;
             const isActive = step.id === currentStep;
             
             return (
               <React.Fragment key={step.id}>
-                <div className="flex flex-col items-center z-10 bg-white px-1 sm:px-2 shrink-0">
+                <div 
+                  data-active={isActive ? "true" : undefined}
+                  className="flex flex-col items-center z-10 bg-white px-2 sm:px-4 shrink-0 transition-transform duration-300 w-24 sm:w-32"
+                >
                   <div
                     className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center mb-2 transition-all shrink-0 ${
                       isCompleted
@@ -240,7 +283,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                     {isCompleted ? <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6" /> : <step.icon className="w-5 h-5 sm:w-6 sm:h-6" />}
                   </div>
                   <span
-                    className={`text-[10px] sm:text-xs font-bold text-center max-w-[70px] sm:max-w-[80px] ${
+                    className={`text-[9px] leading-tight sm:text-xs font-bold text-center break-words mt-1 ${
                       isActive || isCompleted ? "text-black" : "text-gray-400"
                     }`}
                   >
@@ -248,13 +291,14 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                   </span>
                 </div>
                 {idx < STEPS.length - 1 && (
-                  <div className="flex-1 min-w-[30px] sm:min-w-[40px] h-[2px] mx-1 sm:mx-2 relative top-[-10px] sm:top-[-16px]">
-                    <div className={`h-full ${isCompleted ? "bg-yellow-400" : "bg-gray-200"}`} />
+                  <div className="flex-1 h-[2px] mx-1 md:mx-2 relative top-[-10px] sm:top-[-16px] min-w-[20px]">
+                    <div className={`h-full w-full ${isCompleted ? "bg-yellow-400" : "bg-gray-200"}`} />
                   </div>
                 )}
               </React.Fragment>
             );
           })}
+          </div>
         </div>
       </div>
 
@@ -486,20 +530,56 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Years of Work Experience <span className="text-xs font-normal text-gray-400">(optional)</span>
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  name="workExperienceYears"
-                  value={formData.workExperienceYears}
-                  onChange={handleChange}
-                  placeholder="e.g., 3"
-                  className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
-                />
+                <label className="block text-sm font-semibold mb-2">Do you have work experience?</label>
+                <div className="flex items-center space-x-6">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="hasWorkExperience"
+                      checked={hasWorkExperience}
+                      onChange={() => setHasWorkExperience(true)}
+                      className="accent-black w-4 h-4"
+                    />
+                    <span className="text-sm font-medium">Yes</span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="hasWorkExperience"
+                      checked={!hasWorkExperience}
+                      onChange={() => {
+                        setHasWorkExperience(false);
+                        setFormData((prev) => ({
+                          ...prev,
+                          workExperienceYears: "",
+                          company: "",
+                          role: "",
+                        }));
+                      }}
+                      className="accent-black w-4 h-4"
+                    />
+                    <span className="text-sm font-medium">No (Fresher)</span>
+                  </label>
+                </div>
               </div>
+
+              {hasWorkExperience && (
+                <>
+                  <div>
+                    <label className="block text-sm font-semibold mb-2">
+                      Years of Work Experience <span className="text-xs font-normal text-gray-400">(optional)</span>
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      name="workExperienceYears"
+                      value={formData.workExperienceYears}
+                      onChange={handleChange}
+                      placeholder="e.g., 3"
+                      className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                    />
+                  </div>
 
               <div>
                 <label className="block text-sm font-semibold mb-2">
@@ -530,8 +610,8 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                   placeholder="e.g., Product Manager, Consultant"
                   className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                 />
-              </div>
-            </div>
+              </div>                </>
+              )}            </div>
           )}
 
           {currentStep === 4 && (

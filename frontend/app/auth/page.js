@@ -8,6 +8,7 @@ export const metadata = {
 
 export default function AuthPage({ searchParams }) {
   const mode = searchParams?.mode === "register" ? "register" : "login";
+  const initialRole = searchParams?.role === "MENTOR" ? "MENTOR" : "MENTEE";
 
   return (
     <main className="min-h-screen text-[#0d0d0f] flex min-h-[100dvh]">
@@ -45,7 +46,7 @@ export default function AuthPage({ searchParams }) {
       {/* Right side form */}
       <div className="w-full lg:w-1/2 bg-[#fdfaf7] flex text-left p-8 sm:p-12 lg:p-20 relative overflow-y-auto items-center justify-center">
         <div className="w-full max-w-[420px] mx-auto">
-          <AuthPanel initialMode={mode} redirectTo="/onboarding" guestOnly />
+          <AuthPanel initialMode={mode} initialRole={initialRole} redirectTo="/onboarding" guestOnly />
         </div>
       </div>
     </main>

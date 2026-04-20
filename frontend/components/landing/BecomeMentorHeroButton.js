@@ -23,7 +23,7 @@ export default function BecomeMentorHeroButton() {
     );
   }
 
-  const href = user ? "/mentor/dashboard" : "/auth?mode=register";
+  const href = user ? "/mentor/dashboard" : "/auth?mode=register&role=MENTOR";
 
   return (
     <PillButton href={href} variant="primary">
