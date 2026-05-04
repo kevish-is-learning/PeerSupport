@@ -1,45 +1,68 @@
-const quickStats = [
-  { label: "Total Meetings", value: "42" },
-  { label: "Total Payouts", value: "$2,480" },
-  { label: "Avg. Rating", value: "4.8" },
-  { label: "Upcoming Sessions", value: "8" },
-];
+import { IndianRupee, Calendar, Users, Star } from "lucide-react";
 
-const focusAreas = [
-  "Review upcoming session requests",
-  "Keep your services updated with current pricing",
-  "Track payout status and pending invoices",
+const statsCards = [
+  {
+    label: "Total Revenue",
+    value: "₹45,600",
+    subtitle: "This month: ₹12,400",
+    icon: IndianRupee,
+    shadowColor: "#5061E4",
+    iconColor: "text-[#5061E4]",
+  },
+  {
+    label: "Total Sessions",
+    value: "28",
+    subtitle: "This month: 8",
+    icon: Calendar,
+    shadowColor: "#F59E0B",
+    iconColor: "text-[#F59E0B]",
+  },
+  {
+    label: "Active Mentees",
+    value: "8",
+    subtitle: "Total: 12",
+    icon: Users,
+    shadowColor: "#F97316",
+    iconColor: "text-[#F97316]",
+  },
+  {
+    label: "Average Rating",
+    value: "4.8",
+    subtitle: "96.4% completion rate",
+    icon: Star,
+    shadowColor: "#4F46E5",
+    iconColor: "text-[#F59E0B]",
+  },
 ];
 
 export default function MentorDashboardPage() {
   return (
-    <div className="grid gap-4">
-      <section className="rounded-3xl border border-black/10 bg-[linear-gradient(120deg,#0f172a_0%,#1e293b_55%,#334155_100%)] p-6 text-white sm:p-7">
-        <p className="text-xs uppercase tracking-[0.18em] text-white/70">Mentor Dashboard</p>
-        <h3 className="mt-2 text-3xl font-extrabold tracking-[-0.03em]">Run Your Mentorship Operations</h3>
-        <p className="mt-3 max-w-2xl text-white/80">
-          This is your control center for bookings, offers, and payouts. Keep your profile and availability up to date to improve booking quality.
-        </p>
-      </section>
+    <div className="w-full">
+      <header className="mb-8">
+        <h1 className="text-3xl font-extrabold tracking-tight text-[#111]">Home</h1>
+        <p className="mt-1 text-gray-500 font-medium">Welcome back! Here's your mentoring overview</p>
+      </header>
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {quickStats.map((stat) => (
-          <article key={stat.label} className="rounded-2xl border border-black/10 bg-white p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-black/50">{stat.label}</p>
-            <p className="mt-2 text-3xl font-bold tracking-[-0.03em]">{stat.value}</p>
-          </article>
-        ))}
-      </section>
-
-      <section className="rounded-2xl border border-black/10 bg-white p-5">
-        <h4 className="text-lg font-bold">Priority Checklist</h4>
-        <ul className="mt-3 grid gap-2 text-sm text-black/75">
-          {focusAreas.map((item) => (
-            <li key={item} className="rounded-xl border border-black/10 bg-[#f8fafc] px-3 py-2">
-              {item}
-            </li>
-          ))}
-        </ul>
+      <section className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        {statsCards.map((stat, idx) => {
+          const Icon = stat.icon;
+          return (
+            <article
+              key={idx}
+              className="flex flex-col justify-between rounded-xl border-[3px] border-black bg-white p-5"
+              style={{ boxShadow: `6px 6px 0 0 ${stat.shadowColor}` }}
+            >
+              <div className="mb-4">
+                <Icon size={24} className={stat.iconColor} strokeWidth={2.5} />
+              </div>
+              <div>
+                <p className="text-3xl font-extrabold tracking-tight text-black">{stat.value}</p>
+                <p className="mt-1 text-sm font-bold text-gray-500">{stat.label}</p>
+                <p className="mt-4 text-xs font-semibold text-gray-400">{stat.subtitle}</p>
+              </div>
+            </article>
+          );
+        })}
       </section>
     </div>
   );

@@ -1,10 +1,11 @@
+import { Home, Users, Calendar, Wallet, User, HelpCircle } from "lucide-react";
+
 export const MENTOR_NAV_ITEMS = [
-  { label: "Dashboard", href: "/mentor/dashboard", requiresApproval: true },
-  { label: "Bookings", href: "/mentor/bookings", requiresApproval: true },
-  { label: "Services", href: "/mentor/services", requiresApproval: true },
-  { label: "Payments", href: "/mentor/payments", requiresApproval: true },
-  { label: "Profile", href: "/mentor/profile", requiresApproval: false },
-  { label: "Help Center", href: "/mentor/help-center", requiresApproval: false },
+  { label: "Home", href: "/mentor/dashboard", icon: Home, requiresApproval: true },
+  { label: "My Mentees", href: "/mentor/mentees", icon: Users, requiresApproval: true },
+  { label: "Sessions", href: "/mentor/bookings", icon: Calendar, requiresApproval: true },
+  { label: "Payouts", href: "/mentor/payments", icon: Wallet, requiresApproval: true },
+  { label: "Profile", href: "/mentor/profile", icon: User, requiresApproval: false },
 ];
 
 export const MENTOR_ALLOWED_UNAPPROVED_ROUTES = ["/mentor/profile", "/mentor/help-center"];
