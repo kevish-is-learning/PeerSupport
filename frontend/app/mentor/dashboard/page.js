@@ -37,7 +37,7 @@ const statsCards = [
 
 export default function MentorDashboardPage() {
   return (
-    <div className="w-full">
+    <div className="w-full h-full overflow-y-auto p-8 lg:p-12">
       <header className="mb-8">
         <h1 className="text-3xl font-extrabold tracking-tight text-[#111]">Home</h1>
         <p className="mt-1 text-gray-500 font-medium">Welcome back! Here's your mentoring overview</p>
@@ -58,7 +58,7 @@ export default function MentorDashboardPage() {
               <div>
                 <p className="text-3xl font-extrabold tracking-tight text-black">{stat.value}</p>
                 <p className="mt-1 text-sm font-bold text-gray-500">{stat.label}</p>
-                <p className="mt-4 text-xs font-semibold text-gray-400">{stat.subtitle}</p>
+                <p className="mt-1 text-xs font-semibold text-gray-400">{stat.subtitle}</p>
               </div>
             </article>
           );

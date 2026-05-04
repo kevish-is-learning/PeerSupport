@@ -101,8 +101,8 @@ export default function MentorSidebarShell({ children }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#FFF7F5] flex text-black">
-      <aside className="w-64 border-r-2 border-black bg-white flex flex-col sticky top-0 h-screen">
+    <main className="h-screen bg-[#FFF7F5] flex text-black overflow-hidden">
+      <aside className="w-64 shrink-0 border-r-2 border-black bg-white flex flex-col h-screen">
         <div className="p-6 flex items-center gap-3 border-b-0">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5061E4] border-2 border-black text-white font-bold">
             P
@@ -160,24 +160,26 @@ export default function MentorSidebarShell({ children }) {
         </div>
       </aside>
 
-      <section className="flex-1 p-8 lg:p-12">
+      <section className="flex-1 flex flex-col h-screen overflow-hidden">
         {showRestrictedView ? (
-          <div className="mt-5 rounded-3xl border-[3px] border-black bg-[#fff7dd] p-6 sm:p-8" style={{ boxShadow: "6px 6px 0 0 #000" }}>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-black/60">Access Restricted</p>
-            <h3 className="mt-2 text-3xl font-extrabold tracking-[-0.03em]">{approvalMeta.title}</h3>
-            <p className="mt-3 max-w-2xl text-base text-black/80">{approvalMeta.description}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/mentor/profile"
-                className="rounded-xl border-[3px] border-black bg-[#111827] px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
-                style={{ boxShadow: "3px 3px 0 0 #000" }}
-              >
-                Open Profile
-              </Link>
+          <div className="p-8 lg:p-12 h-full overflow-y-auto w-full">
+            <div className="mt-5 rounded-3xl border-[3px] border-black bg-[#fff7dd] p-6 sm:p-8" style={{ boxShadow: "6px 6px 0 0 #000" }}>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-black/60">Access Restricted</p>
+              <h3 className="mt-2 text-3xl font-extrabold tracking-[-0.03em]">{approvalMeta.title}</h3>
+              <p className="mt-3 max-w-2xl text-base text-black/80">{approvalMeta.description}</p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/mentor/profile"
+                  className="rounded-xl border-[3px] border-black bg-[#111827] px-5 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
+                  style={{ boxShadow: "3px 3px 0 0 #000" }}
+                >
+                  Open Profile
+                </Link>
+              </div>
             </div>
           </div>
         ) : (
-          <div className="w-full">{children}</div>
+          children
         )}
       </section>
     </main>
