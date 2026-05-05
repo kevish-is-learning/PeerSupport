@@ -2139,14 +2139,9 @@ export namespace Prisma {
     userId: string | null
     dateOfBirth: Date | null
     contactNumber: string | null
-    education10: string | null
-    education12: string | null
-    bachelors: string | null
-    masters: string | null
     otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
-    catHistory: string | null
     resumeUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2157,14 +2152,9 @@ export namespace Prisma {
     userId: string | null
     dateOfBirth: Date | null
     contactNumber: string | null
-    education10: string | null
-    education12: string | null
-    bachelors: string | null
-    masters: string | null
     otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
-    catHistory: string | null
     resumeUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2175,14 +2165,10 @@ export namespace Prisma {
     userId: number
     dateOfBirth: number
     contactNumber: number
-    education10: number
-    education12: number
-    bachelors: number
-    masters: number
+    education: number
     otherMbaScore: number
     workExperience: number
     certifications: number
-    skillsets: number
     catHistory: number
     resumeUrl: number
     createdAt: number
@@ -2204,14 +2190,9 @@ export namespace Prisma {
     userId?: true
     dateOfBirth?: true
     contactNumber?: true
-    education10?: true
-    education12?: true
-    bachelors?: true
-    masters?: true
     otherMbaScore?: true
     workExperience?: true
     certifications?: true
-    catHistory?: true
     resumeUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -2222,14 +2203,9 @@ export namespace Prisma {
     userId?: true
     dateOfBirth?: true
     contactNumber?: true
-    education10?: true
-    education12?: true
-    bachelors?: true
-    masters?: true
     otherMbaScore?: true
     workExperience?: true
     certifications?: true
-    catHistory?: true
     resumeUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -2240,14 +2216,10 @@ export namespace Prisma {
     userId?: true
     dateOfBirth?: true
     contactNumber?: true
-    education10?: true
-    education12?: true
-    bachelors?: true
-    masters?: true
+    education?: true
     otherMbaScore?: true
     workExperience?: true
     certifications?: true
-    skillsets?: true
     catHistory?: true
     resumeUrl?: true
     createdAt?: true
@@ -2346,15 +2318,11 @@ export namespace Prisma {
     userId: string
     dateOfBirth: Date
     contactNumber: string
-    education10: string | null
-    education12: string | null
-    bachelors: string | null
-    masters: string | null
+    education: JsonValue
     otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
-    skillsets: string[]
-    catHistory: string | null
+    catHistory: JsonValue | null
     resumeUrl: string | null
     createdAt: Date
     updatedAt: Date
@@ -2384,14 +2352,10 @@ export namespace Prisma {
     userId?: boolean
     dateOfBirth?: boolean
     contactNumber?: boolean
-    education10?: boolean
-    education12?: boolean
-    bachelors?: boolean
-    masters?: boolean
+    education?: boolean
     otherMbaScore?: boolean
     workExperience?: boolean
     certifications?: boolean
-    skillsets?: boolean
     catHistory?: boolean
     resumeUrl?: boolean
     createdAt?: boolean
@@ -2404,14 +2368,10 @@ export namespace Prisma {
     userId?: boolean
     dateOfBirth?: boolean
     contactNumber?: boolean
-    education10?: boolean
-    education12?: boolean
-    bachelors?: boolean
-    masters?: boolean
+    education?: boolean
     otherMbaScore?: boolean
     workExperience?: boolean
     certifications?: boolean
-    skillsets?: boolean
     catHistory?: boolean
     resumeUrl?: boolean
     createdAt?: boolean
@@ -2424,14 +2384,10 @@ export namespace Prisma {
     userId?: boolean
     dateOfBirth?: boolean
     contactNumber?: boolean
-    education10?: boolean
-    education12?: boolean
-    bachelors?: boolean
-    masters?: boolean
+    education?: boolean
     otherMbaScore?: boolean
     workExperience?: boolean
     certifications?: boolean
-    skillsets?: boolean
     catHistory?: boolean
     resumeUrl?: boolean
     createdAt?: boolean
@@ -2455,15 +2411,11 @@ export namespace Prisma {
       userId: string
       dateOfBirth: Date
       contactNumber: string
-      education10: string | null
-      education12: string | null
-      bachelors: string | null
-      masters: string | null
+      education: Prisma.JsonValue
       otherMbaScore: number | null
       workExperience: string | null
       certifications: string | null
-      skillsets: string[]
-      catHistory: string | null
+      catHistory: Prisma.JsonValue | null
       resumeUrl: string | null
       createdAt: Date
       updatedAt: Date
@@ -2865,15 +2817,11 @@ export namespace Prisma {
     readonly userId: FieldRef<"MenteeProfile", 'String'>
     readonly dateOfBirth: FieldRef<"MenteeProfile", 'DateTime'>
     readonly contactNumber: FieldRef<"MenteeProfile", 'String'>
-    readonly education10: FieldRef<"MenteeProfile", 'String'>
-    readonly education12: FieldRef<"MenteeProfile", 'String'>
-    readonly bachelors: FieldRef<"MenteeProfile", 'String'>
-    readonly masters: FieldRef<"MenteeProfile", 'String'>
+    readonly education: FieldRef<"MenteeProfile", 'Json'>
     readonly otherMbaScore: FieldRef<"MenteeProfile", 'Float'>
     readonly workExperience: FieldRef<"MenteeProfile", 'String'>
     readonly certifications: FieldRef<"MenteeProfile", 'String'>
-    readonly skillsets: FieldRef<"MenteeProfile", 'String[]'>
-    readonly catHistory: FieldRef<"MenteeProfile", 'String'>
+    readonly catHistory: FieldRef<"MenteeProfile", 'Json'>
     readonly resumeUrl: FieldRef<"MenteeProfile", 'String'>
     readonly createdAt: FieldRef<"MenteeProfile", 'DateTime'>
     readonly updatedAt: FieldRef<"MenteeProfile", 'DateTime'>
@@ -4321,14 +4269,10 @@ export namespace Prisma {
     userId: 'userId',
     dateOfBirth: 'dateOfBirth',
     contactNumber: 'contactNumber',
-    education10: 'education10',
-    education12: 'education12',
-    bachelors: 'bachelors',
-    masters: 'masters',
+    education: 'education',
     otherMbaScore: 'otherMbaScore',
     workExperience: 'workExperience',
     certifications: 'certifications',
-    skillsets: 'skillsets',
     catHistory: 'catHistory',
     resumeUrl: 'resumeUrl',
     createdAt: 'createdAt',
@@ -4369,6 +4313,21 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -4383,6 +4342,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -4436,6 +4404,13 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
 
 
@@ -4595,15 +4570,11 @@ export namespace Prisma {
     userId?: StringFilter<"MenteeProfile"> | string
     dateOfBirth?: DateTimeFilter<"MenteeProfile"> | Date | string
     contactNumber?: StringFilter<"MenteeProfile"> | string
-    education10?: StringNullableFilter<"MenteeProfile"> | string | null
-    education12?: StringNullableFilter<"MenteeProfile"> | string | null
-    bachelors?: StringNullableFilter<"MenteeProfile"> | string | null
-    masters?: StringNullableFilter<"MenteeProfile"> | string | null
+    education?: JsonFilter<"MenteeProfile">
     otherMbaScore?: FloatNullableFilter<"MenteeProfile"> | number | null
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableFilter<"MenteeProfile"> | string | null
-    skillsets?: StringNullableListFilter<"MenteeProfile">
-    catHistory?: StringNullableFilter<"MenteeProfile"> | string | null
+    catHistory?: JsonNullableFilter<"MenteeProfile">
     resumeUrl?: StringNullableFilter<"MenteeProfile"> | string | null
     createdAt?: DateTimeFilter<"MenteeProfile"> | Date | string
     updatedAt?: DateTimeFilter<"MenteeProfile"> | Date | string
@@ -4615,14 +4586,10 @@ export namespace Prisma {
     userId?: SortOrder
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
-    education10?: SortOrderInput | SortOrder
-    education12?: SortOrderInput | SortOrder
-    bachelors?: SortOrderInput | SortOrder
-    masters?: SortOrderInput | SortOrder
+    education?: SortOrder
     otherMbaScore?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
-    skillsets?: SortOrder
     catHistory?: SortOrderInput | SortOrder
     resumeUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -4638,15 +4605,11 @@ export namespace Prisma {
     NOT?: MenteeProfileWhereInput | MenteeProfileWhereInput[]
     dateOfBirth?: DateTimeFilter<"MenteeProfile"> | Date | string
     contactNumber?: StringFilter<"MenteeProfile"> | string
-    education10?: StringNullableFilter<"MenteeProfile"> | string | null
-    education12?: StringNullableFilter<"MenteeProfile"> | string | null
-    bachelors?: StringNullableFilter<"MenteeProfile"> | string | null
-    masters?: StringNullableFilter<"MenteeProfile"> | string | null
+    education?: JsonFilter<"MenteeProfile">
     otherMbaScore?: FloatNullableFilter<"MenteeProfile"> | number | null
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableFilter<"MenteeProfile"> | string | null
-    skillsets?: StringNullableListFilter<"MenteeProfile">
-    catHistory?: StringNullableFilter<"MenteeProfile"> | string | null
+    catHistory?: JsonNullableFilter<"MenteeProfile">
     resumeUrl?: StringNullableFilter<"MenteeProfile"> | string | null
     createdAt?: DateTimeFilter<"MenteeProfile"> | Date | string
     updatedAt?: DateTimeFilter<"MenteeProfile"> | Date | string
@@ -4658,14 +4621,10 @@ export namespace Prisma {
     userId?: SortOrder
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
-    education10?: SortOrderInput | SortOrder
-    education12?: SortOrderInput | SortOrder
-    bachelors?: SortOrderInput | SortOrder
-    masters?: SortOrderInput | SortOrder
+    education?: SortOrder
     otherMbaScore?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
-    skillsets?: SortOrder
     catHistory?: SortOrderInput | SortOrder
     resumeUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -4685,15 +4644,11 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"MenteeProfile"> | string
     dateOfBirth?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
     contactNumber?: StringWithAggregatesFilter<"MenteeProfile"> | string
-    education10?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
-    education12?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
-    bachelors?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
-    masters?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    education?: JsonWithAggregatesFilter<"MenteeProfile">
     otherMbaScore?: FloatNullableWithAggregatesFilter<"MenteeProfile"> | number | null
     workExperience?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
-    skillsets?: StringNullableListFilter<"MenteeProfile">
-    catHistory?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
+    catHistory?: JsonNullableWithAggregatesFilter<"MenteeProfile">
     resumeUrl?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
@@ -4945,15 +4900,11 @@ export namespace Prisma {
     id?: string
     dateOfBirth: Date | string
     contactNumber: string
-    education10?: string | null
-    education12?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
-    skillsets?: MenteeProfileCreateskillsetsInput | string[]
-    catHistory?: string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4965,15 +4916,11 @@ export namespace Prisma {
     userId: string
     dateOfBirth: Date | string
     contactNumber: string
-    education10?: string | null
-    education12?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
-    skillsets?: MenteeProfileCreateskillsetsInput | string[]
-    catHistory?: string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4983,15 +4930,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
-    education10?: NullableStringFieldUpdateOperationsInput | string | null
-    education12?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
-    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
-    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5003,15 +4946,11 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
-    education10?: NullableStringFieldUpdateOperationsInput | string | null
-    education12?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
-    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
-    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5022,15 +4961,11 @@ export namespace Prisma {
     userId: string
     dateOfBirth: Date | string
     contactNumber: string
-    education10?: string | null
-    education12?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
-    skillsets?: MenteeProfileCreateskillsetsInput | string[]
-    catHistory?: string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -5040,15 +4975,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
-    education10?: NullableStringFieldUpdateOperationsInput | string | null
-    education12?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
-    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
-    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5059,15 +4990,11 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
-    education10?: NullableStringFieldUpdateOperationsInput | string | null
-    education12?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
-    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
-    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5423,6 +5350,28 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
+  export type JsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type FloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
@@ -5434,13 +5383,27 @@ export namespace Prisma {
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
+  export type JsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
 
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type UserRelationFilter = {
@@ -5453,14 +5416,10 @@ export namespace Prisma {
     userId?: SortOrder
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
-    education10?: SortOrder
-    education12?: SortOrder
-    bachelors?: SortOrder
-    masters?: SortOrder
+    education?: SortOrder
     otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
-    skillsets?: SortOrder
     catHistory?: SortOrder
     resumeUrl?: SortOrder
     createdAt?: SortOrder
@@ -5476,14 +5435,9 @@ export namespace Prisma {
     userId?: SortOrder
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
-    education10?: SortOrder
-    education12?: SortOrder
-    bachelors?: SortOrder
-    masters?: SortOrder
     otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
-    catHistory?: SortOrder
     resumeUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5494,14 +5448,9 @@ export namespace Prisma {
     userId?: SortOrder
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
-    education10?: SortOrder
-    education12?: SortOrder
-    bachelors?: SortOrder
-    masters?: SortOrder
     otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
-    catHistory?: SortOrder
     resumeUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -5509,6 +5458,31 @@ export namespace Prisma {
 
   export type MenteeProfileSumOrderByAggregateInput = {
     otherMbaScore?: SortOrder
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -5525,6 +5499,39 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
   }
 
   export type EnumMentorApprovalStatusFilter<$PrismaModel = never> = {
@@ -5690,10 +5697,6 @@ export namespace Prisma {
     update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutUserInput, MentorProfileUpdateWithoutUserInput>, MentorProfileUncheckedUpdateWithoutUserInput>
   }
 
-  export type MenteeProfileCreateskillsetsInput = {
-    set: string[]
-  }
-
   export type UserCreateNestedOneWithoutMenteeProfileInput = {
     create?: XOR<UserCreateWithoutMenteeProfileInput, UserUncheckedCreateWithoutMenteeProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutMenteeProfileInput
@@ -5706,11 +5709,6 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type MenteeProfileUpdateskillsetsInput = {
-    set?: string[]
-    push?: string | string[]
   }
 
   export type UserUpdateOneRequiredWithoutMenteeProfileNestedInput = {
@@ -5922,6 +5920,28 @@ export namespace Prisma {
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
+  export type NestedJsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
@@ -5937,6 +5957,28 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedEnumMentorApprovalStatusFilter<$PrismaModel = never> = {
@@ -5960,15 +6002,11 @@ export namespace Prisma {
     id?: string
     dateOfBirth: Date | string
     contactNumber: string
-    education10?: string | null
-    education12?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
-    skillsets?: MenteeProfileCreateskillsetsInput | string[]
-    catHistory?: string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -5978,15 +6016,11 @@ export namespace Prisma {
     id?: string
     dateOfBirth: Date | string
     contactNumber: string
-    education10?: string | null
-    education12?: string | null
-    bachelors?: string | null
-    masters?: string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
-    skillsets?: MenteeProfileCreateskillsetsInput | string[]
-    catHistory?: string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6055,15 +6089,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
-    education10?: NullableStringFieldUpdateOperationsInput | string | null
-    education12?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
-    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
-    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6073,15 +6103,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
-    education10?: NullableStringFieldUpdateOperationsInput | string | null
-    education12?: NullableStringFieldUpdateOperationsInput | string | null
-    bachelors?: NullableStringFieldUpdateOperationsInput | string | null
-    masters?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: JsonNullValueInput | InputJsonValue
     otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
-    skillsets?: MenteeProfileUpdateskillsetsInput | string[]
-    catHistory?: NullableStringFieldUpdateOperationsInput | string | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
     resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

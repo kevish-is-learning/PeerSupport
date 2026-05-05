@@ -47,15 +47,11 @@ model MenteeProfile {
   userId         String   @unique
   dateOfBirth    DateTime @db.Date
   contactNumber  String
-  education10    String?
-  education12    String?
-  bachelors      String?
-  masters        String?
+  education      Json     @default("[]") // Stores array of {type, institutionName, fromYear, toYear, score}
   otherMbaScore  Float?
   workExperience String?
   certifications String?
-  skillsets      String[] @default([])
-  catHistory     String?
+  catHistory     Json?    // Stores {LRDI, VARC, Quants} or similar
   resumeUrl      String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

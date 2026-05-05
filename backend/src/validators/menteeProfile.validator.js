@@ -129,30 +129,54 @@ const updateSkillsetsSchema = z.preprocess(
 export const createMenteeProfileSchema = z.object({
   dateOfBirth: dateOfBirthSchema,
   contactNumber: contactNumberSchema,
-  education10: normalizeOptionalText,
-  education12: normalizeOptionalText,
-  bachelors: normalizeOptionalText,
-  masters: normalizeOptionalText,
+  education: z.preprocess(
+    (value) => (typeof value === 'string' ? JSON.parse(value) : value),
+    z.array(z.object({
+      type: z.enum(['10th', '12th', 'Graduation', 'Post Graduation']),
+      institutionName: z.string().min(1, "Institution name is required"),
+      fromYear: z.coerce.number().min(1900).max(new Date().getFullYear()),
+      toYear: z.coerce.number().min(1900).max(new Date().getFullYear() + 10),
+      score: z.coerce.number().min(0).max(100),
+    }))
+  ).default([]),
   otherMbaScore: otherMbaScoreSchema,
   workExperience: normalizeOptionalText,
   certifications: normalizeOptionalText,
-  skillsets: skillsetsSchema,
-  catHistory: normalizeOptionalText,
+  catHistory: z.preprocess(
+    (value) => (typeof value === 'string' ? JSON.parse(value) : value),
+    z.object({
+      LRDI: z.coerce.number().min(0).max(100).optional(),
+      VARC: z.coerce.number().min(0).max(100).optional(),
+      Quants: z.coerce.number().min(0).max(100).optional(),
+    }).nullable()
+  ).optional(),
   resumeUrl: optionalResumePathSchema,
 });
 
 export const updateMenteeProfileSchema = z.object({
   dateOfBirth: dateOfBirthSchema.optional(),
   contactNumber: contactNumberSchema.optional(),
-  education10: normalizeOptionalText,
-  education12: normalizeOptionalText,
-  bachelors: normalizeOptionalText,
-  masters: normalizeOptionalText,
+  education: z.preprocess(
+    (value) => (typeof value === 'string' ? JSON.parse(value) : value),
+    z.array(z.object({
+      type: z.enum(['10th', '12th', 'Graduation', 'Post Graduation']),
+      institutionName: z.string().min(1, "Institution name is required"),
+      fromYear: z.coerce.number().min(1900).max(new Date().getFullYear()),
+      toYear: z.coerce.number().min(1900).max(new Date().getFullYear() + 10),
+      score: z.coerce.number().min(0).max(100),
+    }))
+  ).optional(),
   otherMbaScore: otherMbaScoreSchema,
   workExperience: normalizeOptionalText,
   certifications: normalizeOptionalText,
-  skillsets: updateSkillsetsSchema,
-  catHistory: normalizeOptionalText,
+  catHistory: z.preprocess(
+    (value) => (typeof value === 'string' ? JSON.parse(value) : value),
+    z.object({
+      LRDI: z.coerce.number().min(0).max(100).optional(),
+      VARC: z.coerce.number().min(0).max(100).optional(),
+      Quants: z.coerce.number().min(0).max(100).optional(),
+    }).nullable()
+  ).optional(),
   resumeUrl: optionalResumePathSchema,
 });
 

@@ -5,14 +5,16 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { User, Briefcase, GraduationCap, Target, Upload, BookOpen, ChevronRight } from "lucide-react";
 import { menteeProfileApi } from "../../lib/api";
+import useAuthStore from "../../store/useAuthStore";
 
 export default function MenteeOnboardingWizard({ existingProfile, onComplete }) {
   const router = useRouter();
+  const { user } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState({
-    name: existingProfile?.name || "",
-    email: existingProfile?.email || "",
+    name: existingProfile?.name || user?.name || "",
+    email: existingProfile?.email || user?.email || "",
     dateOfBirth: existingProfile?.dateOfBirth ? existingProfile.dateOfBirth.split("T")[0] : "",
     contactNumber: existingProfile?.contactNumber || "",
     education: existingProfile?.education || [],
