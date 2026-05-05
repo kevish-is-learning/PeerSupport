@@ -52,8 +52,9 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
       toast.error("Please enter your full name.");
       return;
     }
-    if (!form.contactNumber?.trim()) {
-      toast.error("Please enter your phone number.");
+    const cleanNumber = form.contactNumber?.replace(/^\+91\s*/, '').replace(/\D/g, '');
+    if (!cleanNumber || cleanNumber.length !== 10) {
+      toast.error("Please enter a valid 10-digit phone number.");
       return;
     }
     if (!form.dateOfBirth) {
@@ -77,7 +78,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
       setIsSubmitting(true);
       const formData = new FormData();
       formData.append("dateOfBirth", new Date(form.dateOfBirth).toISOString());
-      formData.append("contactNumber", form.contactNumber);
+      formData.append("contactNumber", `+91 ${cleanNumber}`);
       
       const parsedEdu = form.education.map(e => ({
         type: e.type,
@@ -118,7 +119,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
   };
 
   const Card = ({ title, icon: Icon, children, shadowColor }) => (
-    <div className={`relative mb-8 rounded-[16px] border-2 border-black bg-white shadow-[6px_6px_0px_0px_${shadowColor}]`}> 
+    <div className={`relative mb-8 rounded-2xl border-2 border-black bg-white shadow-[6px_6px_0px_0px_${shadowColor}]`}> 
       <div className="flex items-center gap-3 border-b-2 border-black bg-[#F8EBE6] px-5 py-4 rounded-t-[14px]">
         <Icon className="h-5 w-5" />
         <h3 className="text-lg font-bold text-gray-900">{title}</h3>
@@ -177,14 +178,21 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
             </div>
             <div>
               <label className="mb-1 block text-sm font-bold text-gray-700">Phone Number <span className="text-red-500">*</span></label>
-              <input 
-                type="tel" 
-                required
-                value={form.contactNumber} 
-                onChange={e => setForm({...form, contactNumber: e.target.value})} 
-                placeholder="+91 XXXXX XXXXX"
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black transition-colors"
-              />
+              <div className="relative flex items-center">
+                <span className="absolute left-4 font-bold text-gray-500">+91</span>
+                <input 
+                  type="tel" 
+                  required
+                  maxLength="10"
+                  value={form.contactNumber.replace(/^\+91\s*/, '')} 
+                  onChange={e => {
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    setForm({...form, contactNumber: `+91 ${digits}`});
+                  }}
+                  placeholder="9876543210"
+                  className="w-full rounded-xl border border-gray-300 pl-12 pr-4 py-3 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black transition-colors"
+                />
+              </div>
             </div>
           </div>
         </Card>
