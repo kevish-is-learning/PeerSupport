@@ -12,6 +12,7 @@ import {
   resolveUploadUrl,
 } from "../../lib/api";
 import MentorOnboardingWizard from "../../components/mentor/MentorOnboardingWizard";
+import MenteeOnboardingWizard from "../../components/mentee/MenteeOnboardingWizard";
 
 const emptyMenteeForm = {
   dateOfBirth: "",
@@ -424,139 +425,9 @@ export default function OnboardingPage() {
           </button>
         </section>
 
-        {selectedRole === "MENTEE" ? (
-          <form onSubmit={onMenteeSubmit} className="mt-6 grid gap-6">
-            <section className="rounded-xl border border-black/20 bg-[#f7fafc] p-4">
-              <h2 className="text-lg font-bold">Mentee Details</h2>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <input
-                  type="date"
-                  name="dateOfBirth"
-                  value={menteeForm.dateOfBirth}
-                  onChange={onMenteeFieldChange}
-                  required
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <div className="relative flex items-center">
-                  <span className="absolute left-3 text-sm font-bold text-gray-500 bg-transparent">+91</span>
-                  <input
-                    type="tel"
-                    name="contactNumber"
-                    value={menteeForm.contactNumber}
-                    onChange={onMenteeFieldChange}
-                    maxLength="10"
-                    placeholder="9876543210 *"
-                    required
-                    className="w-full rounded-xl border border-black/30 pl-10 pr-3 py-2 text-sm outline-none focus:border-black"
-                  />
-                </div>
-                <input
-                  name="otherMbaScore"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={menteeForm.otherMbaScore}
-                  onChange={onMenteeFieldChange}
-                  placeholder="Other MBA Score (Cumulative) (optional)"
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <input
-                  name="education10"
-                  value={menteeForm.education10}
-                  onChange={onMenteeFieldChange}
-                  placeholder="Class 10 details (optional)"
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <input
-                  name="education12"
-                  value={menteeForm.education12}
-                  onChange={onMenteeFieldChange}
-                  placeholder="Class 12 details (optional)"
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <input
-                  name="bachelors"
-                  value={menteeForm.bachelors}
-                  onChange={onMenteeFieldChange}
-                  placeholder="Bachelors (optional)"
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-                <input
-                  name="masters"
-                  value={menteeForm.masters}
-                  onChange={onMenteeFieldChange}
-                  placeholder="Masters (optional)"
-                  className="rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-                />
-              </div>
-              <input
-                type="number"
-                min="0"
-                step="0.5"
-                name="workExperience"
-                value={menteeForm.workExperience}
-                onChange={onMenteeFieldChange}
-                placeholder="Work experience in years (optional)"
-                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-              <textarea
-                name="certifications"
-                value={menteeForm.certifications}
-                onChange={onMenteeFieldChange}
-                placeholder="Certifications (optional)"
-                rows={2}
-                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-              <textarea
-                name="skillsets"
-                value={menteeForm.skillsets}
-                onChange={onMenteeFieldChange}
-                placeholder="Skillsets (comma separated) (optional)"
-                rows={2}
-                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-              <textarea
-                name="catHistory"
-                value={menteeForm.catHistory}
-                onChange={onMenteeFieldChange}
-                placeholder="CAT history (optional)"
-                rows={2}
-                className="mt-3 w-full rounded-xl border border-black/30 px-3 py-2 text-sm outline-none focus:border-black"
-              />
-              <div className="mt-3">
-                <label className="mb-1 block text-sm font-semibold">
-                  Resume (PDF/DOC/DOCX) <span className="text-xs font-normal text-gray-500">(optional)</span>
-                </label>
-                <input
-                  name="resume"
-                  type="file"
-                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  onChange={(event) => setMenteeResumeFile(event.target.files?.[0] || null)}
-                  className="w-full rounded-xl border border-black/30 px-3 py-2 text-sm"
-                />
-                {menteeForm.resumeUrl ? (
-                  <a
-                    href={resolveUploadUrl(menteeForm.resumeUrl)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-2 inline-block text-sm font-semibold text-[#5f6cf3] underline"
-                  >
-                    View uploaded resume
-                  </a>
-                ) : null}
-              </div>
-            </section>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="rounded-xl border-2 border-black bg-[#5f6cf3] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isSubmitting ? "Saving..." : "Save and Continue"}
-            </button>
-          </form>
-        ) : null}
+          {selectedRole === "MENTEE" ? (
+            <MenteeOnboardingWizard existingProfile={menteeProfileExists ? menteeForm : null} onComplete={() => { fetchCurrentUser(); router.replace("/mentee/profile"); }} />
+          ) : null}
       </div>
     </main>
   );

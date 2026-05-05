@@ -121,7 +121,7 @@ export default function HeroSection() {
           </Link>
 
           <nav
-            className="flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[0.9rem] font-semibold text-black sm:gap-x-7 sm:text-[0.95rem] md:order-none md:w-auto md:flex-1"
+            className="flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[0.9rem] font-semibold text-black sm:gap-x-7 sm:text-[0.95rem] md:order-0 md:w-auto md:flex-1"
             aria-label="Primary"
           >
             {navItems.map((item) => (
