@@ -7,6 +7,18 @@ import { User, Briefcase, GraduationCap, Target, Upload, BookOpen, ChevronRight 
 import { menteeProfileApi } from "../../lib/api";
 import useAuthStore from "../../store/useAuthStore";
 
+const Card = ({ title, icon: Icon, children, shadowColor }) => (
+  <div className={`relative mb-8 rounded-2xl border-2 border-black bg-white shadow-[6px_6px_0px_0px_${shadowColor}]`}> 
+    <div className="flex items-center gap-3 border-b-2 border-black bg-[#F8EBE6] px-5 py-4 rounded-t-[14px]">
+      <Icon className="h-5 w-5" />
+      <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+    </div>
+    <div className="p-6">
+      {children}
+    </div>
+  </div>
+);
+
 export default function MenteeOnboardingWizard({ existingProfile, onComplete }) {
   const router = useRouter();
   const { user } = useAuthStore();
@@ -117,18 +129,6 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
       setIsSubmitting(false);
     }
   };
-
-  const Card = ({ title, icon: Icon, children, shadowColor }) => (
-    <div className={`relative mb-8 rounded-2xl border-2 border-black bg-white shadow-[6px_6px_0px_0px_${shadowColor}]`}> 
-      <div className="flex items-center gap-3 border-b-2 border-black bg-[#F8EBE6] px-5 py-4 rounded-t-[14px]">
-        <Icon className="h-5 w-5" />
-        <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-      </div>
-      <div className="p-6">
-        {children}
-      </div>
-    </div>
-  );
 
   return (
     <div className="mx-auto w-full max-w-3xl pb-16 pt-8">
