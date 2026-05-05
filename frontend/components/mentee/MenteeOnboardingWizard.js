@@ -46,9 +46,29 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.contactNumber || !form.dateOfBirth) {
-      toast.error("Please fill in contact number and date of birth.");
+    if (!form.name?.trim()) {
+      toast.error("Please enter your full name.");
       return;
+    }
+    if (!form.contactNumber?.trim()) {
+      toast.error("Please enter your phone number.");
+      return;
+    }
+    if (!form.dateOfBirth) {
+      toast.error("Please provide your date of birth.");
+      return;
+    }
+
+    for (let i = 0; i < form.education.length; i++) {
+       const edu = form.education[i];
+       if (!edu.institutionName?.trim() || !edu.fromYear || !edu.toYear || !edu.score) {
+          toast.error(`Please fill all required fields in Education #${i + 1}.`);
+          return;
+       }
+       if (Number(edu.fromYear) > Number(edu.toYear)) {
+          toast.error(`From Year cannot be greater than To Year in Education #${i + 1}.`);
+          return;
+       }
     }
 
     try {
@@ -122,7 +142,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
         <Card title="Basic Information" icon={User} shadowColor="#5B6EF5">
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-bold text-gray-700">Full Name</label>
+              <label className="mb-1 block text-sm font-bold text-gray-700">Full Name <span className="text-red-500">*</span></label>
               <input 
                 type="text" 
                 value={form.name} 
@@ -143,7 +163,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-bold text-gray-700">Date of Birth</label>
+                <label className="mb-1 block text-sm font-bold text-gray-700">Date of Birth <span className="text-red-500">*</span></label>
                 <input 
                    type="date" 
                    required
@@ -154,7 +174,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-bold text-gray-700">Phone Number</label>
+              <label className="mb-1 block text-sm font-bold text-gray-700">Phone Number <span className="text-red-500">*</span></label>
               <input 
                 type="tel" 
                 required
@@ -177,7 +197,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-gray-500">Degree Type</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">Degree Type <span className="text-red-500">*</span></label>
                       <select value={edu.type} onChange={e => updateEducation(idx, "type", e.target.value)} className="w-full rounded-xl border border-gray-300 p-3 text-sm bg-white focus:border-black focus:outline-none focus:ring-1 focus:ring-black">
                         <option value="10th">10th</option>
                         <option value="12th">12th</option>
@@ -186,21 +206,21 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
                       </select>
                     </div>
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-gray-500">Institution Name</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">Institution Name <span className="text-red-500">*</span></label>
                       <input type="text" placeholder="e.g. XYZ University" value={edu.institutionName} onChange={e => updateEducation(idx, "institutionName", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black" />
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="mb-1 block text-xs font-bold text-gray-500">From Year</label>
+                        <label className="mb-1 block text-xs font-bold text-gray-500">From Year <span className="text-red-500">*</span></label>
                         <input type="number" placeholder="2018" value={edu.fromYear} onChange={e => updateEducation(idx, "fromYear", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black" />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs font-bold text-gray-500">To Year</label>
+                        <label className="mb-1 block text-xs font-bold text-gray-500">To Year <span className="text-red-500">*</span></label>
                          <input type="number" placeholder="2022" value={edu.toYear} onChange={e => updateEducation(idx, "toYear", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black" />
                       </div>
                     </div>
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-gray-500">Score (Percentage/CGPA)</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">Score (Percentage/CGPA) <span className="text-red-500">*</span></label>
                       <input type="number" step="0.01" placeholder="e.g. 85.5 or 8.5" value={edu.score} onChange={e => updateEducation(idx, "score", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-3 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black" />
                     </div>
                   </div>
