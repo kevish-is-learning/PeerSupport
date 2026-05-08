@@ -51,6 +51,7 @@ export default function AvailabilityPage() {
   const router = useRouter();
   const [profile, setProfile] = useState(null);
   const [availability, setAvailability] = useState({});
+  const [originalAvailability, setOriginalAvailability] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -65,6 +66,7 @@ export default function AvailabilityPage() {
       const empty = buildEmpty(pricedServices);
       const merged = mergeAvailability(empty, p.weeklyAvailability);
       setAvailability(merged);
+      setOriginalAvailability(merged);
       // Expand all by default
       const exp = {};
       pricedServices.forEach(s => { exp[s] = true; });
@@ -107,6 +109,7 @@ export default function AvailabilityPage() {
         servicePricing: profile.servicePricing || {},
         weeklyAvailability: availability,
       });
+      setOriginalAvailability(availability);
       setSaved(true);
       toast.success("Availability saved!");
       setTimeout(() => setSaved(false), 3000);
@@ -129,6 +132,7 @@ export default function AvailabilityPage() {
   const unpricedServices = services.filter(s => !pricing[s]);
   const totalSlots = countSlots(availability);
   const totalDays = activeDaysCount(availability);
+  const isDirty = JSON.stringify(availability) !== JSON.stringify(originalAvailability);
 
   return (
     <div className="w-full h-full overflow-y-auto bg-[#FFF7F5] text-black">
@@ -144,15 +148,17 @@ export default function AvailabilityPage() {
             <p className="text-xs text-gray-500 font-medium hidden sm:block">Set the time slots you're available each week</p>
           </div>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={saving || pricedServices.length === 0}
-          className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-[#5061E4] px-5 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-40 transition-opacity shrink-0"
-          style={{ boxShadow: "3px 3px 0 0 #000" }}
-        >
-          {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <CheckCircle2 size={14} /> : <Save size={14} />}
-          {saving ? "Saving…" : saved ? "Saved!" : "Save Changes"}
-        </button>
+        {isDirty && (
+          <button
+            onClick={handleSave}
+            disabled={saving || pricedServices.length === 0}
+            className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-[#5061E4] px-5 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-40 transition-opacity shrink-0"
+            style={{ boxShadow: "3px 3px 0 0 #000" }}
+          >
+            {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <CheckCircle2 size={14} /> : <Save size={14} />}
+            {saving ? "Saving…" : saved ? "Saved!" : "Save Changes"}
+          </button>
+        )}
       </div>
 
       <div className="px-6 lg:px-10 py-6 max-w-3xl">
@@ -332,21 +338,6 @@ export default function AvailabilityPage() {
             );
           })}
         </div>
-
-        {/* Bottom save */}
-        {pricedServices.length > 0 && (
-          <div className="mt-8 flex justify-end">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-[#5061E4] px-8 py-3 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
-              style={{ boxShadow: "4px 4px 0 0 #000" }}
-            >
-              {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <CheckCircle2 size={14} /> : <Save size={14} />}
-              {saving ? "Saving…" : saved ? "Changes Saved!" : "Save All Changes"}
-            </button>
-          </div>
-        )}
 
       </div>
     </div>

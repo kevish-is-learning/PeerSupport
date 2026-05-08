@@ -59,9 +59,8 @@ export default function MentorSidebarShell({ children }) {
   }, [hasCheckedSession, user, router]);
 
   const normalizedPath = normalizeMentorPath(pathname);
-  const approvalStatus = user?.mentorApprovalStatus || "PENDING";
-  const approved = isMentorApproved(approvalStatus);
-  const approvalMeta = getMentorApprovalMeta(approvalStatus);
+  const approved = isMentorApproved(user);
+  const approvalMeta = getMentorApprovalMeta(user);
 
   const activeItem = useMemo(
     () =>

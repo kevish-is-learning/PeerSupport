@@ -6,11 +6,10 @@ export const MENTOR_NAV_ITEMS = [
   { label: "Sessions", href: "/mentor/bookings", icon: Calendar, requiresApproval: true },
   { label: "Payouts", href: "/mentor/payments", icon: Wallet, requiresApproval: true },
   { label: "Profile", href: "/mentor/profile", icon: User, requiresApproval: false },
-  { label: "Work Experience", href: "/mentor/work-experience", icon: Briefcase, requiresApproval: false },
   { label: "Availability", href: "/mentor/availability", icon: CalendarDays, requiresApproval: false },
 ];
 
-export const MENTOR_ALLOWED_UNAPPROVED_ROUTES = ["/mentor/profile", "/mentor/help-center", "/mentor/work-experience", "/mentor/availability"];
+export const MENTOR_ALLOWED_UNAPPROVED_ROUTES = ["/mentor/profile", "/mentor/help-center", "/mentor/availability"];
 
 export const normalizeMentorPath = (path) => {
   if (!path) {
@@ -21,13 +20,13 @@ export const normalizeMentorPath = (path) => {
   return normalized || "/mentor";
 };
 
-export const isMentorApproved = (approvalStatus) => approvalStatus === "APPROVED";
+export const isMentorApproved = (user) => user?.mentorApprovalStatus === "APPROVED" || user?.mentorIsVerified === true;
 
 export const isMentorRouteAllowedWithoutApproval = (path) =>
   MENTOR_ALLOWED_UNAPPROVED_ROUTES.includes(normalizeMentorPath(path));
 
-export const getMentorApprovalMeta = (approvalStatus) => {
-  if (approvalStatus === "APPROVED") {
+export const getMentorApprovalMeta = (user) => {
+  if (isMentorApproved(user)) {
     return {
       label: "Approved",
       badgeClassName: "bg-[#c6f6d5] text-[#0f3e22]",
@@ -37,7 +36,7 @@ export const getMentorApprovalMeta = (approvalStatus) => {
     };
   }
 
-  if (approvalStatus === "REJECTED") {
+  if (user?.mentorApprovalStatus === "REJECTED") {
     return {
       label: "Needs Changes",
       badgeClassName: "bg-[#fed7d7] text-[#7a1f1f]",
