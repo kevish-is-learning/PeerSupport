@@ -38,6 +38,8 @@ router.get('/google/failure', (req, res) => {
 
 router.post('/change-password', authenticateJWT, authController.changePassword);
 
+router.put('/update-profile', authenticateJWT, authController.updateProfile);
+
 router.post('/logout', authenticateJWT, authController.logout);
 
 export default router;

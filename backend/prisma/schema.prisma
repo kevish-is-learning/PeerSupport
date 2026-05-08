@@ -67,12 +67,15 @@ model MentorProfile {
   linkedInUrl      String?
   contactNumber    String
   bio              String
-  expertiseTags    String[]
-  ugCollegeProfile String?
-  pgProfile        String?
-  workExperience   String?
-  certifications   String?
-  profilePhotoUrl  String?
+  expertiseTags      String[]
+  servicesOffered    String[]
+  servicePricing     Json?
+  weeklyAvailability Json?
+  ugCollegeProfile   String?
+  pgProfile          String?
+  workExperience     String?
+  certifications     String?
+  profilePhotoUrl    String?
   collegeDocumentUrl String?
   isVerified       Boolean              @default(false)
   approvalStatus   MentorApprovalStatus @default(PENDING)

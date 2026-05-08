@@ -158,6 +158,21 @@ class AuthController {
       res.status(500).json(new ApiError(500, "Logout failed", error.message));
     }
   }
+  // Update profile (name)
+  async updateProfile(req, res) {
+    try {
+      const { name } = req.body;
+      const { prisma } = await import('../config/database.js');
+      const updatedUser = await prisma.user.update({
+        where: { id: req.user.id },
+        data: { name: name?.trim() || req.user.name },
+        select: { id:true, name:true, email:true, role:true },
+      });
+      return res.status(200).json(new ApiResponse(200, "Profile updated", { user: updatedUser }));
+    } catch (error) {
+      return res.status(500).json({ success:false, message: error.message || "Update failed" });
+    }
+  }
 }
 
 export default new AuthController();

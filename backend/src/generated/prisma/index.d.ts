@@ -3212,6 +3212,9 @@ export namespace Prisma {
     contactNumber: number
     bio: number
     expertiseTags: number
+    servicesOffered: number
+    servicePricing: number
+    weeklyAvailability: number
     ugCollegeProfile: number
     pgProfile: number
     workExperience: number
@@ -3272,6 +3275,9 @@ export namespace Prisma {
     contactNumber?: true
     bio?: true
     expertiseTags?: true
+    servicesOffered?: true
+    servicePricing?: true
+    weeklyAvailability?: true
     ugCollegeProfile?: true
     pgProfile?: true
     workExperience?: true
@@ -3365,6 +3371,9 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags: string[]
+    servicesOffered: string[]
+    servicePricing: JsonValue | null
+    weeklyAvailability: JsonValue | null
     ugCollegeProfile: string | null
     pgProfile: string | null
     workExperience: string | null
@@ -3402,6 +3411,9 @@ export namespace Prisma {
     contactNumber?: boolean
     bio?: boolean
     expertiseTags?: boolean
+    servicesOffered?: boolean
+    servicePricing?: boolean
+    weeklyAvailability?: boolean
     ugCollegeProfile?: boolean
     pgProfile?: boolean
     workExperience?: boolean
@@ -3423,6 +3435,9 @@ export namespace Prisma {
     contactNumber?: boolean
     bio?: boolean
     expertiseTags?: boolean
+    servicesOffered?: boolean
+    servicePricing?: boolean
+    weeklyAvailability?: boolean
     ugCollegeProfile?: boolean
     pgProfile?: boolean
     workExperience?: boolean
@@ -3444,6 +3459,9 @@ export namespace Prisma {
     contactNumber?: boolean
     bio?: boolean
     expertiseTags?: boolean
+    servicesOffered?: boolean
+    servicePricing?: boolean
+    weeklyAvailability?: boolean
     ugCollegeProfile?: boolean
     pgProfile?: boolean
     workExperience?: boolean
@@ -3476,6 +3494,9 @@ export namespace Prisma {
       contactNumber: string
       bio: string
       expertiseTags: string[]
+      servicesOffered: string[]
+      servicePricing: Prisma.JsonValue | null
+      weeklyAvailability: Prisma.JsonValue | null
       ugCollegeProfile: string | null
       pgProfile: string | null
       workExperience: string | null
@@ -3887,6 +3908,9 @@ export namespace Prisma {
     readonly contactNumber: FieldRef<"MentorProfile", 'String'>
     readonly bio: FieldRef<"MentorProfile", 'String'>
     readonly expertiseTags: FieldRef<"MentorProfile", 'String[]'>
+    readonly servicesOffered: FieldRef<"MentorProfile", 'String[]'>
+    readonly servicePricing: FieldRef<"MentorProfile", 'Json'>
+    readonly weeklyAvailability: FieldRef<"MentorProfile", 'Json'>
     readonly ugCollegeProfile: FieldRef<"MentorProfile", 'String'>
     readonly pgProfile: FieldRef<"MentorProfile", 'String'>
     readonly workExperience: FieldRef<"MentorProfile", 'String'>
@@ -4289,6 +4313,9 @@ export namespace Prisma {
     contactNumber: 'contactNumber',
     bio: 'bio',
     expertiseTags: 'expertiseTags',
+    servicesOffered: 'servicesOffered',
+    servicePricing: 'servicePricing',
+    weeklyAvailability: 'weeklyAvailability',
     ugCollegeProfile: 'ugCollegeProfile',
     pgProfile: 'pgProfile',
     workExperience: 'workExperience',
@@ -4664,6 +4691,9 @@ export namespace Prisma {
     contactNumber?: StringFilter<"MentorProfile"> | string
     bio?: StringFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
+    servicesOffered?: StringNullableListFilter<"MentorProfile">
+    servicePricing?: JsonNullableFilter<"MentorProfile">
+    weeklyAvailability?: JsonNullableFilter<"MentorProfile">
     ugCollegeProfile?: StringNullableFilter<"MentorProfile"> | string | null
     pgProfile?: StringNullableFilter<"MentorProfile"> | string | null
     workExperience?: StringNullableFilter<"MentorProfile"> | string | null
@@ -4685,6 +4715,9 @@ export namespace Prisma {
     contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
+    servicesOffered?: SortOrder
+    servicePricing?: SortOrderInput | SortOrder
+    weeklyAvailability?: SortOrderInput | SortOrder
     ugCollegeProfile?: SortOrderInput | SortOrder
     pgProfile?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
@@ -4709,6 +4742,9 @@ export namespace Prisma {
     contactNumber?: StringFilter<"MentorProfile"> | string
     bio?: StringFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
+    servicesOffered?: StringNullableListFilter<"MentorProfile">
+    servicePricing?: JsonNullableFilter<"MentorProfile">
+    weeklyAvailability?: JsonNullableFilter<"MentorProfile">
     ugCollegeProfile?: StringNullableFilter<"MentorProfile"> | string | null
     pgProfile?: StringNullableFilter<"MentorProfile"> | string | null
     workExperience?: StringNullableFilter<"MentorProfile"> | string | null
@@ -4730,6 +4766,9 @@ export namespace Prisma {
     contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
+    servicesOffered?: SortOrder
+    servicePricing?: SortOrderInput | SortOrder
+    weeklyAvailability?: SortOrderInput | SortOrder
     ugCollegeProfile?: SortOrderInput | SortOrder
     pgProfile?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
@@ -4756,6 +4795,9 @@ export namespace Prisma {
     contactNumber?: StringWithAggregatesFilter<"MentorProfile"> | string
     bio?: StringWithAggregatesFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
+    servicesOffered?: StringNullableListFilter<"MentorProfile">
+    servicePricing?: JsonNullableWithAggregatesFilter<"MentorProfile">
+    weeklyAvailability?: JsonNullableWithAggregatesFilter<"MentorProfile">
     ugCollegeProfile?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     pgProfile?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     workExperience?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
@@ -5006,6 +5048,9 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -5027,6 +5072,9 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -5046,6 +5094,9 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5067,6 +5118,9 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5087,6 +5141,9 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -5106,6 +5163,9 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5126,6 +5186,9 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5548,6 +5611,9 @@ export namespace Prisma {
     contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
+    servicesOffered?: SortOrder
+    servicePricing?: SortOrder
+    weeklyAvailability?: SortOrder
     ugCollegeProfile?: SortOrder
     pgProfile?: SortOrder
     workExperience?: SortOrder
@@ -5723,6 +5789,10 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type MentorProfileCreateservicesOfferedInput = {
+    set: string[]
+  }
+
   export type UserCreateNestedOneWithoutMentorProfileInput = {
     create?: XOR<UserCreateWithoutMentorProfileInput, UserUncheckedCreateWithoutMentorProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutMentorProfileInput
@@ -5730,6 +5800,11 @@ export namespace Prisma {
   }
 
   export type MentorProfileUpdateexpertiseTagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MentorProfileUpdateservicesOfferedInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -6037,6 +6112,9 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -6056,6 +6134,9 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -6130,6 +6211,9 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6149,6 +6233,9 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
+    servicePricing?: NullableJsonNullValueInput | InputJsonValue
+    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null

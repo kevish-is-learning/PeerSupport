@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, Check, Upload, User, GraduationCap, Briefcase, BookOpen, CheckCircle } from "lucide-react";
+import { ArrowLeft, Check, Upload, User, GraduationCap, Briefcase, BookOpen, CheckCircle, Sparkles } from "lucide-react";
 import useAuthStore from "../../store/useAuthStore";
 import { mentorProfileApi, resolveUploadUrl, authApi } from "../../lib/api";
 
@@ -12,6 +12,16 @@ const STEPS = [
   { id: 2, title: "Education Details", icon: GraduationCap },
   { id: 3, title: "Professional Background", icon: Briefcase },
   { id: 4, title: "Expertise & Profile", icon: BookOpen },
+  { id: 5, title: "Services Offered", icon: Sparkles },
+];
+
+const SERVICES_OPTIONS = [
+  "SoP Review / Discussion",
+  "Resume Curation / Review",
+  "Mock Interview",
+  "WAT and GD Preparation",
+  "Know Your College",
+  "One-on-one Connect",
 ];
 
 const EXPERTISE_OPTIONS = [
@@ -82,6 +92,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
 
     expertiseTags: existingProfile?.expertiseTags || [],
     bio: existingProfile?.bio || "",
+    servicesOffered: existingProfile?.servicesOffered || [],
   });
 
   const [files, setFiles] = useState({
@@ -113,6 +124,18 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
     });
   };
 
+  const handleServiceToggle = (service) => {
+    setFormData((prev) => {
+      const isSelected = prev.servicesOffered.includes(service);
+      return {
+        ...prev,
+        servicesOffered: isSelected
+          ? prev.servicesOffered.filter((s) => s !== service)
+          : [...prev.servicesOffered, service],
+      };
+    });
+  };
+
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (files?.[0]) {
@@ -123,10 +146,10 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
   const handleNext = () => {
     // Validation for Step 1
     if (currentStep === 1) {
-      if (!files.profilePhoto && !formData.profilePhotoUrl) {
-        toast.error("Profile picture is required.");
-        return;
-      }
+      // if (!files.profilePhoto && !formData.profilePhotoUrl) {
+      //   toast.error("Profile picture is required.");
+      //   return;
+      // }
       if (!formData.fullName.trim()) {
         toast.error("Full name is required.");
         return;
@@ -163,11 +186,62 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       }
     }
     
-    if (currentStep < 4) setCurrentStep((prev) => prev + 1);
+    if (currentStep < 5) setCurrentStep((prev) => prev + 1);
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) setCurrentStep((prev) => prev - 1);
+  };
+
+  const buildPayload = (servicesOfferedOverride) => {
+    const payload = new FormData();
+
+    const pgProfile = [formData.mbaCollege, formData.mbaSpecialization, formData.mbaYear].some(Boolean)
+      ? `${formData.mbaCollege}|${formData.mbaSpecialization}|${formData.mbaYear}`
+      : "";
+    const ugCollegeProfile = [formData.ugCollege, formData.ugDegree, formData.ugSpecialization, formData.ugYear].some(Boolean)
+      ? `${formData.ugCollege}|${formData.ugDegree}|${formData.ugSpecialization}|${formData.ugYear}`
+      : "";
+    const workExp = hasWorkExperience && [formData.workExperienceYears, formData.company, formData.role].some(Boolean)
+      ? `${formData.workExperienceYears}|${formData.company}|${formData.role}`
+      : "";
+
+    const services = servicesOfferedOverride ?? formData.servicesOffered;
+
+    payload.append("contactNumber", formData.contactNumber.replace(/\s/g, ""));
+    payload.append("bio", formData.bio);
+    payload.append("expertiseTags", JSON.stringify(formData.expertiseTags));
+    payload.append("servicesOffered", JSON.stringify(services));
+    payload.append("ugCollegeProfile", ugCollegeProfile);
+    payload.append("pgProfile", pgProfile);
+    payload.append("workExperience", workExp);
+    payload.append("linkedInUrl", formData.linkedInUrl || "");
+
+    if (files.profilePhoto) {
+      payload.append("profilePhoto", files.profilePhoto);
+    } else if (formData.profilePhotoUrl) {
+      payload.append("profilePhotoUrl", formData.profilePhotoUrl);
+    }
+
+    return payload;
+  };
+
+  const submitProfile = async (payload) => {
+    try {
+      if (typeof authApi.updateProfile === "function") {
+        await authApi.updateProfile({ name: formData.fullName });
+      }
+    } catch (_) {
+      // Silently ignore
+    }
+
+    const result = existingProfile
+      ? await mentorProfileApi.update(payload)
+      : await mentorProfileApi.create(payload);
+
+    await fetchCurrentUser();
+    toast.success(result?.message || "Mentor profile saved");
+    onComplete?.();
   };
 
   const handleSubmit = async () => {
@@ -175,62 +249,25 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       toast.error("Bio is required.");
       return;
     }
+    // Move to step 5 (Services Offered) instead of submitting immediately
+    setCurrentStep(5);
+  };
 
+  const handleCompleteProfile = async () => {
     setIsSubmitting(true);
     try {
-      const payload = new FormData();
-      
-      const pgProfile = [formData.mbaCollege, formData.mbaSpecialization, formData.mbaYear].some(Boolean)
-        ? `${formData.mbaCollege}|${formData.mbaSpecialization}|${formData.mbaYear}`
-        : "";
-      const ugCollegeProfile = [formData.ugCollege, formData.ugDegree, formData.ugSpecialization, formData.ugYear].some(Boolean)
-        ? `${formData.ugCollege}|${formData.ugDegree}|${formData.ugSpecialization}|${formData.ugYear}`
-        : "";
-      const workExp = hasWorkExperience && [formData.workExperienceYears, formData.company, formData.role].some(Boolean)
-        ? `${formData.workExperienceYears}|${formData.company}|${formData.role}`
-        : "";
+      await submitProfile(buildPayload());
+    } catch (err) {
+      toast.error(err?.message || "Failed to save profile");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-      payload.append("contactNumber", formData.contactNumber.replace(/\s/g, ''));
-      payload.append("bio", formData.bio);
-      
-      if (formData.expertiseTags.length > 0) {
-        payload.append("expertiseTags", JSON.stringify(formData.expertiseTags));
-      } else {
-        payload.append("expertiseTags", "[]");
-      }
-      
-      payload.append("ugCollegeProfile", ugCollegeProfile);
-      payload.append("pgProfile", pgProfile);
-      payload.append("workExperience", workExp);
-      payload.append("linkedInUrl", formData.linkedInUrl || "");
-
-      if (files.profilePhoto) {
-        payload.append("profilePhoto", files.profilePhoto);
-      } else if (formData.profilePhotoUrl) {
-        payload.append("profilePhotoUrl", formData.profilePhotoUrl);
-      }
-
-      // Note: Full name in `formData.fullName` is not saved to MentorProfile, it typically requires a separate `authApi` call to update the user.
-      const userUpdatePayload = { name: formData.fullName };
-      try {
-        if (typeof authApi.updateProfile === "function") {
-          await authApi.updateProfile(userUpdatePayload);
-        }
-      } catch (e) {
-        // Silently ignore
-      }
-
-      const result = existingProfile
-        ? await mentorProfileApi.update(payload)
-        : await mentorProfileApi.create(payload);
-
-      // If user's name changed, update user via authApi profile update if available (assuming user update)
-      // Wait, there's no authApi.updateProfile out of the box in typical projects unless defined. 
-      // But it's okay to skip user full name update if not supported, we assume it's just for display.
-
-      await fetchCurrentUser();
-      toast.success(result?.message || "Mentor profile saved");
-      onComplete?.();
+  const handleSkipServices = async () => {
+    setIsSubmitting(true);
+    try {
+      await submitProfile(buildPayload([]));
     } catch (err) {
       toast.error(err?.message || "Failed to save profile");
     } finally {
@@ -260,7 +297,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
           className="flex w-full items-center overflow-x-auto no-scrollbar scroll-smooth [&::-webkit-scrollbar]:hidden"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          <div className="flex w-full items-center justify-between min-w-[500px] sm:min-w-full px-2 py-1">
+          <div className="flex w-full items-center justify-between min-w-[600px] sm:min-w-full px-2 py-1">
           {STEPS.map((step, idx) => {
             const isCompleted = step.id < currentStep;
             const isActive = step.id === currentStep;
@@ -269,7 +306,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
               <React.Fragment key={step.id}>
                 <div 
                   data-active={isActive ? "true" : undefined}
-                  className="flex flex-col items-center z-10 bg-white px-2 sm:px-4 shrink-0 transition-transform duration-300 w-24 sm:w-32"
+                  className="flex flex-col items-center z-10 bg-white px-2 sm:px-4 shrink-0 transition-transform duration-300 w-20 sm:w-28"
                 >
                   <div
                     className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center mb-2 transition-all shrink-0 ${
@@ -291,7 +328,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                   </span>
                 </div>
                 {idx < STEPS.length - 1 && (
-                  <div className="flex-1 h-[2px] mx-1 md:mx-2 relative top-[-10px] sm:top-[-16px] min-w-[20px]">
+                  <div className="flex-1 h-[2px] mx-1 md:mx-2 relative top-[-10px] sm:top-[-16px] min-w-[12px]">
                     <div className={`h-full w-full ${isCompleted ? "bg-yellow-400" : "bg-gray-200"}`} />
                   </div>
                 )}
@@ -656,15 +693,51 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
               </div>
             </div>
           )}
+
+          {currentStep === 5 && (
+            <div className="space-y-6">
+              <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700 font-medium">
+                ✨ You can skip this for now and set it up later from your profile settings
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold mb-3">Choose Services <span className="font-normal text-gray-500">(Select all that apply)</span></p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {SERVICES_OPTIONS.map((service) => {
+                    const isSelected = formData.servicesOffered.includes(service);
+                    return (
+                      <button
+                        key={service}
+                        type="button"
+                        onClick={() => handleServiceToggle(service)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 font-bold text-sm text-left transition-all ${
+                          isSelected
+                            ? "bg-[#5f6cf3] text-white border-[#5f6cf3] shadow-[3px_3px_0_rgba(0,0,0,0.8)]"
+                            : "bg-white text-gray-700 border-gray-300 hover:border-black"
+                        }`}
+                      >
+                        <span className={`w-5 h-5 shrink-0 rounded border-2 flex items-center justify-center ${
+                          isSelected ? "border-white bg-white" : "border-gray-400"
+                        }`}>
+                          {isSelected && <Check className="w-3 h-3 text-[#5f6cf3]" />}
+                        </span>
+                        {service}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer Actions */}
         <div className="mt-8 flex flex-row items-center justify-between pt-6 border-t border-gray-100">
           <button
             onClick={handlePrevious}
-            disabled={currentStep === 1}
+            disabled={currentStep === 1 || isSubmitting}
             className={`px-2 sm:px-6 py-2 sm:py-2.5 rounded-full border-1 sm:border-2 border-black font-bold text-xs sm:text-base transition-colors ${
-              currentStep === 1 
+              currentStep === 1 || isSubmitting
                 ? "bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed" 
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
@@ -679,16 +752,32 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
             >
               Next &rarr;
             </button>
-          ) : (
+          ) : currentStep === 4 ? (
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="px-4 sm:px-8 py-2 sm:py-2.5 rounded-full border-1 sm:border-2 border-black bg-[#ffc20f] text-black font-bold text-xs sm:text-base hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all flex items-center justify-center shrink-0"
+              className="px-5 sm:px-8 py-2 sm:py-2.5 rounded-full border-1 sm:border-2 border-black bg-[#5f6cf3] text-white font-bold text-xs sm:text-base hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all"
             >
-              <span className="hidden sm:inline">{isSubmitting ? "Requesting..." : "Request for Approval"}</span>
-              <span className="sm:hidden">{isSubmitting ? "Wait..." : "Request"}</span>
-              {!isSubmitting && <Check className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />}
+              Next &rarr;
             </button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleSkipServices}
+                disabled={isSubmitting}
+                className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-full border-2 border-black bg-white text-black font-bold text-xs sm:text-sm hover:bg-gray-50 transition-all disabled:opacity-50"
+              >
+                {isSubmitting ? "Saving..." : "Skip for now"}
+              </button>
+              <button
+                onClick={handleCompleteProfile}
+                disabled={isSubmitting}
+                className="px-4 sm:px-8 py-2 sm:py-2.5 rounded-full border-1 sm:border-2 border-black bg-[#5f6cf3] text-white font-bold text-xs sm:text-base hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all flex items-center justify-center shrink-0 disabled:opacity-50"
+              >
+                {isSubmitting ? "Saving..." : "Complete Profile"}
+                {!isSubmitting && <Check className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />}
+              </button>
+            </div>
           )}
         </div>
       </div>

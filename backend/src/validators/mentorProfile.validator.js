@@ -30,37 +30,41 @@ const bioSchema = z
   .trim()
   .min(10, "Bio must be at least 10 characters long");
 
-const expertiseTagsSchema = z.preprocess(
-  (value) => {
-    if (Array.isArray(value)) {
-      return value;
-    }
-
-    if (typeof value === "string") {
-      const trimmed = value.trim();
-      if (!trimmed.length) {
-        return [];
+const makeTagsArraySchema = (itemErrorMsg) =>
+  z.preprocess(
+    (value) => {
+      if (Array.isArray(value)) {
+        return value;
       }
 
-      try {
-        const parsed = JSON.parse(trimmed);
-        if (Array.isArray(parsed)) {
-          return parsed;
+      if (typeof value === "string") {
+        const trimmed = value.trim();
+        if (!trimmed.length) {
+          return [];
         }
-      } catch (_error) {
-        // Fallback to comma-separated parsing.
+
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed;
+          }
+        } catch (_error) {
+          // Fallback to comma-separated parsing.
+        }
+
+        return trimmed.split(",").map((item) => item.trim());
       }
 
-      return trimmed.split(",").map((item) => item.trim());
-    }
+      return value;
+    },
+    z
+      .array(z.string().trim().min(1, itemErrorMsg))
+      .optional()
+      .default([]),
+  );
 
-    return value;
-  },
-  z
-    .array(z.string().trim().min(1, "Expertise tag cannot be empty"))
-    .optional()
-    .default([]),
-);
+const expertiseTagsSchema = makeTagsArraySchema("Expertise tag cannot be empty");
+const servicesOfferedSchema = makeTagsArraySchema("Service name cannot be empty");
 
 const optionalUrlSchema = z
   .union([z.string().trim(), z.null()])
@@ -78,6 +82,33 @@ export const createMentorProfileSchema = z.object({
   contactNumber: contactNumberSchema,
   bio: bioSchema,
   expertiseTags: expertiseTagsSchema,
+  servicesOffered: servicesOfferedSchema,
+  servicePricing: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return undefined;
+      if (typeof val === 'string') {
+        try { return JSON.parse(val); } catch { return undefined; }
+      }
+      return val;
+    },
+    z.record(z.string(), z.number().nonnegative()).optional()
+  ),
+  weeklyAvailability: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) return undefined;
+      if (typeof val === 'string') {
+        try { return JSON.parse(val); } catch { return undefined; }
+      }
+      return val;
+    },
+    z.record(
+      z.string(),
+      z.record(
+        z.string(),
+        z.array(z.object({ start: z.string(), end: z.string() }))
+      )
+    ).optional()
+  ),
   ugCollegeProfile: normalizeOptionalText,
   pgProfile: normalizeOptionalText,
   workExperience: normalizeOptionalText,

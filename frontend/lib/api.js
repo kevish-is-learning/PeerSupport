@@ -66,6 +66,9 @@ export const authApi = {
   changePassword(data) {
     return apiRequest("/auth/change-password", { method: "POST", body: data });
   },
+  updateProfile(data) {
+    return apiRequest("/auth/update-profile", { method: "PUT", body: data });
+  },
   googleAuthUrl() {
     return `${API_BASE_URL}/auth/google`;
   },

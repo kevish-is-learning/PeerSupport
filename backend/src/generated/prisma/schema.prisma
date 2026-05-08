@@ -68,6 +68,9 @@ model MentorProfile {
   contactNumber      String
   bio                String
   expertiseTags      String[]
+  servicesOffered    String[]
+  servicePricing     Json?
+  weeklyAvailability Json?
   ugCollegeProfile   String?
   pgProfile          String?
   workExperience     String?
