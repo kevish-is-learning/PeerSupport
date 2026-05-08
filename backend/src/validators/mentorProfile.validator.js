@@ -64,7 +64,6 @@ const makeTagsArraySchema = (itemErrorMsg) =>
   );
 
 const expertiseTagsSchema = makeTagsArraySchema("Expertise tag cannot be empty");
-const servicesOfferedSchema = makeTagsArraySchema("Service name cannot be empty");
 
 const optionalUrlSchema = z
   .union([z.string().trim(), z.null()])
@@ -77,38 +76,15 @@ const optionalUrlSchema = z
     return value.startsWith("/uploads/") || /^https?:\/\//i.test(value);
   }, "Must be a valid URL or uploaded file path");
 
+/**
+ * Profile schema — services / pricing / availability are handled by their own
+ * dedicated endpoints now, so they are NOT part of this schema.
+ */
 export const createMentorProfileSchema = z.object({
   linkedInUrl: linkedInUrlSchema,
   contactNumber: contactNumberSchema,
   bio: bioSchema,
   expertiseTags: expertiseTagsSchema,
-  servicesOffered: servicesOfferedSchema,
-  servicePricing: z.preprocess(
-    (val) => {
-      if (val === null || val === undefined) return undefined;
-      if (typeof val === 'string') {
-        try { return JSON.parse(val); } catch { return undefined; }
-      }
-      return val;
-    },
-    z.record(z.string(), z.number().nonnegative()).optional()
-  ),
-  weeklyAvailability: z.preprocess(
-    (val) => {
-      if (val === null || val === undefined) return undefined;
-      if (typeof val === 'string') {
-        try { return JSON.parse(val); } catch { return undefined; }
-      }
-      return val;
-    },
-    z.record(
-      z.string(),
-      z.record(
-        z.string(),
-        z.array(z.object({ start: z.string(), end: z.string() }))
-      )
-    ).optional()
-  ),
   ugCollegeProfile: normalizeOptionalText,
   pgProfile: normalizeOptionalText,
   workExperience: normalizeOptionalText,

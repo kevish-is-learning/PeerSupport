@@ -104,6 +104,44 @@ export const mentorProfileApi = {
   },
 };
 
+// ─── Mentor Services (dedicated endpoints) ───────────────────────────────────
+
+export const mentorServiceApi = {
+  /** Fetch available service types + labels (public) */
+  getTypes() {
+    return apiRequest('/mentor-services/types');
+  },
+  /** Fetch current mentor's services with pricing */
+  getMine() {
+    return apiRequest('/mentor-services');
+  },
+  /** Bulk upsert services + pricing */
+  upsert(services) {
+    return apiRequest('/mentor-services', { method: 'PUT', body: { services } });
+  },
+  /** Delete a single service by type */
+  remove(serviceType) {
+    return apiRequest(`/mentor-services/${serviceType}`, { method: 'DELETE' });
+  },
+};
+
+// ─── Mentor Availability (dedicated endpoints) ───────────────────────────────
+
+export const mentorAvailabilityApi = {
+  /** Fetch current mentor's weekly availability */
+  getMine() {
+    return apiRequest('/mentor-availability');
+  },
+  /** Bulk upsert weekly availability */
+  upsert(availability) {
+    return apiRequest('/mentor-availability', { method: 'PUT', body: { availability } });
+  },
+  /** Delete all availability for a specific day */
+  removeDay(dayOfWeek) {
+    return apiRequest(`/mentor-availability/${dayOfWeek}`, { method: 'DELETE' });
+  },
+};
+
 export const adminMentorApi = {
   getWaitlist() {
     return apiRequest('/admin/mentor-waitlist');

@@ -161,9 +161,6 @@ exports.Prisma.MentorProfileScalarFieldEnum = {
   contactNumber: 'contactNumber',
   bio: 'bio',
   expertiseTags: 'expertiseTags',
-  servicesOffered: 'servicesOffered',
-  servicePricing: 'servicePricing',
-  weeklyAvailability: 'weeklyAvailability',
   ugCollegeProfile: 'ugCollegeProfile',
   pgProfile: 'pgProfile',
   workExperience: 'workExperience',
@@ -175,6 +172,31 @@ exports.Prisma.MentorProfileScalarFieldEnum = {
   adminReviewNotes: 'adminReviewNotes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MentorServiceScalarFieldEnum = {
+  id: 'id',
+  mentorProfileId: 'mentorProfileId',
+  serviceType: 'serviceType',
+  pricePerSession: 'pricePerSession',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WeeklyAvailabilityScalarFieldEnum = {
+  id: 'id',
+  mentorProfileId: 'mentorProfileId',
+  dayOfWeek: 'dayOfWeek',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TimeSlotScalarFieldEnum = {
+  id: 'id',
+  weeklyAvailabilityId: 'weeklyAvailabilityId',
+  startTime: 'startTime',
+  endTime: 'endTime'
 };
 
 exports.Prisma.SortOrder = {
@@ -218,10 +240,32 @@ exports.MentorApprovalStatus = exports.$Enums.MentorApprovalStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.MentorServiceType = exports.$Enums.MentorServiceType = {
+  SOP_REVIEW: 'SOP_REVIEW',
+  RESUME_CURATION: 'RESUME_CURATION',
+  MOCK_INTERVIEW: 'MOCK_INTERVIEW',
+  WAT_GD_PREP: 'WAT_GD_PREP',
+  KNOW_YOUR_COLLEGE: 'KNOW_YOUR_COLLEGE',
+  ONE_ON_ONE_CONNECT: 'ONE_ON_ONE_CONNECT'
+};
+
+exports.DayOfWeek = exports.$Enums.DayOfWeek = {
+  MONDAY: 'MONDAY',
+  TUESDAY: 'TUESDAY',
+  WEDNESDAY: 'WEDNESDAY',
+  THURSDAY: 'THURSDAY',
+  FRIDAY: 'FRIDAY',
+  SATURDAY: 'SATURDAY',
+  SUNDAY: 'SUNDAY'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   MenteeProfile: 'MenteeProfile',
-  MentorProfile: 'MentorProfile'
+  MentorProfile: 'MentorProfile',
+  MentorService: 'MentorService',
+  WeeklyAvailability: 'WeeklyAvailability',
+  TimeSlot: 'TimeSlot'
 };
 
 /**

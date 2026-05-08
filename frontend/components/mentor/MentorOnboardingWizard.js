@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ArrowLeft, Check, Upload, User, GraduationCap, Briefcase, BookOpen, CheckCircle, Sparkles } from "lucide-react";
 import useAuthStore from "../../store/useAuthStore";
-import { mentorProfileApi, resolveUploadUrl, authApi } from "../../lib/api";
+import { mentorProfileApi, mentorServiceApi, resolveUploadUrl, authApi } from "../../lib/api";
 
 const STEPS = [
   { id: 1, title: "Basic Information", icon: User },
@@ -15,14 +15,7 @@ const STEPS = [
   { id: 5, title: "Services Offered", icon: Sparkles },
 ];
 
-const SERVICES_OPTIONS = [
-  "SoP Review / Discussion",
-  "Resume Curation / Review",
-  "Mock Interview",
-  "WAT and GD Preparation",
-  "Know Your College",
-  "One-on-one Connect",
-];
+// Service types are now fetched from the backend API — no more hardcoding.
 
 const EXPERTISE_OPTIONS = [
   "Interview Preparation",
@@ -43,8 +36,18 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serviceTypes, setServiceTypes] = useState([]);
 
   const stepsContainerRef = useRef(null);
+
+  // Fetch service types from the backend (single source of truth)
+  useEffect(() => {
+    mentorServiceApi.getTypes().then((res) => {
+      setServiceTypes(res.data?.types || []);
+    }).catch(() => {
+      toast.error("Failed to load service types");
+    });
+  }, []);
 
   useEffect(() => {
     const container = stepsContainerRef.current;
@@ -92,7 +95,8 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
 
     expertiseTags: existingProfile?.expertiseTags || [],
     bio: existingProfile?.bio || "",
-    servicesOffered: existingProfile?.servicesOffered || [],
+    // Store selected service enum values (e.g. "SOP_REVIEW")
+    selectedServiceTypes: (existingProfile?.services || []).map((s) => s.serviceType),
   });
 
   const [files, setFiles] = useState({
@@ -124,14 +128,14 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
     });
   };
 
-  const handleServiceToggle = (service) => {
+  const handleServiceToggle = (serviceType) => {
     setFormData((prev) => {
-      const isSelected = prev.servicesOffered.includes(service);
+      const isSelected = prev.selectedServiceTypes.includes(serviceType);
       return {
         ...prev,
-        servicesOffered: isSelected
-          ? prev.servicesOffered.filter((s) => s !== service)
-          : [...prev.servicesOffered, service],
+        selectedServiceTypes: isSelected
+          ? prev.selectedServiceTypes.filter((s) => s !== serviceType)
+          : [...prev.selectedServiceTypes, serviceType],
       };
     });
   };
@@ -193,7 +197,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
     if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
-  const buildPayload = (servicesOfferedOverride) => {
+  const buildPayload = () => {
     const payload = new FormData();
 
     const pgProfile = [formData.mbaCollege, formData.mbaSpecialization, formData.mbaYear].some(Boolean)
@@ -206,12 +210,9 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       ? `${formData.workExperienceYears}|${formData.company}|${formData.role}`
       : "";
 
-    const services = servicesOfferedOverride ?? formData.servicesOffered;
-
     payload.append("contactNumber", formData.contactNumber.replace(/\s/g, ""));
     payload.append("bio", formData.bio);
     payload.append("expertiseTags", JSON.stringify(formData.expertiseTags));
-    payload.append("servicesOffered", JSON.stringify(services));
     payload.append("ugCollegeProfile", ugCollegeProfile);
     payload.append("pgProfile", pgProfile);
     payload.append("workExperience", workExp);
@@ -226,7 +227,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
     return payload;
   };
 
-  const submitProfile = async (payload) => {
+  const submitProfile = async (payload, selectedTypes) => {
     try {
       if (typeof authApi.updateProfile === "function") {
         await authApi.updateProfile({ name: formData.fullName });
@@ -238,6 +239,22 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
     const result = existingProfile
       ? await mentorProfileApi.update(payload)
       : await mentorProfileApi.create(payload);
+
+    // Save selected services via the dedicated services endpoint
+    // Services selected during onboarding get a default price of 0 (to be set up later)
+    if (selectedTypes && selectedTypes.length > 0) {
+      try {
+        await mentorServiceApi.upsert(
+          selectedTypes.map((serviceType) => ({
+            serviceType,
+            pricePerSession: 0,
+            isActive: true,
+          }))
+        );
+      } catch (_) {
+        // Non-fatal: services can be configured later from the profile page
+      }
+    }
 
     await fetchCurrentUser();
     toast.success(result?.message || "Mentor profile saved");
@@ -256,7 +273,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
   const handleCompleteProfile = async () => {
     setIsSubmitting(true);
     try {
-      await submitProfile(buildPayload());
+      await submitProfile(buildPayload(), formData.selectedServiceTypes);
     } catch (err) {
       toast.error(err?.message || "Failed to save profile");
     } finally {
@@ -267,7 +284,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
   const handleSkipServices = async () => {
     setIsSubmitting(true);
     try {
-      await submitProfile(buildPayload([]));
+      await submitProfile(buildPayload(), []);
     } catch (err) {
       toast.error(err?.message || "Failed to save profile");
     } finally {
@@ -703,13 +720,13 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
               <div>
                 <p className="text-sm font-semibold mb-3">Choose Services <span className="font-normal text-gray-500">(Select all that apply)</span></p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {SERVICES_OPTIONS.map((service) => {
-                    const isSelected = formData.servicesOffered.includes(service);
+                  {serviceTypes.map((svc) => {
+                    const isSelected = formData.selectedServiceTypes.includes(svc.value);
                     return (
                       <button
-                        key={service}
+                        key={svc.value}
                         type="button"
-                        onClick={() => handleServiceToggle(service)}
+                        onClick={() => handleServiceToggle(svc.value)}
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 font-bold text-sm text-left transition-all ${
                           isSelected
                             ? "bg-[#5f6cf3] text-white border-[#5f6cf3] shadow-[3px_3px_0_rgba(0,0,0,0.8)]"
@@ -721,7 +738,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                         }`}>
                           {isSelected && <Check className="w-3 h-3 text-[#5f6cf3]" />}
                         </span>
-                        {service}
+                        {svc.label}
                       </button>
                     );
                   })}

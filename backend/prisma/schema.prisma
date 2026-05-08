@@ -20,6 +20,25 @@ enum MentorApprovalStatus {
   REJECTED
 }
 
+enum MentorServiceType {
+  SOP_REVIEW
+  RESUME_CURATION
+  MOCK_INTERVIEW
+  WAT_GD_PREP
+  KNOW_YOUR_COLLEGE
+  ONE_ON_ONE_CONNECT
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
 model User {
   id             String   @id @default(uuid())
   email          String   @unique
@@ -62,29 +81,71 @@ model MenteeProfile {
 }
 
 model MentorProfile {
-  id               String               @id @default(uuid())
-  userId           String               @unique
-  linkedInUrl      String?
-  contactNumber    String
-  bio              String
+  id                 String               @id @default(uuid())
+  userId             String               @unique
+  linkedInUrl        String?
+  contactNumber      String
+  bio                String
   expertiseTags      String[]
-  servicesOffered    String[]
-  servicePricing     Json?
-  weeklyAvailability Json?
   ugCollegeProfile   String?
   pgProfile          String?
   workExperience     String?
   certifications     String?
   profilePhotoUrl    String?
   collegeDocumentUrl String?
-  isVerified       Boolean              @default(false)
-  approvalStatus   MentorApprovalStatus @default(PENDING)
-  adminReviewNotes String?
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
+  isVerified         Boolean              @default(false)
+  approvalStatus     MentorApprovalStatus @default(PENDING)
+  adminReviewNotes   String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  services     MentorService[]
+  availability WeeklyAvailability[]
 
   @@index([userId])
   @@index([approvalStatus])
+}
+
+// ─── Dedicated model for each service a mentor offers ────────────────────────
+model MentorService {
+  id              String            @id @default(uuid())
+  mentorProfileId String
+  serviceType     MentorServiceType
+  pricePerSession Float?
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([mentorProfileId, serviceType])
+  @@index([mentorProfileId])
+}
+
+// ─── Dedicated model for weekly availability per day ─────────────────────────
+model WeeklyAvailability {
+  id              String    @id @default(uuid())
+  mentorProfileId String
+  dayOfWeek       DayOfWeek
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  timeSlots     TimeSlot[]
+
+  @@unique([mentorProfileId, dayOfWeek])
+  @@index([mentorProfileId])
+}
+
+// ─── Individual time slot within a day's availability ────────────────────────
+model TimeSlot {
+  id                   String @id @default(uuid())
+  weeklyAvailabilityId String
+  startTime            String // "09:00" format (HH:mm)
+  endTime              String // "10:00" format (HH:mm)
+
+  weeklyAvailability WeeklyAvailability @relation(fields: [weeklyAvailabilityId], references: [id], onDelete: Cascade)
+
+  @@index([weeklyAvailabilityId])
 }

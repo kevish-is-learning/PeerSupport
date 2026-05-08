@@ -6,6 +6,7 @@ import {
   updateMentorProfileSchema,
   updateMentorApprovalSchema,
 } from '../validators/mentorProfile.validator.js';
+import { SERVICE_TYPE_LABELS, DAY_OF_WEEK_LABELS } from '../constants/services.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -34,6 +35,13 @@ const profileInclude = {
       email: true,
     },
   },
+  services: {
+    orderBy: { createdAt: 'asc' },
+  },
+  availability: {
+    include: { timeSlots: true },
+    orderBy: { dayOfWeek: 'asc' },
+  },
 };
 
 const mapProfile = (profile) => ({
@@ -45,9 +53,25 @@ const mapProfile = (profile) => ({
   contactNumber: profile.contactNumber,
   bio: profile.bio,
   expertiseTags: profile.expertiseTags,
-  servicesOffered: profile.servicesOffered,
-  servicePricing: profile.servicePricing,
-  weeklyAvailability: profile.weeklyAvailability,
+  // Normalized services with labels
+  services: (profile.services || []).map((s) => ({
+    id: s.id,
+    serviceType: s.serviceType,
+    label: SERVICE_TYPE_LABELS[s.serviceType],
+    pricePerSession: s.pricePerSession,
+    isActive: s.isActive,
+  })),
+  // Normalized availability with labels
+  availability: (profile.availability || []).map((a) => ({
+    id: a.id,
+    dayOfWeek: a.dayOfWeek,
+    dayLabel: DAY_OF_WEEK_LABELS[a.dayOfWeek],
+    timeSlots: (a.timeSlots || []).map((ts) => ({
+      id: ts.id,
+      startTime: ts.startTime,
+      endTime: ts.endTime,
+    })),
+  })),
   ugCollegeProfile: profile.ugCollegeProfile,
   pgProfile: profile.pgProfile,
   workExperience: profile.workExperience,

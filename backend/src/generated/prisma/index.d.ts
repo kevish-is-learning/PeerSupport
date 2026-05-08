@@ -28,6 +28,21 @@ export type MenteeProfile = $Result.DefaultSelection<Prisma.$MenteeProfilePayloa
  * 
  */
 export type MentorProfile = $Result.DefaultSelection<Prisma.$MentorProfilePayload>
+/**
+ * Model MentorService
+ * 
+ */
+export type MentorService = $Result.DefaultSelection<Prisma.$MentorServicePayload>
+/**
+ * Model WeeklyAvailability
+ * 
+ */
+export type WeeklyAvailability = $Result.DefaultSelection<Prisma.$WeeklyAvailabilityPayload>
+/**
+ * Model TimeSlot
+ * 
+ */
+export type TimeSlot = $Result.DefaultSelection<Prisma.$TimeSlotPayload>
 
 /**
  * Enums
@@ -50,6 +65,31 @@ export const MentorApprovalStatus: {
 
 export type MentorApprovalStatus = (typeof MentorApprovalStatus)[keyof typeof MentorApprovalStatus]
 
+
+export const MentorServiceType: {
+  SOP_REVIEW: 'SOP_REVIEW',
+  RESUME_CURATION: 'RESUME_CURATION',
+  MOCK_INTERVIEW: 'MOCK_INTERVIEW',
+  WAT_GD_PREP: 'WAT_GD_PREP',
+  KNOW_YOUR_COLLEGE: 'KNOW_YOUR_COLLEGE',
+  ONE_ON_ONE_CONNECT: 'ONE_ON_ONE_CONNECT'
+};
+
+export type MentorServiceType = (typeof MentorServiceType)[keyof typeof MentorServiceType]
+
+
+export const DayOfWeek: {
+  MONDAY: 'MONDAY',
+  TUESDAY: 'TUESDAY',
+  WEDNESDAY: 'WEDNESDAY',
+  THURSDAY: 'THURSDAY',
+  FRIDAY: 'FRIDAY',
+  SATURDAY: 'SATURDAY',
+  SUNDAY: 'SUNDAY'
+};
+
+export type DayOfWeek = (typeof DayOfWeek)[keyof typeof DayOfWeek]
+
 }
 
 export type Role = $Enums.Role
@@ -59,6 +99,14 @@ export const Role: typeof $Enums.Role
 export type MentorApprovalStatus = $Enums.MentorApprovalStatus
 
 export const MentorApprovalStatus: typeof $Enums.MentorApprovalStatus
+
+export type MentorServiceType = $Enums.MentorServiceType
+
+export const MentorServiceType: typeof $Enums.MentorServiceType
+
+export type DayOfWeek = $Enums.DayOfWeek
+
+export const DayOfWeek: typeof $Enums.DayOfWeek
 
 /**
  * ##  Prisma Client ʲˢ
@@ -212,6 +260,36 @@ export class PrismaClient<
     * ```
     */
   get mentorProfile(): Prisma.MentorProfileDelegate<ExtArgs>;
+
+  /**
+   * `prisma.mentorService`: Exposes CRUD operations for the **MentorService** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MentorServices
+    * const mentorServices = await prisma.mentorService.findMany()
+    * ```
+    */
+  get mentorService(): Prisma.MentorServiceDelegate<ExtArgs>;
+
+  /**
+   * `prisma.weeklyAvailability`: Exposes CRUD operations for the **WeeklyAvailability** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WeeklyAvailabilities
+    * const weeklyAvailabilities = await prisma.weeklyAvailability.findMany()
+    * ```
+    */
+  get weeklyAvailability(): Prisma.WeeklyAvailabilityDelegate<ExtArgs>;
+
+  /**
+   * `prisma.timeSlot`: Exposes CRUD operations for the **TimeSlot** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TimeSlots
+    * const timeSlots = await prisma.timeSlot.findMany()
+    * ```
+    */
+  get timeSlot(): Prisma.TimeSlotDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -655,7 +733,10 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     MenteeProfile: 'MenteeProfile',
-    MentorProfile: 'MentorProfile'
+    MentorProfile: 'MentorProfile',
+    MentorService: 'MentorService',
+    WeeklyAvailability: 'WeeklyAvailability',
+    TimeSlot: 'TimeSlot'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -671,7 +752,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "menteeProfile" | "mentorProfile"
+      modelProps: "user" | "menteeProfile" | "mentorProfile" | "mentorService" | "weeklyAvailability" | "timeSlot"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -885,6 +966,216 @@ export namespace Prisma {
           }
         }
       }
+      MentorService: {
+        payload: Prisma.$MentorServicePayload<ExtArgs>
+        fields: Prisma.MentorServiceFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MentorServiceFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MentorServiceFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload>
+          }
+          findFirst: {
+            args: Prisma.MentorServiceFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MentorServiceFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload>
+          }
+          findMany: {
+            args: Prisma.MentorServiceFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload>[]
+          }
+          create: {
+            args: Prisma.MentorServiceCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload>
+          }
+          createMany: {
+            args: Prisma.MentorServiceCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MentorServiceCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload>[]
+          }
+          delete: {
+            args: Prisma.MentorServiceDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload>
+          }
+          update: {
+            args: Prisma.MentorServiceUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload>
+          }
+          deleteMany: {
+            args: Prisma.MentorServiceDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MentorServiceUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MentorServiceUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorServicePayload>
+          }
+          aggregate: {
+            args: Prisma.MentorServiceAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMentorService>
+          }
+          groupBy: {
+            args: Prisma.MentorServiceGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MentorServiceGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MentorServiceCountArgs<ExtArgs>
+            result: $Utils.Optional<MentorServiceCountAggregateOutputType> | number
+          }
+        }
+      }
+      WeeklyAvailability: {
+        payload: Prisma.$WeeklyAvailabilityPayload<ExtArgs>
+        fields: Prisma.WeeklyAvailabilityFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WeeklyAvailabilityFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WeeklyAvailabilityFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload>
+          }
+          findFirst: {
+            args: Prisma.WeeklyAvailabilityFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WeeklyAvailabilityFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload>
+          }
+          findMany: {
+            args: Prisma.WeeklyAvailabilityFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload>[]
+          }
+          create: {
+            args: Prisma.WeeklyAvailabilityCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload>
+          }
+          createMany: {
+            args: Prisma.WeeklyAvailabilityCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WeeklyAvailabilityCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload>[]
+          }
+          delete: {
+            args: Prisma.WeeklyAvailabilityDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload>
+          }
+          update: {
+            args: Prisma.WeeklyAvailabilityUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload>
+          }
+          deleteMany: {
+            args: Prisma.WeeklyAvailabilityDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WeeklyAvailabilityUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.WeeklyAvailabilityUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WeeklyAvailabilityPayload>
+          }
+          aggregate: {
+            args: Prisma.WeeklyAvailabilityAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWeeklyAvailability>
+          }
+          groupBy: {
+            args: Prisma.WeeklyAvailabilityGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WeeklyAvailabilityGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WeeklyAvailabilityCountArgs<ExtArgs>
+            result: $Utils.Optional<WeeklyAvailabilityCountAggregateOutputType> | number
+          }
+        }
+      }
+      TimeSlot: {
+        payload: Prisma.$TimeSlotPayload<ExtArgs>
+        fields: Prisma.TimeSlotFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TimeSlotFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TimeSlotFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload>
+          }
+          findFirst: {
+            args: Prisma.TimeSlotFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TimeSlotFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload>
+          }
+          findMany: {
+            args: Prisma.TimeSlotFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload>[]
+          }
+          create: {
+            args: Prisma.TimeSlotCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload>
+          }
+          createMany: {
+            args: Prisma.TimeSlotCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TimeSlotCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload>[]
+          }
+          delete: {
+            args: Prisma.TimeSlotDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload>
+          }
+          update: {
+            args: Prisma.TimeSlotUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload>
+          }
+          deleteMany: {
+            args: Prisma.TimeSlotDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TimeSlotUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.TimeSlotUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TimeSlotPayload>
+          }
+          aggregate: {
+            args: Prisma.TimeSlotAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTimeSlot>
+          }
+          groupBy: {
+            args: Prisma.TimeSlotGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TimeSlotGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TimeSlotCountArgs<ExtArgs>
+            result: $Utils.Optional<TimeSlotCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1040,6 +1331,76 @@ export namespace Prisma {
    * Count Types
    */
 
+
+  /**
+   * Count Type MentorProfileCountOutputType
+   */
+
+  export type MentorProfileCountOutputType = {
+    services: number
+    availability: number
+  }
+
+  export type MentorProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    services?: boolean | MentorProfileCountOutputTypeCountServicesArgs
+    availability?: boolean | MentorProfileCountOutputTypeCountAvailabilityArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * MentorProfileCountOutputType without action
+   */
+  export type MentorProfileCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorProfileCountOutputType
+     */
+    select?: MentorProfileCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * MentorProfileCountOutputType without action
+   */
+  export type MentorProfileCountOutputTypeCountServicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorServiceWhereInput
+  }
+
+  /**
+   * MentorProfileCountOutputType without action
+   */
+  export type MentorProfileCountOutputTypeCountAvailabilityArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WeeklyAvailabilityWhereInput
+  }
+
+
+  /**
+   * Count Type WeeklyAvailabilityCountOutputType
+   */
+
+  export type WeeklyAvailabilityCountOutputType = {
+    timeSlots: number
+  }
+
+  export type WeeklyAvailabilityCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    timeSlots?: boolean | WeeklyAvailabilityCountOutputTypeCountTimeSlotsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * WeeklyAvailabilityCountOutputType without action
+   */
+  export type WeeklyAvailabilityCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailabilityCountOutputType
+     */
+    select?: WeeklyAvailabilityCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * WeeklyAvailabilityCountOutputType without action
+   */
+  export type WeeklyAvailabilityCountOutputTypeCountTimeSlotsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TimeSlotWhereInput
+  }
 
 
   /**
@@ -3212,9 +3573,6 @@ export namespace Prisma {
     contactNumber: number
     bio: number
     expertiseTags: number
-    servicesOffered: number
-    servicePricing: number
-    weeklyAvailability: number
     ugCollegeProfile: number
     pgProfile: number
     workExperience: number
@@ -3275,9 +3633,6 @@ export namespace Prisma {
     contactNumber?: true
     bio?: true
     expertiseTags?: true
-    servicesOffered?: true
-    servicePricing?: true
-    weeklyAvailability?: true
     ugCollegeProfile?: true
     pgProfile?: true
     workExperience?: true
@@ -3371,9 +3726,6 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags: string[]
-    servicesOffered: string[]
-    servicePricing: JsonValue | null
-    weeklyAvailability: JsonValue | null
     ugCollegeProfile: string | null
     pgProfile: string | null
     workExperience: string | null
@@ -3411,9 +3763,6 @@ export namespace Prisma {
     contactNumber?: boolean
     bio?: boolean
     expertiseTags?: boolean
-    servicesOffered?: boolean
-    servicePricing?: boolean
-    weeklyAvailability?: boolean
     ugCollegeProfile?: boolean
     pgProfile?: boolean
     workExperience?: boolean
@@ -3426,6 +3775,9 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    services?: boolean | MentorProfile$servicesArgs<ExtArgs>
+    availability?: boolean | MentorProfile$availabilityArgs<ExtArgs>
+    _count?: boolean | MentorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["mentorProfile"]>
 
   export type MentorProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3435,9 +3787,6 @@ export namespace Prisma {
     contactNumber?: boolean
     bio?: boolean
     expertiseTags?: boolean
-    servicesOffered?: boolean
-    servicePricing?: boolean
-    weeklyAvailability?: boolean
     ugCollegeProfile?: boolean
     pgProfile?: boolean
     workExperience?: boolean
@@ -3459,9 +3808,6 @@ export namespace Prisma {
     contactNumber?: boolean
     bio?: boolean
     expertiseTags?: boolean
-    servicesOffered?: boolean
-    servicePricing?: boolean
-    weeklyAvailability?: boolean
     ugCollegeProfile?: boolean
     pgProfile?: boolean
     workExperience?: boolean
@@ -3477,6 +3823,9 @@ export namespace Prisma {
 
   export type MentorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    services?: boolean | MentorProfile$servicesArgs<ExtArgs>
+    availability?: boolean | MentorProfile$availabilityArgs<ExtArgs>
+    _count?: boolean | MentorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MentorProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3486,6 +3835,8 @@ export namespace Prisma {
     name: "MentorProfile"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      services: Prisma.$MentorServicePayload<ExtArgs>[]
+      availability: Prisma.$WeeklyAvailabilityPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3494,9 +3845,6 @@ export namespace Prisma {
       contactNumber: string
       bio: string
       expertiseTags: string[]
-      servicesOffered: string[]
-      servicePricing: Prisma.JsonValue | null
-      weeklyAvailability: Prisma.JsonValue | null
       ugCollegeProfile: string | null
       pgProfile: string | null
       workExperience: string | null
@@ -3873,6 +4221,8 @@ export namespace Prisma {
   export interface Prisma__MentorProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    services<T extends MentorProfile$servicesArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "findMany"> | Null>
+    availability<T extends MentorProfile$availabilityArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$availabilityArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3908,9 +4258,6 @@ export namespace Prisma {
     readonly contactNumber: FieldRef<"MentorProfile", 'String'>
     readonly bio: FieldRef<"MentorProfile", 'String'>
     readonly expertiseTags: FieldRef<"MentorProfile", 'String[]'>
-    readonly servicesOffered: FieldRef<"MentorProfile", 'String[]'>
-    readonly servicePricing: FieldRef<"MentorProfile", 'Json'>
-    readonly weeklyAvailability: FieldRef<"MentorProfile", 'Json'>
     readonly ugCollegeProfile: FieldRef<"MentorProfile", 'String'>
     readonly pgProfile: FieldRef<"MentorProfile", 'String'>
     readonly workExperience: FieldRef<"MentorProfile", 'String'>
@@ -4240,6 +4587,46 @@ export namespace Prisma {
   }
 
   /**
+   * MentorProfile.services
+   */
+  export type MentorProfile$servicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    where?: MentorServiceWhereInput
+    orderBy?: MentorServiceOrderByWithRelationInput | MentorServiceOrderByWithRelationInput[]
+    cursor?: MentorServiceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MentorServiceScalarFieldEnum | MentorServiceScalarFieldEnum[]
+  }
+
+  /**
+   * MentorProfile.availability
+   */
+  export type MentorProfile$availabilityArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    where?: WeeklyAvailabilityWhereInput
+    orderBy?: WeeklyAvailabilityOrderByWithRelationInput | WeeklyAvailabilityOrderByWithRelationInput[]
+    cursor?: WeeklyAvailabilityWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WeeklyAvailabilityScalarFieldEnum | WeeklyAvailabilityScalarFieldEnum[]
+  }
+
+  /**
    * MentorProfile without action
    */
   export type MentorProfileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4251,6 +4638,2877 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: MentorProfileInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MentorService
+   */
+
+  export type AggregateMentorService = {
+    _count: MentorServiceCountAggregateOutputType | null
+    _avg: MentorServiceAvgAggregateOutputType | null
+    _sum: MentorServiceSumAggregateOutputType | null
+    _min: MentorServiceMinAggregateOutputType | null
+    _max: MentorServiceMaxAggregateOutputType | null
+  }
+
+  export type MentorServiceAvgAggregateOutputType = {
+    pricePerSession: number | null
+  }
+
+  export type MentorServiceSumAggregateOutputType = {
+    pricePerSession: number | null
+  }
+
+  export type MentorServiceMinAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    serviceType: $Enums.MentorServiceType | null
+    pricePerSession: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorServiceMaxAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    serviceType: $Enums.MentorServiceType | null
+    pricePerSession: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorServiceCountAggregateOutputType = {
+    id: number
+    mentorProfileId: number
+    serviceType: number
+    pricePerSession: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MentorServiceAvgAggregateInputType = {
+    pricePerSession?: true
+  }
+
+  export type MentorServiceSumAggregateInputType = {
+    pricePerSession?: true
+  }
+
+  export type MentorServiceMinAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    serviceType?: true
+    pricePerSession?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorServiceMaxAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    serviceType?: true
+    pricePerSession?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorServiceCountAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    serviceType?: true
+    pricePerSession?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MentorServiceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorService to aggregate.
+     */
+    where?: MentorServiceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorServices to fetch.
+     */
+    orderBy?: MentorServiceOrderByWithRelationInput | MentorServiceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MentorServiceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorServices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorServices.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MentorServices
+    **/
+    _count?: true | MentorServiceCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MentorServiceAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MentorServiceSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MentorServiceMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MentorServiceMaxAggregateInputType
+  }
+
+  export type GetMentorServiceAggregateType<T extends MentorServiceAggregateArgs> = {
+        [P in keyof T & keyof AggregateMentorService]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMentorService[P]>
+      : GetScalarType<T[P], AggregateMentorService[P]>
+  }
+
+
+
+
+  export type MentorServiceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorServiceWhereInput
+    orderBy?: MentorServiceOrderByWithAggregationInput | MentorServiceOrderByWithAggregationInput[]
+    by: MentorServiceScalarFieldEnum[] | MentorServiceScalarFieldEnum
+    having?: MentorServiceScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MentorServiceCountAggregateInputType | true
+    _avg?: MentorServiceAvgAggregateInputType
+    _sum?: MentorServiceSumAggregateInputType
+    _min?: MentorServiceMinAggregateInputType
+    _max?: MentorServiceMaxAggregateInputType
+  }
+
+  export type MentorServiceGroupByOutputType = {
+    id: string
+    mentorProfileId: string
+    serviceType: $Enums.MentorServiceType
+    pricePerSession: number
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: MentorServiceCountAggregateOutputType | null
+    _avg: MentorServiceAvgAggregateOutputType | null
+    _sum: MentorServiceSumAggregateOutputType | null
+    _min: MentorServiceMinAggregateOutputType | null
+    _max: MentorServiceMaxAggregateOutputType | null
+  }
+
+  type GetMentorServiceGroupByPayload<T extends MentorServiceGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MentorServiceGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MentorServiceGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MentorServiceGroupByOutputType[P]>
+            : GetScalarType<T[P], MentorServiceGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MentorServiceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    serviceType?: boolean
+    pricePerSession?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorService"]>
+
+  export type MentorServiceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    serviceType?: boolean
+    pricePerSession?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorService"]>
+
+  export type MentorServiceSelectScalar = {
+    id?: boolean
+    mentorProfileId?: boolean
+    serviceType?: boolean
+    pricePerSession?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MentorServiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }
+  export type MentorServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $MentorServicePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MentorService"
+    objects: {
+      mentorProfile: Prisma.$MentorProfilePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      mentorProfileId: string
+      serviceType: $Enums.MentorServiceType
+      pricePerSession: number
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["mentorService"]>
+    composites: {}
+  }
+
+  type MentorServiceGetPayload<S extends boolean | null | undefined | MentorServiceDefaultArgs> = $Result.GetResult<Prisma.$MentorServicePayload, S>
+
+  type MentorServiceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<MentorServiceFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: MentorServiceCountAggregateInputType | true
+    }
+
+  export interface MentorServiceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MentorService'], meta: { name: 'MentorService' } }
+    /**
+     * Find zero or one MentorService that matches the filter.
+     * @param {MentorServiceFindUniqueArgs} args - Arguments to find a MentorService
+     * @example
+     * // Get one MentorService
+     * const mentorService = await prisma.mentorService.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MentorServiceFindUniqueArgs>(args: SelectSubset<T, MentorServiceFindUniqueArgs<ExtArgs>>): Prisma__MentorServiceClient<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one MentorService that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {MentorServiceFindUniqueOrThrowArgs} args - Arguments to find a MentorService
+     * @example
+     * // Get one MentorService
+     * const mentorService = await prisma.mentorService.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MentorServiceFindUniqueOrThrowArgs>(args: SelectSubset<T, MentorServiceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MentorServiceClient<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first MentorService that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorServiceFindFirstArgs} args - Arguments to find a MentorService
+     * @example
+     * // Get one MentorService
+     * const mentorService = await prisma.mentorService.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MentorServiceFindFirstArgs>(args?: SelectSubset<T, MentorServiceFindFirstArgs<ExtArgs>>): Prisma__MentorServiceClient<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first MentorService that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorServiceFindFirstOrThrowArgs} args - Arguments to find a MentorService
+     * @example
+     * // Get one MentorService
+     * const mentorService = await prisma.mentorService.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MentorServiceFindFirstOrThrowArgs>(args?: SelectSubset<T, MentorServiceFindFirstOrThrowArgs<ExtArgs>>): Prisma__MentorServiceClient<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more MentorServices that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorServiceFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MentorServices
+     * const mentorServices = await prisma.mentorService.findMany()
+     * 
+     * // Get first 10 MentorServices
+     * const mentorServices = await prisma.mentorService.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mentorServiceWithIdOnly = await prisma.mentorService.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MentorServiceFindManyArgs>(args?: SelectSubset<T, MentorServiceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a MentorService.
+     * @param {MentorServiceCreateArgs} args - Arguments to create a MentorService.
+     * @example
+     * // Create one MentorService
+     * const MentorService = await prisma.mentorService.create({
+     *   data: {
+     *     // ... data to create a MentorService
+     *   }
+     * })
+     * 
+     */
+    create<T extends MentorServiceCreateArgs>(args: SelectSubset<T, MentorServiceCreateArgs<ExtArgs>>): Prisma__MentorServiceClient<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many MentorServices.
+     * @param {MentorServiceCreateManyArgs} args - Arguments to create many MentorServices.
+     * @example
+     * // Create many MentorServices
+     * const mentorService = await prisma.mentorService.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MentorServiceCreateManyArgs>(args?: SelectSubset<T, MentorServiceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MentorServices and returns the data saved in the database.
+     * @param {MentorServiceCreateManyAndReturnArgs} args - Arguments to create many MentorServices.
+     * @example
+     * // Create many MentorServices
+     * const mentorService = await prisma.mentorService.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MentorServices and only return the `id`
+     * const mentorServiceWithIdOnly = await prisma.mentorService.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MentorServiceCreateManyAndReturnArgs>(args?: SelectSubset<T, MentorServiceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a MentorService.
+     * @param {MentorServiceDeleteArgs} args - Arguments to delete one MentorService.
+     * @example
+     * // Delete one MentorService
+     * const MentorService = await prisma.mentorService.delete({
+     *   where: {
+     *     // ... filter to delete one MentorService
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MentorServiceDeleteArgs>(args: SelectSubset<T, MentorServiceDeleteArgs<ExtArgs>>): Prisma__MentorServiceClient<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one MentorService.
+     * @param {MentorServiceUpdateArgs} args - Arguments to update one MentorService.
+     * @example
+     * // Update one MentorService
+     * const mentorService = await prisma.mentorService.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MentorServiceUpdateArgs>(args: SelectSubset<T, MentorServiceUpdateArgs<ExtArgs>>): Prisma__MentorServiceClient<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more MentorServices.
+     * @param {MentorServiceDeleteManyArgs} args - Arguments to filter MentorServices to delete.
+     * @example
+     * // Delete a few MentorServices
+     * const { count } = await prisma.mentorService.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MentorServiceDeleteManyArgs>(args?: SelectSubset<T, MentorServiceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MentorServices.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorServiceUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MentorServices
+     * const mentorService = await prisma.mentorService.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MentorServiceUpdateManyArgs>(args: SelectSubset<T, MentorServiceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MentorService.
+     * @param {MentorServiceUpsertArgs} args - Arguments to update or create a MentorService.
+     * @example
+     * // Update or create a MentorService
+     * const mentorService = await prisma.mentorService.upsert({
+     *   create: {
+     *     // ... data to create a MentorService
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MentorService we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MentorServiceUpsertArgs>(args: SelectSubset<T, MentorServiceUpsertArgs<ExtArgs>>): Prisma__MentorServiceClient<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of MentorServices.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorServiceCountArgs} args - Arguments to filter MentorServices to count.
+     * @example
+     * // Count the number of MentorServices
+     * const count = await prisma.mentorService.count({
+     *   where: {
+     *     // ... the filter for the MentorServices we want to count
+     *   }
+     * })
+    **/
+    count<T extends MentorServiceCountArgs>(
+      args?: Subset<T, MentorServiceCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MentorServiceCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MentorService.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorServiceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MentorServiceAggregateArgs>(args: Subset<T, MentorServiceAggregateArgs>): Prisma.PrismaPromise<GetMentorServiceAggregateType<T>>
+
+    /**
+     * Group by MentorService.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorServiceGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MentorServiceGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MentorServiceGroupByArgs['orderBy'] }
+        : { orderBy?: MentorServiceGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MentorServiceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMentorServiceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MentorService model
+   */
+  readonly fields: MentorServiceFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MentorService.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MentorServiceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    mentorProfile<T extends MentorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfileDefaultArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MentorService model
+   */ 
+  interface MentorServiceFieldRefs {
+    readonly id: FieldRef<"MentorService", 'String'>
+    readonly mentorProfileId: FieldRef<"MentorService", 'String'>
+    readonly serviceType: FieldRef<"MentorService", 'MentorServiceType'>
+    readonly pricePerSession: FieldRef<"MentorService", 'Float'>
+    readonly isActive: FieldRef<"MentorService", 'Boolean'>
+    readonly createdAt: FieldRef<"MentorService", 'DateTime'>
+    readonly updatedAt: FieldRef<"MentorService", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MentorService findUnique
+   */
+  export type MentorServiceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorService to fetch.
+     */
+    where: MentorServiceWhereUniqueInput
+  }
+
+  /**
+   * MentorService findUniqueOrThrow
+   */
+  export type MentorServiceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorService to fetch.
+     */
+    where: MentorServiceWhereUniqueInput
+  }
+
+  /**
+   * MentorService findFirst
+   */
+  export type MentorServiceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorService to fetch.
+     */
+    where?: MentorServiceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorServices to fetch.
+     */
+    orderBy?: MentorServiceOrderByWithRelationInput | MentorServiceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorServices.
+     */
+    cursor?: MentorServiceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorServices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorServices.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorServices.
+     */
+    distinct?: MentorServiceScalarFieldEnum | MentorServiceScalarFieldEnum[]
+  }
+
+  /**
+   * MentorService findFirstOrThrow
+   */
+  export type MentorServiceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorService to fetch.
+     */
+    where?: MentorServiceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorServices to fetch.
+     */
+    orderBy?: MentorServiceOrderByWithRelationInput | MentorServiceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorServices.
+     */
+    cursor?: MentorServiceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorServices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorServices.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorServices.
+     */
+    distinct?: MentorServiceScalarFieldEnum | MentorServiceScalarFieldEnum[]
+  }
+
+  /**
+   * MentorService findMany
+   */
+  export type MentorServiceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorServices to fetch.
+     */
+    where?: MentorServiceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorServices to fetch.
+     */
+    orderBy?: MentorServiceOrderByWithRelationInput | MentorServiceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MentorServices.
+     */
+    cursor?: MentorServiceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorServices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorServices.
+     */
+    skip?: number
+    distinct?: MentorServiceScalarFieldEnum | MentorServiceScalarFieldEnum[]
+  }
+
+  /**
+   * MentorService create
+   */
+  export type MentorServiceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MentorService.
+     */
+    data: XOR<MentorServiceCreateInput, MentorServiceUncheckedCreateInput>
+  }
+
+  /**
+   * MentorService createMany
+   */
+  export type MentorServiceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MentorServices.
+     */
+    data: MentorServiceCreateManyInput | MentorServiceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MentorService createManyAndReturn
+   */
+  export type MentorServiceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many MentorServices.
+     */
+    data: MentorServiceCreateManyInput | MentorServiceCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MentorService update
+   */
+  export type MentorServiceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MentorService.
+     */
+    data: XOR<MentorServiceUpdateInput, MentorServiceUncheckedUpdateInput>
+    /**
+     * Choose, which MentorService to update.
+     */
+    where: MentorServiceWhereUniqueInput
+  }
+
+  /**
+   * MentorService updateMany
+   */
+  export type MentorServiceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MentorServices.
+     */
+    data: XOR<MentorServiceUpdateManyMutationInput, MentorServiceUncheckedUpdateManyInput>
+    /**
+     * Filter which MentorServices to update
+     */
+    where?: MentorServiceWhereInput
+  }
+
+  /**
+   * MentorService upsert
+   */
+  export type MentorServiceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MentorService to update in case it exists.
+     */
+    where: MentorServiceWhereUniqueInput
+    /**
+     * In case the MentorService found by the `where` argument doesn't exist, create a new MentorService with this data.
+     */
+    create: XOR<MentorServiceCreateInput, MentorServiceUncheckedCreateInput>
+    /**
+     * In case the MentorService was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MentorServiceUpdateInput, MentorServiceUncheckedUpdateInput>
+  }
+
+  /**
+   * MentorService delete
+   */
+  export type MentorServiceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+    /**
+     * Filter which MentorService to delete.
+     */
+    where: MentorServiceWhereUniqueInput
+  }
+
+  /**
+   * MentorService deleteMany
+   */
+  export type MentorServiceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorServices to delete
+     */
+    where?: MentorServiceWhereInput
+  }
+
+  /**
+   * MentorService without action
+   */
+  export type MentorServiceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorService
+     */
+    select?: MentorServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorServiceInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model WeeklyAvailability
+   */
+
+  export type AggregateWeeklyAvailability = {
+    _count: WeeklyAvailabilityCountAggregateOutputType | null
+    _min: WeeklyAvailabilityMinAggregateOutputType | null
+    _max: WeeklyAvailabilityMaxAggregateOutputType | null
+  }
+
+  export type WeeklyAvailabilityMinAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    dayOfWeek: $Enums.DayOfWeek | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WeeklyAvailabilityMaxAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    dayOfWeek: $Enums.DayOfWeek | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WeeklyAvailabilityCountAggregateOutputType = {
+    id: number
+    mentorProfileId: number
+    dayOfWeek: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type WeeklyAvailabilityMinAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    dayOfWeek?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WeeklyAvailabilityMaxAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    dayOfWeek?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WeeklyAvailabilityCountAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    dayOfWeek?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type WeeklyAvailabilityAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WeeklyAvailability to aggregate.
+     */
+    where?: WeeklyAvailabilityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WeeklyAvailabilities to fetch.
+     */
+    orderBy?: WeeklyAvailabilityOrderByWithRelationInput | WeeklyAvailabilityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WeeklyAvailabilityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WeeklyAvailabilities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WeeklyAvailabilities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WeeklyAvailabilities
+    **/
+    _count?: true | WeeklyAvailabilityCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WeeklyAvailabilityMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WeeklyAvailabilityMaxAggregateInputType
+  }
+
+  export type GetWeeklyAvailabilityAggregateType<T extends WeeklyAvailabilityAggregateArgs> = {
+        [P in keyof T & keyof AggregateWeeklyAvailability]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWeeklyAvailability[P]>
+      : GetScalarType<T[P], AggregateWeeklyAvailability[P]>
+  }
+
+
+
+
+  export type WeeklyAvailabilityGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WeeklyAvailabilityWhereInput
+    orderBy?: WeeklyAvailabilityOrderByWithAggregationInput | WeeklyAvailabilityOrderByWithAggregationInput[]
+    by: WeeklyAvailabilityScalarFieldEnum[] | WeeklyAvailabilityScalarFieldEnum
+    having?: WeeklyAvailabilityScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WeeklyAvailabilityCountAggregateInputType | true
+    _min?: WeeklyAvailabilityMinAggregateInputType
+    _max?: WeeklyAvailabilityMaxAggregateInputType
+  }
+
+  export type WeeklyAvailabilityGroupByOutputType = {
+    id: string
+    mentorProfileId: string
+    dayOfWeek: $Enums.DayOfWeek
+    createdAt: Date
+    updatedAt: Date
+    _count: WeeklyAvailabilityCountAggregateOutputType | null
+    _min: WeeklyAvailabilityMinAggregateOutputType | null
+    _max: WeeklyAvailabilityMaxAggregateOutputType | null
+  }
+
+  type GetWeeklyAvailabilityGroupByPayload<T extends WeeklyAvailabilityGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WeeklyAvailabilityGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WeeklyAvailabilityGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WeeklyAvailabilityGroupByOutputType[P]>
+            : GetScalarType<T[P], WeeklyAvailabilityGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WeeklyAvailabilitySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    dayOfWeek?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+    timeSlots?: boolean | WeeklyAvailability$timeSlotsArgs<ExtArgs>
+    _count?: boolean | WeeklyAvailabilityCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["weeklyAvailability"]>
+
+  export type WeeklyAvailabilitySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    dayOfWeek?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["weeklyAvailability"]>
+
+  export type WeeklyAvailabilitySelectScalar = {
+    id?: boolean
+    mentorProfileId?: boolean
+    dayOfWeek?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type WeeklyAvailabilityInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+    timeSlots?: boolean | WeeklyAvailability$timeSlotsArgs<ExtArgs>
+    _count?: boolean | WeeklyAvailabilityCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type WeeklyAvailabilityIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $WeeklyAvailabilityPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WeeklyAvailability"
+    objects: {
+      mentorProfile: Prisma.$MentorProfilePayload<ExtArgs>
+      timeSlots: Prisma.$TimeSlotPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      mentorProfileId: string
+      dayOfWeek: $Enums.DayOfWeek
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["weeklyAvailability"]>
+    composites: {}
+  }
+
+  type WeeklyAvailabilityGetPayload<S extends boolean | null | undefined | WeeklyAvailabilityDefaultArgs> = $Result.GetResult<Prisma.$WeeklyAvailabilityPayload, S>
+
+  type WeeklyAvailabilityCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<WeeklyAvailabilityFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: WeeklyAvailabilityCountAggregateInputType | true
+    }
+
+  export interface WeeklyAvailabilityDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WeeklyAvailability'], meta: { name: 'WeeklyAvailability' } }
+    /**
+     * Find zero or one WeeklyAvailability that matches the filter.
+     * @param {WeeklyAvailabilityFindUniqueArgs} args - Arguments to find a WeeklyAvailability
+     * @example
+     * // Get one WeeklyAvailability
+     * const weeklyAvailability = await prisma.weeklyAvailability.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WeeklyAvailabilityFindUniqueArgs>(args: SelectSubset<T, WeeklyAvailabilityFindUniqueArgs<ExtArgs>>): Prisma__WeeklyAvailabilityClient<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one WeeklyAvailability that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {WeeklyAvailabilityFindUniqueOrThrowArgs} args - Arguments to find a WeeklyAvailability
+     * @example
+     * // Get one WeeklyAvailability
+     * const weeklyAvailability = await prisma.weeklyAvailability.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WeeklyAvailabilityFindUniqueOrThrowArgs>(args: SelectSubset<T, WeeklyAvailabilityFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WeeklyAvailabilityClient<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first WeeklyAvailability that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WeeklyAvailabilityFindFirstArgs} args - Arguments to find a WeeklyAvailability
+     * @example
+     * // Get one WeeklyAvailability
+     * const weeklyAvailability = await prisma.weeklyAvailability.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WeeklyAvailabilityFindFirstArgs>(args?: SelectSubset<T, WeeklyAvailabilityFindFirstArgs<ExtArgs>>): Prisma__WeeklyAvailabilityClient<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first WeeklyAvailability that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WeeklyAvailabilityFindFirstOrThrowArgs} args - Arguments to find a WeeklyAvailability
+     * @example
+     * // Get one WeeklyAvailability
+     * const weeklyAvailability = await prisma.weeklyAvailability.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WeeklyAvailabilityFindFirstOrThrowArgs>(args?: SelectSubset<T, WeeklyAvailabilityFindFirstOrThrowArgs<ExtArgs>>): Prisma__WeeklyAvailabilityClient<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more WeeklyAvailabilities that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WeeklyAvailabilityFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WeeklyAvailabilities
+     * const weeklyAvailabilities = await prisma.weeklyAvailability.findMany()
+     * 
+     * // Get first 10 WeeklyAvailabilities
+     * const weeklyAvailabilities = await prisma.weeklyAvailability.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const weeklyAvailabilityWithIdOnly = await prisma.weeklyAvailability.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WeeklyAvailabilityFindManyArgs>(args?: SelectSubset<T, WeeklyAvailabilityFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a WeeklyAvailability.
+     * @param {WeeklyAvailabilityCreateArgs} args - Arguments to create a WeeklyAvailability.
+     * @example
+     * // Create one WeeklyAvailability
+     * const WeeklyAvailability = await prisma.weeklyAvailability.create({
+     *   data: {
+     *     // ... data to create a WeeklyAvailability
+     *   }
+     * })
+     * 
+     */
+    create<T extends WeeklyAvailabilityCreateArgs>(args: SelectSubset<T, WeeklyAvailabilityCreateArgs<ExtArgs>>): Prisma__WeeklyAvailabilityClient<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many WeeklyAvailabilities.
+     * @param {WeeklyAvailabilityCreateManyArgs} args - Arguments to create many WeeklyAvailabilities.
+     * @example
+     * // Create many WeeklyAvailabilities
+     * const weeklyAvailability = await prisma.weeklyAvailability.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WeeklyAvailabilityCreateManyArgs>(args?: SelectSubset<T, WeeklyAvailabilityCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WeeklyAvailabilities and returns the data saved in the database.
+     * @param {WeeklyAvailabilityCreateManyAndReturnArgs} args - Arguments to create many WeeklyAvailabilities.
+     * @example
+     * // Create many WeeklyAvailabilities
+     * const weeklyAvailability = await prisma.weeklyAvailability.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WeeklyAvailabilities and only return the `id`
+     * const weeklyAvailabilityWithIdOnly = await prisma.weeklyAvailability.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WeeklyAvailabilityCreateManyAndReturnArgs>(args?: SelectSubset<T, WeeklyAvailabilityCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a WeeklyAvailability.
+     * @param {WeeklyAvailabilityDeleteArgs} args - Arguments to delete one WeeklyAvailability.
+     * @example
+     * // Delete one WeeklyAvailability
+     * const WeeklyAvailability = await prisma.weeklyAvailability.delete({
+     *   where: {
+     *     // ... filter to delete one WeeklyAvailability
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WeeklyAvailabilityDeleteArgs>(args: SelectSubset<T, WeeklyAvailabilityDeleteArgs<ExtArgs>>): Prisma__WeeklyAvailabilityClient<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one WeeklyAvailability.
+     * @param {WeeklyAvailabilityUpdateArgs} args - Arguments to update one WeeklyAvailability.
+     * @example
+     * // Update one WeeklyAvailability
+     * const weeklyAvailability = await prisma.weeklyAvailability.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WeeklyAvailabilityUpdateArgs>(args: SelectSubset<T, WeeklyAvailabilityUpdateArgs<ExtArgs>>): Prisma__WeeklyAvailabilityClient<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more WeeklyAvailabilities.
+     * @param {WeeklyAvailabilityDeleteManyArgs} args - Arguments to filter WeeklyAvailabilities to delete.
+     * @example
+     * // Delete a few WeeklyAvailabilities
+     * const { count } = await prisma.weeklyAvailability.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WeeklyAvailabilityDeleteManyArgs>(args?: SelectSubset<T, WeeklyAvailabilityDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WeeklyAvailabilities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WeeklyAvailabilityUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WeeklyAvailabilities
+     * const weeklyAvailability = await prisma.weeklyAvailability.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WeeklyAvailabilityUpdateManyArgs>(args: SelectSubset<T, WeeklyAvailabilityUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one WeeklyAvailability.
+     * @param {WeeklyAvailabilityUpsertArgs} args - Arguments to update or create a WeeklyAvailability.
+     * @example
+     * // Update or create a WeeklyAvailability
+     * const weeklyAvailability = await prisma.weeklyAvailability.upsert({
+     *   create: {
+     *     // ... data to create a WeeklyAvailability
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WeeklyAvailability we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WeeklyAvailabilityUpsertArgs>(args: SelectSubset<T, WeeklyAvailabilityUpsertArgs<ExtArgs>>): Prisma__WeeklyAvailabilityClient<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of WeeklyAvailabilities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WeeklyAvailabilityCountArgs} args - Arguments to filter WeeklyAvailabilities to count.
+     * @example
+     * // Count the number of WeeklyAvailabilities
+     * const count = await prisma.weeklyAvailability.count({
+     *   where: {
+     *     // ... the filter for the WeeklyAvailabilities we want to count
+     *   }
+     * })
+    **/
+    count<T extends WeeklyAvailabilityCountArgs>(
+      args?: Subset<T, WeeklyAvailabilityCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WeeklyAvailabilityCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WeeklyAvailability.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WeeklyAvailabilityAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WeeklyAvailabilityAggregateArgs>(args: Subset<T, WeeklyAvailabilityAggregateArgs>): Prisma.PrismaPromise<GetWeeklyAvailabilityAggregateType<T>>
+
+    /**
+     * Group by WeeklyAvailability.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WeeklyAvailabilityGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WeeklyAvailabilityGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WeeklyAvailabilityGroupByArgs['orderBy'] }
+        : { orderBy?: WeeklyAvailabilityGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WeeklyAvailabilityGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWeeklyAvailabilityGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WeeklyAvailability model
+   */
+  readonly fields: WeeklyAvailabilityFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WeeklyAvailability.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WeeklyAvailabilityClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    mentorProfile<T extends MentorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfileDefaultArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    timeSlots<T extends WeeklyAvailability$timeSlotsArgs<ExtArgs> = {}>(args?: Subset<T, WeeklyAvailability$timeSlotsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WeeklyAvailability model
+   */ 
+  interface WeeklyAvailabilityFieldRefs {
+    readonly id: FieldRef<"WeeklyAvailability", 'String'>
+    readonly mentorProfileId: FieldRef<"WeeklyAvailability", 'String'>
+    readonly dayOfWeek: FieldRef<"WeeklyAvailability", 'DayOfWeek'>
+    readonly createdAt: FieldRef<"WeeklyAvailability", 'DateTime'>
+    readonly updatedAt: FieldRef<"WeeklyAvailability", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WeeklyAvailability findUnique
+   */
+  export type WeeklyAvailabilityFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    /**
+     * Filter, which WeeklyAvailability to fetch.
+     */
+    where: WeeklyAvailabilityWhereUniqueInput
+  }
+
+  /**
+   * WeeklyAvailability findUniqueOrThrow
+   */
+  export type WeeklyAvailabilityFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    /**
+     * Filter, which WeeklyAvailability to fetch.
+     */
+    where: WeeklyAvailabilityWhereUniqueInput
+  }
+
+  /**
+   * WeeklyAvailability findFirst
+   */
+  export type WeeklyAvailabilityFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    /**
+     * Filter, which WeeklyAvailability to fetch.
+     */
+    where?: WeeklyAvailabilityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WeeklyAvailabilities to fetch.
+     */
+    orderBy?: WeeklyAvailabilityOrderByWithRelationInput | WeeklyAvailabilityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WeeklyAvailabilities.
+     */
+    cursor?: WeeklyAvailabilityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WeeklyAvailabilities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WeeklyAvailabilities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WeeklyAvailabilities.
+     */
+    distinct?: WeeklyAvailabilityScalarFieldEnum | WeeklyAvailabilityScalarFieldEnum[]
+  }
+
+  /**
+   * WeeklyAvailability findFirstOrThrow
+   */
+  export type WeeklyAvailabilityFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    /**
+     * Filter, which WeeklyAvailability to fetch.
+     */
+    where?: WeeklyAvailabilityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WeeklyAvailabilities to fetch.
+     */
+    orderBy?: WeeklyAvailabilityOrderByWithRelationInput | WeeklyAvailabilityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WeeklyAvailabilities.
+     */
+    cursor?: WeeklyAvailabilityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WeeklyAvailabilities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WeeklyAvailabilities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WeeklyAvailabilities.
+     */
+    distinct?: WeeklyAvailabilityScalarFieldEnum | WeeklyAvailabilityScalarFieldEnum[]
+  }
+
+  /**
+   * WeeklyAvailability findMany
+   */
+  export type WeeklyAvailabilityFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    /**
+     * Filter, which WeeklyAvailabilities to fetch.
+     */
+    where?: WeeklyAvailabilityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WeeklyAvailabilities to fetch.
+     */
+    orderBy?: WeeklyAvailabilityOrderByWithRelationInput | WeeklyAvailabilityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WeeklyAvailabilities.
+     */
+    cursor?: WeeklyAvailabilityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WeeklyAvailabilities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WeeklyAvailabilities.
+     */
+    skip?: number
+    distinct?: WeeklyAvailabilityScalarFieldEnum | WeeklyAvailabilityScalarFieldEnum[]
+  }
+
+  /**
+   * WeeklyAvailability create
+   */
+  export type WeeklyAvailabilityCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    /**
+     * The data needed to create a WeeklyAvailability.
+     */
+    data: XOR<WeeklyAvailabilityCreateInput, WeeklyAvailabilityUncheckedCreateInput>
+  }
+
+  /**
+   * WeeklyAvailability createMany
+   */
+  export type WeeklyAvailabilityCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WeeklyAvailabilities.
+     */
+    data: WeeklyAvailabilityCreateManyInput | WeeklyAvailabilityCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WeeklyAvailability createManyAndReturn
+   */
+  export type WeeklyAvailabilityCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many WeeklyAvailabilities.
+     */
+    data: WeeklyAvailabilityCreateManyInput | WeeklyAvailabilityCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WeeklyAvailability update
+   */
+  export type WeeklyAvailabilityUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    /**
+     * The data needed to update a WeeklyAvailability.
+     */
+    data: XOR<WeeklyAvailabilityUpdateInput, WeeklyAvailabilityUncheckedUpdateInput>
+    /**
+     * Choose, which WeeklyAvailability to update.
+     */
+    where: WeeklyAvailabilityWhereUniqueInput
+  }
+
+  /**
+   * WeeklyAvailability updateMany
+   */
+  export type WeeklyAvailabilityUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WeeklyAvailabilities.
+     */
+    data: XOR<WeeklyAvailabilityUpdateManyMutationInput, WeeklyAvailabilityUncheckedUpdateManyInput>
+    /**
+     * Filter which WeeklyAvailabilities to update
+     */
+    where?: WeeklyAvailabilityWhereInput
+  }
+
+  /**
+   * WeeklyAvailability upsert
+   */
+  export type WeeklyAvailabilityUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    /**
+     * The filter to search for the WeeklyAvailability to update in case it exists.
+     */
+    where: WeeklyAvailabilityWhereUniqueInput
+    /**
+     * In case the WeeklyAvailability found by the `where` argument doesn't exist, create a new WeeklyAvailability with this data.
+     */
+    create: XOR<WeeklyAvailabilityCreateInput, WeeklyAvailabilityUncheckedCreateInput>
+    /**
+     * In case the WeeklyAvailability was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WeeklyAvailabilityUpdateInput, WeeklyAvailabilityUncheckedUpdateInput>
+  }
+
+  /**
+   * WeeklyAvailability delete
+   */
+  export type WeeklyAvailabilityDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+    /**
+     * Filter which WeeklyAvailability to delete.
+     */
+    where: WeeklyAvailabilityWhereUniqueInput
+  }
+
+  /**
+   * WeeklyAvailability deleteMany
+   */
+  export type WeeklyAvailabilityDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WeeklyAvailabilities to delete
+     */
+    where?: WeeklyAvailabilityWhereInput
+  }
+
+  /**
+   * WeeklyAvailability.timeSlots
+   */
+  export type WeeklyAvailability$timeSlotsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    where?: TimeSlotWhereInput
+    orderBy?: TimeSlotOrderByWithRelationInput | TimeSlotOrderByWithRelationInput[]
+    cursor?: TimeSlotWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TimeSlotScalarFieldEnum | TimeSlotScalarFieldEnum[]
+  }
+
+  /**
+   * WeeklyAvailability without action
+   */
+  export type WeeklyAvailabilityDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WeeklyAvailability
+     */
+    select?: WeeklyAvailabilitySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WeeklyAvailabilityInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TimeSlot
+   */
+
+  export type AggregateTimeSlot = {
+    _count: TimeSlotCountAggregateOutputType | null
+    _min: TimeSlotMinAggregateOutputType | null
+    _max: TimeSlotMaxAggregateOutputType | null
+  }
+
+  export type TimeSlotMinAggregateOutputType = {
+    id: string | null
+    weeklyAvailabilityId: string | null
+    startTime: string | null
+    endTime: string | null
+  }
+
+  export type TimeSlotMaxAggregateOutputType = {
+    id: string | null
+    weeklyAvailabilityId: string | null
+    startTime: string | null
+    endTime: string | null
+  }
+
+  export type TimeSlotCountAggregateOutputType = {
+    id: number
+    weeklyAvailabilityId: number
+    startTime: number
+    endTime: number
+    _all: number
+  }
+
+
+  export type TimeSlotMinAggregateInputType = {
+    id?: true
+    weeklyAvailabilityId?: true
+    startTime?: true
+    endTime?: true
+  }
+
+  export type TimeSlotMaxAggregateInputType = {
+    id?: true
+    weeklyAvailabilityId?: true
+    startTime?: true
+    endTime?: true
+  }
+
+  export type TimeSlotCountAggregateInputType = {
+    id?: true
+    weeklyAvailabilityId?: true
+    startTime?: true
+    endTime?: true
+    _all?: true
+  }
+
+  export type TimeSlotAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TimeSlot to aggregate.
+     */
+    where?: TimeSlotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TimeSlots to fetch.
+     */
+    orderBy?: TimeSlotOrderByWithRelationInput | TimeSlotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TimeSlotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TimeSlots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TimeSlots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TimeSlots
+    **/
+    _count?: true | TimeSlotCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TimeSlotMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TimeSlotMaxAggregateInputType
+  }
+
+  export type GetTimeSlotAggregateType<T extends TimeSlotAggregateArgs> = {
+        [P in keyof T & keyof AggregateTimeSlot]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTimeSlot[P]>
+      : GetScalarType<T[P], AggregateTimeSlot[P]>
+  }
+
+
+
+
+  export type TimeSlotGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TimeSlotWhereInput
+    orderBy?: TimeSlotOrderByWithAggregationInput | TimeSlotOrderByWithAggregationInput[]
+    by: TimeSlotScalarFieldEnum[] | TimeSlotScalarFieldEnum
+    having?: TimeSlotScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TimeSlotCountAggregateInputType | true
+    _min?: TimeSlotMinAggregateInputType
+    _max?: TimeSlotMaxAggregateInputType
+  }
+
+  export type TimeSlotGroupByOutputType = {
+    id: string
+    weeklyAvailabilityId: string
+    startTime: string
+    endTime: string
+    _count: TimeSlotCountAggregateOutputType | null
+    _min: TimeSlotMinAggregateOutputType | null
+    _max: TimeSlotMaxAggregateOutputType | null
+  }
+
+  type GetTimeSlotGroupByPayload<T extends TimeSlotGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TimeSlotGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TimeSlotGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TimeSlotGroupByOutputType[P]>
+            : GetScalarType<T[P], TimeSlotGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TimeSlotSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    weeklyAvailabilityId?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    weeklyAvailability?: boolean | WeeklyAvailabilityDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["timeSlot"]>
+
+  export type TimeSlotSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    weeklyAvailabilityId?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    weeklyAvailability?: boolean | WeeklyAvailabilityDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["timeSlot"]>
+
+  export type TimeSlotSelectScalar = {
+    id?: boolean
+    weeklyAvailabilityId?: boolean
+    startTime?: boolean
+    endTime?: boolean
+  }
+
+  export type TimeSlotInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    weeklyAvailability?: boolean | WeeklyAvailabilityDefaultArgs<ExtArgs>
+  }
+  export type TimeSlotIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    weeklyAvailability?: boolean | WeeklyAvailabilityDefaultArgs<ExtArgs>
+  }
+
+  export type $TimeSlotPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TimeSlot"
+    objects: {
+      weeklyAvailability: Prisma.$WeeklyAvailabilityPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      weeklyAvailabilityId: string
+      startTime: string
+      endTime: string
+    }, ExtArgs["result"]["timeSlot"]>
+    composites: {}
+  }
+
+  type TimeSlotGetPayload<S extends boolean | null | undefined | TimeSlotDefaultArgs> = $Result.GetResult<Prisma.$TimeSlotPayload, S>
+
+  type TimeSlotCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<TimeSlotFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: TimeSlotCountAggregateInputType | true
+    }
+
+  export interface TimeSlotDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TimeSlot'], meta: { name: 'TimeSlot' } }
+    /**
+     * Find zero or one TimeSlot that matches the filter.
+     * @param {TimeSlotFindUniqueArgs} args - Arguments to find a TimeSlot
+     * @example
+     * // Get one TimeSlot
+     * const timeSlot = await prisma.timeSlot.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TimeSlotFindUniqueArgs>(args: SelectSubset<T, TimeSlotFindUniqueArgs<ExtArgs>>): Prisma__TimeSlotClient<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one TimeSlot that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {TimeSlotFindUniqueOrThrowArgs} args - Arguments to find a TimeSlot
+     * @example
+     * // Get one TimeSlot
+     * const timeSlot = await prisma.timeSlot.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TimeSlotFindUniqueOrThrowArgs>(args: SelectSubset<T, TimeSlotFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TimeSlotClient<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first TimeSlot that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimeSlotFindFirstArgs} args - Arguments to find a TimeSlot
+     * @example
+     * // Get one TimeSlot
+     * const timeSlot = await prisma.timeSlot.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TimeSlotFindFirstArgs>(args?: SelectSubset<T, TimeSlotFindFirstArgs<ExtArgs>>): Prisma__TimeSlotClient<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first TimeSlot that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimeSlotFindFirstOrThrowArgs} args - Arguments to find a TimeSlot
+     * @example
+     * // Get one TimeSlot
+     * const timeSlot = await prisma.timeSlot.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TimeSlotFindFirstOrThrowArgs>(args?: SelectSubset<T, TimeSlotFindFirstOrThrowArgs<ExtArgs>>): Prisma__TimeSlotClient<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more TimeSlots that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimeSlotFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TimeSlots
+     * const timeSlots = await prisma.timeSlot.findMany()
+     * 
+     * // Get first 10 TimeSlots
+     * const timeSlots = await prisma.timeSlot.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const timeSlotWithIdOnly = await prisma.timeSlot.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TimeSlotFindManyArgs>(args?: SelectSubset<T, TimeSlotFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a TimeSlot.
+     * @param {TimeSlotCreateArgs} args - Arguments to create a TimeSlot.
+     * @example
+     * // Create one TimeSlot
+     * const TimeSlot = await prisma.timeSlot.create({
+     *   data: {
+     *     // ... data to create a TimeSlot
+     *   }
+     * })
+     * 
+     */
+    create<T extends TimeSlotCreateArgs>(args: SelectSubset<T, TimeSlotCreateArgs<ExtArgs>>): Prisma__TimeSlotClient<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many TimeSlots.
+     * @param {TimeSlotCreateManyArgs} args - Arguments to create many TimeSlots.
+     * @example
+     * // Create many TimeSlots
+     * const timeSlot = await prisma.timeSlot.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TimeSlotCreateManyArgs>(args?: SelectSubset<T, TimeSlotCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TimeSlots and returns the data saved in the database.
+     * @param {TimeSlotCreateManyAndReturnArgs} args - Arguments to create many TimeSlots.
+     * @example
+     * // Create many TimeSlots
+     * const timeSlot = await prisma.timeSlot.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TimeSlots and only return the `id`
+     * const timeSlotWithIdOnly = await prisma.timeSlot.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TimeSlotCreateManyAndReturnArgs>(args?: SelectSubset<T, TimeSlotCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a TimeSlot.
+     * @param {TimeSlotDeleteArgs} args - Arguments to delete one TimeSlot.
+     * @example
+     * // Delete one TimeSlot
+     * const TimeSlot = await prisma.timeSlot.delete({
+     *   where: {
+     *     // ... filter to delete one TimeSlot
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TimeSlotDeleteArgs>(args: SelectSubset<T, TimeSlotDeleteArgs<ExtArgs>>): Prisma__TimeSlotClient<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one TimeSlot.
+     * @param {TimeSlotUpdateArgs} args - Arguments to update one TimeSlot.
+     * @example
+     * // Update one TimeSlot
+     * const timeSlot = await prisma.timeSlot.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TimeSlotUpdateArgs>(args: SelectSubset<T, TimeSlotUpdateArgs<ExtArgs>>): Prisma__TimeSlotClient<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more TimeSlots.
+     * @param {TimeSlotDeleteManyArgs} args - Arguments to filter TimeSlots to delete.
+     * @example
+     * // Delete a few TimeSlots
+     * const { count } = await prisma.timeSlot.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TimeSlotDeleteManyArgs>(args?: SelectSubset<T, TimeSlotDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TimeSlots.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimeSlotUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TimeSlots
+     * const timeSlot = await prisma.timeSlot.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TimeSlotUpdateManyArgs>(args: SelectSubset<T, TimeSlotUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one TimeSlot.
+     * @param {TimeSlotUpsertArgs} args - Arguments to update or create a TimeSlot.
+     * @example
+     * // Update or create a TimeSlot
+     * const timeSlot = await prisma.timeSlot.upsert({
+     *   create: {
+     *     // ... data to create a TimeSlot
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TimeSlot we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TimeSlotUpsertArgs>(args: SelectSubset<T, TimeSlotUpsertArgs<ExtArgs>>): Prisma__TimeSlotClient<$Result.GetResult<Prisma.$TimeSlotPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of TimeSlots.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimeSlotCountArgs} args - Arguments to filter TimeSlots to count.
+     * @example
+     * // Count the number of TimeSlots
+     * const count = await prisma.timeSlot.count({
+     *   where: {
+     *     // ... the filter for the TimeSlots we want to count
+     *   }
+     * })
+    **/
+    count<T extends TimeSlotCountArgs>(
+      args?: Subset<T, TimeSlotCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TimeSlotCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TimeSlot.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimeSlotAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TimeSlotAggregateArgs>(args: Subset<T, TimeSlotAggregateArgs>): Prisma.PrismaPromise<GetTimeSlotAggregateType<T>>
+
+    /**
+     * Group by TimeSlot.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TimeSlotGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TimeSlotGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TimeSlotGroupByArgs['orderBy'] }
+        : { orderBy?: TimeSlotGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TimeSlotGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTimeSlotGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TimeSlot model
+   */
+  readonly fields: TimeSlotFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TimeSlot.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TimeSlotClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    weeklyAvailability<T extends WeeklyAvailabilityDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WeeklyAvailabilityDefaultArgs<ExtArgs>>): Prisma__WeeklyAvailabilityClient<$Result.GetResult<Prisma.$WeeklyAvailabilityPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TimeSlot model
+   */ 
+  interface TimeSlotFieldRefs {
+    readonly id: FieldRef<"TimeSlot", 'String'>
+    readonly weeklyAvailabilityId: FieldRef<"TimeSlot", 'String'>
+    readonly startTime: FieldRef<"TimeSlot", 'String'>
+    readonly endTime: FieldRef<"TimeSlot", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TimeSlot findUnique
+   */
+  export type TimeSlotFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    /**
+     * Filter, which TimeSlot to fetch.
+     */
+    where: TimeSlotWhereUniqueInput
+  }
+
+  /**
+   * TimeSlot findUniqueOrThrow
+   */
+  export type TimeSlotFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    /**
+     * Filter, which TimeSlot to fetch.
+     */
+    where: TimeSlotWhereUniqueInput
+  }
+
+  /**
+   * TimeSlot findFirst
+   */
+  export type TimeSlotFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    /**
+     * Filter, which TimeSlot to fetch.
+     */
+    where?: TimeSlotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TimeSlots to fetch.
+     */
+    orderBy?: TimeSlotOrderByWithRelationInput | TimeSlotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TimeSlots.
+     */
+    cursor?: TimeSlotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TimeSlots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TimeSlots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TimeSlots.
+     */
+    distinct?: TimeSlotScalarFieldEnum | TimeSlotScalarFieldEnum[]
+  }
+
+  /**
+   * TimeSlot findFirstOrThrow
+   */
+  export type TimeSlotFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    /**
+     * Filter, which TimeSlot to fetch.
+     */
+    where?: TimeSlotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TimeSlots to fetch.
+     */
+    orderBy?: TimeSlotOrderByWithRelationInput | TimeSlotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TimeSlots.
+     */
+    cursor?: TimeSlotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TimeSlots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TimeSlots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TimeSlots.
+     */
+    distinct?: TimeSlotScalarFieldEnum | TimeSlotScalarFieldEnum[]
+  }
+
+  /**
+   * TimeSlot findMany
+   */
+  export type TimeSlotFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    /**
+     * Filter, which TimeSlots to fetch.
+     */
+    where?: TimeSlotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TimeSlots to fetch.
+     */
+    orderBy?: TimeSlotOrderByWithRelationInput | TimeSlotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TimeSlots.
+     */
+    cursor?: TimeSlotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TimeSlots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TimeSlots.
+     */
+    skip?: number
+    distinct?: TimeSlotScalarFieldEnum | TimeSlotScalarFieldEnum[]
+  }
+
+  /**
+   * TimeSlot create
+   */
+  export type TimeSlotCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TimeSlot.
+     */
+    data: XOR<TimeSlotCreateInput, TimeSlotUncheckedCreateInput>
+  }
+
+  /**
+   * TimeSlot createMany
+   */
+  export type TimeSlotCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TimeSlots.
+     */
+    data: TimeSlotCreateManyInput | TimeSlotCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TimeSlot createManyAndReturn
+   */
+  export type TimeSlotCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many TimeSlots.
+     */
+    data: TimeSlotCreateManyInput | TimeSlotCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TimeSlot update
+   */
+  export type TimeSlotUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TimeSlot.
+     */
+    data: XOR<TimeSlotUpdateInput, TimeSlotUncheckedUpdateInput>
+    /**
+     * Choose, which TimeSlot to update.
+     */
+    where: TimeSlotWhereUniqueInput
+  }
+
+  /**
+   * TimeSlot updateMany
+   */
+  export type TimeSlotUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TimeSlots.
+     */
+    data: XOR<TimeSlotUpdateManyMutationInput, TimeSlotUncheckedUpdateManyInput>
+    /**
+     * Filter which TimeSlots to update
+     */
+    where?: TimeSlotWhereInput
+  }
+
+  /**
+   * TimeSlot upsert
+   */
+  export type TimeSlotUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TimeSlot to update in case it exists.
+     */
+    where: TimeSlotWhereUniqueInput
+    /**
+     * In case the TimeSlot found by the `where` argument doesn't exist, create a new TimeSlot with this data.
+     */
+    create: XOR<TimeSlotCreateInput, TimeSlotUncheckedCreateInput>
+    /**
+     * In case the TimeSlot was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TimeSlotUpdateInput, TimeSlotUncheckedUpdateInput>
+  }
+
+  /**
+   * TimeSlot delete
+   */
+  export type TimeSlotDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
+    /**
+     * Filter which TimeSlot to delete.
+     */
+    where: TimeSlotWhereUniqueInput
+  }
+
+  /**
+   * TimeSlot deleteMany
+   */
+  export type TimeSlotDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TimeSlots to delete
+     */
+    where?: TimeSlotWhereInput
+  }
+
+  /**
+   * TimeSlot without action
+   */
+  export type TimeSlotDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TimeSlot
+     */
+    select?: TimeSlotSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TimeSlotInclude<ExtArgs> | null
   }
 
 
@@ -4313,9 +7571,6 @@ export namespace Prisma {
     contactNumber: 'contactNumber',
     bio: 'bio',
     expertiseTags: 'expertiseTags',
-    servicesOffered: 'servicesOffered',
-    servicePricing: 'servicePricing',
-    weeklyAvailability: 'weeklyAvailability',
     ugCollegeProfile: 'ugCollegeProfile',
     pgProfile: 'pgProfile',
     workExperience: 'workExperience',
@@ -4330,6 +7585,40 @@ export namespace Prisma {
   };
 
   export type MentorProfileScalarFieldEnum = (typeof MentorProfileScalarFieldEnum)[keyof typeof MentorProfileScalarFieldEnum]
+
+
+  export const MentorServiceScalarFieldEnum: {
+    id: 'id',
+    mentorProfileId: 'mentorProfileId',
+    serviceType: 'serviceType',
+    pricePerSession: 'pricePerSession',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MentorServiceScalarFieldEnum = (typeof MentorServiceScalarFieldEnum)[keyof typeof MentorServiceScalarFieldEnum]
+
+
+  export const WeeklyAvailabilityScalarFieldEnum: {
+    id: 'id',
+    mentorProfileId: 'mentorProfileId',
+    dayOfWeek: 'dayOfWeek',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type WeeklyAvailabilityScalarFieldEnum = (typeof WeeklyAvailabilityScalarFieldEnum)[keyof typeof WeeklyAvailabilityScalarFieldEnum]
+
+
+  export const TimeSlotScalarFieldEnum: {
+    id: 'id',
+    weeklyAvailabilityId: 'weeklyAvailabilityId',
+    startTime: 'startTime',
+    endTime: 'endTime'
+  };
+
+  export type TimeSlotScalarFieldEnum = (typeof TimeSlotScalarFieldEnum)[keyof typeof TimeSlotScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -4466,6 +7755,34 @@ export namespace Prisma {
    * Reference to a field of type 'MentorApprovalStatus[]'
    */
   export type ListEnumMentorApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MentorApprovalStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MentorServiceType'
+   */
+  export type EnumMentorServiceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MentorServiceType'>
+    
+
+
+  /**
+   * Reference to a field of type 'MentorServiceType[]'
+   */
+  export type ListEnumMentorServiceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MentorServiceType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'DayOfWeek'
+   */
+  export type EnumDayOfWeekFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DayOfWeek'>
+    
+
+
+  /**
+   * Reference to a field of type 'DayOfWeek[]'
+   */
+  export type ListEnumDayOfWeekFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DayOfWeek[]'>
     
 
 
@@ -4691,9 +8008,6 @@ export namespace Prisma {
     contactNumber?: StringFilter<"MentorProfile"> | string
     bio?: StringFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
-    servicesOffered?: StringNullableListFilter<"MentorProfile">
-    servicePricing?: JsonNullableFilter<"MentorProfile">
-    weeklyAvailability?: JsonNullableFilter<"MentorProfile">
     ugCollegeProfile?: StringNullableFilter<"MentorProfile"> | string | null
     pgProfile?: StringNullableFilter<"MentorProfile"> | string | null
     workExperience?: StringNullableFilter<"MentorProfile"> | string | null
@@ -4706,6 +8020,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"MentorProfile"> | Date | string
     updatedAt?: DateTimeFilter<"MentorProfile"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
+    services?: MentorServiceListRelationFilter
+    availability?: WeeklyAvailabilityListRelationFilter
   }
 
   export type MentorProfileOrderByWithRelationInput = {
@@ -4715,9 +8031,6 @@ export namespace Prisma {
     contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
-    servicesOffered?: SortOrder
-    servicePricing?: SortOrderInput | SortOrder
-    weeklyAvailability?: SortOrderInput | SortOrder
     ugCollegeProfile?: SortOrderInput | SortOrder
     pgProfile?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
@@ -4730,6 +8043,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
+    services?: MentorServiceOrderByRelationAggregateInput
+    availability?: WeeklyAvailabilityOrderByRelationAggregateInput
   }
 
   export type MentorProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -4742,9 +8057,6 @@ export namespace Prisma {
     contactNumber?: StringFilter<"MentorProfile"> | string
     bio?: StringFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
-    servicesOffered?: StringNullableListFilter<"MentorProfile">
-    servicePricing?: JsonNullableFilter<"MentorProfile">
-    weeklyAvailability?: JsonNullableFilter<"MentorProfile">
     ugCollegeProfile?: StringNullableFilter<"MentorProfile"> | string | null
     pgProfile?: StringNullableFilter<"MentorProfile"> | string | null
     workExperience?: StringNullableFilter<"MentorProfile"> | string | null
@@ -4757,6 +8069,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"MentorProfile"> | Date | string
     updatedAt?: DateTimeFilter<"MentorProfile"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
+    services?: MentorServiceListRelationFilter
+    availability?: WeeklyAvailabilityListRelationFilter
   }, "id" | "userId">
 
   export type MentorProfileOrderByWithAggregationInput = {
@@ -4766,9 +8080,6 @@ export namespace Prisma {
     contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
-    servicesOffered?: SortOrder
-    servicePricing?: SortOrderInput | SortOrder
-    weeklyAvailability?: SortOrderInput | SortOrder
     ugCollegeProfile?: SortOrderInput | SortOrder
     pgProfile?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
@@ -4795,9 +8106,6 @@ export namespace Prisma {
     contactNumber?: StringWithAggregatesFilter<"MentorProfile"> | string
     bio?: StringWithAggregatesFilter<"MentorProfile"> | string
     expertiseTags?: StringNullableListFilter<"MentorProfile">
-    servicesOffered?: StringNullableListFilter<"MentorProfile">
-    servicePricing?: JsonNullableWithAggregatesFilter<"MentorProfile">
-    weeklyAvailability?: JsonNullableWithAggregatesFilter<"MentorProfile">
     ugCollegeProfile?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     pgProfile?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     workExperience?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
@@ -4809,6 +8117,183 @@ export namespace Prisma {
     adminReviewNotes?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"MentorProfile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"MentorProfile"> | Date | string
+  }
+
+  export type MentorServiceWhereInput = {
+    AND?: MentorServiceWhereInput | MentorServiceWhereInput[]
+    OR?: MentorServiceWhereInput[]
+    NOT?: MentorServiceWhereInput | MentorServiceWhereInput[]
+    id?: StringFilter<"MentorService"> | string
+    mentorProfileId?: StringFilter<"MentorService"> | string
+    serviceType?: EnumMentorServiceTypeFilter<"MentorService"> | $Enums.MentorServiceType
+    pricePerSession?: FloatFilter<"MentorService"> | number
+    isActive?: BoolFilter<"MentorService"> | boolean
+    createdAt?: DateTimeFilter<"MentorService"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorService"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+  }
+
+  export type MentorServiceOrderByWithRelationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    serviceType?: SortOrder
+    pricePerSession?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    mentorProfile?: MentorProfileOrderByWithRelationInput
+  }
+
+  export type MentorServiceWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    mentorProfileId_serviceType?: MentorServiceMentorProfileIdServiceTypeCompoundUniqueInput
+    AND?: MentorServiceWhereInput | MentorServiceWhereInput[]
+    OR?: MentorServiceWhereInput[]
+    NOT?: MentorServiceWhereInput | MentorServiceWhereInput[]
+    mentorProfileId?: StringFilter<"MentorService"> | string
+    serviceType?: EnumMentorServiceTypeFilter<"MentorService"> | $Enums.MentorServiceType
+    pricePerSession?: FloatFilter<"MentorService"> | number
+    isActive?: BoolFilter<"MentorService"> | boolean
+    createdAt?: DateTimeFilter<"MentorService"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorService"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+  }, "id" | "mentorProfileId_serviceType">
+
+  export type MentorServiceOrderByWithAggregationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    serviceType?: SortOrder
+    pricePerSession?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MentorServiceCountOrderByAggregateInput
+    _avg?: MentorServiceAvgOrderByAggregateInput
+    _max?: MentorServiceMaxOrderByAggregateInput
+    _min?: MentorServiceMinOrderByAggregateInput
+    _sum?: MentorServiceSumOrderByAggregateInput
+  }
+
+  export type MentorServiceScalarWhereWithAggregatesInput = {
+    AND?: MentorServiceScalarWhereWithAggregatesInput | MentorServiceScalarWhereWithAggregatesInput[]
+    OR?: MentorServiceScalarWhereWithAggregatesInput[]
+    NOT?: MentorServiceScalarWhereWithAggregatesInput | MentorServiceScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MentorService"> | string
+    mentorProfileId?: StringWithAggregatesFilter<"MentorService"> | string
+    serviceType?: EnumMentorServiceTypeWithAggregatesFilter<"MentorService"> | $Enums.MentorServiceType
+    pricePerSession?: FloatWithAggregatesFilter<"MentorService"> | number
+    isActive?: BoolWithAggregatesFilter<"MentorService"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"MentorService"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MentorService"> | Date | string
+  }
+
+  export type WeeklyAvailabilityWhereInput = {
+    AND?: WeeklyAvailabilityWhereInput | WeeklyAvailabilityWhereInput[]
+    OR?: WeeklyAvailabilityWhereInput[]
+    NOT?: WeeklyAvailabilityWhereInput | WeeklyAvailabilityWhereInput[]
+    id?: StringFilter<"WeeklyAvailability"> | string
+    mentorProfileId?: StringFilter<"WeeklyAvailability"> | string
+    dayOfWeek?: EnumDayOfWeekFilter<"WeeklyAvailability"> | $Enums.DayOfWeek
+    createdAt?: DateTimeFilter<"WeeklyAvailability"> | Date | string
+    updatedAt?: DateTimeFilter<"WeeklyAvailability"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+    timeSlots?: TimeSlotListRelationFilter
+  }
+
+  export type WeeklyAvailabilityOrderByWithRelationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    dayOfWeek?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    mentorProfile?: MentorProfileOrderByWithRelationInput
+    timeSlots?: TimeSlotOrderByRelationAggregateInput
+  }
+
+  export type WeeklyAvailabilityWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    mentorProfileId_dayOfWeek?: WeeklyAvailabilityMentorProfileIdDayOfWeekCompoundUniqueInput
+    AND?: WeeklyAvailabilityWhereInput | WeeklyAvailabilityWhereInput[]
+    OR?: WeeklyAvailabilityWhereInput[]
+    NOT?: WeeklyAvailabilityWhereInput | WeeklyAvailabilityWhereInput[]
+    mentorProfileId?: StringFilter<"WeeklyAvailability"> | string
+    dayOfWeek?: EnumDayOfWeekFilter<"WeeklyAvailability"> | $Enums.DayOfWeek
+    createdAt?: DateTimeFilter<"WeeklyAvailability"> | Date | string
+    updatedAt?: DateTimeFilter<"WeeklyAvailability"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+    timeSlots?: TimeSlotListRelationFilter
+  }, "id" | "mentorProfileId_dayOfWeek">
+
+  export type WeeklyAvailabilityOrderByWithAggregationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    dayOfWeek?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: WeeklyAvailabilityCountOrderByAggregateInput
+    _max?: WeeklyAvailabilityMaxOrderByAggregateInput
+    _min?: WeeklyAvailabilityMinOrderByAggregateInput
+  }
+
+  export type WeeklyAvailabilityScalarWhereWithAggregatesInput = {
+    AND?: WeeklyAvailabilityScalarWhereWithAggregatesInput | WeeklyAvailabilityScalarWhereWithAggregatesInput[]
+    OR?: WeeklyAvailabilityScalarWhereWithAggregatesInput[]
+    NOT?: WeeklyAvailabilityScalarWhereWithAggregatesInput | WeeklyAvailabilityScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"WeeklyAvailability"> | string
+    mentorProfileId?: StringWithAggregatesFilter<"WeeklyAvailability"> | string
+    dayOfWeek?: EnumDayOfWeekWithAggregatesFilter<"WeeklyAvailability"> | $Enums.DayOfWeek
+    createdAt?: DateTimeWithAggregatesFilter<"WeeklyAvailability"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"WeeklyAvailability"> | Date | string
+  }
+
+  export type TimeSlotWhereInput = {
+    AND?: TimeSlotWhereInput | TimeSlotWhereInput[]
+    OR?: TimeSlotWhereInput[]
+    NOT?: TimeSlotWhereInput | TimeSlotWhereInput[]
+    id?: StringFilter<"TimeSlot"> | string
+    weeklyAvailabilityId?: StringFilter<"TimeSlot"> | string
+    startTime?: StringFilter<"TimeSlot"> | string
+    endTime?: StringFilter<"TimeSlot"> | string
+    weeklyAvailability?: XOR<WeeklyAvailabilityRelationFilter, WeeklyAvailabilityWhereInput>
+  }
+
+  export type TimeSlotOrderByWithRelationInput = {
+    id?: SortOrder
+    weeklyAvailabilityId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    weeklyAvailability?: WeeklyAvailabilityOrderByWithRelationInput
+  }
+
+  export type TimeSlotWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TimeSlotWhereInput | TimeSlotWhereInput[]
+    OR?: TimeSlotWhereInput[]
+    NOT?: TimeSlotWhereInput | TimeSlotWhereInput[]
+    weeklyAvailabilityId?: StringFilter<"TimeSlot"> | string
+    startTime?: StringFilter<"TimeSlot"> | string
+    endTime?: StringFilter<"TimeSlot"> | string
+    weeklyAvailability?: XOR<WeeklyAvailabilityRelationFilter, WeeklyAvailabilityWhereInput>
+  }, "id">
+
+  export type TimeSlotOrderByWithAggregationInput = {
+    id?: SortOrder
+    weeklyAvailabilityId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    _count?: TimeSlotCountOrderByAggregateInput
+    _max?: TimeSlotMaxOrderByAggregateInput
+    _min?: TimeSlotMinOrderByAggregateInput
+  }
+
+  export type TimeSlotScalarWhereWithAggregatesInput = {
+    AND?: TimeSlotScalarWhereWithAggregatesInput | TimeSlotScalarWhereWithAggregatesInput[]
+    OR?: TimeSlotScalarWhereWithAggregatesInput[]
+    NOT?: TimeSlotScalarWhereWithAggregatesInput | TimeSlotScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TimeSlot"> | string
+    weeklyAvailabilityId?: StringWithAggregatesFilter<"TimeSlot"> | string
+    startTime?: StringWithAggregatesFilter<"TimeSlot"> | string
+    endTime?: StringWithAggregatesFilter<"TimeSlot"> | string
   }
 
   export type UserCreateInput = {
@@ -5048,9 +8533,6 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -5063,6 +8545,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutMentorProfileInput
+    services?: MentorServiceCreateNestedManyWithoutMentorProfileInput
+    availability?: WeeklyAvailabilityCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateInput = {
@@ -5072,9 +8556,6 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -5086,6 +8567,8 @@ export namespace Prisma {
     adminReviewNotes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    services?: MentorServiceUncheckedCreateNestedManyWithoutMentorProfileInput
+    availability?: WeeklyAvailabilityUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUpdateInput = {
@@ -5094,9 +8577,6 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5109,6 +8589,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutMentorProfileNestedInput
+    services?: MentorServiceUpdateManyWithoutMentorProfileNestedInput
+    availability?: WeeklyAvailabilityUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateInput = {
@@ -5118,9 +8600,6 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5132,6 +8611,8 @@ export namespace Prisma {
     adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    services?: MentorServiceUncheckedUpdateManyWithoutMentorProfileNestedInput
+    availability?: WeeklyAvailabilityUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileCreateManyInput = {
@@ -5141,9 +8622,6 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -5163,9 +8641,6 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5186,9 +8661,6 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -5200,6 +8672,182 @@ export namespace Prisma {
     adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorServiceCreateInput = {
+    id?: string
+    serviceType: $Enums.MentorServiceType
+    pricePerSession: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorProfile: MentorProfileCreateNestedOneWithoutServicesInput
+  }
+
+  export type MentorServiceUncheckedCreateInput = {
+    id?: string
+    mentorProfileId: string
+    serviceType: $Enums.MentorServiceType
+    pricePerSession: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorServiceUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceType?: EnumMentorServiceTypeFieldUpdateOperationsInput | $Enums.MentorServiceType
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutServicesNestedInput
+  }
+
+  export type MentorServiceUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    serviceType?: EnumMentorServiceTypeFieldUpdateOperationsInput | $Enums.MentorServiceType
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorServiceCreateManyInput = {
+    id?: string
+    mentorProfileId: string
+    serviceType: $Enums.MentorServiceType
+    pricePerSession: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorServiceUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceType?: EnumMentorServiceTypeFieldUpdateOperationsInput | $Enums.MentorServiceType
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorServiceUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    serviceType?: EnumMentorServiceTypeFieldUpdateOperationsInput | $Enums.MentorServiceType
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WeeklyAvailabilityCreateInput = {
+    id?: string
+    dayOfWeek: $Enums.DayOfWeek
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorProfile: MentorProfileCreateNestedOneWithoutAvailabilityInput
+    timeSlots?: TimeSlotCreateNestedManyWithoutWeeklyAvailabilityInput
+  }
+
+  export type WeeklyAvailabilityUncheckedCreateInput = {
+    id?: string
+    mentorProfileId: string
+    dayOfWeek: $Enums.DayOfWeek
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    timeSlots?: TimeSlotUncheckedCreateNestedManyWithoutWeeklyAvailabilityInput
+  }
+
+  export type WeeklyAvailabilityUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayOfWeek?: EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutAvailabilityNestedInput
+    timeSlots?: TimeSlotUpdateManyWithoutWeeklyAvailabilityNestedInput
+  }
+
+  export type WeeklyAvailabilityUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    dayOfWeek?: EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    timeSlots?: TimeSlotUncheckedUpdateManyWithoutWeeklyAvailabilityNestedInput
+  }
+
+  export type WeeklyAvailabilityCreateManyInput = {
+    id?: string
+    mentorProfileId: string
+    dayOfWeek: $Enums.DayOfWeek
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WeeklyAvailabilityUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayOfWeek?: EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WeeklyAvailabilityUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    dayOfWeek?: EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TimeSlotCreateInput = {
+    id?: string
+    startTime: string
+    endTime: string
+    weeklyAvailability: WeeklyAvailabilityCreateNestedOneWithoutTimeSlotsInput
+  }
+
+  export type TimeSlotUncheckedCreateInput = {
+    id?: string
+    weeklyAvailabilityId: string
+    startTime: string
+    endTime: string
+  }
+
+  export type TimeSlotUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    weeklyAvailability?: WeeklyAvailabilityUpdateOneRequiredWithoutTimeSlotsNestedInput
+  }
+
+  export type TimeSlotUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weeklyAvailabilityId?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TimeSlotCreateManyInput = {
+    id?: string
+    weeklyAvailabilityId: string
+    startTime: string
+    endTime: string
+  }
+
+  export type TimeSlotUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TimeSlotUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    weeklyAvailabilityId?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -5604,6 +9252,26 @@ export namespace Prisma {
     not?: NestedEnumMentorApprovalStatusFilter<$PrismaModel> | $Enums.MentorApprovalStatus
   }
 
+  export type MentorServiceListRelationFilter = {
+    every?: MentorServiceWhereInput
+    some?: MentorServiceWhereInput
+    none?: MentorServiceWhereInput
+  }
+
+  export type WeeklyAvailabilityListRelationFilter = {
+    every?: WeeklyAvailabilityWhereInput
+    some?: WeeklyAvailabilityWhereInput
+    none?: WeeklyAvailabilityWhereInput
+  }
+
+  export type MentorServiceOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WeeklyAvailabilityOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type MentorProfileCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -5611,9 +9279,6 @@ export namespace Prisma {
     contactNumber?: SortOrder
     bio?: SortOrder
     expertiseTags?: SortOrder
-    servicesOffered?: SortOrder
-    servicePricing?: SortOrder
-    weeklyAvailability?: SortOrder
     ugCollegeProfile?: SortOrder
     pgProfile?: SortOrder
     workExperience?: SortOrder
@@ -5673,6 +9338,180 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumMentorApprovalStatusFilter<$PrismaModel>
     _max?: NestedEnumMentorApprovalStatusFilter<$PrismaModel>
+  }
+
+  export type EnumMentorServiceTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MentorServiceType | EnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MentorServiceType[] | ListEnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MentorServiceType[] | ListEnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMentorServiceTypeFilter<$PrismaModel> | $Enums.MentorServiceType
+  }
+
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type MentorProfileRelationFilter = {
+    is?: MentorProfileWhereInput
+    isNot?: MentorProfileWhereInput
+  }
+
+  export type MentorServiceMentorProfileIdServiceTypeCompoundUniqueInput = {
+    mentorProfileId: string
+    serviceType: $Enums.MentorServiceType
+  }
+
+  export type MentorServiceCountOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    serviceType?: SortOrder
+    pricePerSession?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorServiceAvgOrderByAggregateInput = {
+    pricePerSession?: SortOrder
+  }
+
+  export type MentorServiceMaxOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    serviceType?: SortOrder
+    pricePerSession?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorServiceMinOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    serviceType?: SortOrder
+    pricePerSession?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorServiceSumOrderByAggregateInput = {
+    pricePerSession?: SortOrder
+  }
+
+  export type EnumMentorServiceTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MentorServiceType | EnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MentorServiceType[] | ListEnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MentorServiceType[] | ListEnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMentorServiceTypeWithAggregatesFilter<$PrismaModel> | $Enums.MentorServiceType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMentorServiceTypeFilter<$PrismaModel>
+    _max?: NestedEnumMentorServiceTypeFilter<$PrismaModel>
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type EnumDayOfWeekFilter<$PrismaModel = never> = {
+    equals?: $Enums.DayOfWeek | EnumDayOfWeekFieldRefInput<$PrismaModel>
+    in?: $Enums.DayOfWeek[] | ListEnumDayOfWeekFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DayOfWeek[] | ListEnumDayOfWeekFieldRefInput<$PrismaModel>
+    not?: NestedEnumDayOfWeekFilter<$PrismaModel> | $Enums.DayOfWeek
+  }
+
+  export type TimeSlotListRelationFilter = {
+    every?: TimeSlotWhereInput
+    some?: TimeSlotWhereInput
+    none?: TimeSlotWhereInput
+  }
+
+  export type TimeSlotOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WeeklyAvailabilityMentorProfileIdDayOfWeekCompoundUniqueInput = {
+    mentorProfileId: string
+    dayOfWeek: $Enums.DayOfWeek
+  }
+
+  export type WeeklyAvailabilityCountOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    dayOfWeek?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WeeklyAvailabilityMaxOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    dayOfWeek?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WeeklyAvailabilityMinOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    dayOfWeek?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumDayOfWeekWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DayOfWeek | EnumDayOfWeekFieldRefInput<$PrismaModel>
+    in?: $Enums.DayOfWeek[] | ListEnumDayOfWeekFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DayOfWeek[] | ListEnumDayOfWeekFieldRefInput<$PrismaModel>
+    not?: NestedEnumDayOfWeekWithAggregatesFilter<$PrismaModel> | $Enums.DayOfWeek
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDayOfWeekFilter<$PrismaModel>
+    _max?: NestedEnumDayOfWeekFilter<$PrismaModel>
+  }
+
+  export type WeeklyAvailabilityRelationFilter = {
+    is?: WeeklyAvailabilityWhereInput
+    isNot?: WeeklyAvailabilityWhereInput
+  }
+
+  export type TimeSlotCountOrderByAggregateInput = {
+    id?: SortOrder
+    weeklyAvailabilityId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+  }
+
+  export type TimeSlotMaxOrderByAggregateInput = {
+    id?: SortOrder
+    weeklyAvailabilityId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+  }
+
+  export type TimeSlotMinOrderByAggregateInput = {
+    id?: SortOrder
+    weeklyAvailabilityId?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
   }
 
   export type MenteeProfileCreateNestedOneWithoutUserInput = {
@@ -5789,22 +9628,41 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type MentorProfileCreateservicesOfferedInput = {
-    set: string[]
-  }
-
   export type UserCreateNestedOneWithoutMentorProfileInput = {
     create?: XOR<UserCreateWithoutMentorProfileInput, UserUncheckedCreateWithoutMentorProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutMentorProfileInput
     connect?: UserWhereUniqueInput
   }
 
-  export type MentorProfileUpdateexpertiseTagsInput = {
-    set?: string[]
-    push?: string | string[]
+  export type MentorServiceCreateNestedManyWithoutMentorProfileInput = {
+    create?: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput> | MentorServiceCreateWithoutMentorProfileInput[] | MentorServiceUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: MentorServiceCreateOrConnectWithoutMentorProfileInput | MentorServiceCreateOrConnectWithoutMentorProfileInput[]
+    createMany?: MentorServiceCreateManyMentorProfileInputEnvelope
+    connect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
   }
 
-  export type MentorProfileUpdateservicesOfferedInput = {
+  export type WeeklyAvailabilityCreateNestedManyWithoutMentorProfileInput = {
+    create?: XOR<WeeklyAvailabilityCreateWithoutMentorProfileInput, WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput> | WeeklyAvailabilityCreateWithoutMentorProfileInput[] | WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: WeeklyAvailabilityCreateOrConnectWithoutMentorProfileInput | WeeklyAvailabilityCreateOrConnectWithoutMentorProfileInput[]
+    createMany?: WeeklyAvailabilityCreateManyMentorProfileInputEnvelope
+    connect?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+  }
+
+  export type MentorServiceUncheckedCreateNestedManyWithoutMentorProfileInput = {
+    create?: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput> | MentorServiceCreateWithoutMentorProfileInput[] | MentorServiceUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: MentorServiceCreateOrConnectWithoutMentorProfileInput | MentorServiceCreateOrConnectWithoutMentorProfileInput[]
+    createMany?: MentorServiceCreateManyMentorProfileInputEnvelope
+    connect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
+  }
+
+  export type WeeklyAvailabilityUncheckedCreateNestedManyWithoutMentorProfileInput = {
+    create?: XOR<WeeklyAvailabilityCreateWithoutMentorProfileInput, WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput> | WeeklyAvailabilityCreateWithoutMentorProfileInput[] | WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: WeeklyAvailabilityCreateOrConnectWithoutMentorProfileInput | WeeklyAvailabilityCreateOrConnectWithoutMentorProfileInput[]
+    createMany?: WeeklyAvailabilityCreateManyMentorProfileInputEnvelope
+    connect?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+  }
+
+  export type MentorProfileUpdateexpertiseTagsInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -5819,6 +9677,162 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutMentorProfileInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMentorProfileInput, UserUpdateWithoutMentorProfileInput>, UserUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type MentorServiceUpdateManyWithoutMentorProfileNestedInput = {
+    create?: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput> | MentorServiceCreateWithoutMentorProfileInput[] | MentorServiceUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: MentorServiceCreateOrConnectWithoutMentorProfileInput | MentorServiceCreateOrConnectWithoutMentorProfileInput[]
+    upsert?: MentorServiceUpsertWithWhereUniqueWithoutMentorProfileInput | MentorServiceUpsertWithWhereUniqueWithoutMentorProfileInput[]
+    createMany?: MentorServiceCreateManyMentorProfileInputEnvelope
+    set?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
+    disconnect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
+    delete?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
+    connect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
+    update?: MentorServiceUpdateWithWhereUniqueWithoutMentorProfileInput | MentorServiceUpdateWithWhereUniqueWithoutMentorProfileInput[]
+    updateMany?: MentorServiceUpdateManyWithWhereWithoutMentorProfileInput | MentorServiceUpdateManyWithWhereWithoutMentorProfileInput[]
+    deleteMany?: MentorServiceScalarWhereInput | MentorServiceScalarWhereInput[]
+  }
+
+  export type WeeklyAvailabilityUpdateManyWithoutMentorProfileNestedInput = {
+    create?: XOR<WeeklyAvailabilityCreateWithoutMentorProfileInput, WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput> | WeeklyAvailabilityCreateWithoutMentorProfileInput[] | WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: WeeklyAvailabilityCreateOrConnectWithoutMentorProfileInput | WeeklyAvailabilityCreateOrConnectWithoutMentorProfileInput[]
+    upsert?: WeeklyAvailabilityUpsertWithWhereUniqueWithoutMentorProfileInput | WeeklyAvailabilityUpsertWithWhereUniqueWithoutMentorProfileInput[]
+    createMany?: WeeklyAvailabilityCreateManyMentorProfileInputEnvelope
+    set?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+    disconnect?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+    delete?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+    connect?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+    update?: WeeklyAvailabilityUpdateWithWhereUniqueWithoutMentorProfileInput | WeeklyAvailabilityUpdateWithWhereUniqueWithoutMentorProfileInput[]
+    updateMany?: WeeklyAvailabilityUpdateManyWithWhereWithoutMentorProfileInput | WeeklyAvailabilityUpdateManyWithWhereWithoutMentorProfileInput[]
+    deleteMany?: WeeklyAvailabilityScalarWhereInput | WeeklyAvailabilityScalarWhereInput[]
+  }
+
+  export type MentorServiceUncheckedUpdateManyWithoutMentorProfileNestedInput = {
+    create?: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput> | MentorServiceCreateWithoutMentorProfileInput[] | MentorServiceUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: MentorServiceCreateOrConnectWithoutMentorProfileInput | MentorServiceCreateOrConnectWithoutMentorProfileInput[]
+    upsert?: MentorServiceUpsertWithWhereUniqueWithoutMentorProfileInput | MentorServiceUpsertWithWhereUniqueWithoutMentorProfileInput[]
+    createMany?: MentorServiceCreateManyMentorProfileInputEnvelope
+    set?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
+    disconnect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
+    delete?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
+    connect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
+    update?: MentorServiceUpdateWithWhereUniqueWithoutMentorProfileInput | MentorServiceUpdateWithWhereUniqueWithoutMentorProfileInput[]
+    updateMany?: MentorServiceUpdateManyWithWhereWithoutMentorProfileInput | MentorServiceUpdateManyWithWhereWithoutMentorProfileInput[]
+    deleteMany?: MentorServiceScalarWhereInput | MentorServiceScalarWhereInput[]
+  }
+
+  export type WeeklyAvailabilityUncheckedUpdateManyWithoutMentorProfileNestedInput = {
+    create?: XOR<WeeklyAvailabilityCreateWithoutMentorProfileInput, WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput> | WeeklyAvailabilityCreateWithoutMentorProfileInput[] | WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: WeeklyAvailabilityCreateOrConnectWithoutMentorProfileInput | WeeklyAvailabilityCreateOrConnectWithoutMentorProfileInput[]
+    upsert?: WeeklyAvailabilityUpsertWithWhereUniqueWithoutMentorProfileInput | WeeklyAvailabilityUpsertWithWhereUniqueWithoutMentorProfileInput[]
+    createMany?: WeeklyAvailabilityCreateManyMentorProfileInputEnvelope
+    set?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+    disconnect?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+    delete?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+    connect?: WeeklyAvailabilityWhereUniqueInput | WeeklyAvailabilityWhereUniqueInput[]
+    update?: WeeklyAvailabilityUpdateWithWhereUniqueWithoutMentorProfileInput | WeeklyAvailabilityUpdateWithWhereUniqueWithoutMentorProfileInput[]
+    updateMany?: WeeklyAvailabilityUpdateManyWithWhereWithoutMentorProfileInput | WeeklyAvailabilityUpdateManyWithWhereWithoutMentorProfileInput[]
+    deleteMany?: WeeklyAvailabilityScalarWhereInput | WeeklyAvailabilityScalarWhereInput[]
+  }
+
+  export type MentorProfileCreateNestedOneWithoutServicesInput = {
+    create?: XOR<MentorProfileCreateWithoutServicesInput, MentorProfileUncheckedCreateWithoutServicesInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutServicesInput
+    connect?: MentorProfileWhereUniqueInput
+  }
+
+  export type EnumMentorServiceTypeFieldUpdateOperationsInput = {
+    set?: $Enums.MentorServiceType
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type MentorProfileUpdateOneRequiredWithoutServicesNestedInput = {
+    create?: XOR<MentorProfileCreateWithoutServicesInput, MentorProfileUncheckedCreateWithoutServicesInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutServicesInput
+    upsert?: MentorProfileUpsertWithoutServicesInput
+    connect?: MentorProfileWhereUniqueInput
+    update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutServicesInput, MentorProfileUpdateWithoutServicesInput>, MentorProfileUncheckedUpdateWithoutServicesInput>
+  }
+
+  export type MentorProfileCreateNestedOneWithoutAvailabilityInput = {
+    create?: XOR<MentorProfileCreateWithoutAvailabilityInput, MentorProfileUncheckedCreateWithoutAvailabilityInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutAvailabilityInput
+    connect?: MentorProfileWhereUniqueInput
+  }
+
+  export type TimeSlotCreateNestedManyWithoutWeeklyAvailabilityInput = {
+    create?: XOR<TimeSlotCreateWithoutWeeklyAvailabilityInput, TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput> | TimeSlotCreateWithoutWeeklyAvailabilityInput[] | TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput[]
+    connectOrCreate?: TimeSlotCreateOrConnectWithoutWeeklyAvailabilityInput | TimeSlotCreateOrConnectWithoutWeeklyAvailabilityInput[]
+    createMany?: TimeSlotCreateManyWeeklyAvailabilityInputEnvelope
+    connect?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+  }
+
+  export type TimeSlotUncheckedCreateNestedManyWithoutWeeklyAvailabilityInput = {
+    create?: XOR<TimeSlotCreateWithoutWeeklyAvailabilityInput, TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput> | TimeSlotCreateWithoutWeeklyAvailabilityInput[] | TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput[]
+    connectOrCreate?: TimeSlotCreateOrConnectWithoutWeeklyAvailabilityInput | TimeSlotCreateOrConnectWithoutWeeklyAvailabilityInput[]
+    createMany?: TimeSlotCreateManyWeeklyAvailabilityInputEnvelope
+    connect?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+  }
+
+  export type EnumDayOfWeekFieldUpdateOperationsInput = {
+    set?: $Enums.DayOfWeek
+  }
+
+  export type MentorProfileUpdateOneRequiredWithoutAvailabilityNestedInput = {
+    create?: XOR<MentorProfileCreateWithoutAvailabilityInput, MentorProfileUncheckedCreateWithoutAvailabilityInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutAvailabilityInput
+    upsert?: MentorProfileUpsertWithoutAvailabilityInput
+    connect?: MentorProfileWhereUniqueInput
+    update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutAvailabilityInput, MentorProfileUpdateWithoutAvailabilityInput>, MentorProfileUncheckedUpdateWithoutAvailabilityInput>
+  }
+
+  export type TimeSlotUpdateManyWithoutWeeklyAvailabilityNestedInput = {
+    create?: XOR<TimeSlotCreateWithoutWeeklyAvailabilityInput, TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput> | TimeSlotCreateWithoutWeeklyAvailabilityInput[] | TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput[]
+    connectOrCreate?: TimeSlotCreateOrConnectWithoutWeeklyAvailabilityInput | TimeSlotCreateOrConnectWithoutWeeklyAvailabilityInput[]
+    upsert?: TimeSlotUpsertWithWhereUniqueWithoutWeeklyAvailabilityInput | TimeSlotUpsertWithWhereUniqueWithoutWeeklyAvailabilityInput[]
+    createMany?: TimeSlotCreateManyWeeklyAvailabilityInputEnvelope
+    set?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+    disconnect?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+    delete?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+    connect?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+    update?: TimeSlotUpdateWithWhereUniqueWithoutWeeklyAvailabilityInput | TimeSlotUpdateWithWhereUniqueWithoutWeeklyAvailabilityInput[]
+    updateMany?: TimeSlotUpdateManyWithWhereWithoutWeeklyAvailabilityInput | TimeSlotUpdateManyWithWhereWithoutWeeklyAvailabilityInput[]
+    deleteMany?: TimeSlotScalarWhereInput | TimeSlotScalarWhereInput[]
+  }
+
+  export type TimeSlotUncheckedUpdateManyWithoutWeeklyAvailabilityNestedInput = {
+    create?: XOR<TimeSlotCreateWithoutWeeklyAvailabilityInput, TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput> | TimeSlotCreateWithoutWeeklyAvailabilityInput[] | TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput[]
+    connectOrCreate?: TimeSlotCreateOrConnectWithoutWeeklyAvailabilityInput | TimeSlotCreateOrConnectWithoutWeeklyAvailabilityInput[]
+    upsert?: TimeSlotUpsertWithWhereUniqueWithoutWeeklyAvailabilityInput | TimeSlotUpsertWithWhereUniqueWithoutWeeklyAvailabilityInput[]
+    createMany?: TimeSlotCreateManyWeeklyAvailabilityInputEnvelope
+    set?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+    disconnect?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+    delete?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+    connect?: TimeSlotWhereUniqueInput | TimeSlotWhereUniqueInput[]
+    update?: TimeSlotUpdateWithWhereUniqueWithoutWeeklyAvailabilityInput | TimeSlotUpdateWithWhereUniqueWithoutWeeklyAvailabilityInput[]
+    updateMany?: TimeSlotUpdateManyWithWhereWithoutWeeklyAvailabilityInput | TimeSlotUpdateManyWithWhereWithoutWeeklyAvailabilityInput[]
+    deleteMany?: TimeSlotScalarWhereInput | TimeSlotScalarWhereInput[]
+  }
+
+  export type WeeklyAvailabilityCreateNestedOneWithoutTimeSlotsInput = {
+    create?: XOR<WeeklyAvailabilityCreateWithoutTimeSlotsInput, WeeklyAvailabilityUncheckedCreateWithoutTimeSlotsInput>
+    connectOrCreate?: WeeklyAvailabilityCreateOrConnectWithoutTimeSlotsInput
+    connect?: WeeklyAvailabilityWhereUniqueInput
+  }
+
+  export type WeeklyAvailabilityUpdateOneRequiredWithoutTimeSlotsNestedInput = {
+    create?: XOR<WeeklyAvailabilityCreateWithoutTimeSlotsInput, WeeklyAvailabilityUncheckedCreateWithoutTimeSlotsInput>
+    connectOrCreate?: WeeklyAvailabilityCreateOrConnectWithoutTimeSlotsInput
+    upsert?: WeeklyAvailabilityUpsertWithoutTimeSlotsInput
+    connect?: WeeklyAvailabilityWhereUniqueInput
+    update?: XOR<XOR<WeeklyAvailabilityUpdateToOneWithWhereWithoutTimeSlotsInput, WeeklyAvailabilityUpdateWithoutTimeSlotsInput>, WeeklyAvailabilityUncheckedUpdateWithoutTimeSlotsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -6073,6 +10087,67 @@ export namespace Prisma {
     _max?: NestedEnumMentorApprovalStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumMentorServiceTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MentorServiceType | EnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MentorServiceType[] | ListEnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MentorServiceType[] | ListEnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMentorServiceTypeFilter<$PrismaModel> | $Enums.MentorServiceType
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedEnumMentorServiceTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MentorServiceType | EnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MentorServiceType[] | ListEnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MentorServiceType[] | ListEnumMentorServiceTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMentorServiceTypeWithAggregatesFilter<$PrismaModel> | $Enums.MentorServiceType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMentorServiceTypeFilter<$PrismaModel>
+    _max?: NestedEnumMentorServiceTypeFilter<$PrismaModel>
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type NestedEnumDayOfWeekFilter<$PrismaModel = never> = {
+    equals?: $Enums.DayOfWeek | EnumDayOfWeekFieldRefInput<$PrismaModel>
+    in?: $Enums.DayOfWeek[] | ListEnumDayOfWeekFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DayOfWeek[] | ListEnumDayOfWeekFieldRefInput<$PrismaModel>
+    not?: NestedEnumDayOfWeekFilter<$PrismaModel> | $Enums.DayOfWeek
+  }
+
+  export type NestedEnumDayOfWeekWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DayOfWeek | EnumDayOfWeekFieldRefInput<$PrismaModel>
+    in?: $Enums.DayOfWeek[] | ListEnumDayOfWeekFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DayOfWeek[] | ListEnumDayOfWeekFieldRefInput<$PrismaModel>
+    not?: NestedEnumDayOfWeekWithAggregatesFilter<$PrismaModel> | $Enums.DayOfWeek
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDayOfWeekFilter<$PrismaModel>
+    _max?: NestedEnumDayOfWeekFilter<$PrismaModel>
+  }
+
   export type MenteeProfileCreateWithoutUserInput = {
     id?: string
     dateOfBirth: Date | string
@@ -6112,9 +10187,6 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -6126,6 +10198,8 @@ export namespace Prisma {
     adminReviewNotes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    services?: MentorServiceCreateNestedManyWithoutMentorProfileInput
+    availability?: WeeklyAvailabilityCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutUserInput = {
@@ -6134,9 +10208,6 @@ export namespace Prisma {
     contactNumber: string
     bio: string
     expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileCreateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: string | null
     pgProfile?: string | null
     workExperience?: string | null
@@ -6148,6 +10219,8 @@ export namespace Prisma {
     adminReviewNotes?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    services?: MentorServiceUncheckedCreateNestedManyWithoutMentorProfileInput
+    availability?: WeeklyAvailabilityUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutUserInput = {
@@ -6211,9 +10284,6 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6225,6 +10295,8 @@ export namespace Prisma {
     adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    services?: MentorServiceUpdateManyWithoutMentorProfileNestedInput
+    availability?: WeeklyAvailabilityUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutUserInput = {
@@ -6233,9 +10305,6 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     bio?: StringFieldUpdateOperationsInput | string
     expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
-    servicesOffered?: MentorProfileUpdateservicesOfferedInput | string[]
-    servicePricing?: NullableJsonNullValueInput | InputJsonValue
-    weeklyAvailability?: NullableJsonNullValueInput | InputJsonValue
     ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
     pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6247,6 +10316,8 @@ export namespace Prisma {
     adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    services?: MentorServiceUncheckedUpdateManyWithoutMentorProfileNestedInput
+    availability?: WeeklyAvailabilityUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type UserCreateWithoutMenteeProfileInput = {
@@ -6378,6 +10449,60 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutMentorProfileInput, UserUncheckedCreateWithoutMentorProfileInput>
   }
 
+  export type MentorServiceCreateWithoutMentorProfileInput = {
+    id?: string
+    serviceType: $Enums.MentorServiceType
+    pricePerSession: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorServiceUncheckedCreateWithoutMentorProfileInput = {
+    id?: string
+    serviceType: $Enums.MentorServiceType
+    pricePerSession: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorServiceCreateOrConnectWithoutMentorProfileInput = {
+    where: MentorServiceWhereUniqueInput
+    create: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput>
+  }
+
+  export type MentorServiceCreateManyMentorProfileInputEnvelope = {
+    data: MentorServiceCreateManyMentorProfileInput | MentorServiceCreateManyMentorProfileInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WeeklyAvailabilityCreateWithoutMentorProfileInput = {
+    id?: string
+    dayOfWeek: $Enums.DayOfWeek
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    timeSlots?: TimeSlotCreateNestedManyWithoutWeeklyAvailabilityInput
+  }
+
+  export type WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput = {
+    id?: string
+    dayOfWeek: $Enums.DayOfWeek
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    timeSlots?: TimeSlotUncheckedCreateNestedManyWithoutWeeklyAvailabilityInput
+  }
+
+  export type WeeklyAvailabilityCreateOrConnectWithoutMentorProfileInput = {
+    where: WeeklyAvailabilityWhereUniqueInput
+    create: XOR<WeeklyAvailabilityCreateWithoutMentorProfileInput, WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput>
+  }
+
+  export type WeeklyAvailabilityCreateManyMentorProfileInputEnvelope = {
+    data: WeeklyAvailabilityCreateManyMentorProfileInput | WeeklyAvailabilityCreateManyMentorProfileInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutMentorProfileInput = {
     update: XOR<UserUpdateWithoutMentorProfileInput, UserUncheckedUpdateWithoutMentorProfileInput>
     create: XOR<UserCreateWithoutMentorProfileInput, UserUncheckedCreateWithoutMentorProfileInput>
@@ -6425,11 +10550,461 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
+  export type MentorServiceUpsertWithWhereUniqueWithoutMentorProfileInput = {
+    where: MentorServiceWhereUniqueInput
+    update: XOR<MentorServiceUpdateWithoutMentorProfileInput, MentorServiceUncheckedUpdateWithoutMentorProfileInput>
+    create: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput>
+  }
+
+  export type MentorServiceUpdateWithWhereUniqueWithoutMentorProfileInput = {
+    where: MentorServiceWhereUniqueInput
+    data: XOR<MentorServiceUpdateWithoutMentorProfileInput, MentorServiceUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type MentorServiceUpdateManyWithWhereWithoutMentorProfileInput = {
+    where: MentorServiceScalarWhereInput
+    data: XOR<MentorServiceUpdateManyMutationInput, MentorServiceUncheckedUpdateManyWithoutMentorProfileInput>
+  }
+
+  export type MentorServiceScalarWhereInput = {
+    AND?: MentorServiceScalarWhereInput | MentorServiceScalarWhereInput[]
+    OR?: MentorServiceScalarWhereInput[]
+    NOT?: MentorServiceScalarWhereInput | MentorServiceScalarWhereInput[]
+    id?: StringFilter<"MentorService"> | string
+    mentorProfileId?: StringFilter<"MentorService"> | string
+    serviceType?: EnumMentorServiceTypeFilter<"MentorService"> | $Enums.MentorServiceType
+    pricePerSession?: FloatFilter<"MentorService"> | number
+    isActive?: BoolFilter<"MentorService"> | boolean
+    createdAt?: DateTimeFilter<"MentorService"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorService"> | Date | string
+  }
+
+  export type WeeklyAvailabilityUpsertWithWhereUniqueWithoutMentorProfileInput = {
+    where: WeeklyAvailabilityWhereUniqueInput
+    update: XOR<WeeklyAvailabilityUpdateWithoutMentorProfileInput, WeeklyAvailabilityUncheckedUpdateWithoutMentorProfileInput>
+    create: XOR<WeeklyAvailabilityCreateWithoutMentorProfileInput, WeeklyAvailabilityUncheckedCreateWithoutMentorProfileInput>
+  }
+
+  export type WeeklyAvailabilityUpdateWithWhereUniqueWithoutMentorProfileInput = {
+    where: WeeklyAvailabilityWhereUniqueInput
+    data: XOR<WeeklyAvailabilityUpdateWithoutMentorProfileInput, WeeklyAvailabilityUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type WeeklyAvailabilityUpdateManyWithWhereWithoutMentorProfileInput = {
+    where: WeeklyAvailabilityScalarWhereInput
+    data: XOR<WeeklyAvailabilityUpdateManyMutationInput, WeeklyAvailabilityUncheckedUpdateManyWithoutMentorProfileInput>
+  }
+
+  export type WeeklyAvailabilityScalarWhereInput = {
+    AND?: WeeklyAvailabilityScalarWhereInput | WeeklyAvailabilityScalarWhereInput[]
+    OR?: WeeklyAvailabilityScalarWhereInput[]
+    NOT?: WeeklyAvailabilityScalarWhereInput | WeeklyAvailabilityScalarWhereInput[]
+    id?: StringFilter<"WeeklyAvailability"> | string
+    mentorProfileId?: StringFilter<"WeeklyAvailability"> | string
+    dayOfWeek?: EnumDayOfWeekFilter<"WeeklyAvailability"> | $Enums.DayOfWeek
+    createdAt?: DateTimeFilter<"WeeklyAvailability"> | Date | string
+    updatedAt?: DateTimeFilter<"WeeklyAvailability"> | Date | string
+  }
+
+  export type MentorProfileCreateWithoutServicesInput = {
+    id?: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    bio: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    profilePhotoUrl?: string | null
+    collegeDocumentUrl?: string | null
+    isVerified?: boolean
+    approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMentorProfileInput
+    availability?: WeeklyAvailabilityCreateNestedManyWithoutMentorProfileInput
+  }
+
+  export type MentorProfileUncheckedCreateWithoutServicesInput = {
+    id?: string
+    userId: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    bio: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    profilePhotoUrl?: string | null
+    collegeDocumentUrl?: string | null
+    isVerified?: boolean
+    approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    availability?: WeeklyAvailabilityUncheckedCreateNestedManyWithoutMentorProfileInput
+  }
+
+  export type MentorProfileCreateOrConnectWithoutServicesInput = {
+    where: MentorProfileWhereUniqueInput
+    create: XOR<MentorProfileCreateWithoutServicesInput, MentorProfileUncheckedCreateWithoutServicesInput>
+  }
+
+  export type MentorProfileUpsertWithoutServicesInput = {
+    update: XOR<MentorProfileUpdateWithoutServicesInput, MentorProfileUncheckedUpdateWithoutServicesInput>
+    create: XOR<MentorProfileCreateWithoutServicesInput, MentorProfileUncheckedCreateWithoutServicesInput>
+    where?: MentorProfileWhereInput
+  }
+
+  export type MentorProfileUpdateToOneWithWhereWithoutServicesInput = {
+    where?: MentorProfileWhereInput
+    data: XOR<MentorProfileUpdateWithoutServicesInput, MentorProfileUncheckedUpdateWithoutServicesInput>
+  }
+
+  export type MentorProfileUpdateWithoutServicesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMentorProfileNestedInput
+    availability?: WeeklyAvailabilityUpdateManyWithoutMentorProfileNestedInput
+  }
+
+  export type MentorProfileUncheckedUpdateWithoutServicesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    availability?: WeeklyAvailabilityUncheckedUpdateManyWithoutMentorProfileNestedInput
+  }
+
+  export type MentorProfileCreateWithoutAvailabilityInput = {
+    id?: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    bio: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    profilePhotoUrl?: string | null
+    collegeDocumentUrl?: string | null
+    isVerified?: boolean
+    approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMentorProfileInput
+    services?: MentorServiceCreateNestedManyWithoutMentorProfileInput
+  }
+
+  export type MentorProfileUncheckedCreateWithoutAvailabilityInput = {
+    id?: string
+    userId: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    bio: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    profilePhotoUrl?: string | null
+    collegeDocumentUrl?: string | null
+    isVerified?: boolean
+    approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    services?: MentorServiceUncheckedCreateNestedManyWithoutMentorProfileInput
+  }
+
+  export type MentorProfileCreateOrConnectWithoutAvailabilityInput = {
+    where: MentorProfileWhereUniqueInput
+    create: XOR<MentorProfileCreateWithoutAvailabilityInput, MentorProfileUncheckedCreateWithoutAvailabilityInput>
+  }
+
+  export type TimeSlotCreateWithoutWeeklyAvailabilityInput = {
+    id?: string
+    startTime: string
+    endTime: string
+  }
+
+  export type TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput = {
+    id?: string
+    startTime: string
+    endTime: string
+  }
+
+  export type TimeSlotCreateOrConnectWithoutWeeklyAvailabilityInput = {
+    where: TimeSlotWhereUniqueInput
+    create: XOR<TimeSlotCreateWithoutWeeklyAvailabilityInput, TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput>
+  }
+
+  export type TimeSlotCreateManyWeeklyAvailabilityInputEnvelope = {
+    data: TimeSlotCreateManyWeeklyAvailabilityInput | TimeSlotCreateManyWeeklyAvailabilityInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MentorProfileUpsertWithoutAvailabilityInput = {
+    update: XOR<MentorProfileUpdateWithoutAvailabilityInput, MentorProfileUncheckedUpdateWithoutAvailabilityInput>
+    create: XOR<MentorProfileCreateWithoutAvailabilityInput, MentorProfileUncheckedCreateWithoutAvailabilityInput>
+    where?: MentorProfileWhereInput
+  }
+
+  export type MentorProfileUpdateToOneWithWhereWithoutAvailabilityInput = {
+    where?: MentorProfileWhereInput
+    data: XOR<MentorProfileUpdateWithoutAvailabilityInput, MentorProfileUncheckedUpdateWithoutAvailabilityInput>
+  }
+
+  export type MentorProfileUpdateWithoutAvailabilityInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMentorProfileNestedInput
+    services?: MentorServiceUpdateManyWithoutMentorProfileNestedInput
+  }
+
+  export type MentorProfileUncheckedUpdateWithoutAvailabilityInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhotoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    services?: MentorServiceUncheckedUpdateManyWithoutMentorProfileNestedInput
+  }
+
+  export type TimeSlotUpsertWithWhereUniqueWithoutWeeklyAvailabilityInput = {
+    where: TimeSlotWhereUniqueInput
+    update: XOR<TimeSlotUpdateWithoutWeeklyAvailabilityInput, TimeSlotUncheckedUpdateWithoutWeeklyAvailabilityInput>
+    create: XOR<TimeSlotCreateWithoutWeeklyAvailabilityInput, TimeSlotUncheckedCreateWithoutWeeklyAvailabilityInput>
+  }
+
+  export type TimeSlotUpdateWithWhereUniqueWithoutWeeklyAvailabilityInput = {
+    where: TimeSlotWhereUniqueInput
+    data: XOR<TimeSlotUpdateWithoutWeeklyAvailabilityInput, TimeSlotUncheckedUpdateWithoutWeeklyAvailabilityInput>
+  }
+
+  export type TimeSlotUpdateManyWithWhereWithoutWeeklyAvailabilityInput = {
+    where: TimeSlotScalarWhereInput
+    data: XOR<TimeSlotUpdateManyMutationInput, TimeSlotUncheckedUpdateManyWithoutWeeklyAvailabilityInput>
+  }
+
+  export type TimeSlotScalarWhereInput = {
+    AND?: TimeSlotScalarWhereInput | TimeSlotScalarWhereInput[]
+    OR?: TimeSlotScalarWhereInput[]
+    NOT?: TimeSlotScalarWhereInput | TimeSlotScalarWhereInput[]
+    id?: StringFilter<"TimeSlot"> | string
+    weeklyAvailabilityId?: StringFilter<"TimeSlot"> | string
+    startTime?: StringFilter<"TimeSlot"> | string
+    endTime?: StringFilter<"TimeSlot"> | string
+  }
+
+  export type WeeklyAvailabilityCreateWithoutTimeSlotsInput = {
+    id?: string
+    dayOfWeek: $Enums.DayOfWeek
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorProfile: MentorProfileCreateNestedOneWithoutAvailabilityInput
+  }
+
+  export type WeeklyAvailabilityUncheckedCreateWithoutTimeSlotsInput = {
+    id?: string
+    mentorProfileId: string
+    dayOfWeek: $Enums.DayOfWeek
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WeeklyAvailabilityCreateOrConnectWithoutTimeSlotsInput = {
+    where: WeeklyAvailabilityWhereUniqueInput
+    create: XOR<WeeklyAvailabilityCreateWithoutTimeSlotsInput, WeeklyAvailabilityUncheckedCreateWithoutTimeSlotsInput>
+  }
+
+  export type WeeklyAvailabilityUpsertWithoutTimeSlotsInput = {
+    update: XOR<WeeklyAvailabilityUpdateWithoutTimeSlotsInput, WeeklyAvailabilityUncheckedUpdateWithoutTimeSlotsInput>
+    create: XOR<WeeklyAvailabilityCreateWithoutTimeSlotsInput, WeeklyAvailabilityUncheckedCreateWithoutTimeSlotsInput>
+    where?: WeeklyAvailabilityWhereInput
+  }
+
+  export type WeeklyAvailabilityUpdateToOneWithWhereWithoutTimeSlotsInput = {
+    where?: WeeklyAvailabilityWhereInput
+    data: XOR<WeeklyAvailabilityUpdateWithoutTimeSlotsInput, WeeklyAvailabilityUncheckedUpdateWithoutTimeSlotsInput>
+  }
+
+  export type WeeklyAvailabilityUpdateWithoutTimeSlotsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayOfWeek?: EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutAvailabilityNestedInput
+  }
+
+  export type WeeklyAvailabilityUncheckedUpdateWithoutTimeSlotsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    dayOfWeek?: EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorServiceCreateManyMentorProfileInput = {
+    id?: string
+    serviceType: $Enums.MentorServiceType
+    pricePerSession: number
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WeeklyAvailabilityCreateManyMentorProfileInput = {
+    id?: string
+    dayOfWeek: $Enums.DayOfWeek
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorServiceUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceType?: EnumMentorServiceTypeFieldUpdateOperationsInput | $Enums.MentorServiceType
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorServiceUncheckedUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceType?: EnumMentorServiceTypeFieldUpdateOperationsInput | $Enums.MentorServiceType
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorServiceUncheckedUpdateManyWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    serviceType?: EnumMentorServiceTypeFieldUpdateOperationsInput | $Enums.MentorServiceType
+    pricePerSession?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WeeklyAvailabilityUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayOfWeek?: EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    timeSlots?: TimeSlotUpdateManyWithoutWeeklyAvailabilityNestedInput
+  }
+
+  export type WeeklyAvailabilityUncheckedUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayOfWeek?: EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    timeSlots?: TimeSlotUncheckedUpdateManyWithoutWeeklyAvailabilityNestedInput
+  }
+
+  export type WeeklyAvailabilityUncheckedUpdateManyWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayOfWeek?: EnumDayOfWeekFieldUpdateOperationsInput | $Enums.DayOfWeek
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TimeSlotCreateManyWeeklyAvailabilityInput = {
+    id?: string
+    startTime: string
+    endTime: string
+  }
+
+  export type TimeSlotUpdateWithoutWeeklyAvailabilityInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TimeSlotUncheckedUpdateWithoutWeeklyAvailabilityInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TimeSlotUncheckedUpdateManyWithoutWeeklyAvailabilityInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+  }
+
 
 
   /**
    * Aliases for legacy arg types
    */
+    /**
+     * @deprecated Use MentorProfileCountOutputTypeDefaultArgs instead
+     */
+    export type MentorProfileCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorProfileCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use WeeklyAvailabilityCountOutputTypeDefaultArgs instead
+     */
+    export type WeeklyAvailabilityCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = WeeklyAvailabilityCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use UserDefaultArgs instead
      */
@@ -6442,6 +11017,18 @@ export namespace Prisma {
      * @deprecated Use MentorProfileDefaultArgs instead
      */
     export type MentorProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorProfileDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use MentorServiceDefaultArgs instead
+     */
+    export type MentorServiceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorServiceDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use WeeklyAvailabilityDefaultArgs instead
+     */
+    export type WeeklyAvailabilityArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = WeeklyAvailabilityDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use TimeSlotDefaultArgs instead
+     */
+    export type TimeSlotArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TimeSlotDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

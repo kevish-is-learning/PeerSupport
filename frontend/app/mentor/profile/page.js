@@ -23,7 +23,7 @@ import {
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "../../../store/useAuthStore";
-import { mentorProfileApi, authApi, resolveUploadUrl } from "../../../lib/api";
+import { mentorProfileApi, mentorServiceApi, authApi, resolveUploadUrl } from "../../../lib/api";
 import { toast } from "sonner";
 
 const EXPERTISE_OPTIONS = [
@@ -56,24 +56,10 @@ const IIM_SCHOOLS = [
   "Other",
 ];
 
-const SERVICES_OPTIONS = [
-  "SoP Review / Discussion",
-  "Resume Curation / Review",
-  "Mock Interview",
-  "WAT and GD Preparation",
-  "Know Your College",
-  "One-on-one Connect",
-];
+// Service types are fetched from the backend — no hardcoding.
 
-const DAYS = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
+const DAYS_ORDER = ["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"];
+const DAY_LABELS = {MONDAY:"Monday",TUESDAY:"Tuesday",WEDNESDAY:"Wednesday",THURSDAY:"Thursday",FRIDAY:"Friday",SATURDAY:"Saturday",SUNDAY:"Sunday"};
 
 const SERVICE_PALETTES = [
   { text: "text-[#5061E4]", bg: "bg-[#EEF0FF]", border: "border-[#5061E4]" },
@@ -155,6 +141,9 @@ export default function MentorProfilePage() {
   const [editingSection, setEditingSection] = useState(null); // 'personal'|'services'|'pricing'
   const [saving, setSaving] = useState(false);
 
+  // Service types catalogue from backend
+  const [serviceTypeCatalogue, setServiceTypeCatalogue] = useState([]);
+
   // Wizard state
   const [wizardStep, setWizardStep] = useState(0);
   const [wizardPricing, setWizardPricing] = useState({});
@@ -173,10 +162,10 @@ export default function MentorProfilePage() {
     workExpRole: "",
   });
 
-  // Services form
+  // Services form — stores array of { serviceType, pricePerSession }
   const [servicesForm, setServicesForm] = useState([]);
 
-  // Pricing form
+  // Pricing form — keyed by serviceType enum value
   const [pricingForm, setPricingForm] = useState({});
 
   const loadProfile = async () => {
@@ -187,6 +176,12 @@ export default function MentorProfilePage() {
         setProfile(p);
         const pg = (p.pgProfile || "").split("|");
         const we = (p.workExperience || "").split("|");
+        // Services are now normalized objects
+        setServicesForm((p.services || []).map((s) => s.serviceType));
+        const pf = {};
+        (p.services || []).forEach((s) => { pf[s.serviceType] = s.pricePerSession; });
+        setPricingForm(pf);
+
         setPersonalForm({
           fullName: p.name || "",
           contactNumber: p.contactNumber || "",
@@ -198,8 +193,7 @@ export default function MentorProfilePage() {
           workExpCompany: we[1] || "",
           workExpRole: we[2] || "",
         });
-        setServicesForm(p.servicesOffered || []);
-        setPricingForm(p.servicePricing || {});
+        // Already set above from normalized p.services
       }
     } catch {
       toast.error("Failed to load profile.");
@@ -208,13 +202,19 @@ export default function MentorProfilePage() {
     }
   };
 
+  // Fetch service types catalogue from backend
   useEffect(() => {
+    mentorServiceApi.getTypes().then((res) => {
+      setServiceTypeCatalogue(res.data?.types || []);
+    }).catch(() => {});
     loadProfile();
   }, []);
 
   useEffect(() => {
-    if (profile?.servicePricing) {
-      setWizardPricing(profile.servicePricing);
+    if (profile?.services) {
+      const wp = {};
+      profile.services.filter((s) => !s.pricePerSession || s.pricePerSession <= 0).forEach((s) => { wp[s.serviceType] = ""; });
+      setWizardPricing(wp);
     }
   }, [profile]);
 
@@ -250,9 +250,6 @@ export default function MentorProfilePage() {
         expertiseTags: personalForm.expertiseTagsArr,
         pgProfile: newPgProfile,
         workExperience: newWorkExperience,
-        servicesOffered: profile?.servicesOffered || [],
-        servicePricing: profile?.servicePricing || {},
-        weeklyAvailability: profile?.weeklyAvailability || {},
       });
       const updated = { ...res.data?.profile, name: personalForm.fullName };
       setProfile(updated);
@@ -265,25 +262,44 @@ export default function MentorProfilePage() {
     }
   };
 
-  const saveServices = () =>
-    saveSection({
-      contactNumber: profile.contactNumber,
-      bio: profile.bio,
-      servicesOffered: servicesForm,
-      expertiseTags: profile.expertiseTags || [],
-      servicePricing: profile?.servicePricing || {},
-      weeklyAvailability: profile?.weeklyAvailability || {},
-    });
+  const saveServices = async () => {
+    setSaving(true);
+    try {
+      // Build services payload from selected types + existing pricing
+      const svcPayload = servicesForm.map((st) => ({
+        serviceType: st,
+        pricePerSession: pricingForm[st] || 0,
+        isActive: true,
+      }));
+      await mentorServiceApi.upsert(svcPayload);
+      await loadProfile();
+      toast.success("Services saved!");
+      setEditingSection(null);
+    } catch (e) {
+      toast.error(e.message || "Failed to save services.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  const savePricing = () =>
-    saveSection({
-      contactNumber: profile.contactNumber,
-      bio: profile.bio,
-      servicesOffered: profile.servicesOffered || [],
-      expertiseTags: profile.expertiseTags || [],
-      servicePricing: pricingForm,
-      weeklyAvailability: profile?.weeklyAvailability || {},
-    });
+  const savePricing = async () => {
+    setSaving(true);
+    try {
+      const svcPayload = (profile?.services || []).map((s) => ({
+        serviceType: s.serviceType,
+        pricePerSession: pricingForm[s.serviceType] || 0,
+        isActive: true,
+      }));
+      await mentorServiceApi.upsert(svcPayload);
+      await loadProfile();
+      toast.success("Pricing saved!");
+      setEditingSection(null);
+    } catch (e) {
+      toast.error(e.message || "Failed to save pricing.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const toggleService = (s) =>
     setServicesForm((prev) =>
@@ -314,21 +330,8 @@ export default function MentorProfilePage() {
     if (profile?.expertiseTags?.length) {
       formData.append("expertiseTags", JSON.stringify(profile.expertiseTags));
     }
-    if (profile?.servicesOffered?.length) {
-      formData.append(
-        "servicesOffered",
-        JSON.stringify(profile.servicesOffered),
-      );
-    }
-    if (profile?.servicePricing) {
-      formData.append("servicePricing", JSON.stringify(profile.servicePricing));
-    }
-    if (profile?.weeklyAvailability) {
-      formData.append(
-        "weeklyAvailability",
-        JSON.stringify(profile.weeklyAvailability),
-      );
-    }
+    // Services, pricing, and availability are now managed by their own APIs
+    // No need to send them when uploading a photo
 
     try {
       setSaving(true);
@@ -345,27 +348,24 @@ export default function MentorProfilePage() {
     }
   };
 
-  // Derived flags
-  const services = profile?.servicesOffered || [];
-  const pricing = profile?.servicePricing || {};
-  const availability = profile?.weeklyAvailability || {};
+  // Derived flags — using normalized services
+  const services = profile?.services || [];
+  const availability = profile?.availability || [];
 
-  const pricingMissing =
-    services.length > 0 && services.some((s) => !pricing[s]);
-  const availabilityMissing =
-    services.length > 0 && Object.keys(availability).length === 0;
+  const pricingMissing = services.length > 0 && services.some((s) => !s.pricePerSession || s.pricePerSession <= 0);
+  const availabilityMissing = services.length > 0 && availability.length === 0;
 
   // Count availability stats
   const availDays = new Set();
-  const availSlots = [];
-  Object.values(availability).forEach((svcDays) => {
-    Object.entries(svcDays).forEach(([day, slots]) => {
-      if (slots.length > 0) availDays.add(day);
-      availSlots.push(...slots);
-    });
+  let availSlotsCount = 0;
+  availability.forEach((dayEntry) => {
+    if (dayEntry.timeSlots?.length > 0) {
+      availDays.add(dayEntry.dayOfWeek);
+      availSlotsCount += dayEntry.timeSlots.length;
+    }
   });
 
-  const missingPricingServices = services.filter((s) => !pricing[s]);
+  const missingPricingServices = services.filter((s) => !s.pricePerSession || s.pricePerSession <= 0);
   const showPricingWizard = !skippedWizard && missingPricingServices.length > 0;
 
   const handleWizardNext = async () => {
@@ -375,11 +375,13 @@ export default function MentorProfilePage() {
       // Final step, save all
       setSaving(true);
       try {
-        const res = await mentorProfileApi.update({
-          ...profile,
-          servicePricing: { ...profile.servicePricing, ...wizardPricing },
-        });
-        setProfile(res.data?.profile);
+        const svcPayload = (profile?.services || []).map((s) => ({
+          serviceType: s.serviceType,
+          pricePerSession: wizardPricing[s.serviceType] || s.pricePerSession || 0,
+          isActive: true,
+        }));
+        await mentorServiceApi.upsert(svcPayload);
+        await loadProfile();
         toast.success("Pricing setup complete!");
       } catch (err) {
         toast.error("Failed to save pricing");
@@ -425,7 +427,7 @@ export default function MentorProfilePage() {
 
             <div className="text-center mb-8">
               <h3 className="text-2xl font-black text-[#111] mb-2">
-                {missingPricingServices[wizardStep]}
+                {missingPricingServices[wizardStep]?.label}
               </h3>
               <p className="text-gray-500 font-medium">
                 How much would you like to charge per session?
@@ -443,12 +445,12 @@ export default function MentorProfilePage() {
                 <input
                   type="number"
                   value={
-                    wizardPricing[missingPricingServices[wizardStep]] || ""
+                    wizardPricing[missingPricingServices[wizardStep]?.serviceType] || ""
                   }
                   onChange={(e) =>
                     setWizardPricing((prev) => ({
                       ...prev,
-                      [missingPricingServices[wizardStep]]: e.target.value,
+                      [missingPricingServices[wizardStep]?.serviceType]: e.target.value === "" ? "" : Number(e.target.value),
                     }))
                   }
                   onKeyDown={(e) => e.key === "Enter" && handleWizardNext()}
@@ -461,10 +463,10 @@ export default function MentorProfilePage() {
             <button
               onClick={handleWizardNext}
               disabled={
-                saving || !wizardPricing[missingPricingServices[wizardStep]]
+                saving || !wizardPricing[missingPricingServices[wizardStep]?.serviceType]
               }
               className={`w-full rounded-2xl border-[3px] border-black py-5 text-lg font-black transition-all shadow-[4px_4px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center justify-center gap-2 ${
-                wizardPricing[missingPricingServices[wizardStep]]
+                wizardPricing[missingPricingServices[wizardStep]?.serviceType]
                   ? "bg-[#5061E4] text-white hover:opacity-90"
                   : "bg-gray-100 text-gray-400 cursor-not-allowed"
               }`}
@@ -952,7 +954,7 @@ export default function MentorProfilePage() {
                     <SaveCancelBtns
                       onSave={saveServices}
                       onCancel={() => {
-                        setServicesForm(profile?.servicesOffered || []);
+                        setServicesForm((profile?.services || []).map((s) => s.serviceType));
                         setEditingSection(null);
                       }}
                       saving={saving}
@@ -971,12 +973,12 @@ export default function MentorProfilePage() {
                         Select the services you want to offer to mentees
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {SERVICES_OPTIONS.map((s) => {
-                          const sel = servicesForm.includes(s);
+                        {serviceTypeCatalogue.map((svc) => {
+                          const sel = servicesForm.includes(svc.value);
                           return (
                             <button
-                              key={s}
-                              onClick={() => toggleService(s)}
+                              key={svc.value}
+                              onClick={() => toggleService(svc.value)}
                               type="button"
                               className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 font-bold text-sm transition-all text-left ${sel ? "bg-[#5061E4] text-white border-[#5061E4]" : "bg-white text-gray-700 border-gray-300 hover:border-black"}`}
                             >
@@ -987,7 +989,7 @@ export default function MentorProfilePage() {
                                   <CheckCircle className="w-3.5 h-3.5 text-[#5061E4]" />
                                 )}
                               </span>
-                              {s}
+                              {svc.label}
                             </button>
                           );
                         })}
@@ -1007,7 +1009,7 @@ export default function MentorProfilePage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {services.map((s) => (
                         <div
-                          key={s}
+                          key={s.serviceType}
                           className="flex items-center gap-2 rounded-xl border-2 border-[#22C55E] bg-[#F0FDF4] px-4 py-3"
                         >
                           <CheckCircle
@@ -1015,7 +1017,7 @@ export default function MentorProfilePage() {
                             className="text-[#22C55E] shrink-0"
                           />
                           <span className="font-semibold text-sm text-gray-800">
-                            {s}
+                            {s.label}
                           </span>
                         </div>
                       ))}
@@ -1031,7 +1033,9 @@ export default function MentorProfilePage() {
                     <SaveCancelBtns
                       onSave={savePricing}
                       onCancel={() => {
-                        setPricingForm(profile?.servicePricing || {});
+                        const pf = {};
+                        (profile?.services || []).forEach((s) => { pf[s.serviceType] = s.pricePerSession; });
+                        setPricingForm(pf);
                         setEditingSection(null);
                       }}
                       saving={saving}
@@ -1039,7 +1043,9 @@ export default function MentorProfilePage() {
                   ) : services.length > 0 ? (
                     <EditBtn
                       onClick={() => {
-                        setPricingForm(profile?.servicePricing || {});
+                        const pf = {};
+                        (profile?.services || []).forEach((s) => { pf[s.serviceType] = s.pricePerSession; });
+                        setPricingForm(pf);
                         setEditingSection("pricing");
                       }}
                       label="Edit Pricing"
@@ -1074,11 +1080,11 @@ export default function MentorProfilePage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {services.map((s) => (
                           <div
-                            key={s}
+                            key={s.serviceType}
                             className="rounded-xl border-2 border-gray-200 p-4"
                           >
                             <p className="text-xs font-bold text-gray-500 mb-2">
-                              {s}
+                              {s.label}
                             </p>
                             {editingSection === "pricing" ? (
                               <div className="relative">
@@ -1088,11 +1094,11 @@ export default function MentorProfilePage() {
                                 <input
                                   type="number"
                                   min="0"
-                                  value={pricingForm[s] ?? ""}
+                                  value={pricingForm[s.serviceType] ?? ""}
                                   onChange={(e) =>
                                     setPricingForm((p) => ({
                                       ...p,
-                                      [s]:
+                                      [s.serviceType]:
                                         e.target.value === ""
                                           ? ""
                                           : Number(e.target.value),
@@ -1104,21 +1110,14 @@ export default function MentorProfilePage() {
                               </div>
                             ) : (
                               <p
-                                className={`text-lg font-extrabold ${pricing[s] ? "text-black" : "text-gray-400"}`}
+                                className={`text-lg font-extrabold ${s.pricePerSession ? "text-black" : "text-gray-400"}`}
                               >
-                                {pricing[s] ? `₹${pricing[s]}` : "Not set"}
+                                {s.pricePerSession ? `₹${s.pricePerSession}` : "Not set"}
                               </p>
                             )}
                           </div>
                         ))}
                       </div>
-                      {editingSection === "pricing" && (
-                        <p className="mt-4 flex items-center gap-1.5 text-xs text-amber-600">
-                          <AlertCircle size={12} /> Platform fee of 10% will be
-                          deducted from your earnings. Set competitive pricing
-                          to attract more mentees.
-                        </p>
-                      )}
                     </>
                   )}
                 </div>
@@ -1130,7 +1129,7 @@ export default function MentorProfilePage() {
                   {services.length > 0 &&
                     (() => {
                       const pricedCount = services.filter(
-                        (s) => pricing[s],
+                        (s) => s.pricePerSession > 0,
                       ).length;
                       if (pricedCount === 0) {
                         return (
@@ -1154,7 +1153,7 @@ export default function MentorProfilePage() {
                     <p className="text-sm text-gray-400 text-center py-4">
                       Add services first to set availability.
                     </p>
-                  ) : Object.keys(availability).length === 0 ? (
+                  ) : availability.length === 0 ? (
                     <div className="flex flex-col items-center py-8 text-center">
                       <Calendar size={36} className="text-gray-300 mb-2" />
                       <p className="text-sm font-bold text-gray-400">Not set</p>
@@ -1176,7 +1175,7 @@ export default function MentorProfilePage() {
                         </div>
                         <div className="rounded-xl border border-[#F59E0B] bg-[#FFF7ED] p-4">
                           <p className="text-2xl font-extrabold text-[#F59E0B]">
-                            {availSlots.length}
+                            {availSlotsCount}
                           </p>
                           <p className="text-xs text-gray-500 font-semibold mt-1">
                             Total Slots
@@ -1184,101 +1183,53 @@ export default function MentorProfilePage() {
                         </div>
                         <div className="rounded-xl border border-[#F97316] bg-[#FFF3EE] p-4">
                           <p className="text-2xl font-extrabold text-[#F97316]">
-                            {
-                              Object.keys(availability).filter((svc) =>
-                                Object.values(availability[svc]).some(
-                                  (s) => s.length > 0,
-                                ),
-                              ).length
-                            }
+                            {services.length}
                           </p>
                           <p className="text-xs text-gray-500 font-semibold mt-1">
-                            Services
+                            Active Services
                           </p>
                         </div>
                       </div>
 
                       <div className="space-y-4">
-                        {DAYS.map((day) => {
-                          const servicesForDay = [];
-                          Object.entries(availability).forEach(
-                            ([svc, days]) => {
-                              if (days[day] && days[day].length > 0) {
-                                servicesForDay.push({ svc, slots: days[day] });
-                              }
-                            },
-                          );
-                          if (servicesForDay.length === 0) return null;
-
-                          const totalSlotsForDay = servicesForDay.reduce(
-                            (acc, curr) => acc + curr.slots.length,
-                            0,
-                          );
+                        {availability.map((dayEntry) => {
+                          const slots = dayEntry.timeSlots || [];
+                          if (slots.length === 0) return null;
 
                           return (
                             <div
-                              key={day}
+                              key={dayEntry.dayOfWeek}
                               className="rounded-2xl border border-black bg-[#FAF9F6] overflow-hidden"
                             >
                               <div className="px-5 py-4 border-b border-black flex justify-between items-start">
                                 <div>
                                   <h3 className="text-lg font-extrabold text-black">
-                                    {day}
+                                    {dayEntry.dayLabel}
                                   </h3>
                                   <p className="text-xs text-gray-500 font-medium mt-0.5">
-                                    {servicesForDay.length} service
-                                    {servicesForDay.length !== 1 ? "s" : ""} •{" "}
-                                    {totalSlotsForDay} slot
-                                    {totalSlotsForDay !== 1 ? "s" : ""}
+                                    {slots.length} slot
+                                    {slots.length !== 1 ? "s" : ""}
                                   </p>
                                 </div>
                                 <Calendar size={20} className="text-gray-400" />
                               </div>
                               <div className="p-5 space-y-3 bg-white">
-                                {servicesForDay.map((item) => {
-                                  const svcIdx = SERVICES_OPTIONS.indexOf(
-                                    item.svc,
-                                  );
-                                  const palIdx =
-                                    svcIdx >= 0
-                                      ? svcIdx % SERVICE_PALETTES.length
-                                      : 0;
-                                  const pal = SERVICE_PALETTES[palIdx];
-                                  return (
+                                <div className="flex flex-wrap gap-2">
+                                  {slots.map((sl, i) => (
                                     <div
-                                      key={item.svc}
-                                      className={`rounded-xl border ${pal.border} ${pal.bg} p-4`}
+                                      key={i}
+                                      className="flex items-center gap-1.5 rounded-lg border border-black bg-white px-3 py-1.5"
                                     >
-                                      <div className="flex justify-between items-center mb-3">
-                                        <h4 className="font-bold text-sm text-black">
-                                          {item.svc}
-                                        </h4>
-                                        <span
-                                          className={`text-xs font-bold ${pal.text}`}
-                                        >
-                                          {item.slots.length} slot
-                                          {item.slots.length !== 1 ? "s" : ""}
-                                        </span>
-                                      </div>
-                                      <div className="flex flex-wrap gap-2">
-                                        {item.slots.map((sl, i) => (
-                                          <div
-                                            key={i}
-                                            className="flex items-center gap-1.5 rounded-lg border border-black bg-white px-3 py-1.5"
-                                          >
-                                            <Clock
-                                              size={12}
-                                              className="text-gray-500"
-                                            />
-                                            <span className="text-xs font-semibold text-black">
-                                              {sl.start} - {sl.end}
-                                            </span>
-                                          </div>
-                                        ))}
-                                      </div>
+                                      <Clock
+                                        size={12}
+                                        className="text-gray-500"
+                                      />
+                                      <span className="text-xs font-semibold text-black">
+                                        {sl.startTime} - {sl.endTime}
+                                      </span>
                                     </div>
-                                  );
-                                })}
+                                  ))}
+                                </div>
                               </div>
                             </div>
                           );
