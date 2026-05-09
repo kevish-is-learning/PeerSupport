@@ -1,68 +1,87 @@
 "use client";
 
-import { useState } from "react";
-import { IndianRupee, Wallet, Clock, CheckCircle, Info, Search, ArrowDownLeft } from "lucide-react";
-
-// Mock Data
-const statsCards = [
-  {
-    label: "Total Earnings",
-    value: "₹12,200",
-    subtitle: "",
-    icon: IndianRupee,
-    shadowColor: "#5061E4",
-    iconColor: "text-[#5061E4]",
-  },
-  {
-    label: "Available for Payout",
-    value: "₹10,370",
-    subtitle: "After 15% platform fee",
-    icon: Wallet,
-    shadowColor: "#F59E0B",
-    iconColor: "text-[#F59E0B]",
-  },
-  {
-    label: "Pending Amount",
-    value: "₹1,500",
-    subtitle: "",
-    icon: Clock,
-    shadowColor: "#F97316",
-    iconColor: "text-[#F97316]",
-  },
-  {
-    label: "Completed Transactions",
-    value: "8",
-    subtitle: "",
-    icon: CheckCircle,
-    shadowColor: "#5061E4",
-    iconColor: "text-[#5061E4]",
-  },
-];
-
-const mockTransactions = [
-  {
-    id: "TXN20264180001",
-    mentee: "Priya Sharma",
-    session: "Case Study Practice - Market Entry",
-    date: "18 Apr 2026, 10:30 am",
-    amount: "+₹1,500",
-    status: "completed",
-  },
-  {
-    id: "TXN20264170002",
-    mentee: "Rahul Verma",
-    session: "Resume Review Session",
-    date: "17 Apr 2026, 02:00 pm",
-    amount: "+₹1,200",
-    status: "completed",
-  },
-];
-
-const filterTabs = ["All", "Completed", "Pending", "Failed"];
+import { useState, useEffect } from "react";
+import { IndianRupee, Wallet, Clock, CheckCircle, Info, Search, ArrowDownLeft, Loader2 } from "lucide-react";
+import { mentorBookingApi } from "../../../lib/api";
+import { toast } from "sonner";
+import { format } from "date-fns";
 
 export default function MentorPaymentsPage() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const fetchEarnings = async () => {
+      try {
+        const res = await mentorBookingApi.getEarnings();
+        setData(res.data?.earnings);
+      } catch (e) {
+        toast.error("Failed to load earnings data");
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEarnings();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-[#FFF7F5]">
+        <Loader2 className="animate-spin text-[#5061E4]" size={36} />
+      </div>
+    );
+  }
+
+  const statsCards = [
+    {
+      label: "Total Earnings",
+      value: `₹${data?.totalEarnings?.toLocaleString() || 0}`,
+      subtitle: "",
+      icon: IndianRupee,
+      shadowColor: "#5061E4",
+      iconColor: "text-[#5061E4]",
+    },
+    {
+      label: "Available for Payout",
+      value: `₹${data?.availableForPayout?.toLocaleString() || 0}`,
+      subtitle: "After 15% platform fee",
+      icon: Wallet,
+      shadowColor: "#F59E0B",
+      iconColor: "text-[#F59E0B]",
+    },
+    {
+      label: "Pending Amount",
+      value: `₹${data?.pendingAmount?.toLocaleString() || 0}`,
+      subtitle: "",
+      icon: Clock,
+      shadowColor: "#F97316",
+      iconColor: "text-[#F97316]",
+    },
+    {
+      label: "Completed Transactions",
+      value: data?.completedTransactions || 0,
+      subtitle: "",
+      icon: CheckCircle,
+      shadowColor: "#5061E4",
+      iconColor: "text-[#5061E4]",
+    },
+  ];
+
+  const filterTabs = ["All", "SUCCESS", "PENDING", "FAILED"];
+
+  const filteredTransactions = (data?.transactions || []).filter((txn) => {
+    const matchesSearch = 
+      txn.mentee.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      txn.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      txn.transactionRef.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesTab = activeTab === "All" || txn.status === activeTab;
+    
+    return matchesSearch && matchesTab;
+  });
 
   return (
     <div className="w-full h-full overflow-y-auto p-8 lg:p-12 flex flex-col gap-8 bg-[#FFF7F5]">
@@ -147,7 +166,7 @@ export default function MentorPaymentsPage() {
                       : "bg-white text-black hover:bg-gray-50 cursor-pointer"
                   }`}
                 >
-                  {tab}
+                  {tab === "SUCCESS" ? "Completed" : tab.charAt(0) + tab.slice(1).toLowerCase()}
                 </button>
               ))}
             </div>
@@ -155,28 +174,39 @@ export default function MentorPaymentsPage() {
         </div>
 
         <div className="p-6 flex flex-col gap-4 bg-white rounded-b-xl border-t-0">
-          {mockTransactions.map((txn) => (
-            <article key={txn.id} className="flex flex-col sm:flex-row sm:justify-between rounded-[0.85rem] border-[3px] border-black p-5 gap-4">
-              <div className="flex gap-4 relative">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[0.55rem] border-2 border-black bg-[#FEF3C7] text-[#F59E0B]">
-                  <ArrowDownLeft size={20} strokeWidth={2.5} />
+          {filteredTransactions.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="font-bold text-gray-400 italic">No transactions found.</p>
+            </div>
+          ) : (
+            filteredTransactions.map((txn) => (
+              <article key={txn.id} className="flex flex-col sm:flex-row sm:justify-between rounded-[0.85rem] border-[3px] border-black p-5 gap-4">
+                <div className="flex gap-4 relative">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[0.55rem] border-2 border-black bg-[#FEF3C7] text-[#F59E0B]">
+                    <ArrowDownLeft size={20} strokeWidth={2.5} />
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <h3 className="font-bold text-black text-sm">{txn.mentee}</h3>
+                    <p className="text-[0.65rem] font-semibold text-gray-500 mt-1">{txn.service}</p>
+                    <p className="text-[0.65rem] font-semibold text-gray-400 mt-0.5">
+                      {format(new Date(txn.date), "dd MMM yyyy, hh:mm a")}
+                    </p>
+                    <p className="text-[0.55rem] font-bold text-gray-400 mt-4">Transaction Ref: <span className="font-extrabold">{txn.transactionRef}</span></p>
+                  </div>
                 </div>
-                <div className="flex flex-col justify-center">
-                  <h3 className="font-bold text-black text-sm">{txn.mentee}</h3>
-                  <p className="text-[0.65rem] font-semibold text-gray-500 mt-1">{txn.session}</p>
-                  <p className="text-[0.65rem] font-semibold text-gray-400 mt-0.5">{txn.date}</p>
-                  <p className="text-[0.55rem] font-bold text-gray-400 mt-4">Transaction ID: <span className="font-extrabold">{txn.id}</span></p>
+                <div className="flex flex-col sm:items-end gap-2 justify-start pt-1">
+                  <p className="text-xl font-extrabold text-[#F59E0B] tracking-tight">₹{txn.amount.toLocaleString()}</p>
+                  <div className={`flex items-center gap-1.5 rounded-full px-2 py-0.5 mt-1 w-max ${
+                    txn.status === 'SUCCESS' ? 'bg-[#22C55E]' : 
+                    txn.status === 'PENDING' ? 'bg-[#F59E0B]' : 'bg-gray-400'
+                  }`}>
+                    <CheckCircle size={10} className="text-black" />
+                    <span className="text-[0.6rem] font-bold text-black uppercase tracking-widest">{txn.status === 'SUCCESS' ? 'Completed' : txn.status}</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col sm:items-end gap-2 justify-start pt-1">
-                <p className="text-xl font-extrabold text-[#F59E0B] tracking-tight">{txn.amount}</p>
-                <div className="flex items-center gap-1.5 rounded-full bg-[#F59E0B] px-2 py-0.5 mt-1 w-max">
-                  <CheckCircle size={10} className="text-black" />
-                  <span className="text-[0.6rem] font-bold text-black uppercase tracking-widest">{txn.status}</span>
-                </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))
+          )}
         </div>
       </section>
 

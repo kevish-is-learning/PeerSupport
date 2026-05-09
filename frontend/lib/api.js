@@ -154,6 +154,23 @@ export const adminMentorApi = {
   },
 };
 
+// ─── Mentor Bookings / Mentees / Earnings ────────────────────────────────────
+
+export const mentorBookingApi = {
+  getDashboardStats() {
+    return apiRequest('/mentor-bookings/dashboard');
+  },
+  listMentees() {
+    return apiRequest('/mentor-bookings/mentees');
+  },
+  listBookingsForMentee(menteeId) {
+    return apiRequest(`/mentor-bookings/mentees/${menteeId}`);
+  },
+  getEarnings() {
+    return apiRequest('/mentor-bookings/earnings');
+  },
+};
+
 export function resolveUploadUrl(filePath) {
   if (!filePath) {
     return "";
