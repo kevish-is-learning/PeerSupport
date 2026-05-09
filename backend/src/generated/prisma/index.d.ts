@@ -3248,13 +3248,11 @@ export namespace Prisma {
   }
 
   export type MenteeProfileAvgAggregateOutputType = {
-    catScore: number | null
-    otherExamScore: number | null
+    otherMbaScore: number | null
   }
 
   export type MenteeProfileSumAggregateOutputType = {
-    catScore: number | null
-    otherExamScore: number | null
+    otherMbaScore: number | null
   }
 
   export type MenteeProfileMinAggregateOutputType = {
@@ -3263,8 +3261,7 @@ export namespace Prisma {
     username: string | null
     dateOfBirth: Date | null
     contactNumber: string | null
-    catScore: number | null
-    otherExamScore: number | null
+    otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
     expectations: string | null
@@ -3280,8 +3277,7 @@ export namespace Prisma {
     username: string | null
     dateOfBirth: Date | null
     contactNumber: string | null
-    catScore: number | null
-    otherExamScore: number | null
+    otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
     expectations: string | null
@@ -3298,8 +3294,8 @@ export namespace Prisma {
     dateOfBirth: number
     contactNumber: number
     education: number
-    catScore: number
-    otherExamScore: number
+    catHistory: number
+    otherMbaScore: number
     workExperience: number
     certifications: number
     expectations: number
@@ -3313,13 +3309,11 @@ export namespace Prisma {
 
 
   export type MenteeProfileAvgAggregateInputType = {
-    catScore?: true
-    otherExamScore?: true
+    otherMbaScore?: true
   }
 
   export type MenteeProfileSumAggregateInputType = {
-    catScore?: true
-    otherExamScore?: true
+    otherMbaScore?: true
   }
 
   export type MenteeProfileMinAggregateInputType = {
@@ -3328,8 +3322,7 @@ export namespace Prisma {
     username?: true
     dateOfBirth?: true
     contactNumber?: true
-    catScore?: true
-    otherExamScore?: true
+    otherMbaScore?: true
     workExperience?: true
     certifications?: true
     expectations?: true
@@ -3345,8 +3338,7 @@ export namespace Prisma {
     username?: true
     dateOfBirth?: true
     contactNumber?: true
-    catScore?: true
-    otherExamScore?: true
+    otherMbaScore?: true
     workExperience?: true
     certifications?: true
     expectations?: true
@@ -3363,8 +3355,8 @@ export namespace Prisma {
     dateOfBirth?: true
     contactNumber?: true
     education?: true
-    catScore?: true
-    otherExamScore?: true
+    catHistory?: true
+    otherMbaScore?: true
     workExperience?: true
     certifications?: true
     expectations?: true
@@ -3469,8 +3461,8 @@ export namespace Prisma {
     dateOfBirth: Date
     contactNumber: string
     education: JsonValue
-    catScore: number | null
-    otherExamScore: number | null
+    catHistory: JsonValue | null
+    otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
     expectations: string | null
@@ -3507,8 +3499,8 @@ export namespace Prisma {
     dateOfBirth?: boolean
     contactNumber?: boolean
     education?: boolean
-    catScore?: boolean
-    otherExamScore?: boolean
+    catHistory?: boolean
+    otherMbaScore?: boolean
     workExperience?: boolean
     certifications?: boolean
     expectations?: boolean
@@ -3527,8 +3519,8 @@ export namespace Prisma {
     dateOfBirth?: boolean
     contactNumber?: boolean
     education?: boolean
-    catScore?: boolean
-    otherExamScore?: boolean
+    catHistory?: boolean
+    otherMbaScore?: boolean
     workExperience?: boolean
     certifications?: boolean
     expectations?: boolean
@@ -3547,8 +3539,8 @@ export namespace Prisma {
     dateOfBirth?: boolean
     contactNumber?: boolean
     education?: boolean
-    catScore?: boolean
-    otherExamScore?: boolean
+    catHistory?: boolean
+    otherMbaScore?: boolean
     workExperience?: boolean
     certifications?: boolean
     expectations?: boolean
@@ -3578,8 +3570,8 @@ export namespace Prisma {
       dateOfBirth: Date
       contactNumber: string
       education: Prisma.JsonValue
-      catScore: number | null
-      otherExamScore: number | null
+      catHistory: Prisma.JsonValue | null
+      otherMbaScore: number | null
       workExperience: string | null
       certifications: string | null
       expectations: string | null
@@ -3988,8 +3980,8 @@ export namespace Prisma {
     readonly dateOfBirth: FieldRef<"MenteeProfile", 'DateTime'>
     readonly contactNumber: FieldRef<"MenteeProfile", 'String'>
     readonly education: FieldRef<"MenteeProfile", 'Json'>
-    readonly catScore: FieldRef<"MenteeProfile", 'Float'>
-    readonly otherExamScore: FieldRef<"MenteeProfile", 'Float'>
+    readonly catHistory: FieldRef<"MenteeProfile", 'Json'>
+    readonly otherMbaScore: FieldRef<"MenteeProfile", 'Float'>
     readonly workExperience: FieldRef<"MenteeProfile", 'String'>
     readonly certifications: FieldRef<"MenteeProfile", 'String'>
     readonly expectations: FieldRef<"MenteeProfile", 'String'>
@@ -14832,8 +14824,8 @@ export namespace Prisma {
     dateOfBirth: 'dateOfBirth',
     contactNumber: 'contactNumber',
     education: 'education',
-    catScore: 'catScore',
-    otherExamScore: 'otherExamScore',
+    catHistory: 'catHistory',
+    otherMbaScore: 'otherMbaScore',
     workExperience: 'workExperience',
     certifications: 'certifications',
     expectations: 'expectations',
@@ -15017,6 +15009,14 @@ export namespace Prisma {
   };
 
   export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -15353,8 +15353,8 @@ export namespace Prisma {
     dateOfBirth?: DateTimeFilter<"MenteeProfile"> | Date | string
     contactNumber?: StringFilter<"MenteeProfile"> | string
     education?: JsonFilter<"MenteeProfile">
-    catScore?: FloatNullableFilter<"MenteeProfile"> | number | null
-    otherExamScore?: FloatNullableFilter<"MenteeProfile"> | number | null
+    catHistory?: JsonNullableFilter<"MenteeProfile">
+    otherMbaScore?: FloatNullableFilter<"MenteeProfile"> | number | null
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableFilter<"MenteeProfile"> | string | null
     expectations?: StringNullableFilter<"MenteeProfile"> | string | null
@@ -15373,8 +15373,8 @@ export namespace Prisma {
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
     education?: SortOrder
-    catScore?: SortOrderInput | SortOrder
-    otherExamScore?: SortOrderInput | SortOrder
+    catHistory?: SortOrderInput | SortOrder
+    otherMbaScore?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     expectations?: SortOrderInput | SortOrder
@@ -15396,8 +15396,8 @@ export namespace Prisma {
     dateOfBirth?: DateTimeFilter<"MenteeProfile"> | Date | string
     contactNumber?: StringFilter<"MenteeProfile"> | string
     education?: JsonFilter<"MenteeProfile">
-    catScore?: FloatNullableFilter<"MenteeProfile"> | number | null
-    otherExamScore?: FloatNullableFilter<"MenteeProfile"> | number | null
+    catHistory?: JsonNullableFilter<"MenteeProfile">
+    otherMbaScore?: FloatNullableFilter<"MenteeProfile"> | number | null
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableFilter<"MenteeProfile"> | string | null
     expectations?: StringNullableFilter<"MenteeProfile"> | string | null
@@ -15416,8 +15416,8 @@ export namespace Prisma {
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
     education?: SortOrder
-    catScore?: SortOrderInput | SortOrder
-    otherExamScore?: SortOrderInput | SortOrder
+    catHistory?: SortOrderInput | SortOrder
+    otherMbaScore?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     expectations?: SortOrderInput | SortOrder
@@ -15443,8 +15443,8 @@ export namespace Prisma {
     dateOfBirth?: DateTimeWithAggregatesFilter<"MenteeProfile"> | Date | string
     contactNumber?: StringWithAggregatesFilter<"MenteeProfile"> | string
     education?: JsonWithAggregatesFilter<"MenteeProfile">
-    catScore?: FloatNullableWithAggregatesFilter<"MenteeProfile"> | number | null
-    otherExamScore?: FloatNullableWithAggregatesFilter<"MenteeProfile"> | number | null
+    catHistory?: JsonNullableWithAggregatesFilter<"MenteeProfile">
+    otherMbaScore?: FloatNullableWithAggregatesFilter<"MenteeProfile"> | number | null
     workExperience?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     expectations?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
@@ -16452,8 +16452,8 @@ export namespace Prisma {
     dateOfBirth: Date | string
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
-    catScore?: number | null
-    otherExamScore?: number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -16472,8 +16472,8 @@ export namespace Prisma {
     dateOfBirth: Date | string
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
-    catScore?: number | null
-    otherExamScore?: number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -16490,8 +16490,8 @@ export namespace Prisma {
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
-    catScore?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherExamScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16510,8 +16510,8 @@ export namespace Prisma {
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
-    catScore?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherExamScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16529,8 +16529,8 @@ export namespace Prisma {
     dateOfBirth: Date | string
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
-    catScore?: number | null
-    otherExamScore?: number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -16547,8 +16547,8 @@ export namespace Prisma {
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
-    catScore?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherExamScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16566,8 +16566,8 @@ export namespace Prisma {
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
-    catScore?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherExamScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17773,6 +17773,28 @@ export namespace Prisma {
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
+  export type JsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type FloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
@@ -17805,8 +17827,8 @@ export namespace Prisma {
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
     education?: SortOrder
-    catScore?: SortOrder
-    otherExamScore?: SortOrder
+    catHistory?: SortOrder
+    otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
     expectations?: SortOrder
@@ -17818,8 +17840,7 @@ export namespace Prisma {
   }
 
   export type MenteeProfileAvgOrderByAggregateInput = {
-    catScore?: SortOrder
-    otherExamScore?: SortOrder
+    otherMbaScore?: SortOrder
   }
 
   export type MenteeProfileMaxOrderByAggregateInput = {
@@ -17828,8 +17849,7 @@ export namespace Prisma {
     username?: SortOrder
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
-    catScore?: SortOrder
-    otherExamScore?: SortOrder
+    otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
     expectations?: SortOrder
@@ -17845,8 +17865,7 @@ export namespace Prisma {
     username?: SortOrder
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
-    catScore?: SortOrder
-    otherExamScore?: SortOrder
+    otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
     expectations?: SortOrder
@@ -17857,8 +17876,7 @@ export namespace Prisma {
   }
 
   export type MenteeProfileSumOrderByAggregateInput = {
-    catScore?: SortOrder
-    otherExamScore?: SortOrder
+    otherMbaScore?: SortOrder
   }
   export type JsonWithAggregatesFilter<$PrismaModel = never> = 
     | PatchUndefined<
@@ -17884,6 +17902,31 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedJsonFilter<$PrismaModel>
     _max?: NestedJsonFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -19804,6 +19847,28 @@ export namespace Prisma {
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
@@ -19972,8 +20037,8 @@ export namespace Prisma {
     dateOfBirth: Date | string
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
-    catScore?: number | null
-    otherExamScore?: number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -19990,8 +20055,8 @@ export namespace Prisma {
     dateOfBirth: Date | string
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
-    catScore?: number | null
-    otherExamScore?: number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: number | null
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -20169,8 +20234,8 @@ export namespace Prisma {
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
-    catScore?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherExamScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20187,8 +20252,8 @@ export namespace Prisma {
     dateOfBirth?: DateTimeFieldUpdateOperationsInput | Date | string
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
-    catScore?: NullableFloatFieldUpdateOperationsInput | number | null
-    otherExamScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    catHistory?: NullableJsonNullValueInput | InputJsonValue
+    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null

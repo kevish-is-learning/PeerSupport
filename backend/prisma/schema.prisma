@@ -129,9 +129,9 @@ model MenteeProfile {
 
   education Json
 
-  catScore Float?
+  catHistory Json?
 
-  otherExamScore Float?
+  otherMbaScore Float?
 
   workExperience String?
 
@@ -152,6 +152,7 @@ model MenteeProfile {
 
   @@index([username])
 }
+
 
 // ============================================================
 // MENTOR PROFILE

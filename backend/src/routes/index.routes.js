@@ -7,6 +7,8 @@ import mentorProfileRoutes from './mentorProfile.routes.js';
 import mentorServiceRoutes from './mentorService.routes.js';
 import mentorAvailabilityRoutes from './mentorAvailability.routes.js';
 import mentorBookingRoutes from './mentorBooking.routes.js';
+import menteeDashboardRoutes from './menteeDashboard.routes.js';
+import menteeBookingRoutes from './menteeBooking.routes.js';
 
 const router = Router();
 
@@ -29,6 +31,8 @@ router.get('/health', (_req, res) => {
 // Mount route groups
 router.use('/auth', authRoutes);
 router.use('/mentee-profile', menteeProfileRoutes);
+router.use('/mentee-dashboard', menteeDashboardRoutes);
+router.use('/mentee-bookings', menteeBookingRoutes);
 router.use('/mentor-profile', mentorProfileRoutes);
 router.use('/mentor-services', mentorServiceRoutes);
 router.use('/mentor-availability', mentorAvailabilityRoutes);

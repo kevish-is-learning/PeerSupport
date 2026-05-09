@@ -127,6 +127,7 @@ const updateSkillsetsSchema = z.preprocess(
 );
 
 export const createMenteeProfileSchema = z.object({
+  name: z.string().min(1, 'Full name is required').trim(),
   dateOfBirth: dateOfBirthSchema,
   contactNumber: contactNumberSchema,
   education: z.preprocess(
@@ -154,6 +155,7 @@ export const createMenteeProfileSchema = z.object({
 });
 
 export const updateMenteeProfileSchema = z.object({
+  name: z.string().min(1, 'Full name is required').trim().optional(),
   dateOfBirth: dateOfBirthSchema.optional(),
   contactNumber: contactNumberSchema.optional(),
   education: z.preprocess(
@@ -169,6 +171,8 @@ export const updateMenteeProfileSchema = z.object({
   otherMbaScore: otherMbaScoreSchema,
   workExperience: normalizeOptionalText,
   certifications: normalizeOptionalText,
+  expectations: normalizeOptionalText,
+  linkedInUrl: normalizeOptionalText,
   catHistory: z.preprocess(
     (value) => (typeof value === 'string' ? JSON.parse(value) : value),
     z.object({

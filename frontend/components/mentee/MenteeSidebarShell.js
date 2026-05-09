@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
+import { Home, Calendar as CalendarIcon, Search, User, LogOut } from "lucide-react";
 import useAuthStore from "../../store/useAuthStore";
 import {
-  MENTEE_NAV_ITEMS,
   getWorkspaceRouteByRole,
   normalizeMenteePath,
 } from "./menteeNavigation";
@@ -50,12 +50,12 @@ export default function MenteeSidebarShell({ children }) {
 
   const normalizedPath = normalizeMenteePath(pathname);
 
-  const activeItem = useMemo(
-    () =>
-      MENTEE_NAV_ITEMS.find((item) => normalizeMenteePath(item.href) === normalizedPath) ||
-      MENTEE_NAV_ITEMS[0],
-    [normalizedPath]
-  );
+  const NAV_ITEMS = [
+    { label: "Home", href: "/mentee/dashboard", icon: Home },
+    { label: "My Sessions", href: "/mentee/sessions", icon: CalendarIcon },
+    { label: "Explore Mentors", href: "/mentee/find-mentors", icon: Search },
+    { label: "Profile", href: "/mentee/profile", icon: User },
+  ];
 
   const onLogout = async () => {
     try {
@@ -68,10 +68,8 @@ export default function MenteeSidebarShell({ children }) {
 
   if (!hasCheckedSession || isLoading) {
     return (
-      <main className="min-h-screen bg-[#0a0c10] p-4 text-[#f7f8fb] sm:p-6 lg:p-8">
-        <div className="mx-auto flex min-h-[80vh] w-full items-center justify-center rounded-4xl border border-white/20 bg-[#10131a] px-6 py-12">
-          <p className="text-lg font-semibold">Loading mentee workspace...</p>
-        </div>
+      <main className="min-h-screen bg-[#FCF8F5] p-4 flex items-center justify-center">
+        <p className="text-lg font-bold text-gray-900">Loading mentee workspace...</p>
       </main>
     );
   }
@@ -81,56 +79,50 @@ export default function MenteeSidebarShell({ children }) {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_20%_10%,#262435_0%,#0d0f18_42%,#06080d_100%)] p-3 text-[#f5f6f8] sm:p-6">
-      <div className="mx-auto grid w-full gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-6">
-        <aside className="rounded-[1.75rem] border border-white/35 bg-[#121520] p-4 shadow-[0_14px_45px_rgba(0,0,0,0.45)] sm:p-5 lg:min-h-[calc(100vh-3rem)] lg:sticky lg:top-6">
-          <div className="border-b border-white/15 pb-4">
-            <p className="text-[0.7rem] uppercase tracking-[0.2em] text-white/60">Mentee POV</p>
-            <h1 className="mt-1 text-xl font-bold">Workspace</h1>
+    <div className="flex min-h-screen w-full bg-[#FCF8F5] text-gray-900 font-sans">
+      {/* Sidebar */}
+      <aside className="sticky top-0 flex h-screen w-64 flex-col border-r-2 border-black bg-white px-6 py-8">
+        <div className="mb-10 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black bg-[#8B5CF6] text-xl font-black text-white shadow-[2px_2px_0px_0px_#1E1E1E]">
+            P
           </div>
+          <span className="text-xl font-extrabold tracking-tight">Peer Support</span>
+        </div>
 
-          <nav className="mt-4 grid gap-2">
-            {MENTEE_NAV_ITEMS.map((item) => {
-              const isActive = normalizeMenteePath(item.href) === normalizedPath;
+        <nav className="flex flex-1 flex-col gap-2">
+          {NAV_ITEMS.map((item) => {
+            const isActive = normalizeMenteePath(item.href) === normalizedPath;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-bold transition-colors ${
+                  isActive
+                    ? "bg-[#F3E8FF] text-[#8B5CF6]"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                }`}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`rounded-2xl border px-3 py-2.5 text-sm font-semibold transition-all ${
-                    isActive
-                      ? "border-white/60 bg-white/15 text-white"
-                      : "border-white/15 bg-transparent text-white/85 hover:border-white/40 hover:bg-white/10"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+        <button
+          type="button"
+          onClick={onLogout}
+          className="mt-auto flex w-full items-center gap-3 rounded-xl border-2 border-black bg-[#FDE6D5] px-4 py-3 text-sm font-bold text-gray-900 transition-transform active:translate-y-1"
+        >
+          <LogOut className="h-5 w-5" />
+          Logout
+        </button>
+      </aside>
 
-          <button
-            type="button"
-            onClick={onLogout}
-            className="mt-6 w-full rounded-2xl border border-white/35 bg-transparent px-3 py-2.5 text-left text-sm font-semibold text-white transition-all hover:bg-white/10"
-          >
-            Logout
-          </button>
-        </aside>
-
-        <section className="rounded-[1.75rem] border border-black/10 bg-[#f8f7f3] p-4 text-[#0d1117] shadow-[0_16px_45px_rgba(0,0,0,0.18)] sm:p-6 lg:p-7">
-          <header className="rounded-2xl border border-black/10 bg-white px-4 py-3">
-            <p className="text-xs uppercase tracking-[0.16em] text-black/50">Mentee Console</p>
-            <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-2xl font-bold tracking-[-0.02em]">{activeItem.label}</h2>
-              <span className="rounded-full bg-[#dbeafe] px-3 py-1 text-xs font-bold text-[#1e40af]">
-                Active Learner
-              </span>
-            </div>
-          </header>
-          <div className="mt-5">{children}</div>
-        </section>
-      </div>
-    </main>
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto p-8 lg:p-12">
+        {children}
+      </main>
+    </div>
   );
 }

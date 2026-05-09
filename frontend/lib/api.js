@@ -89,6 +89,18 @@ export const menteeProfileApi = {
   },
 };
 
+export const menteeDashboardApi = {
+  getDashboardData() {
+    return apiRequest('/mentee-dashboard');
+  },
+};
+
+export const menteeBookingApi = {
+  getMySessions() {
+    return apiRequest('/mentee-bookings/my-sessions');
+  },
+};
+
 export const mentorProfileApi = {
   getMine() {
     return apiRequest('/mentor-profile');

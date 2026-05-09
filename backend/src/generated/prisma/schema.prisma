@@ -129,9 +129,9 @@ model MenteeProfile {
 
   education Json
 
-  catScore Float?
+  catHistory Json?
 
-  otherExamScore Float?
+  otherMbaScore Float?
 
   workExperience String?
 
@@ -232,8 +232,7 @@ model MentorService {
   durationMinutes Int
 
   pricePerSession Float
-
-  isActive Boolean @default(true)
+  isActive        Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

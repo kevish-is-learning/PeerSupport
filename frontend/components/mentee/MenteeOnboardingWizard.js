@@ -89,6 +89,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
     try {
       setIsSubmitting(true);
       const formData = new FormData();
+      formData.append("name", form.name.trim());
       formData.append("dateOfBirth", new Date(form.dateOfBirth).toISOString());
       formData.append("contactNumber", `+91 ${cleanNumber}`);
       
@@ -289,12 +290,12 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-bold text-gray-700">Other MBA Exams Score (Cumulative)</label>
+              <label className="mb-1 block text-sm font-bold text-gray-700">Other MBA Exams Score (Cumulative Percentile)</label>
                <input 
                  type="number" step="0.01"
                  value={form.otherMbaScore} 
                  onChange={e => setForm({...form, otherMbaScore: e.target.value})} 
-                 placeholder="e.g. XAT 99.5"
+                 placeholder="e.g. 99.5"
                  className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black transition-colors"
                />
             </div>

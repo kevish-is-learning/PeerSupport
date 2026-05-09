@@ -146,8 +146,8 @@ exports.Prisma.MenteeProfileScalarFieldEnum = {
   dateOfBirth: 'dateOfBirth',
   contactNumber: 'contactNumber',
   education: 'education',
-  catScore: 'catScore',
-  otherExamScore: 'otherExamScore',
+  catHistory: 'catHistory',
+  otherMbaScore: 'otherMbaScore',
   workExperience: 'workExperience',
   certifications: 'certifications',
   expectations: 'expectations',
@@ -291,6 +291,11 @@ exports.Prisma.SortOrder = {
 };
 
 exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull
 };
 

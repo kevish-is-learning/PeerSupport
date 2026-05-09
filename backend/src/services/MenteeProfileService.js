@@ -28,16 +28,19 @@ const removeUploadedFile = async (publicFilePath) => {
 const mapProfile = (profile) => ({
   id: profile.id,
   userId: profile.userId,
+  username: profile.username,
   name: profile.user.name || null,
   email: profile.user.email,
   dateOfBirth: profile.dateOfBirth.toISOString().split('T')[0],
   contactNumber: profile.contactNumber,
   education: profile.education || [],
+  catHistory: profile.catHistory,
   otherMbaScore: profile.otherMbaScore,
   workExperience: profile.workExperience,
   certifications: profile.certifications,
+  expectations: profile.expectations,
   skillsets: profile.skillsets || [],
-  catHistory: profile.catHistory,
+  linkedInUrl: profile.linkedInUrl,
   resumeUrl: profile.resumeUrl,
   createdAt: profile.createdAt,
   updatedAt: profile.updatedAt,
@@ -68,6 +71,7 @@ class MenteeProfileService {
 
   async create(userId, payload) {
     const parsedData = createMenteeProfileSchema.parse(payload);
+    const { name, ...profileData } = parsedData;
 
     const existingProfile = await prisma.menteeProfile.findUnique({
       where: { userId },
@@ -78,19 +82,31 @@ class MenteeProfileService {
       throw createServiceError(409, 'Mentee onboarding profile already exists');
     }
 
+    const baseUsername = `mentee_${userId.substring(0, 8)}`;
+
     const createdProfile = await prisma.menteeProfile.create({
       data: {
         userId,
-        ...parsedData,
+        username: baseUsername,
+        ...profileData,
       },
       include: profileInclude,
     });
+
+    if (name) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { name },
+      });
+      createdProfile.user.name = name;
+    }
 
     return mapProfile(createdProfile);
   }
 
   async update(userId, payload) {
     const parsedData = updateMenteeProfileSchema.parse(payload);
+    const { name, ...profileData } = parsedData;
 
     const existingProfile = await prisma.menteeProfile.findUnique({
       where: { userId },
@@ -104,18 +120,26 @@ class MenteeProfileService {
       throw createServiceError(404, 'Mentee onboarding profile not found');
     }
 
-    const nextResumeUrl = parsedData.resumeUrl ?? existingProfile.resumeUrl;
+    const nextResumeUrl = profileData.resumeUrl ?? existingProfile.resumeUrl;
 
     const updatedProfile = await prisma.menteeProfile.update({
       where: { userId },
       data: {
-        ...parsedData,
+        ...profileData,
         resumeUrl: nextResumeUrl,
       },
       include: profileInclude,
     });
 
-    if (parsedData.resumeUrl && existingProfile.resumeUrl && parsedData.resumeUrl !== existingProfile.resumeUrl) {
+    if (name) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { name },
+      });
+      updatedProfile.user.name = name;
+    }
+
+    if (profileData.resumeUrl && existingProfile.resumeUrl && profileData.resumeUrl !== existingProfile.resumeUrl) {
       await removeUploadedFile(existingProfile.resumeUrl);
     }
 
