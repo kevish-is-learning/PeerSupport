@@ -101,6 +101,16 @@ export const menteeBookingApi = {
   },
 };
 
+export const publicMentorApi = {
+  listMentors(params = {}) {
+    const qs = new URLSearchParams(
+      Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v !== null && v !== undefined))
+    ).toString();
+    return apiRequest(`/mentors${qs ? `?${qs}` : ''}`);
+  },
+};
+
+
 export const mentorProfileApi = {
   getMine() {
     return apiRequest('/mentor-profile');

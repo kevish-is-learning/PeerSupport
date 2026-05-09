@@ -9,6 +9,7 @@ import mentorAvailabilityRoutes from './mentorAvailability.routes.js';
 import mentorBookingRoutes from './mentorBooking.routes.js';
 import menteeDashboardRoutes from './menteeDashboard.routes.js';
 import menteeBookingRoutes from './menteeBooking.routes.js';
+import publicMentorRoutes from './publicMentor.routes.js';
 
 const router = Router();
 
@@ -37,6 +38,7 @@ router.use('/mentor-profile', mentorProfileRoutes);
 router.use('/mentor-services', mentorServiceRoutes);
 router.use('/mentor-availability', mentorAvailabilityRoutes);
 router.use('/mentor-bookings', mentorBookingRoutes);
+router.use('/mentors', publicMentorRoutes);
 router.use('/admin', adminMentorRoutes);
 
 export default router;

@@ -53,7 +53,7 @@ export default function MenteeSidebarShell({ children }) {
   const NAV_ITEMS = [
     { label: "Home", href: "/mentee/dashboard", icon: Home },
     { label: "My Sessions", href: "/mentee/sessions", icon: CalendarIcon },
-    { label: "Explore Mentors", href: "/mentee/find-mentors", icon: Search },
+    { label: "Explore Mentors", href: "/find-mentors", icon: Search },
     { label: "Profile", href: "/mentee/profile", icon: User },
   ];
 
