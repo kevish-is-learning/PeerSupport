@@ -11,46 +11,8 @@ const router = Router();
 
 router.get('/', (req, res) => {
   res.json({
-    message: 'Auth API',
+    message: 'Peer Support API',
     version: '1.0.0',
-    endpoints: {
-      auth: {
-        register: 'POST /api/auth/register',
-        login: 'POST /api/auth/login',
-        googleAuth: 'GET /api/auth/google',
-        googleCallback: 'GET /api/auth/google/callback',
-        selectRole: 'POST /api/auth/select-role',
-        changePassword: 'POST /api/auth/change-password',
-        logout: 'POST /api/auth/logout',
-      },
-      menteeProfile: {
-        get: 'GET /api/mentee-profile',
-        create: 'POST /api/mentee-profile',
-        update: 'PUT /api/mentee-profile',
-        delete: 'DELETE /api/mentee-profile',
-      },
-      mentorProfile: {
-        get: 'GET /api/mentor-profile',
-        create: 'POST /api/mentor-profile',
-        update: 'PUT /api/mentor-profile',
-        delete: 'DELETE /api/mentor-profile',
-      },
-      mentorServices: {
-        types: 'GET /api/mentor-services/types',
-        get: 'GET /api/mentor-services',
-        upsert: 'PUT /api/mentor-services',
-        delete: 'DELETE /api/mentor-services/:serviceType',
-      },
-      mentorAvailability: {
-        get: 'GET /api/mentor-availability',
-        upsert: 'PUT /api/mentor-availability',
-        delete: 'DELETE /api/mentor-availability/:dayOfWeek',
-      },
-      admin: {
-        mentorWaitlist: 'GET /api/admin/mentor-waitlist',
-        updateMentorApproval: 'PATCH /api/admin/mentor-waitlist/:profileId',
-      },
-    },
   });
 });
 // Health check

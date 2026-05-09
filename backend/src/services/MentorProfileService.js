@@ -33,12 +33,13 @@ const profileInclude = {
       id: true,
       name: true,
       email: true,
+      profilePicture: true,
     },
   },
   services: {
     orderBy: { createdAt: 'asc' },
   },
-  availability: {
+  weeklyAvailability: {
     include: { timeSlots: true },
     orderBy: { dayOfWeek: 'asc' },
   },
@@ -47,6 +48,7 @@ const profileInclude = {
 const mapProfile = (profile) => ({
   id: profile.id,
   userId: profile.userId,
+  username: profile.username,
   name: profile.user.name || null,
   email: profile.user.email,
   linkedInUrl: profile.linkedInUrl,
@@ -62,7 +64,7 @@ const mapProfile = (profile) => ({
     isActive: s.isActive,
   })),
   // Normalized availability with labels
-  availability: (profile.availability || []).map((a) => ({
+  availability: (profile.weeklyAvailability || []).map((a) => ({
     id: a.id,
     dayOfWeek: a.dayOfWeek,
     dayLabel: DAY_OF_WEEK_LABELS[a.dayOfWeek],
@@ -73,14 +75,13 @@ const mapProfile = (profile) => ({
     })),
   })),
   ugCollegeProfile: profile.ugCollegeProfile,
-  pgProfile: profile.pgProfile,
+  pgProfile: profile.pgCollegeProfile,
   workExperience: profile.workExperience,
   certifications: profile.certifications,
-  profilePhotoUrl: profile.profilePhotoUrl,
+  profilePhotoUrl: profile.user?.profilePicture,
   collegeDocumentUrl: profile.collegeDocumentUrl,
   isVerified: profile.isVerified,
   approvalStatus: profile.approvalStatus,
-  adminReviewNotes: profile.adminReviewNotes,
   createdAt: profile.createdAt,
   updatedAt: profile.updatedAt,
 });
@@ -101,6 +102,9 @@ class MentorProfileService {
 
   async create(userId, payload) {
     const parsedData = createMentorProfileSchema.parse(payload);
+    
+    // Extract fields that don't match MentorProfile model directly
+    const { profilePhotoUrl, pgProfile, ...restData } = parsedData;
 
     const existingProfile = await prisma.mentorProfile.findUnique({
       where: { userId },
@@ -111,29 +115,42 @@ class MentorProfileService {
       throw createServiceError(409, 'Mentor onboarding profile already exists');
     }
 
+    // Default username if not provided (Prisma requires it to be unique)
+    const baseUsername = `mentor_${userId.substring(0, 8)}`;
+
     const createdProfile = await prisma.mentorProfile.create({
       data: {
         userId,
-        ...parsedData,
+        username: baseUsername,
+        ...restData,
+        pgCollegeProfile: pgProfile,
         isVerified: false,
         approvalStatus: 'PENDING',
-        adminReviewNotes: null,
       },
       include: profileInclude,
     });
+
+    if (profilePhotoUrl) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { profilePicture: profilePhotoUrl }
+      });
+      createdProfile.user.profilePicture = profilePhotoUrl;
+    }
 
     return mapProfile(createdProfile);
   }
 
   async update(userId, payload) {
     const parsedData = updateMentorProfileSchema.parse(payload);
+    const { profilePhotoUrl, pgProfile, ...restData } = parsedData;
 
     const existingProfile = await prisma.mentorProfile.findUnique({
       where: { userId },
       select: {
         id: true,
-        profilePhotoUrl: true,
         collegeDocumentUrl: true,
+        user: { select: { profilePicture: true } }
       },
     });
 
@@ -141,30 +158,37 @@ class MentorProfileService {
       throw createServiceError(404, 'Mentor onboarding profile not found');
     }
 
-    const nextProfilePhotoUrl = parsedData.profilePhotoUrl ?? existingProfile.profilePhotoUrl;
-    const nextCollegeDocumentUrl = parsedData.collegeDocumentUrl ?? existingProfile.collegeDocumentUrl;
+    const nextProfilePhotoUrl = profilePhotoUrl ?? existingProfile.user?.profilePicture;
+    const nextCollegeDocumentUrl = restData.collegeDocumentUrl ?? existingProfile.collegeDocumentUrl;
 
     const updatedProfile = await prisma.mentorProfile.update({
       where: { userId },
       data: {
-        ...parsedData,
-        profilePhotoUrl: nextProfilePhotoUrl,
+        ...restData,
+        pgCollegeProfile: pgProfile,
         collegeDocumentUrl: nextCollegeDocumentUrl,
         isVerified: false,
         approvalStatus: 'PENDING',
-        adminReviewNotes: null,
       },
       include: profileInclude,
     });
 
-    if (parsedData.profilePhotoUrl && existingProfile.profilePhotoUrl && parsedData.profilePhotoUrl !== existingProfile.profilePhotoUrl) {
-      await removeUploadedFile(existingProfile.profilePhotoUrl);
+    if (profilePhotoUrl) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { profilePicture: nextProfilePhotoUrl }
+      });
+      updatedProfile.user.profilePicture = nextProfilePhotoUrl;
+    }
+
+    if (profilePhotoUrl && existingProfile.user?.profilePicture && profilePhotoUrl !== existingProfile.user.profilePicture) {
+      await removeUploadedFile(existingProfile.user.profilePicture);
     }
 
     if (
-      parsedData.collegeDocumentUrl &&
+      restData.collegeDocumentUrl &&
       existingProfile.collegeDocumentUrl &&
-      parsedData.collegeDocumentUrl !== existingProfile.collegeDocumentUrl
+      restData.collegeDocumentUrl !== existingProfile.collegeDocumentUrl
     ) {
       await removeUploadedFile(existingProfile.collegeDocumentUrl);
     }
@@ -177,8 +201,8 @@ class MentorProfileService {
       where: { userId },
       select: {
         id: true,
-        profilePhotoUrl: true,
         collegeDocumentUrl: true,
+        user: { select: { profilePicture: true } }
       },
     });
 
@@ -186,7 +210,7 @@ class MentorProfileService {
       throw createServiceError(404, 'Mentor onboarding profile not found');
     }
 
-    await removeUploadedFile(existingProfile.profilePhotoUrl);
+    await removeUploadedFile(existingProfile.user?.profilePicture);
     await removeUploadedFile(existingProfile.collegeDocumentUrl);
 
     await prisma.mentorProfile.delete({ where: { userId } });
@@ -222,7 +246,6 @@ class MentorProfileService {
       where: { id: profileId },
       data: {
         approvalStatus: parsedData.approvalStatus,
-        adminReviewNotes: parsedData.adminReviewNotes || null,
         isVerified: parsedData.approvalStatus === 'APPROVED',
       },
       include: profileInclude,

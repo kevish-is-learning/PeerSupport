@@ -14,6 +14,7 @@ const singleServiceSchema = z.object({
     .nonnegative('Price cannot be negative')
     .optional()
     .nullable(),
+  durationMinutes: z.number().int().positive().optional().default(30),
   isActive: z.boolean().optional().default(true),
 });
 
@@ -49,14 +50,37 @@ const timeSlotSchema = z
     startTime: z.string().regex(timePattern, 'Start time must be HH:mm format'),
     endTime: z.string().regex(timePattern, 'End time must be HH:mm format'),
   })
-  .refine((slot) => slot.startTime < slot.endTime, {
-    message: 'Start time must be before end time',
+  .refine((slot) => {
+    const [startH, startM] = slot.startTime.split(':').map(Number);
+    const [endH, endM] = slot.endTime.split(':').map(Number);
+    const startMins = startH * 60 + startM;
+    const endMins = endH * 60 + endM;
+    return endMins - startMins >= 15;
+  }, {
+    message: 'Start time must be before end time and duration must be at least 15 minutes',
   });
 
 const dayAvailabilitySchema = z.object({
   dayOfWeek: dayOfWeekEnum,
   timeSlots: z.array(timeSlotSchema).default([]),
-});
+}).refine((day) => {
+  if (day.timeSlots.length <= 1) return true;
+  
+  const parsedSlots = day.timeSlots.map(s => {
+    const [startH, startM] = s.startTime.split(':').map(Number);
+    const [endH, endM] = s.endTime.split(':').map(Number);
+    return { start: startH * 60 + startM, end: endH * 60 + endM };
+  });
+  
+  parsedSlots.sort((a, b) => a.start - b.start);
+  
+  for (let i = 0; i < parsedSlots.length - 1; i++) {
+    if (parsedSlots[i].end > parsedSlots[i+1].start) {
+      return false;
+    }
+  }
+  return true;
+}, { message: 'Time slots cannot overlap or conflict on the same day' });
 
 /** Bulk upsert: array of day-level availability */
 export const upsertAvailabilitySchema = z.object({

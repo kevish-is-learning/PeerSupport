@@ -127,13 +127,13 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   googleId: 'googleId',
-  name: 'name',
-  profilePicture: 'profilePicture',
   provider: 'provider',
   role: 'role',
-  isRoleSelected: 'isRoleSelected',
+  name: 'name',
+  profilePicture: 'profilePicture',
   isVerified: 'isVerified',
   isActive: 'isActive',
+  lastLoginAt: 'lastLoginAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -142,14 +142,18 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.MenteeProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  username: 'username',
   dateOfBirth: 'dateOfBirth',
   contactNumber: 'contactNumber',
   education: 'education',
-  otherMbaScore: 'otherMbaScore',
+  catScore: 'catScore',
+  otherExamScore: 'otherExamScore',
   workExperience: 'workExperience',
   certifications: 'certifications',
-  catHistory: 'catHistory',
+  expectations: 'expectations',
+  skillsets: 'skillsets',
   resumeUrl: 'resumeUrl',
+  linkedInUrl: 'linkedInUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -157,19 +161,22 @@ exports.Prisma.MenteeProfileScalarFieldEnum = {
 exports.Prisma.MentorProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  username: 'username',
+  bio: 'bio',
   linkedInUrl: 'linkedInUrl',
   contactNumber: 'contactNumber',
-  bio: 'bio',
   expertiseTags: 'expertiseTags',
   ugCollegeProfile: 'ugCollegeProfile',
-  pgProfile: 'pgProfile',
+  pgCollegeProfile: 'pgCollegeProfile',
   workExperience: 'workExperience',
   certifications: 'certifications',
-  profilePhotoUrl: 'profilePhotoUrl',
   collegeDocumentUrl: 'collegeDocumentUrl',
-  isVerified: 'isVerified',
   approvalStatus: 'approvalStatus',
-  adminReviewNotes: 'adminReviewNotes',
+  isVerified: 'isVerified',
+  totalSessions: 'totalSessions',
+  totalEarnings: 'totalEarnings',
+  averageRating: 'averageRating',
+  timezone: 'timezone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -178,6 +185,8 @@ exports.Prisma.MentorServiceScalarFieldEnum = {
   id: 'id',
   mentorProfileId: 'mentorProfileId',
   serviceType: 'serviceType',
+  description: 'description',
+  durationMinutes: 'durationMinutes',
   pricePerSession: 'pricePerSession',
   isActive: 'isActive',
   createdAt: 'createdAt',
@@ -188,6 +197,7 @@ exports.Prisma.WeeklyAvailabilityScalarFieldEnum = {
   id: 'id',
   mentorProfileId: 'mentorProfileId',
   dayOfWeek: 'dayOfWeek',
+  isAvailable: 'isAvailable',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -196,7 +206,83 @@ exports.Prisma.TimeSlotScalarFieldEnum = {
   id: 'id',
   weeklyAvailabilityId: 'weeklyAvailabilityId',
   startTime: 'startTime',
-  endTime: 'endTime'
+  endTime: 'endTime',
+  maxBookings: 'maxBookings',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BookingScalarFieldEnum = {
+  id: 'id',
+  menteeId: 'menteeId',
+  mentorProfileId: 'mentorProfileId',
+  mentorServiceId: 'mentorServiceId',
+  timeSlotId: 'timeSlotId',
+  sessionType: 'sessionType',
+  bookingStatus: 'bookingStatus',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  meetingLink: 'meetingLink',
+  purposeOfCall: 'purposeOfCall',
+  notes: 'notes',
+  sharedResume: 'sharedResume',
+  isFeedbackSubmitted: 'isFeedbackSubmitted',
+  cancelledReason: 'cancelledReason',
+  rescheduledFromId: 'rescheduledFromId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  razorpayOrderId: 'razorpayOrderId',
+  razorpayPaymentId: 'razorpayPaymentId',
+  razorpaySignature: 'razorpaySignature',
+  amount: 'amount',
+  currency: 'currency',
+  paymentStatus: 'paymentStatus',
+  paidAt: 'paidAt',
+  refundedAmount: 'refundedAmount',
+  refundReason: 'refundReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InvoiceScalarFieldEnum = {
+  id: 'id',
+  paymentId: 'paymentId',
+  invoiceNumber: 'invoiceNumber',
+  invoiceUrl: 'invoiceUrl',
+  generatedAt: 'generatedAt'
+};
+
+exports.Prisma.SessionFeedbackScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  mentorProfileId: 'mentorProfileId',
+  strengths: 'strengths',
+  weaknesses: 'weaknesses',
+  recommendations: 'recommendations',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  mentorProfileId: 'mentorProfileId',
+  authorId: 'authorId',
+  rating: 'rating',
+  review: 'review',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PayoutScalarFieldEnum = {
+  id: 'id',
+  mentorProfileId: 'mentorProfileId',
+  amount: 'amount',
+  transactionId: 'transactionId',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -205,11 +291,6 @@ exports.Prisma.SortOrder = {
 };
 
 exports.Prisma.JsonNullValueInput = {
-  JsonNull: Prisma.JsonNull
-};
-
-exports.Prisma.NullableJsonNullValueInput = {
-  DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull
 };
 
@@ -228,16 +309,22 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.AuthProvider = exports.$Enums.AuthProvider = {
+  LOCAL: 'LOCAL',
+  GOOGLE: 'GOOGLE'
+};
+
 exports.Role = exports.$Enums.Role = {
+  ADMIN: 'ADMIN',
   MENTOR: 'MENTOR',
-  MENTEE: 'MENTEE',
-  ADMIN: 'ADMIN'
+  MENTEE: 'MENTEE'
 };
 
 exports.MentorApprovalStatus = exports.$Enums.MentorApprovalStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+  SUSPENDED: 'SUSPENDED'
 };
 
 exports.MentorServiceType = exports.$Enums.MentorServiceType = {
@@ -259,13 +346,41 @@ exports.DayOfWeek = exports.$Enums.DayOfWeek = {
   SUNDAY: 'SUNDAY'
 };
 
+exports.SessionType = exports.$Enums.SessionType = {
+  ONE_ON_ONE: 'ONE_ON_ONE',
+  GROUP_DISCUSSION: 'GROUP_DISCUSSION'
+};
+
+exports.BookingStatus = exports.$Enums.BookingStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  RESCHEDULED: 'RESCHEDULED',
+  REFUNDED: 'REFUNDED',
+  EXPIRED: 'EXPIRED'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   MenteeProfile: 'MenteeProfile',
   MentorProfile: 'MentorProfile',
   MentorService: 'MentorService',
   WeeklyAvailability: 'WeeklyAvailability',
-  TimeSlot: 'TimeSlot'
+  TimeSlot: 'TimeSlot',
+  Booking: 'Booking',
+  Payment: 'Payment',
+  Invoice: 'Invoice',
+  SessionFeedback: 'SessionFeedback',
+  Review: 'Review',
+  Payout: 'Payout'
 };
 
 /**

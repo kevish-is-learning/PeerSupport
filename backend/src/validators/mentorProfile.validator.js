@@ -97,7 +97,6 @@ export const updateMentorProfileSchema = createMentorProfileSchema;
 
 export const updateMentorApprovalSchema = z.object({
   approvalStatus: z.enum(["APPROVED", "REJECTED"]),
-  adminReviewNotes: normalizeOptionalText,
 });
 
 export default {

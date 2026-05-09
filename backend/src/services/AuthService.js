@@ -11,7 +11,6 @@ const selectRoleSchema = z.object({
 const mapUserWithOnboardingState = (user) => {
   const hasMenteeProfile = Boolean(user.menteeProfile);
   const hasMentorProfile = Boolean(user.mentorProfile);
-  const isRoleSelected = Boolean(user.isRoleSelected);
 
   const onboardingCompleted =
     (user.role === 'MENTEE' && hasMenteeProfile) ||
@@ -24,10 +23,9 @@ const mapUserWithOnboardingState = (user) => {
     name: user.name,
     provider: user.provider,
     role: user.role,
-    isRoleSelected,
     isVerified: user.isVerified,
     createdAt: user.createdAt,
-    onboardingCompleted: isRoleSelected && onboardingCompleted,
+    onboardingCompleted,
     mentorApprovalStatus: user.mentorProfile?.approvalStatus || null,
     mentorIsVerified: Boolean(user.mentorProfile?.isVerified),
   };
@@ -63,10 +61,6 @@ class AuthService {
 
     if (!user) {
       return '/auth?mode=login';
-    }
-
-    if (!user.isRoleSelected) {
-      return '/onboarding';
     }
 
     if (user.role === 'MENTEE' && !user.menteeProfile) {
@@ -118,9 +112,8 @@ class AuthService {
         email: email.toLowerCase(),
         password: hashedPassword,
         name: name || null,
-        provider: 'local',
+        provider: 'LOCAL',
         role: role || "MENTEE",
-        isRoleSelected: true,
       },
       include: {
         menteeProfile: {
@@ -205,7 +198,6 @@ class AuthService {
       where: { id: userId },
       data: {
         role,
-        isRoleSelected: true,
       },
       include: {
         mentorProfile: {

@@ -115,10 +115,48 @@ export default function AvailabilityPage() {
   });
 
   const handleSave = async () => {
+    // 1. Frontend Validation
+    for (const day of DAYS_ORDER) {
+      const slots = availability[day] || [];
+
+      // Parse all slots to minutes first
+      const parsedSlots = [];
+      for (let i = 0; i < slots.length; i++) {
+        const s = slots[i];
+        if (!s.startTime || !s.endTime) {
+          toast.error(`${DAY_LABELS[day]} has an incomplete time slot.`);
+          return;
+        }
+        const [startH, startM] = s.startTime.split(':').map(Number);
+        const [endH, endM] = s.endTime.split(':').map(Number);
+        const startMins = startH * 60 + startM;
+        const endMins = endH * 60 + endM;
+
+        if (endMins - startMins < 15) {
+          toast.error(`Slot on ${DAY_LABELS[day]} (${s.startTime}–${s.endTime}) must be at least 15 minutes.`);
+          return;
+        }
+        parsedSlots.push({ startMins, endMins, label: `${s.startTime}–${s.endTime}` });
+      }
+
+      // Check for overlaps / exact duplicates by sorting and comparing neighbours
+      parsedSlots.sort((a, b) => a.startMins - b.startMins);
+      for (let i = 0; i < parsedSlots.length - 1; i++) {
+        const curr = parsedSlots[i];
+        const next = parsedSlots[i + 1];
+        if (curr.endMins > next.startMins) {
+          toast.error(
+            `Overlapping slots on ${DAY_LABELS[day]}: ${curr.label} and ${next.label} conflict.`
+          );
+          return;
+        }
+      }
+    }
+
     setSaving(true);
     setSaved(false);
     try {
-      // Convert local state to API format
+      // 2. Convert local state to API format
       const payload = DAYS_ORDER
         .filter((day) => (availability[day] || []).length > 0)
         .map((day) => ({

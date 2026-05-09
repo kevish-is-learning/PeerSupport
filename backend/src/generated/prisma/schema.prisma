@@ -8,16 +8,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ============================================================
+// ENUMS
+// ============================================================
+
 enum Role {
+  ADMIN
   MENTOR
   MENTEE
-  ADMIN
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
 }
 
 enum MentorApprovalStatus {
   PENDING
   APPROVED
   REJECTED
+  SUSPENDED
 }
 
 enum MentorServiceType {
@@ -39,113 +49,423 @@ enum DayOfWeek {
   SUNDAY
 }
 
-model User {
-  id             String         @id @default(uuid())
-  email          String         @unique
-  password       String?
-  googleId       String?        @unique
-  name           String?
-  profilePicture String?
-  provider       String         @default("local")
-  role           Role           @default(MENTEE)
-  isRoleSelected Boolean        @default(true)
-  isVerified     Boolean        @default(false)
-  isActive       Boolean        @default(true)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  deletedAt      DateTime?
-  menteeProfile  MenteeProfile?
-  mentorProfile  MentorProfile?
-
-  @@index([role])
-  @@index([email])
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+  REFUNDED
+  EXPIRED
 }
 
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum SessionType {
+  ONE_ON_ONE
+  GROUP_DISCUSSION
+}
+
+// ============================================================
+// USER
+// ============================================================
+
+model User {
+  id String @id @default(uuid())
+
+  email    String  @unique
+  password String?
+
+  googleId String? @unique
+
+  provider AuthProvider @default(LOCAL)
+
+  role Role @default(MENTEE)
+
+  name String
+
+  profilePicture String?
+
+  isVerified Boolean @default(false)
+
+  isActive Boolean @default(true)
+
+  lastLoginAt DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  menteeProfile MenteeProfile?
+  mentorProfile MentorProfile?
+
+  menteeBookings Booking[] @relation("MenteeBookings")
+
+  reviewsGiven Review[] @relation("ReviewAuthor")
+
+  @@index([email])
+  @@index([role])
+}
+
+// ============================================================
+// MENTEE PROFILE
+// ============================================================
+
 model MenteeProfile {
-  id             String   @id @default(uuid())
-  userId         String   @unique
-  dateOfBirth    DateTime @db.Date
-  contactNumber  String
-  education      Json     @default("[]") // Stores array of {type, institutionName, fromYear, toYear, score}
-  otherMbaScore  Float?
+  id String @id @default(uuid())
+
+  userId String @unique
+
+  username String @unique
+
+  dateOfBirth DateTime @db.Date
+
+  contactNumber String
+
+  education Json
+
+  catScore Float?
+
+  otherExamScore Float?
+
   workExperience String?
+
   certifications String?
-  catHistory     Json? // Stores {LRDI, VARC, Quants} or similar
-  resumeUrl      String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+
+  expectations String?
+
+  skillsets String[]
+
+  resumeUrl String?
+
+  linkedInUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  @@index([username])
 }
+
+// ============================================================
+// MENTOR PROFILE
+// ============================================================
 
 model MentorProfile {
-  id                 String               @id @default(uuid())
-  userId             String               @unique
-  linkedInUrl        String?
-  contactNumber      String
-  bio                String
-  expertiseTags      String[]
-  ugCollegeProfile   String?
-  pgProfile          String?
-  workExperience     String?
-  certifications     String?
-  profilePhotoUrl    String?
+  id String @id @default(uuid())
+
+  userId String @unique
+
+  username String @unique
+
+  bio String
+
+  linkedInUrl String?
+
+  contactNumber String
+
+  expertiseTags String[]
+
+  ugCollegeProfile String?
+
+  pgCollegeProfile String?
+
+  workExperience String?
+
+  certifications String?
+
   collegeDocumentUrl String?
-  isVerified         Boolean              @default(false)
-  approvalStatus     MentorApprovalStatus @default(PENDING)
-  adminReviewNotes   String?
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
 
-  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  services     MentorService[]
-  availability WeeklyAvailability[]
+  approvalStatus MentorApprovalStatus @default(PENDING)
 
-  @@index([userId])
+  isVerified Boolean @default(false)
+
+  totalSessions Int @default(0)
+
+  totalEarnings Float @default(0)
+
+  averageRating Float @default(0)
+
+  timezone String @default("Asia/Kolkata")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  services MentorService[]
+
+  weeklyAvailability WeeklyAvailability[]
+
+  mentorBookings Booking[] @relation("MentorBookings")
+
+  reviews Review[]
+
+  feedbacks SessionFeedback[]
+
+  payouts Payout[]
+
   @@index([approvalStatus])
+  @@index([averageRating])
+  @@index([username])
 }
 
-// ─── Dedicated model for each service a mentor offers ────────────────────────
+// ============================================================
+// MENTOR SERVICES
+// ============================================================
+
 model MentorService {
-  id              String            @id @default(uuid())
+  id String @id @default(uuid())
+
   mentorProfileId String
-  serviceType     MentorServiceType
+
+  serviceType MentorServiceType
+
+  description String?
+
+  durationMinutes Int
+
   pricePerSession Float
-  isActive        Boolean           @default(true)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+
+  bookings Booking[]
 
   @@unique([mentorProfileId, serviceType])
   @@index([mentorProfileId])
 }
 
-// ─── Dedicated model for weekly availability per day ─────────────────────────
+// ============================================================
+// AVAILABILITY
+// ============================================================
+
 model WeeklyAvailability {
-  id              String    @id @default(uuid())
+  id String @id @default(uuid())
+
   mentorProfileId String
-  dayOfWeek       DayOfWeek
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+
+  dayOfWeek DayOfWeek
+
+  isAvailable Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
-  timeSlots     TimeSlot[]
+
+  timeSlots TimeSlot[]
 
   @@unique([mentorProfileId, dayOfWeek])
-  @@index([mentorProfileId])
 }
 
-// ─── Individual time slot within a day's availability ────────────────────────
 model TimeSlot {
-  id                   String @id @default(uuid())
+  id String @id @default(uuid())
+
   weeklyAvailabilityId String
-  startTime            String // "09:00" format (HH:mm)
-  endTime              String // "10:00" format (HH:mm)
+
+  startTime String
+  endTime   String
+
+  maxBookings Int @default(1)
+
+  createdAt DateTime @default(now())
 
   weeklyAvailability WeeklyAvailability @relation(fields: [weeklyAvailabilityId], references: [id], onDelete: Cascade)
 
+  bookings Booking[]
+
   @@index([weeklyAvailabilityId])
+}
+
+// ============================================================
+// BOOKINGS
+// ============================================================
+
+model Booking {
+  id String @id @default(uuid())
+
+  menteeId String
+
+  mentorProfileId String
+
+  mentorServiceId String
+
+  timeSlotId String?
+
+  sessionType SessionType @default(ONE_ON_ONE)
+
+  bookingStatus BookingStatus @default(PENDING)
+
+  startTime DateTime
+  endTime   DateTime
+
+  meetingLink String?
+
+  purposeOfCall String?
+
+  notes String?
+
+  sharedResume Boolean @default(false)
+
+  isFeedbackSubmitted Boolean @default(false)
+
+  cancelledReason String?
+
+  rescheduledFromId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentee User @relation("MenteeBookings", fields: [menteeId], references: [id], onDelete: Cascade)
+
+  mentorProfile MentorProfile @relation("MentorBookings", fields: [mentorProfileId], references: [id], onDelete: Cascade)
+
+  mentorService MentorService @relation(fields: [mentorServiceId], references: [id])
+
+  timeSlot TimeSlot? @relation(fields: [timeSlotId], references: [id])
+
+  payment Payment?
+
+  review Review?
+
+  feedback SessionFeedback?
+
+  @@index([menteeId])
+  @@index([mentorProfileId])
+  @@index([bookingStatus])
+  @@index([startTime])
+}
+
+// ============================================================
+// PAYMENTS
+// ============================================================
+
+model Payment {
+  id String @id @default(uuid())
+
+  bookingId String @unique
+
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+
+  amount Float
+
+  currency String @default("INR")
+
+  paymentStatus PaymentStatus @default(PENDING)
+
+  paidAt DateTime?
+
+  refundedAmount Float?
+
+  refundReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  invoice Invoice?
+}
+
+// ============================================================
+// INVOICE
+// ============================================================
+
+model Invoice {
+  id String @id @default(uuid())
+
+  paymentId String @unique
+
+  invoiceNumber String @unique
+
+  invoiceUrl String?
+
+  generatedAt DateTime @default(now())
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// SESSION FEEDBACK
+// ============================================================
+
+model SessionFeedback {
+  id String @id @default(uuid())
+
+  bookingId String @unique
+
+  mentorProfileId String
+
+  strengths String?
+
+  weaknesses String?
+
+  recommendations String?
+
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// REVIEWS
+// ============================================================
+
+model Review {
+  id String @id @default(uuid())
+
+  bookingId String @unique
+
+  mentorProfileId String
+
+  authorId String
+
+  rating Int
+
+  review String?
+
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+
+  author User @relation("ReviewAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([mentorProfileId])
+}
+
+// ============================================================
+// PAYOUTS
+// ============================================================
+
+model Payout {
+  id String @id @default(uuid())
+
+  mentorProfileId String
+
+  amount Float
+
+  transactionId String?
+
+  processedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
 }

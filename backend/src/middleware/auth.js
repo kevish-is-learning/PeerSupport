@@ -5,7 +5,6 @@ import { ApiError } from "../utils/apiError.js";
 const mapRequestUser = (user) => {
   const hasMenteeProfile = Boolean(user.menteeProfile);
   const hasMentorProfile = Boolean(user.mentorProfile);
-  const isRoleSelected = Boolean(user.isRoleSelected);
 
   const onboardingCompleted =
     (user.role === "MENTEE" && hasMenteeProfile) ||
@@ -16,8 +15,7 @@ const mapRequestUser = (user) => {
 
   return {
     ...safeUser,
-    isRoleSelected,
-    onboardingCompleted: isRoleSelected && onboardingCompleted,
+    onboardingCompleted,
     mentorApprovalStatus: mentorProfile?.approvalStatus || null,
     mentorIsVerified: Boolean(mentorProfile?.isVerified),
   };
@@ -51,7 +49,7 @@ const authenticateJWT = async (req, res, next) => {
         email: true,
         name: true,
         role: true,
-        isRoleSelected: true,
+        role: true,
         provider: true,
         profilePicture: true,
         isVerified: true,
@@ -135,7 +133,7 @@ const optionalAuth = async (req, res, next) => {
           email: true,
           name: true,
           role: true,
-          isRoleSelected: true,
+          role: true,
           provider: true,
           profilePicture: true,
           isVerified: true,

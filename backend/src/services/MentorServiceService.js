@@ -16,6 +16,7 @@ const mapService = (row) => ({
   serviceType: row.serviceType,
   label: SERVICE_TYPE_LABELS[row.serviceType],
   pricePerSession: row.pricePerSession,
+  durationMinutes: row.durationMinutes,
   isActive: row.isActive,
   createdAt: row.createdAt,
   updatedAt: row.updatedAt,
@@ -95,12 +96,14 @@ class MentorServiceService {
           },
           update: {
             pricePerSession: svc.pricePerSession,
+            durationMinutes: svc.durationMinutes ?? 30,
             isActive: svc.isActive ?? true,
           },
           create: {
             mentorProfileId: profileId,
             serviceType: svc.serviceType,
             pricePerSession: svc.pricePerSession,
+            durationMinutes: svc.durationMinutes ?? 30,
             isActive: svc.isActive ?? true,
           },
         });

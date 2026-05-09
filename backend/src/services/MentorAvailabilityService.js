@@ -9,6 +9,47 @@ const createServiceError = (statusCode, message) => {
 };
 
 /**
+ * Normalizes an array of time slots by sorting and merging any 
+ * overlapping or contiguous intervals.
+ */
+const normalizeTimeSlots = (slots) => {
+  if (!slots || slots.length === 0) return [];
+
+  const timeToMins = (t) => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  };
+
+  const minsToTime = (mins) => {
+    const h = String(Math.floor(mins / 60)).padStart(2, '0');
+    const m = String(mins % 60).padStart(2, '0');
+    return `${h}:${m}`;
+  };
+
+  const parsed = slots.map(s => ({
+    start: timeToMins(s.startTime),
+    end: timeToMins(s.endTime)
+  })).sort((a, b) => a.start - b.start);
+
+  const merged = [parsed[0]];
+  for (let i = 1; i < parsed.length; i++) {
+    const prev = merged[merged.length - 1];
+    const curr = parsed[i];
+
+    if (curr.start <= prev.end) {
+      prev.end = Math.max(prev.end, curr.end);
+    } else {
+      merged.push(curr);
+    }
+  }
+
+  return merged.map(m => ({
+    startTime: minsToTime(m.start),
+    endTime: minsToTime(m.end)
+  }));
+};
+
+/**
  * Maps a raw WeeklyAvailability row (with timeSlots) to a clean API shape.
  */
 const mapAvailability = (row) => ({
@@ -112,8 +153,10 @@ class MentorAvailabilityService {
         });
 
         if (day.timeSlots.length > 0) {
+          const normalizedSlots = normalizeTimeSlots(day.timeSlots);
+          
           await tx.timeSlot.createMany({
-            data: day.timeSlots.map((slot) => ({
+            data: normalizedSlots.map((slot) => ({
               weeklyAvailabilityId: dayRow.id,
               startTime: slot.startTime,
               endTime: slot.endTime,
