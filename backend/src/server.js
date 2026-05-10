@@ -11,6 +11,7 @@ import passport from './config/passport.js';
 
 import { connectDatabase } from './config/database.js';
 import routes from "./routes/index.routes.js";
+import { startBookingExpiryJob } from './services/BookingExpiryService.js';
 
 export const app = express();
 const PORT = process.env.PORT || 8080;
@@ -88,6 +89,9 @@ const startServer = async () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📍 API available at http://localhost:${PORT}`);
       console.log(`🔐 Environment: ${process.env.NODE_ENV || 'development'}`);
+
+      // Start background job to auto-expire stale PENDING bookings
+      startBookingExpiryJob();
     });
   } catch (error) {
     console.error('Failed to start server:', {

@@ -8,7 +8,7 @@ import { format } from "date-fns";
 const SessionCard = ({ session, isUpcoming }) => (
   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-xl border border-gray-200 bg-white p-4">
     <div className="flex items-center gap-4 w-full sm:w-auto">
-      <div className="h-16 w-16 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 flex-shrink-0">
+      <div className="h-16 w-16 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shrink-0">
         {session.mentorPicture ? (
           <img
             src={resolveUploadUrl(session.mentorPicture)}
@@ -23,7 +23,7 @@ const SessionCard = ({ session, isUpcoming }) => (
       </div>
       <div>
         <h4 className="font-bold text-gray-900">{session.mentorName}</h4>
-        <p className="text-sm font-medium text-gray-500 mb-2">{session.serviceType.replace(/_/g, " ")}</p>
+        <p className="text-sm font-medium text-gray-500 mb-2">{session?.serviceType?.replace(/_/g, " ")}</p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-gray-500">
           <div className="flex items-center gap-1">
             <CalendarIcon className="h-3.5 w-3.5" />

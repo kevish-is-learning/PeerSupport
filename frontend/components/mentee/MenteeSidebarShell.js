@@ -66,7 +66,7 @@ export default function MenteeSidebarShell({ children }) {
     }
   };
 
-  if (!hasCheckedSession || isLoading) {
+  if (!hasCheckedSession) {
     return (
       <main className="min-h-screen bg-[#FCF8F5] p-4 flex items-center justify-center">
         <p className="text-lg font-bold text-gray-900">Loading mentee workspace...</p>

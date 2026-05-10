@@ -160,6 +160,8 @@ class BookingService {
     }
 
     // Find all active slots that support this service
+    const pendingCutoff = new Date(Date.now() - 10 * 60 * 1000);
+
     const slots = await prisma.availabilitySlot.findMany({
       where: {
         weeklyAvailabilityId: dayAvailability.id,
@@ -171,11 +173,16 @@ class BookingService {
         },
       },
       include: {
-        // Count bookings for this date (non-cancelled)
+        // Count bookings for this date:
+        // - CONFIRMED/COMPLETED bookings always count
+        // - PENDING bookings count only if created within the last 10 min (active hold)
         bookings: {
           where: {
             scheduledDate: requestedDate,
-            bookingStatus: { notIn: ['CANCELLED', 'EXPIRED', 'REFUNDED'] },
+            OR: [
+              { bookingStatus: { in: ['CONFIRMED', 'COMPLETED', 'RESCHEDULED'] } },
+              { bookingStatus: 'PENDING', createdAt: { gte: pendingCutoff } },
+            ],
           },
           select: { id: true },
         },
