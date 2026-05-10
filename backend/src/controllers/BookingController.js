@@ -33,13 +33,21 @@ class BookingController {
   }
 
   /**
-   * POST /api/bookings
-   * Authenticated mentee — create a new booking.
+   * POST /api/bookings/initiate
+   * Authenticated mentee — initiate a booking with payment.
+   *
+   * This single endpoint:
+   * 1. Creates the PENDING booking + payment
+   * 2. Creates the Razorpay order
+   * 3. Returns everything the frontend needs to open Razorpay checkout
+   *
+   * The slot is held from this moment. If payment fails/dismissed,
+   * the slot is released immediately via /payments/failure.
    */
-  async createBooking(req, res) {
+  async initiateBooking(req, res) {
     try {
-      const booking = await bookingService.createBooking(req.user.id, req.body);
-      return res.status(201).json(new ApiResponse(201, 'Booking created successfully', { booking }));
+      const result = await bookingService.initiateBooking(req.user.id, req.body);
+      return res.status(201).json(new ApiResponse(201, 'Booking initiated — proceed to payment', result));
     } catch (error) {
       // Handle unique constraint violation (duplicate booking)
       if (error.code === 'P2002') {

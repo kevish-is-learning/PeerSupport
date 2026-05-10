@@ -181,41 +181,42 @@ exports.Prisma.MentorProfileScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ServiceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.MentorServiceScalarFieldEnum = {
   id: 'id',
   mentorProfileId: 'mentorProfileId',
-  serviceType: 'serviceType',
-  description: 'description',
+  serviceId: 'serviceId',
+  price: 'price',
   durationMinutes: 'durationMinutes',
-  pricePerSession: 'pricePerSession',
+  bufferMinutes: 'bufferMinutes',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.WeeklyAvailabilityScalarFieldEnum = {
+exports.Prisma.AvailabilityWindowScalarFieldEnum = {
   id: 'id',
   mentorProfileId: 'mentorProfileId',
   dayOfWeek: 'dayOfWeek',
-  isAvailable: 'isAvailable',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.AvailabilitySlotScalarFieldEnum = {
-  id: 'id',
-  weeklyAvailabilityId: 'weeklyAvailabilityId',
+  specificDate: 'specificDate',
   startTime: 'startTime',
   endTime: 'endTime',
-  maxBookings: 'maxBookings',
-  isActive: 'isActive',
+  timezone: 'timezone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.SlotServiceScalarFieldEnum = {
+exports.Prisma.AvailabilityWindowServiceScalarFieldEnum = {
   id: 'id',
-  availabilitySlotId: 'availabilitySlotId',
+  windowId: 'windowId',
   mentorServiceId: 'mentorServiceId',
   createdAt: 'createdAt'
 };
@@ -225,17 +226,13 @@ exports.Prisma.BookingScalarFieldEnum = {
   menteeId: 'menteeId',
   mentorProfileId: 'mentorProfileId',
   mentorServiceId: 'mentorServiceId',
-  availabilitySlotId: 'availabilitySlotId',
-  scheduledDate: 'scheduledDate',
-  sessionType: 'sessionType',
-  bookingStatus: 'bookingStatus',
   startTime: 'startTime',
   endTime: 'endTime',
+  status: 'status',
+  paymentId: 'paymentId',
   meetingLink: 'meetingLink',
   purposeOfCall: 'purposeOfCall',
   notes: 'notes',
-  sharedResume: 'sharedResume',
-  isFeedbackSubmitted: 'isFeedbackSubmitted',
   cancelledReason: 'cancelledReason',
   rescheduledFromId: 'rescheduledFromId',
   createdAt: 'createdAt',
@@ -342,15 +339,6 @@ exports.MentorApprovalStatus = exports.$Enums.MentorApprovalStatus = {
   SUSPENDED: 'SUSPENDED'
 };
 
-exports.MentorServiceType = exports.$Enums.MentorServiceType = {
-  SOP_REVIEW: 'SOP_REVIEW',
-  RESUME_CURATION: 'RESUME_CURATION',
-  MOCK_INTERVIEW: 'MOCK_INTERVIEW',
-  WAT_GD_PREP: 'WAT_GD_PREP',
-  KNOW_YOUR_COLLEGE: 'KNOW_YOUR_COLLEGE',
-  ONE_ON_ONE_CONNECT: 'ONE_ON_ONE_CONNECT'
-};
-
 exports.DayOfWeek = exports.$Enums.DayOfWeek = {
   MONDAY: 'MONDAY',
   TUESDAY: 'TUESDAY',
@@ -361,19 +349,11 @@ exports.DayOfWeek = exports.$Enums.DayOfWeek = {
   SUNDAY: 'SUNDAY'
 };
 
-exports.SessionType = exports.$Enums.SessionType = {
-  ONE_ON_ONE: 'ONE_ON_ONE',
-  GROUP_DISCUSSION: 'GROUP_DISCUSSION'
-};
-
 exports.BookingStatus = exports.$Enums.BookingStatus = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
-  COMPLETED: 'COMPLETED',
   CANCELLED: 'CANCELLED',
-  RESCHEDULED: 'RESCHEDULED',
-  REFUNDED: 'REFUNDED',
-  EXPIRED: 'EXPIRED'
+  COMPLETED: 'COMPLETED'
 };
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
@@ -387,10 +367,10 @@ exports.Prisma.ModelName = {
   User: 'User',
   MenteeProfile: 'MenteeProfile',
   MentorProfile: 'MentorProfile',
+  Service: 'Service',
   MentorService: 'MentorService',
-  WeeklyAvailability: 'WeeklyAvailability',
-  AvailabilitySlot: 'AvailabilitySlot',
-  SlotService: 'SlotService',
+  AvailabilityWindow: 'AvailabilityWindow',
+  AvailabilityWindowService: 'AvailabilityWindowService',
   Booking: 'Booking',
   Payment: 'Payment',
   Invoice: 'Invoice',

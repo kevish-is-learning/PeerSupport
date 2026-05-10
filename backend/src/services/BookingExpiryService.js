@@ -3,9 +3,14 @@ import { prisma } from '../config/database.js';
 /**
  * Booking Expiry Service
  *
- * Automatically expires PENDING bookings older than 10 minutes
- * whose payment has not been completed. This unblocks the slot
- * so other mentees can book it.
+ * Safety net for edge cases where a PENDING booking wasn't properly
+ * cleaned up (e.g., user closes browser mid-payment without triggering
+ * the ondismiss callback). Expires PENDING bookings older than 10 minutes
+ * whose payment was never completed.
+ *
+ * NOTE: In the normal flow, failed/dismissed payments release slots
+ * IMMEDIATELY via PaymentService.handlePaymentFailure(). This job
+ * only catches orphaned bookings that slipped through.
  *
  * DESIGN: Runs on a setInterval (every 2 minutes) inside the
  * Node process. For production at scale, replace with a proper
@@ -21,7 +26,7 @@ async function expireStaleBookings() {
   const cutoff = new Date(Date.now() - EXPIRY_MINUTES * 60 * 1000);
 
   try {
-    // Find PENDING bookings older than 10 min with PENDING payment
+    // Find PENDING bookings older than 10 min that were never paid
     const staleBookings = await prisma.booking.findMany({
       where: {
         bookingStatus: 'PENDING',
@@ -52,7 +57,7 @@ async function expireStaleBookings() {
       }),
     ]);
 
-    console.log(`🕐 Auto-expired ${ids.length} stale booking(s)`);
+    console.log(`🕐 Auto-expired ${ids.length} stale booking(s) (safety net)`);
   } catch (error) {
     console.error('❌ Booking expiry job error:', error.message);
   }
@@ -68,7 +73,7 @@ export function startBookingExpiryJob() {
   intervalId = setInterval(expireStaleBookings, CHECK_INTERVAL_MS);
 
   console.log(
-    `🕐 Booking expiry job started (every ${CHECK_INTERVAL_MS / 1000}s, expiry: ${EXPIRY_MINUTES}min)`
+    `🕐 Booking expiry safety net started (every ${CHECK_INTERVAL_MS / 1000}s, expiry: ${EXPIRY_MINUTES}min)`
   );
 }
 

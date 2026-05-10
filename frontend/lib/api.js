@@ -186,8 +186,12 @@ export const bookingApi = {
   getAvailableSlots(mentorId, { serviceType, date }) {
     return apiRequest(`/bookings/mentors/${mentorId}/available-slots?serviceType=${serviceType}&date=${date}`);
   },
-  /** Create a new booking (mentee) */
-  create(data) {
+  /**
+   * Initiate a booking with payment (unified flow).
+   * Creates PENDING booking + payment + Razorpay order in one call.
+   * Returns { booking, order } — order has everything needed to open Razorpay checkout.
+   */
+  initiate(data) {
     return apiRequest('/bookings', { method: 'POST', body: data });
   },
   /** Get a single booking by ID */
@@ -203,15 +207,11 @@ export const bookingApi = {
 // ─── Payment APIs (Razorpay) ─────────────────────────────────────────────────
 
 export const paymentApi = {
-  /** Create a Razorpay order for a booking */
-  createOrder(bookingId) {
-    return apiRequest('/payments/create-order', { method: 'POST', body: { bookingId } });
-  },
   /** Verify Razorpay payment after checkout */
   verify(data) {
     return apiRequest('/payments/verify', { method: 'POST', body: data });
   },
-  /** Handle payment failure */
+  /** Handle payment failure — immediately releases the slot */
   handleFailure(data) {
     return apiRequest('/payments/failure', { method: 'POST', body: data });
   },
@@ -243,6 +243,60 @@ export const mentorBookingApi = {
   },
   getEarnings() {
     return apiRequest('/mentor-bookings/earnings');
+  },
+};
+
+// ─── V2 API — New Booking & Availability System ─────────────────────────────
+
+export const v2Api = {
+  // ─── Service Catalogue (public) ──────────────────────────────────────
+  /** List all 6 seeded services */
+  getServices() {
+    return apiRequest('/v2/services');
+  },
+
+  // ─── Mentor Service Config ───────────────────────────────────────────
+  /** Get mentor's configured services (auth + MENTOR) */
+  getMentorServices() {
+    return apiRequest('/v2/mentor/services');
+  },
+  /** Upsert mentor service config */
+  upsertMentorServices(services) {
+    return apiRequest('/v2/mentor/services', { method: 'PUT', body: { services } });
+  },
+
+  // ─── Availability Windows ────────────────────────────────────────────
+  /** Get mentor's availability windows (auth + MENTOR) */
+  getAvailability() {
+    return apiRequest('/v2/mentor/availability');
+  },
+  /** Replace all availability windows */
+  upsertAvailability(windows) {
+    return apiRequest('/v2/mentor/availability', { method: 'PUT', body: { windows } });
+  },
+
+  // ─── Slot Generation (mentee side) ───────────────────────────────────
+  /** Generate available slots for a mentor + service + date */
+  getSlots(mentorProfileId, { serviceId, date }) {
+    return apiRequest(`/v2/mentors/${mentorProfileId}/slots?serviceId=${serviceId}&date=${date}`);
+  },
+
+  // ─── Bookings ────────────────────────────────────────────────────────
+  /** Create a booking with conflict guard */
+  createBooking(data) {
+    return apiRequest('/v2/bookings', { method: 'POST', body: data });
+  },
+  /** Get a single booking */
+  getBooking(bookingId) {
+    return apiRequest(`/v2/bookings/${bookingId}`);
+  },
+  /** Cancel a booking (mentor only) */
+  cancelBooking(bookingId, data = {}) {
+    return apiRequest(`/v2/bookings/${bookingId}/cancel`, { method: 'PATCH', body: data });
+  },
+  /** Reschedule a booking */
+  rescheduleBooking(bookingId, data) {
+    return apiRequest(`/v2/bookings/${bookingId}/reschedule`, { method: 'PATCH', body: data });
   },
 };
 

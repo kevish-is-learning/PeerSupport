@@ -1,4 +1,5 @@
 import { prisma } from '../config/database.js';
+import { razorpayInstance } from '../config/razorpay.js';
 import {
   createBookingSchema,
   cancelBookingSchema,
@@ -116,6 +117,10 @@ class BookingService {
    *    - have a SlotService mapping for the requested service type
    * 4. For each slot, count existing bookings on that date.
    * 5. Return slots with remaining capacity.
+   *
+   * IMPORTANT: Only CONFIRMED/COMPLETED/RESCHEDULED bookings and
+   * PENDING bookings with active payment (not FAILED) block capacity.
+   * Failed payments release the slot immediately.
    */
   async getAvailableSlots(mentorId, query) {
     const { mentorId: validMentorId } = mentorIdParamSchema.parse({ mentorId });
@@ -160,8 +165,6 @@ class BookingService {
     }
 
     // Find all active slots that support this service
-    const pendingCutoff = new Date(Date.now() - 10 * 60 * 1000);
-
     const slots = await prisma.availabilitySlot.findMany({
       where: {
         weeklyAvailabilityId: dayAvailability.id,
@@ -174,14 +177,20 @@ class BookingService {
       },
       include: {
         // Count bookings for this date:
-        // - CONFIRMED/COMPLETED bookings always count
-        // - PENDING bookings count only if created within the last 10 min (active hold)
+        // - CONFIRMED/COMPLETED/RESCHEDULED bookings always count
+        // - PENDING bookings count only if their payment is NOT FAILED
+        //   (i.e., user is actively in the payment flow)
         bookings: {
           where: {
             scheduledDate: requestedDate,
             OR: [
               { bookingStatus: { in: ['CONFIRMED', 'COMPLETED', 'RESCHEDULED'] } },
-              { bookingStatus: 'PENDING', createdAt: { gte: pendingCutoff } },
+              {
+                bookingStatus: 'PENDING',
+                payment: {
+                  paymentStatus: { not: 'FAILED' },
+                },
+              },
             ],
           },
           select: { id: true },
@@ -222,21 +231,19 @@ class BookingService {
   }
 
   /**
-   * POST — Create a new booking.
+   * POST — Initiate a booking with payment.
    *
-   * TRANSACTION with race condition prevention:
-   * 1. Verify all entities exist and are valid.
-   * 2. Verify SlotService mapping (the service is offered in this slot).
-   * 3. Lock the slot row (SELECT FOR UPDATE equivalent via transaction isolation).
-   * 4. Count existing non-cancelled bookings for this slot + date.
-   * 5. If capacity full → reject.
-   * 6. Create Booking with resolved start/end times.
-   * 7. Create Payment (PENDING).
+   * This is the NEW unified flow:
+   * 1. Validate all entities (slot, service, slot-service mapping, capacity).
+   * 2. Create Booking (PENDING) + Payment (PENDING) in a transaction.
+   * 3. Create Razorpay order.
+   * 4. Save the razorpayOrderId on the Payment record.
+   * 5. Return the booking + Razorpay order details for the frontend.
    *
-   * The @@unique([menteeId, availabilitySlotId, scheduledDate]) constraint
-   * prevents duplicate bookings at the database level as a final guard.
+   * The slot is held ONLY while the user is on the payment page.
+   * If payment fails or the user dismisses → slot is released instantly.
    */
-  async createBooking(menteeId, payload) {
+  async initiateBooking(menteeId, payload) {
     const data = createBookingSchema.parse(payload);
 
     const scheduledDate = new Date(data.scheduledDate + 'T00:00:00.000Z');
@@ -248,7 +255,7 @@ class BookingService {
     // Verify the scheduled date matches the slot's day of week
     const targetDayOfWeek = getDayOfWeekFromDate(scheduledDate);
 
-    const booking = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       // 1. Verify the slot exists and is active
       const slot = await tx.availabilitySlot.findUnique({
         where: { id: data.availabilitySlotId },
@@ -311,12 +318,21 @@ class BookingService {
         );
       }
 
-      // 4. Count existing bookings for this slot + date (non-cancelled)
+      // 4. Count existing bookings for this slot + date
+      //    Only count CONFIRMED/COMPLETED/RESCHEDULED and PENDING with non-FAILED payment
       const existingCount = await tx.booking.count({
         where: {
           availabilitySlotId: data.availabilitySlotId,
           scheduledDate,
-          bookingStatus: { notIn: ['CANCELLED', 'EXPIRED', 'REFUNDED'] },
+          OR: [
+            { bookingStatus: { in: ['CONFIRMED', 'COMPLETED', 'RESCHEDULED'] } },
+            {
+              bookingStatus: 'PENDING',
+              payment: {
+                paymentStatus: { not: 'FAILED' },
+              },
+            },
+          ],
         },
       });
 
@@ -353,11 +369,16 @@ class BookingService {
           notes: data.notes,
           sharedResume: data.sharedResume,
         },
-        include: bookingInclude,
+        include: {
+          ...bookingInclude,
+          mentee: {
+            select: { id: true, name: true, email: true, profilePicture: true },
+          },
+        },
       });
 
       // 8. Create PENDING payment
-      await tx.payment.create({
+      const payment = await tx.payment.create({
         data: {
           bookingId: newBooking.id,
           amount: service.pricePerSession,
@@ -366,10 +387,44 @@ class BookingService {
         },
       });
 
-      return newBooking;
+      return { booking: newBooking, payment, service };
     });
 
-    return mapBooking(booking);
+    // 9. Create Razorpay order (outside transaction — external API call)
+    const amountInPaise = Math.round(result.payment.amount * 100);
+
+    const razorpayOrder = await razorpayInstance.orders.create({
+      amount: amountInPaise,
+      currency: result.payment.currency || 'INR',
+      receipt: `booking_${result.booking.id.substring(0, 8)}`,
+      notes: {
+        bookingId: result.booking.id,
+        menteeId,
+        serviceType: result.service?.serviceType || '',
+      },
+    });
+
+    // 10. Save Razorpay order ID on the payment record
+    await prisma.payment.update({
+      where: { id: result.payment.id },
+      data: { razorpayOrderId: razorpayOrder.id },
+    });
+
+    // Return both booking info and Razorpay order details
+    return {
+      booking: mapBooking(result.booking),
+      order: {
+        orderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        bookingId: result.booking.id,
+        keyId: process.env.RAZORPAY_KEY_ID,
+        prefill: {
+          name: result.booking.mentee?.name,
+          email: result.booking.mentee?.email,
+        },
+      },
+    };
   }
 
   /**

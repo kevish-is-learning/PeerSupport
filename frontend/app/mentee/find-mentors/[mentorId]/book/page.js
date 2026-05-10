@@ -134,8 +134,8 @@ export default function BookSessionPage() {
     if (!user) { router.push("/auth?mode=login"); return; }
     setSubmitting(true);
     try {
-      // 1. Create booking
-      const bRes = await bookingApi.create({
+      // 1. Single call: creates PENDING booking + payment + Razorpay order
+      const res = await bookingApi.initiate({
         mentorProfileId: mentor.id,
         mentorServiceId: serviceId,
         availabilitySlotId: slotId,
@@ -144,14 +144,10 @@ export default function BookSessionPage() {
         purposeOfCall: purpose || undefined,
         notes: notes || undefined,
       });
-      const booking = bRes.data?.booking;
-      if (!booking?.id) throw new Error("Booking failed");
+      const { booking, order } = res.data;
+      if (!booking?.id || !order?.orderId) throw new Error("Failed to initiate booking");
 
-      // 2. Create Razorpay order
-      const oRes = await paymentApi.createOrder(booking.id);
-      const order = oRes.data;
-
-      // 3. Open Razorpay
+      // 2. Open Razorpay checkout — slot is held from this moment
       const options = {
         key: order.keyId,
         amount: order.amount,
@@ -162,6 +158,7 @@ export default function BookSessionPage() {
         prefill: { ...order.prefill, contact: phone || undefined },
         theme: { color: "#8B5CF6" },
         handler: async (response) => {
+          // Payment success → verify & confirm the booking
           try {
             await paymentApi.verify({
               razorpay_order_id: response.razorpay_order_id,
@@ -174,16 +171,18 @@ export default function BookSessionPage() {
         },
         modal: {
           ondismiss: async () => {
+            // User dismissed → release the slot immediately
             await paymentApi.handleFailure({ razorpay_order_id: order.orderId, bookingId: booking.id }).catch(() => {});
-            toast.error("Payment cancelled. Your slot hold expires in 10 minutes.");
+            toast.error("Payment cancelled. The slot has been released.");
           },
         },
       };
       if (typeof window !== "undefined" && window.Razorpay) {
         const rzp = new window.Razorpay(options);
         rzp.on("payment.failed", async (r) => {
+          // Payment failed → release the slot immediately
           await paymentApi.handleFailure({ razorpay_order_id: order.orderId, bookingId: booking.id }).catch(() => {});
-          toast.error(r.error?.description || "Payment failed");
+          toast.error(r.error?.description || "Payment failed. The slot has been released.");
         });
         rzp.open();
       } else { toast.error("Payment gateway not loaded. Please refresh."); }

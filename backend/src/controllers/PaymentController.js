@@ -16,25 +16,11 @@ const formatError = (error) => {
 
 class PaymentController {
   /**
-   * POST /api/payments/create-order
-   * Body: { bookingId }
-   */
-  async createOrder(req, res) {
-    try {
-      const result = await paymentService.createOrder(req.user.id, req.body.bookingId);
-      return res.status(200).json(new ApiResponse(200, 'Razorpay order created', result));
-    } catch (error) {
-      const statusCode = getStatusCode(error);
-      return res.status(statusCode).json({
-        success: false,
-        message: formatError(error),
-      });
-    }
-  }
-
-  /**
    * POST /api/payments/verify
    * Body: { razorpay_order_id, razorpay_payment_id, razorpay_signature, bookingId }
+   *
+   * Called after Razorpay checkout success. Verifies the signature,
+   * marks payment as SUCCESS, and confirms the booking.
    */
   async verifyPayment(req, res) {
     try {
@@ -52,6 +38,9 @@ class PaymentController {
   /**
    * POST /api/payments/failure
    * Body: { razorpay_order_id, bookingId }
+   *
+   * Called when Razorpay checkout fails or user dismisses.
+   * Immediately releases the slot (booking → EXPIRED, payment → FAILED).
    */
   async handleFailure(req, res) {
     try {

@@ -30,15 +30,6 @@ enum MentorApprovalStatus {
   SUSPENDED
 }
 
-enum MentorServiceType {
-  SOP_REVIEW
-  RESUME_CURATION
-  MOCK_INTERVIEW
-  WAT_GD_PREP
-  KNOW_YOUR_COLLEGE
-  ONE_ON_ONE_CONNECT
-}
-
 enum DayOfWeek {
   MONDAY
   TUESDAY
@@ -52,11 +43,8 @@ enum DayOfWeek {
 enum BookingStatus {
   PENDING
   CONFIRMED
-  COMPLETED
   CANCELLED
-  RESCHEDULED
-  REFUNDED
-  EXPIRED
+  COMPLETED
 }
 
 enum PaymentStatus {
@@ -64,11 +52,6 @@ enum PaymentStatus {
   SUCCESS
   FAILED
   REFUNDED
-}
-
-enum SessionType {
-  ONE_ON_ONE
-  GROUP_DISCUSSION
 }
 
 // ============================================================
@@ -200,17 +183,12 @@ model MentorProfile {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  services MentorService[]
-
-  weeklyAvailability WeeklyAvailability[]
-
-  mentorBookings Booking[] @relation("MentorBookings")
-
-  reviews Review[]
-
-  feedbacks SessionFeedback[]
-
-  payouts Payout[]
+  mentorServices     MentorService[]
+  availabilityWindows AvailabilityWindow[]
+  mentorBookings     Booking[]  @relation("MentorBookings")
+  reviews            Review[]
+  feedbacks          SessionFeedback[]
+  payouts            Payout[]
 
   @@index([approvalStatus])
   @@index([averageRating])
@@ -218,153 +196,137 @@ model MentorProfile {
 }
 
 // ============================================================
+// SERVICES (Seeded lookup table — 6 fixed rows)
+// ============================================================
+
+model Service {
+  id   String @id @default(uuid())
+  name String @unique
+  slug String @unique
+
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentorServices MentorService[]
+}
+
+// ============================================================
 // MENTOR SERVICES
 // ============================================================
 
+/// Links a mentor to a service with pricing and duration config.
 model MentorService {
   id String @id @default(uuid())
 
   mentorProfileId String
+  serviceId       String
 
-  serviceType MentorServiceType
-
-  description String?
-
+  /// Price in INR
+  price           Float
+  /// Session duration: 15, 30, 45, or 60 minutes
   durationMinutes Int
-
-  pricePerSession Float
-  isActive Boolean @default(true)
+  /// Optional buffer between consecutive slots (minutes)
+  bufferMinutes   Int      @default(0)
+  isActive        Boolean  @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  service       Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
-  // Many-to-many: which slots offer this service
-  slotServices SlotService[]
+  windowServices AvailabilityWindowService[]
+  bookings       Booking[]
 
-  bookings Booking[]
-
-  @@unique([mentorProfileId, serviceType])
+  @@unique([mentorProfileId, serviceId])
   @@index([mentorProfileId])
+  @@index([serviceId])
 }
 
 // ============================================================
-// AVAILABILITY (NEW ARCHITECTURE)
+// AVAILABILITY WINDOWS (replaces WeeklyAvailability + AvailabilitySlot)
 // ============================================================
 
-/// WeeklyAvailability: Day-level container.
-/// One record per mentor per day-of-week.
-model WeeklyAvailability {
+/// A time range during which a mentor is available.
+/// Can be recurring (dayOfWeek set, specificDate null) or
+/// one-off (specificDate set, dayOfWeek null).
+model AvailabilityWindow {
   id String @id @default(uuid())
 
   mentorProfileId String
 
-  dayOfWeek DayOfWeek
+  /// For recurring windows — e.g., every MONDAY
+  dayOfWeek DayOfWeek?
 
-  isAvailable Boolean @default(true)
+  /// For one-off overrides — e.g., 2026-05-15
+  specificDate DateTime? @db.Date
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
-
-  // Child slots within this day
-  slots AvailabilitySlot[]
-
-  @@unique([mentorProfileId, dayOfWeek])
-}
-
-/// AvailabilitySlot: A time range within a day.
-/// Uses DateTime for startTime/endTime (date portion is canonical 1970-01-01).
-/// maxBookings controls capacity (1 = 1:1, >1 = group sessions).
-model AvailabilitySlot {
-  id String @id @default(uuid())
-
-  weeklyAvailabilityId String
-
-  /// Time stored as DateTime; date portion is always 1970-01-01.
-  /// Only the time component (HH:mm) matters.
+  /// Start time (stored as HH:mm in canonical 1970-01-01 UTC)
   startTime DateTime
+  /// End time (stored as HH:mm in canonical 1970-01-01 UTC)
   endTime   DateTime
 
-  /// Maximum concurrent bookings for this slot.
-  /// 1 = one-on-one only. >1 = supports group sessions.
-  maxBookings Int @default(1)
-
-  /// Soft-disable without deletion.
-  isActive Boolean @default(true)
+  /// IANA timezone (default IST)
+  timezone String @default("Asia/Kolkata")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  weeklyAvailability WeeklyAvailability @relation(fields: [weeklyAvailabilityId], references: [id], onDelete: Cascade)
+  mentorProfile  MentorProfile              @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  windowServices AvailabilityWindowService[]
 
-  // Many-to-many: which services are offered in this slot
-  slotServices SlotService[]
-
-  // Bookings placed against this slot
-  bookings Booking[]
-
-  @@index([weeklyAvailabilityId])
+  @@index([mentorProfileId])
+  @@index([mentorProfileId, dayOfWeek])
+  @@index([mentorProfileId, specificDate])
 }
 
-/// SlotService: Join table between AvailabilitySlot and MentorService.
-/// This is the core architectural fix: each slot explicitly declares
-/// which services it supports.
-model SlotService {
+// ============================================================
+// AVAILABILITY WINDOW ↔ MENTOR SERVICE (join table)
+// ============================================================
+
+/// Which services are offered during a specific availability window.
+model AvailabilityWindowService {
   id String @id @default(uuid())
 
-  availabilitySlotId String
-  mentorServiceId    String
+  windowId        String
+  mentorServiceId String
 
   createdAt DateTime @default(now())
 
-  availabilitySlot AvailabilitySlot @relation(fields: [availabilitySlotId], references: [id], onDelete: Cascade)
-  mentorService    MentorService    @relation(fields: [mentorServiceId], references: [id], onDelete: Cascade)
+  window        AvailabilityWindow @relation(fields: [windowId], references: [id], onDelete: Cascade)
+  mentorService MentorService      @relation(fields: [mentorServiceId], references: [id], onDelete: Cascade)
 
-  @@unique([availabilitySlotId, mentorServiceId])
+  @@unique([windowId, mentorServiceId])
   @@index([mentorServiceId])
 }
 
 // ============================================================
-// BOOKINGS (UPDATED)
+// BOOKINGS
 // ============================================================
 
 model Booking {
   id String @id @default(uuid())
 
-  menteeId String
-
+  menteeId        String
   mentorProfileId String
-
   mentorServiceId String
 
-  /// Required: every booking must be tied to a specific slot.
-  availabilitySlotId String
-
-  /// The actual calendar date this booking is for (e.g., 2026-05-15).
-  /// Combined with the slot's time range, this gives the full datetime.
-  scheduledDate DateTime @db.Date
-
-  sessionType SessionType @default(ONE_ON_ONE)
-
-  bookingStatus BookingStatus @default(PENDING)
-
-  /// Resolved start/end times for this specific booking instance.
-  /// Computed from slot time + scheduledDate on creation.
+  /// Resolved UTC start/end — the actual booked time.
   startTime DateTime
   endTime   DateTime
+
+  status BookingStatus @default(PENDING)
+
+  /// Razorpay payment ID (nullable — set on payment confirmation)
+  paymentId String?
 
   meetingLink String?
 
   purposeOfCall String?
 
   notes String?
-
-  sharedResume Boolean @default(false)
-
-  isFeedbackSubmitted Boolean @default(false)
 
   cancelledReason String?
 
@@ -373,27 +335,19 @@ model Booking {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  mentee User @relation("MenteeBookings", fields: [menteeId], references: [id], onDelete: Cascade)
-
+  mentee        User          @relation("MenteeBookings", fields: [menteeId], references: [id], onDelete: Cascade)
   mentorProfile MentorProfile @relation("MentorBookings", fields: [mentorProfileId], references: [id], onDelete: Cascade)
-
   mentorService MentorService @relation(fields: [mentorServiceId], references: [id])
 
-  availabilitySlot AvailabilitySlot @relation(fields: [availabilitySlotId], references: [id])
-
-  payment Payment?
-
-  review Review?
-
+  payment  Payment?
+  review   Review?
   feedback SessionFeedback?
 
-  // Prevent same mentee from booking same slot on same date twice
-  @@unique([menteeId, availabilitySlotId, scheduledDate])
   @@index([menteeId])
   @@index([mentorProfileId])
-  @@index([bookingStatus])
-  @@index([startTime])
-  @@index([availabilitySlotId, scheduledDate])
+  @@index([status])
+  // Composite index for conflict-check queries
+  @@index([mentorProfileId, startTime, endTime])
 }
 
 // ============================================================

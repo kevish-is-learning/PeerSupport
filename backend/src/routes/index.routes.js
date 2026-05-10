@@ -13,6 +13,10 @@ import publicMentorRoutes from './publicMentor.routes.js';
 import bookingRoutes from './booking.routes.js';
 import paymentRoutes from './payment.routes.js';
 
+// V2 routes — new booking & availability system
+import v2MentorRoutes from './v2/mentor.routes.js';
+import v2BookingRoutes from './v2/booking.routes.js';
+
 const router = Router();
 
 router.get('/', (req, res) => {
@@ -44,6 +48,10 @@ router.use('/mentors', publicMentorRoutes);
 router.use('/admin', adminMentorRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/payments', paymentRoutes);
+
+// ─── V2 Routes ─────────────────────────────────────────────────────────────
+router.use('/v2', v2MentorRoutes);
+router.use('/v2', v2BookingRoutes);
 
 export default router;
 

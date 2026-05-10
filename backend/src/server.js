@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import { createServer } from 'http';
 import cors from 'cors';
 import helmet from "helmet";
 import compression from "compression";
@@ -10,10 +11,12 @@ import path from 'path';
 import passport from './config/passport.js';
 
 import { connectDatabase } from './config/database.js';
+import { initSocket } from './config/socket.js';
 import routes from "./routes/index.routes.js";
 import { startBookingExpiryJob } from './services/BookingExpiryService.js';
 
 export const app = express();
+const httpServer = createServer(app);
 const PORT = process.env.PORT || 8080;
 
 
@@ -84,10 +87,14 @@ const startServer = async () => {
     // Connect to database
     await connectDatabase();
 
-    // Start Express server
-    app.listen(PORT, () => {
+    // Initialize Socket.io
+    initSocket(httpServer);
+
+    // Start HTTP server (Express + Socket.io)
+    httpServer.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📍 API available at http://localhost:${PORT}`);
+      console.log(`🔌 Socket.io ready`);
       console.log(`🔐 Environment: ${process.env.NODE_ENV || 'development'}`);
 
       // Start background job to auto-expire stale PENDING bookings

@@ -1,0 +1,421 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { v2Api } from "../../../lib/api";
+import { toast } from "sonner";
+import {
+  Loader2, Plus, Trash2, Save, X, Clock, ChevronLeft, ChevronRight, CalendarDays,
+} from "lucide-react";
+
+const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+const DAY_LABELS = { MONDAY: "Mon", TUESDAY: "Tue", WEDNESDAY: "Wed", THURSDAY: "Thu", FRIDAY: "Fri", SATURDAY: "Sat", SUNDAY: "Sun" };
+const DAY_FULL = { MONDAY: "Monday", TUESDAY: "Tuesday", WEDNESDAY: "Wednesday", THURSDAY: "Thursday", FRIDAY: "Friday", SATURDAY: "Saturday", SUNDAY: "Sunday" };
+
+function getDayOfWeek(date) {
+  const map = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+  return map[date.getDay()];
+}
+
+function generateCalendarDays(year, month) {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startPad = firstDay.getDay();
+  const days = [];
+
+  for (let i = 0; i < startPad; i++) days.push(null);
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    days.push(new Date(year, month, d));
+  }
+  return days;
+}
+
+export default function AvailabilityCalendar() {
+  const [windows, setWindows] = useState([]);
+  const [mentorServices, setMentorServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(null);
+
+  // Calendar state
+  const now = new Date();
+  const [calYear, setCalYear] = useState(now.getFullYear());
+  const [calMonth, setCalMonth] = useState(now.getMonth());
+
+  // Modal form state
+  const [formWindows, setFormWindows] = useState([]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const [availRes, svcRes] = await Promise.all([
+        v2Api.getAvailability(),
+        v2Api.getMentorServices(),
+      ]);
+      setWindows(availRes?.data?.windows || []);
+      setMentorServices(svcRes?.data?.services || []);
+    } catch (e) {
+      toast.error("Failed to load availability");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Which days-of-week have windows
+  const activeDays = new Set(windows.map((w) => w.dayOfWeek).filter(Boolean));
+
+  const prevMonth = () => {
+    if (calMonth === 0) { setCalYear((y) => y - 1); setCalMonth(11); }
+    else setCalMonth((m) => m - 1);
+  };
+
+  const nextMonth = () => {
+    if (calMonth === 11) { setCalYear((y) => y + 1); setCalMonth(0); }
+    else setCalMonth((m) => m + 1);
+  };
+
+  const calDays = generateCalendarDays(calYear, calMonth);
+  const monthLabel = new Date(calYear, calMonth).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+  const openModal = (day) => {
+    setSelectedDay(day);
+    // Load existing windows for this day
+    const existing = windows.filter((w) => w.dayOfWeek === day);
+    if (existing.length > 0) {
+      setFormWindows(
+        existing.map((w) => ({
+          startTime: w.startTime,
+          endTime: w.endTime,
+          mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
+        }))
+      );
+    } else {
+      setFormWindows([{ startTime: "09:00", endTime: "17:00", mentorServiceIds: [] }]);
+    }
+    setModalOpen(true);
+  };
+
+  const addWindowRow = () => {
+    setFormWindows((prev) => [...prev, { startTime: "09:00", endTime: "17:00", mentorServiceIds: [] }]);
+  };
+
+  const removeWindowRow = (idx) => {
+    setFormWindows((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const updateWindowRow = (idx, field, value) => {
+    setFormWindows((prev) => prev.map((w, i) => (i === idx ? { ...w, [field]: value } : w)));
+  };
+
+  const toggleService = (idx, msId) => {
+    setFormWindows((prev) =>
+      prev.map((w, i) => {
+        if (i !== idx) return w;
+        const has = w.mentorServiceIds.includes(msId);
+        return {
+          ...w,
+          mentorServiceIds: has
+            ? w.mentorServiceIds.filter((id) => id !== msId)
+            : [...w.mentorServiceIds, msId],
+        };
+      })
+    );
+  };
+
+  const handleSave = async () => {
+    // Validate
+    for (const fw of formWindows) {
+      if (fw.mentorServiceIds.length === 0) {
+        toast.error("Each window must have at least one service selected");
+        return;
+      }
+    }
+
+    setSaving(true);
+    try {
+      // Build the full windows array: keep non-selected-day windows + add new ones
+      const otherWindows = windows
+        .filter((w) => w.dayOfWeek !== selectedDay)
+        .map((w) => ({
+          dayOfWeek: w.dayOfWeek,
+          startTime: w.startTime,
+          endTime: w.endTime,
+          mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
+        }));
+
+      const newWindows = formWindows.map((fw) => ({
+        dayOfWeek: selectedDay,
+        startTime: fw.startTime,
+        endTime: fw.endTime,
+        mentorServiceIds: fw.mentorServiceIds,
+      }));
+
+      const allWindows = [...otherWindows, ...newWindows];
+
+      const res = await v2Api.upsertAvailability(allWindows);
+      setWindows(res?.data?.windows || []);
+      toast.success(`${DAY_FULL[selectedDay]} availability saved`);
+      setModalOpen(false);
+    } catch (e) {
+      if (e.status === 409) {
+        toast.error(e.message || "Conflicting bookings exist");
+      } else {
+        toast.error(e.message || "Failed to save availability");
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const removeDay = async () => {
+    setSaving(true);
+    try {
+      const otherWindows = windows
+        .filter((w) => w.dayOfWeek !== selectedDay)
+        .map((w) => ({
+          dayOfWeek: w.dayOfWeek,
+          startTime: w.startTime,
+          endTime: w.endTime,
+          mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
+        }));
+
+      if (otherWindows.length === 0) {
+        // Can't send empty array if at least 1 required — just delete all
+        // Actually the validator requires min 1, so we need to handle this edge case
+        toast.error("You need at least one availability window");
+        setSaving(false);
+        return;
+      }
+
+      const res = await v2Api.upsertAvailability(otherWindows);
+      setWindows(res?.data?.windows || []);
+      toast.success(`${DAY_FULL[selectedDay]} availability removed`);
+      setModalOpen(false);
+    } catch (e) {
+      toast.error(e.message || "Failed to remove availability");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="animate-spin text-[#5061E4]" size={32} />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h2 className="text-2xl font-extrabold tracking-tight text-[#111]">Availability</h2>
+        <p className="mt-1 text-sm font-medium text-gray-500">
+          Click a date or day to set your availability windows
+        </p>
+      </div>
+
+      {/* Calendar */}
+      <div
+        className="rounded-xl border-[3px] border-black bg-white p-6"
+        style={{ boxShadow: "6px 6px 0 0 #5061E4" }}
+      >
+        {/* Month nav */}
+        <div className="mb-4 flex items-center justify-between">
+          <button onClick={prevMonth} className="rounded-lg border-2 border-black p-2 hover:bg-gray-100">
+            <ChevronLeft size={18} />
+          </button>
+          <h3 className="text-lg font-extrabold">{monthLabel}</h3>
+          <button onClick={nextMonth} className="rounded-lg border-2 border-black p-2 hover:bg-gray-100">
+            <ChevronRight size={18} />
+          </button>
+        </div>
+
+        {/* Day headers */}
+        <div className="grid grid-cols-7 gap-1 mb-2">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+            <div key={d} className="text-center text-xs font-bold uppercase tracking-wide text-gray-400 py-2">
+              {d}
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar grid */}
+        <div className="grid grid-cols-7 gap-1">
+          {calDays.map((date, idx) => {
+            if (!date) {
+              return <div key={`pad-${idx}`} className="h-12" />;
+            }
+
+            const dayOfWeek = getDayOfWeek(date);
+            const hasAvailability = activeDays.has(dayOfWeek);
+            const isToday =
+              date.getDate() === now.getDate() &&
+              date.getMonth() === now.getMonth() &&
+              date.getFullYear() === now.getFullYear();
+
+            return (
+              <button
+                key={date.toISOString()}
+                onClick={() => openModal(dayOfWeek)}
+                className={`relative flex h-12 items-center justify-center rounded-lg border-2 text-sm font-bold transition-all hover:-translate-y-0.5 ${
+                  hasAvailability
+                    ? "border-[#5061E4] bg-[#EEF0FF] text-[#5061E4] hover:bg-[#DDE1FF]"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-gray-400"
+                } ${isToday ? "ring-2 ring-[#F59E0B] ring-offset-1" : ""}`}
+              >
+                {date.getDate()}
+                {hasAvailability && (
+                  <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-[#5061E4]" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Active days summary */}
+      <div className="mt-6 grid grid-cols-7 gap-2">
+        {DAYS.map((day) => {
+          const dayWindows = windows.filter((w) => w.dayOfWeek === day);
+          const isActive = dayWindows.length > 0;
+
+          return (
+            <button
+              key={day}
+              onClick={() => openModal(day)}
+              className={`rounded-xl border-[3px] border-black p-3 text-center transition-all hover:-translate-y-0.5 ${
+                isActive ? "bg-[#EEF0FF]" : "bg-gray-50"
+              }`}
+              style={{ boxShadow: isActive ? "3px 3px 0 0 #5061E4" : "3px 3px 0 0 #d1d5db" }}
+            >
+              <p className="text-xs font-extrabold">{DAY_LABELS[day]}</p>
+              {isActive ? (
+                <p className="mt-1 text-[10px] font-semibold text-[#5061E4]">
+                  {dayWindows.length} window{dayWindows.length > 1 ? "s" : ""}
+                </p>
+              ) : (
+                <p className="mt-1 text-[10px] font-semibold text-gray-400">—</p>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div
+            className="w-full max-w-lg rounded-2xl border-[3px] border-black bg-white p-6"
+            style={{ boxShadow: "8px 8px 0 0 #5061E4" }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-extrabold">{DAY_FULL[selectedDay]} Availability</h3>
+              <button onClick={() => setModalOpen(false)} className="rounded-lg border-2 border-black p-1.5 hover:bg-gray-100">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
+              {formWindows.map((fw, idx) => (
+                <div key={idx} className="rounded-lg border-2 border-gray-200 p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-bold uppercase tracking-wide text-gray-400">
+                      Window {idx + 1}
+                    </span>
+                    {formWindows.length > 1 && (
+                      <button
+                        onClick={() => removeWindowRow(idx)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">Start</label>
+                      <input
+                        type="time"
+                        value={fw.startTime}
+                        onChange={(e) => updateWindowRow(idx, "startTime", e.target.value)}
+                        className="w-full rounded-lg border-2 border-black px-3 py-2 text-sm font-semibold"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">End</label>
+                      <input
+                        type="time"
+                        value={fw.endTime}
+                        onChange={(e) => updateWindowRow(idx, "endTime", e.target.value)}
+                        className="w-full rounded-lg border-2 border-black px-3 py-2 text-sm font-semibold"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-bold text-gray-500">Services Offered</label>
+                    <div className="flex flex-wrap gap-2">
+                      {mentorServices.filter((ms) => ms.isActive).map((ms) => {
+                        const isSelected = fw.mentorServiceIds.includes(ms.id);
+                        return (
+                          <button
+                            key={ms.id}
+                            onClick={() => toggleService(idx, ms.id)}
+                            className={`rounded-lg border-2 px-3 py-1.5 text-xs font-bold transition-colors ${
+                              isSelected
+                                ? "border-[#5061E4] bg-[#5061E4] text-white"
+                                : "border-gray-300 bg-white text-gray-600 hover:border-gray-400"
+                            }`}
+                          >
+                            {ms.serviceName}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {mentorServices.filter((ms) => ms.isActive).length === 0 && (
+                      <p className="text-xs text-red-500 font-medium mt-1">
+                        No active services. Configure services first.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={addWindowRow}
+              className="mt-3 flex items-center gap-2 text-sm font-bold text-[#5061E4] hover:underline"
+            >
+              <Plus size={14} /> Add another window
+            </button>
+
+            <div className="mt-5 flex items-center justify-between">
+              <button
+                onClick={removeDay}
+                disabled={saving}
+                className="flex items-center gap-2 rounded-xl border-2 border-red-300 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50"
+              >
+                <Trash2 size={14} /> Remove Day
+              </button>
+
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-[#5061E4] px-6 py-2.5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-50"
+                style={{ boxShadow: "4px 4px 0 0 #000" }}
+              >
+                {saving ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} />}
+                {saving ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -21,7 +21,7 @@ router.post(
   '/',
   authenticateJWT,
   authorizeRoles('MENTEE'),
-  bookingController.createBooking
+  bookingController.initiateBooking
 );
 
 // GET /api/bookings/:bookingId — get a single booking (mentee or mentor)

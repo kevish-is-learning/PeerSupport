@@ -1,276 +1,157 @@
-# Authentication Backend
+# PeerSupport — Booking & Availability System
 
-A complete authentication backend built with Node.js, Express, Prisma, and Passport.js supporting both email/password and Google OAuth authentication.
+A real-time booking and availability management system for peer-to-peer mentoring.
 
-## Features
+## Architecture
 
-- ✅ Email/Password Authentication
-- ✅ Google OAuth 2.0 Integration
-- ✅ JWT-based Authorization
-- ✅ Secure Password Hashing (bcrypt)
-- ✅ User Profile Management
-- ✅ Password Change Functionality
-- ✅ PostgreSQL Database with Prisma ORM
-- ✅ Session Management
+- **Backend**: Node.js + Express + Prisma + PostgreSQL
+- **Frontend**: React (Next.js 14) + Tailwind CSS
+- **Real-time**: Socket.io
 
-## Prerequisites
+### Key Design Decisions
 
-- Node.js (v14 or higher)
-- PostgreSQL database
-- Google OAuth credentials (for Google authentication)
+- **Slots are never stored** — they are generated on-demand from availability windows minus existing bookings
+- **SELECT FOR UPDATE** — PostgreSQL row-level locking prevents double-booking under concurrency
+- **UTC storage** — all datetimes stored in UTC, converted to/from IST at the API boundary
+- **Service table** — 6 fixed services seeded in the database (not enum-based)
 
-## Installation
+## Setup
 
-1. **Clone and navigate to the project:**
-   ```bash
-   cd auth-backend
-   ```
+### Prerequisites
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+- Node.js 18+
+- PostgreSQL (or Neon serverless)
 
-3. **Set up environment variables:**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit `.env` and configure:
-   - `DATABASE_URL`: Your PostgreSQL connection string
-   - `JWT_SECRET`: Strong secret for JWT tokens
-   - `SESSION_SECRET`: Secret for session management
-   - `GOOGLE_CLIENT_ID`: From Google Cloud Console
-   - `GOOGLE_CLIENT_SECRET`: From Google Cloud Console
-   - `FRONTEND_URL`: Your frontend application URL
+### Environment Variables
 
-4. **Set up Google OAuth:**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select existing
-   - Enable Google+ API
-   - Create OAuth 2.0 credentials
-   - Add authorized redirect URIs:
-     - `http://localhost:5000/api/auth/google/callback` (development)
-     - Your production callback URL
+**Backend** (`backend/.env`):
 
-5. **Set up database:**
-   ```bash
-   npm run prisma:generate
-   npm run prisma:migrate
-   ```
+```env
+DATABASE_URL=postgresql://user:password@host:5432/dbname
+PORT=8080
+CORS_ORIGIN=http://localhost:3000
+JWT_SECRET=your_jwt_secret
+JWT_REFRESH_SECRET=your_refresh_secret
+CLIENT_URL=http://localhost:3000
+RAZORPAY_KEY_ID=rzp_test_xxx
+RAZORPAY_KEY_SECRET=xxx
+```
 
-## Usage
+**Frontend** (`frontend/.env`):
 
-### Development Mode
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_xxx
+```
+
+### Installation
+
 ```bash
+# Backend
+cd backend
+npm install
+npx prisma db push
+npm run db:seed    # Seeds the 6 fixed services
+npm run dev
+
+# Frontend
+cd frontend
+npm install
 npm run dev
 ```
 
-### Production Mode
+### Running Tests
+
 ```bash
-npm start
+cd backend
+npm test   # Runs slot generation unit tests (Node.js test runner)
 ```
 
-The server will start on `http://localhost:5000` (or your configured PORT).
+## API Endpoints (V2)
 
-## API Endpoints
+All V2 endpoints are prefixed with `/api/v2`.
 
-### Public Endpoints
+### Public
 
-#### Register
-```http
-POST /api/auth/register
-Content-Type: application/json
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/v2/services` | List all 6 seeded services |
 
-{
-  "email": "user@example.com",
-  "password": "password123",
-  "name": "John Doe"
-}
+### Mentor (auth + MENTOR role)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/v2/mentor/services` | Get mentor's configured services |
+| PUT | `/v2/mentor/services` | Upsert service configs |
+| GET | `/v2/mentor/availability` | Get availability windows |
+| PUT | `/v2/mentor/availability` | Replace availability windows |
+
+### Slots & Bookings (auth required)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/v2/mentors/:id/slots?serviceId=&date=` | Generate available slots |
+| POST | `/v2/bookings` | Create booking (MENTEE) |
+| GET | `/v2/bookings/:id` | Get booking details |
+| PATCH | `/v2/bookings/:id/cancel` | Cancel booking (MENTOR) |
+| PATCH | `/v2/bookings/:id/reschedule` | Reschedule booking |
+
+### Socket.io Events
+
+**Client → Server:**
+- `join-mentor-room(mentorProfileId)` — Join a mentor's room for real-time updates
+- `leave-mentor-room(mentorProfileId)` — Leave a mentor's room
+
+**Server → Client (room: `mentor:{mentorId}`):**
+- `slot-update` — `{ event: 'slot-update', startTime, endTime, serviceId, action: 'taken'|'released' }`
+
+## Slot Generation Algorithm
+
 ```
-
-#### Login
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
+for each availability window matching the date:
+  cursor = window.startTime
+  while cursor + duration <= window.endTime:
+    slot = [cursor, cursor + duration]
+    if slot is >= 15 minutes from now AND
+       no existing booking overlaps (startA < endB AND endA > startB):
+      → include slot
+    cursor += duration + buffer
 ```
-
-#### Google OAuth
-```http
-GET /api/auth/google
-```
-Redirects to Google sign-in page.
-
-### Protected Endpoints (Require JWT Token)
-
-Include JWT token in Authorization header:
-```
-Authorization: Bearer <your-jwt-token>
-```
-
-#### Get Profile (Role-based)
-```http
-GET /api/users/me
-```
-Returns user info and role-specific profile (mentee, mentor, or admin profile).
-
-#### Update Profile (Role-based)
-```http
-PUT /api/users/me
-Content-Type: application/json
-
-{
-  "bio": "Updated bio",
-  "skills": ["JavaScript", "React"],
-  ... (other role-specific fields)
-}
-```
-
-#### Change Password
-```http
-POST /api/auth/change-password
-Content-Type: application/json
-
-{
-  "currentPassword": "oldpassword",
-  "newPassword": "newpassword123"
-}
-```
-
-#### Logout
-```http
-POST /api/auth/logout
-```
-
-## Response Format
-
-### Success Response
-```json
-{
-  "success": true,
-  "message": "Operation successful",
-  "data": {
-    "user": { ... },
-    "token": "jwt-token"
-  }
-}
-```
-
-### Error Response
-```json
-{
-  "success": false,
-  "message": "Error message"
-}
-```
-
-## Database Schema
-
-### User Model
-```prisma
-model User {
-  id             String    @id @default(uuid())
-  email          String    @unique
-  password       String?
-  name           String?
-  googleId       String?   @unique
-  provider       String    @default("local")
-  profilePicture String?
-  isVerified     Boolean   @default(false)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-}
-```
-
-## Security Features
-
-- **Password Hashing**: bcrypt with salt rounds of 12
-- **JWT Tokens**: Secure token-based authentication
-- **CORS Protection**: Configured for specific origins
-- **Session Security**: HTTP-only cookies in production
-- **Input Validation**: Email and password validation
-- **Password Requirements**: Minimum 6 characters
-
-## Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| DATABASE_URL | PostgreSQL connection string | Yes |
-| JWT_SECRET | Secret key for JWT tokens | Yes |
-| JWT_EXPIRES_IN | Token expiration time (e.g., "7d") | No |
-| SESSION_SECRET | Secret for session management | Yes |
-| GOOGLE_CLIENT_ID | Google OAuth client ID | Yes* |
-| GOOGLE_CLIENT_SECRET | Google OAuth client secret | Yes* |
-| GOOGLE_CALLBACK_URL | OAuth callback URL | Yes* |
-| PORT | Server port (default: 5000) | No |
-| NODE_ENV | Environment (development/production) | No |
-| FRONTEND_URL | Frontend URL for CORS | Yes |
-
-*Required only if using Google OAuth
 
 ## Project Structure
 
 ```
-auth-backend/
+backend/
 ├── prisma/
-│   └── schema.prisma          # Database schema
+│   ├── schema.prisma          # Database schema
+│   └── seed.js                # Seeds 6 fixed services
 ├── src/
 │   ├── config/
-│   │   ├── database.js        # Database connection
-│   │   └── passport.js        # Passport strategies
-│   ├── controllers/
-│   │   └── AuthController.js  # Auth endpoints
-│   ├── middleware/
-│   │   └── auth.js            # JWT middleware
-│   ├── routes/
-│   │   └── auth.js            # Auth routes
-│   ├── services/
-│   │   └── AuthService.js     # Business logic
-│   └── server.js              # Express app
-├── .env.example               # Environment template
-├── package.json
-└── README.md
+│   │   ├── database.js        # Prisma client
+│   │   └── socket.js          # Socket.io server
+│   ├── utils/
+│   │   ├── slotGenerator.js   # On-demand slot generation
+│   │   ├── conflictGuard.js   # SELECT FOR UPDATE locking
+│   │   └── timezoneUtils.js   # IST ↔ UTC conversion
+│   ├── validators/
+│   │   └── v2.validator.js    # Zod schemas
+│   ├── services/v2/           # Business logic
+│   ├── controllers/v2/        # Route handlers
+│   ├── routes/v2/             # Route definitions
+│   └── __tests__/
+│       └── slotGenerator.test.js
+│
+frontend/
+├── lib/
+│   ├── api.js                 # API client (v2Api)
+│   └── useSocket.js           # Socket.io React hook
+├── components/
+│   ├── mentor/v2/
+│   │   ├── ServiceConfigPanel.js
+│   │   └── AvailabilityCalendar.js
+│   └── mentee/v2/
+│       └── MentorBookingPage.js
+└── app/
+    ├── mentor/availability/   # Mentor dashboard
+    └── mentee/book/[id]/      # Mentee booking flow
 ```
-
-## Prisma Commands
-
-```bash
-# Generate Prisma Client
-npm run prisma:generate
-
-# Run database migrations
-npm run prisma:migrate
-
-# Open Prisma Studio (Database GUI)
-npm run prisma:studio
-```
-
-## Troubleshooting
-
-### Database Connection Issues
-- Verify PostgreSQL is running
-- Check DATABASE_URL in .env
-- Ensure database exists
-
-### Google OAuth Errors
-- Verify credentials in Google Cloud Console
-- Check authorized redirect URIs
-- Ensure GOOGLE_CALLBACK_URL matches
-
-### JWT Token Issues
-- Verify JWT_SECRET is set
-- Check token expiration settings
-- Ensure proper Authorization header format
-
-## License
-
-ISC
-
-## Support
-
-For issues or questions, please open an issue in the repository.

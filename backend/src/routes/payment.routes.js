@@ -5,7 +5,7 @@ import { authenticateJWT } from '../middleware/auth.js';
 const router = Router();
 
 // All payment routes require authentication
-router.post('/create-order', authenticateJWT, paymentController.createOrder);
+// NOTE: /create-order is removed — order creation is now part of POST /api/bookings (initiateBooking)
 router.post('/verify', authenticateJWT, paymentController.verifyPayment);
 router.post('/failure', authenticateJWT, paymentController.handleFailure);
 
