@@ -359,9 +359,9 @@ export default function MentorProfilePage() {
   const availDays = new Set();
   let availSlotsCount = 0;
   availability.forEach((dayEntry) => {
-    if (dayEntry.timeSlots?.length > 0) {
+    if (dayEntry.slots?.length > 0) {
       availDays.add(dayEntry.dayOfWeek);
-      availSlotsCount += dayEntry.timeSlots.length;
+      availSlotsCount += dayEntry.slots.length;
     }
   });
 
@@ -1193,7 +1193,7 @@ export default function MentorProfilePage() {
 
                       <div className="space-y-4">
                         {availability.map((dayEntry) => {
-                          const slots = dayEntry.timeSlots || [];
+                          const slots = dayEntry.slots || [];
                           if (slots.length === 0) return null;
 
                           return (

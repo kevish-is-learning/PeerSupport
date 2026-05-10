@@ -150,17 +150,50 @@ export const mentorServiceApi = {
 // ─── Mentor Availability (dedicated endpoints) ───────────────────────────────
 
 export const mentorAvailabilityApi = {
-  /** Fetch current mentor's weekly availability */
+  /** Fetch current mentor's weekly availability with slots + services */
   getMine() {
     return apiRequest('/mentor-availability');
   },
-  /** Bulk upsert weekly availability */
+  /** Bulk upsert weekly availability (days + slots + service mappings) */
   upsert(availability) {
     return apiRequest('/mentor-availability', { method: 'PUT', body: { availability } });
+  },
+  /** Add a single slot to a day */
+  addSlot(dayId, data) {
+    return apiRequest(`/mentor-availability/${dayId}/slots`, { method: 'POST', body: data });
+  },
+  /** Update a slot */
+  updateSlot(slotId, data) {
+    return apiRequest(`/mentor-availability/slots/${slotId}`, { method: 'PUT', body: data });
+  },
+  /** Delete a single slot */
+  deleteSlot(slotId) {
+    return apiRequest(`/mentor-availability/slots/${slotId}`, { method: 'DELETE' });
   },
   /** Delete all availability for a specific day */
   removeDay(dayOfWeek) {
     return apiRequest(`/mentor-availability/${dayOfWeek}`, { method: 'DELETE' });
+  },
+};
+
+// ─── Booking APIs ────────────────────────────────────────────────────────────
+
+export const bookingApi = {
+  /** Get available slots for a mentor, filtered by service type and date */
+  getAvailableSlots(mentorId, { serviceType, date }) {
+    return apiRequest(`/bookings/mentors/${mentorId}/available-slots?serviceType=${serviceType}&date=${date}`);
+  },
+  /** Create a new booking (mentee) */
+  create(data) {
+    return apiRequest('/bookings', { method: 'POST', body: data });
+  },
+  /** Get a single booking by ID */
+  getById(bookingId) {
+    return apiRequest(`/bookings/${bookingId}`);
+  },
+  /** Cancel a booking */
+  cancel(bookingId, data) {
+    return apiRequest(`/bookings/${bookingId}/cancel`, { method: 'POST', body: data });
   },
 };
 

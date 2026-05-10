@@ -10,6 +10,7 @@ import mentorBookingRoutes from './mentorBooking.routes.js';
 import menteeDashboardRoutes from './menteeDashboard.routes.js';
 import menteeBookingRoutes from './menteeBooking.routes.js';
 import publicMentorRoutes from './publicMentor.routes.js';
+import bookingRoutes from './booking.routes.js';
 
 const router = Router();
 
@@ -40,5 +41,6 @@ router.use('/mentor-availability', mentorAvailabilityRoutes);
 router.use('/mentor-bookings', mentorBookingRoutes);
 router.use('/mentors', publicMentorRoutes);
 router.use('/admin', adminMentorRoutes);
+router.use('/bookings', bookingRoutes);
 
 export default router;

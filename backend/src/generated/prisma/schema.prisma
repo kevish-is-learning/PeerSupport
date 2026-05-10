@@ -239,6 +239,9 @@ model MentorService {
 
   mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
 
+  // Many-to-many: which slots offer this service
+  slotServices SlotService[]
+
   bookings Booking[]
 
   @@unique([mentorProfileId, serviceType])
@@ -246,9 +249,11 @@ model MentorService {
 }
 
 // ============================================================
-// AVAILABILITY
+// AVAILABILITY (NEW ARCHITECTURE)
 // ============================================================
 
+/// WeeklyAvailability: Day-level container.
+/// One record per mentor per day-of-week.
 model WeeklyAvailability {
   id String @id @default(uuid())
 
@@ -263,32 +268,66 @@ model WeeklyAvailability {
 
   mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
 
-  timeSlots TimeSlot[]
+  // Child slots within this day
+  slots AvailabilitySlot[]
 
   @@unique([mentorProfileId, dayOfWeek])
 }
 
-model TimeSlot {
+/// AvailabilitySlot: A time range within a day.
+/// Uses DateTime for startTime/endTime (date portion is canonical 1970-01-01).
+/// maxBookings controls capacity (1 = 1:1, >1 = group sessions).
+model AvailabilitySlot {
   id String @id @default(uuid())
 
   weeklyAvailabilityId String
 
-  startTime String
-  endTime   String
+  /// Time stored as DateTime; date portion is always 1970-01-01.
+  /// Only the time component (HH:mm) matters.
+  startTime DateTime
+  endTime   DateTime
 
+  /// Maximum concurrent bookings for this slot.
+  /// 1 = one-on-one only. >1 = supports group sessions.
   maxBookings Int @default(1)
 
+  /// Soft-disable without deletion.
+  isActive Boolean @default(true)
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   weeklyAvailability WeeklyAvailability @relation(fields: [weeklyAvailabilityId], references: [id], onDelete: Cascade)
 
+  // Many-to-many: which services are offered in this slot
+  slotServices SlotService[]
+
+  // Bookings placed against this slot
   bookings Booking[]
 
   @@index([weeklyAvailabilityId])
 }
 
+/// SlotService: Join table between AvailabilitySlot and MentorService.
+/// This is the core architectural fix: each slot explicitly declares
+/// which services it supports.
+model SlotService {
+  id String @id @default(uuid())
+
+  availabilitySlotId String
+  mentorServiceId    String
+
+  createdAt DateTime @default(now())
+
+  availabilitySlot AvailabilitySlot @relation(fields: [availabilitySlotId], references: [id], onDelete: Cascade)
+  mentorService    MentorService    @relation(fields: [mentorServiceId], references: [id], onDelete: Cascade)
+
+  @@unique([availabilitySlotId, mentorServiceId])
+  @@index([mentorServiceId])
+}
+
 // ============================================================
-// BOOKINGS
+// BOOKINGS (UPDATED)
 // ============================================================
 
 model Booking {
@@ -300,12 +339,19 @@ model Booking {
 
   mentorServiceId String
 
-  timeSlotId String?
+  /// Required: every booking must be tied to a specific slot.
+  availabilitySlotId String
+
+  /// The actual calendar date this booking is for (e.g., 2026-05-15).
+  /// Combined with the slot's time range, this gives the full datetime.
+  scheduledDate DateTime @db.Date
 
   sessionType SessionType @default(ONE_ON_ONE)
 
   bookingStatus BookingStatus @default(PENDING)
 
+  /// Resolved start/end times for this specific booking instance.
+  /// Computed from slot time + scheduledDate on creation.
   startTime DateTime
   endTime   DateTime
 
@@ -332,7 +378,7 @@ model Booking {
 
   mentorService MentorService @relation(fields: [mentorServiceId], references: [id])
 
-  timeSlot TimeSlot? @relation(fields: [timeSlotId], references: [id])
+  availabilitySlot AvailabilitySlot @relation(fields: [availabilitySlotId], references: [id])
 
   payment Payment?
 
@@ -340,10 +386,13 @@ model Booking {
 
   feedback SessionFeedback?
 
+  // Prevent same mentee from booking same slot on same date twice
+  @@unique([menteeId, availabilitySlotId, scheduledDate])
   @@index([menteeId])
   @@index([mentorProfileId])
   @@index([bookingStatus])
   @@index([startTime])
+  @@index([availabilitySlotId, scheduledDate])
 }
 
 // ============================================================

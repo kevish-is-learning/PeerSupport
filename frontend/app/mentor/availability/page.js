@@ -2,11 +2,12 @@
 
 import {
   CalendarDays, Plus, Trash2, Loader2, Save,
-  Lock, IndianRupee, Clock, CheckCircle2, ChevronDown, ChevronUp
+  IndianRupee, Clock, CheckCircle2, ChevronDown, ChevronUp,
+  Layers, Settings2
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { mentorProfileApi, mentorServiceApi, mentorAvailabilityApi } from "../../../lib/api";
+import { mentorServiceApi, mentorAvailabilityApi } from "../../../lib/api";
 import { toast } from "sonner";
 
 const DAYS_ORDER = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
@@ -23,29 +24,80 @@ const SERVICE_PALETTES = [
 ];
 
 /**
- * Build a local availability state from the API response.
- * Structure: { [dayOfWeek]: [{ startTime, endTime }] }
+ * Build local availability state from the API response.
+ *
+ * New structure:
+ * {
+ *   [dayOfWeek]: {
+ *     dayId: string | null,   // server ID for this day record
+ *     slots: [{
+ *       id: string | null,    // server ID (null if newly added)
+ *       startTime: string,    // "HH:mm"
+ *       endTime: string,      // "HH:mm"
+ *       maxBookings: number,
+ *       serviceIds: string[], // MentorService IDs assigned to this slot
+ *     }]
+ *   }
+ * }
  */
 function buildAvailabilityState(apiAvailability) {
   const state = {};
-  DAYS_ORDER.forEach((day) => { state[day] = []; });
+  DAYS_ORDER.forEach((day) => { state[day] = { dayId: null, slots: [] }; });
+
   (apiAvailability || []).forEach((dayEntry) => {
-    state[dayEntry.dayOfWeek] = (dayEntry.timeSlots || []).map((ts) => ({
-      startTime: ts.startTime,
-      endTime: ts.endTime,
-    }));
+    state[dayEntry.dayOfWeek] = {
+      dayId: dayEntry.id,
+      slots: (dayEntry.slots || []).map((slot) => ({
+        id: slot.id,
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        maxBookings: slot.maxBookings || 1,
+        serviceIds: (slot.services || []).map((ss) => ss.mentorServiceId),
+      })),
+    };
   });
+
   return state;
 }
 
 function countSlots(avail) {
   let total = 0;
-  Object.values(avail).forEach((slots) => { total += slots.length; });
+  Object.values(avail).forEach((day) => { total += day.slots.length; });
   return total;
 }
 
 function activeDaysCount(avail) {
-  return Object.values(avail).filter((slots) => slots.length > 0).length;
+  return Object.values(avail).filter((day) => day.slots.length > 0).length;
+}
+
+/**
+ * ServiceChips: Renders toggleable service pills for a slot.
+ */
+function ServiceChips({ services, selectedIds, onToggle }) {
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-2">
+      {services.map((svc, idx) => {
+        const pal = SERVICE_PALETTES[idx % SERVICE_PALETTES.length];
+        const isSelected = selectedIds.includes(svc.id);
+        return (
+          <button
+            key={svc.id}
+            type="button"
+            onClick={() => onToggle(svc.id)}
+            className={`
+              px-2.5 py-1 rounded-lg text-[10px] font-bold border-2 transition-all
+              ${isSelected
+                ? `${pal.pill} border-black shadow-[2px_2px_0_0_#000]`
+                : 'bg-white border-gray-200 text-gray-400 hover:border-gray-400'
+              }
+            `}
+          >
+            {svc.label}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function AvailabilityPage() {
@@ -61,7 +113,6 @@ export default function AvailabilityPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Fetch services and availability in parallel
         const [servicesRes, availRes] = await Promise.all([
           mentorServiceApi.getMine(),
           mentorAvailabilityApi.getMine(),
@@ -77,9 +128,8 @@ export default function AvailabilityPage() {
 
         const availState = buildAvailabilityState(availRes.data?.availability);
         setAvailability(availState);
-        setOriginalAvailability(availState);
+        setOriginalAvailability(JSON.parse(JSON.stringify(availState)));
 
-        // Expand all days by default
         const exp = {};
         DAYS_ORDER.forEach((d) => { exp[d] = true; });
         setExpandedDays(exp);
@@ -96,30 +146,53 @@ export default function AvailabilityPage() {
 
   const toggleExpand = (day) => setExpandedDays((p) => ({ ...p, [day]: !p[day] }));
 
-  const addSlot = (day) => setAvailability((prev) => {
-    const c = JSON.parse(JSON.stringify(prev));
-    c[day] = [...(c[day] || []), { startTime: "09:00", endTime: "10:00" }];
-    return c;
-  });
+  const addSlot = useCallback((day) => {
+    setAvailability((prev) => {
+      const c = JSON.parse(JSON.stringify(prev));
+      // Default: assign all priced services to the new slot
+      const defaultServiceIds = services
+        .filter((s) => s.pricePerSession > 0)
+        .map((s) => s.id);
+
+      c[day].slots.push({
+        id: null,
+        startTime: "09:00",
+        endTime: "10:00",
+        maxBookings: 1,
+        serviceIds: defaultServiceIds,
+      });
+      return c;
+    });
+  }, [services]);
 
   const removeSlot = (day, idx) => setAvailability((prev) => {
     const c = JSON.parse(JSON.stringify(prev));
-    c[day] = c[day].filter((_, i) => i !== idx);
+    c[day].slots = c[day].slots.filter((_, i) => i !== idx);
     return c;
   });
 
   const updateSlot = (day, idx, field, val) => setAvailability((prev) => {
     const c = JSON.parse(JSON.stringify(prev));
-    c[day][idx] = { ...c[day][idx], [field]: val };
+    c[day].slots[idx] = { ...c[day].slots[idx], [field]: val };
+    return c;
+  });
+
+  const toggleService = (day, idx, serviceId) => setAvailability((prev) => {
+    const c = JSON.parse(JSON.stringify(prev));
+    const slot = c[day].slots[idx];
+    if (slot.serviceIds.includes(serviceId)) {
+      slot.serviceIds = slot.serviceIds.filter((id) => id !== serviceId);
+    } else {
+      slot.serviceIds.push(serviceId);
+    }
     return c;
   });
 
   const handleSave = async () => {
-    // 1. Frontend Validation
+    // 1. Frontend validation
     for (const day of DAYS_ORDER) {
-      const slots = availability[day] || [];
+      const slots = availability[day]?.slots || [];
 
-      // Parse all slots to minutes first
       const parsedSlots = [];
       for (let i = 0; i < slots.length; i++) {
         const s = slots[i];
@@ -127,6 +200,13 @@ export default function AvailabilityPage() {
           toast.error(`${DAY_LABELS[day]} has an incomplete time slot.`);
           return;
         }
+
+        // Validate services
+        if (!s.serviceIds || s.serviceIds.length === 0) {
+          toast.error(`Slot ${s.startTime}–${s.endTime} on ${DAY_LABELS[day]} must have at least one service assigned.`);
+          return;
+        }
+
         const [startH, startM] = s.startTime.split(':').map(Number);
         const [endH, endM] = s.endTime.split(':').map(Number);
         const startMins = startH * 60 + startM;
@@ -139,7 +219,7 @@ export default function AvailabilityPage() {
         parsedSlots.push({ startMins, endMins, label: `${s.startTime}–${s.endTime}` });
       }
 
-      // Check for overlaps / exact duplicates by sorting and comparing neighbours
+      // Check for overlaps
       parsedSlots.sort((a, b) => a.startMins - b.startMins);
       for (let i = 0; i < parsedSlots.length - 1; i++) {
         const curr = parsedSlots[i];
@@ -156,19 +236,21 @@ export default function AvailabilityPage() {
     setSaving(true);
     setSaved(false);
     try {
-      // 2. Convert local state to API format
+      // 2. Convert to new API format
       const payload = DAYS_ORDER
-        .filter((day) => (availability[day] || []).length > 0)
+        .filter((day) => (availability[day]?.slots || []).length > 0)
         .map((day) => ({
           dayOfWeek: day,
-          timeSlots: availability[day].map((s) => ({
+          slots: availability[day].slots.map((s) => ({
             startTime: s.startTime,
             endTime: s.endTime,
+            maxBookings: s.maxBookings || 1,
+            serviceIds: s.serviceIds,
           })),
         }));
 
       await mentorAvailabilityApi.upsert(payload);
-      setOriginalAvailability(availability);
+      setOriginalAvailability(JSON.parse(JSON.stringify(availability)));
       setSaved(true);
       toast.success("Availability saved!");
       setTimeout(() => setSaved(false), 3000);
@@ -202,7 +284,7 @@ export default function AvailabilityPage() {
           </div>
           <div>
             <h1 className="text-xl font-extrabold leading-tight text-[#111]">Weekly Availability</h1>
-            <p className="text-xs text-gray-500 font-medium hidden sm:block">Set the time slots you're available each week</p>
+            <p className="text-xs text-gray-500 font-medium hidden sm:block">Set your time slots and assign services to each slot</p>
           </div>
         </div>
         {isDirty && (
@@ -278,7 +360,7 @@ export default function AvailabilityPage() {
         <div className="space-y-5">
           {DAYS_ORDER.map((day, di) => {
             const pal = SERVICE_PALETTES[di % SERVICE_PALETTES.length];
-            const slots = availability[day] || [];
+            const slots = availability[day]?.slots || [];
             const isOpen = expandedDays[day];
 
             return (
@@ -302,33 +384,65 @@ export default function AvailabilityPage() {
 
                 {/* Slot editor */}
                 {isOpen && (
-                  <div className="px-5 py-4 space-y-3">
+                  <div className="px-5 py-4 space-y-4">
                     {slots.length === 0 && (
                       <p className="text-xs text-gray-300 italic">No slots configured for this day</p>
                     )}
                     {slots.map((slot, idx) => (
-                      <div key={idx} className="flex items-center gap-2">
-                        <div className="flex items-center gap-1.5 rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 focus-within:border-[#5061E4] transition-colors">
-                          <Clock size={11} className="text-gray-400 shrink-0" />
-                          <input
-                            type="time" value={slot.startTime}
-                            onChange={(e) => updateSlot(day, idx, "startTime", e.target.value)}
-                            className="text-xs font-semibold bg-transparent focus:outline-none w-20"
-                          />
+                      <div key={idx} className="rounded-xl border-2 border-gray-100 bg-gray-50/50 p-3 space-y-2">
+                        {/* Time range row */}
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 focus-within:border-[#5061E4] transition-colors">
+                            <Clock size={11} className="text-gray-400 shrink-0" />
+                            <input
+                              type="time" value={slot.startTime}
+                              onChange={(e) => updateSlot(day, idx, "startTime", e.target.value)}
+                              className="text-xs font-semibold bg-transparent focus:outline-none w-20"
+                            />
+                          </div>
+                          <span className="text-gray-300 text-xs font-bold">→</span>
+                          <div className="flex items-center gap-1.5 rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 focus-within:border-[#5061E4] transition-colors">
+                            <Clock size={11} className="text-gray-400 shrink-0" />
+                            <input
+                              type="time" value={slot.endTime}
+                              onChange={(e) => updateSlot(day, idx, "endTime", e.target.value)}
+                              className="text-xs font-semibold bg-transparent focus:outline-none w-20"
+                            />
+                          </div>
+
+                          {/* Max bookings */}
+                          <div className="flex items-center gap-1.5 rounded-xl border-2 border-gray-200 bg-white px-2 py-1.5 ml-auto">
+                            <Layers size={11} className="text-gray-400 shrink-0" />
+                            <input
+                              type="number" min={1} max={50}
+                              value={slot.maxBookings}
+                              onChange={(e) => updateSlot(day, idx, "maxBookings", Math.max(1, parseInt(e.target.value) || 1))}
+                              className="text-xs font-semibold bg-transparent focus:outline-none w-8 text-center"
+                              title="Max bookings per slot"
+                            />
+                          </div>
+
+                          <button onClick={() => removeSlot(day, idx)}
+                            className="w-7 h-7 rounded-lg border-2 border-red-200 bg-red-50 flex items-center justify-center text-red-400 hover:bg-red-100 hover:border-red-400 transition-colors shrink-0">
+                            <Trash2 size={11} />
+                          </button>
                         </div>
-                        <span className="text-gray-300 text-xs font-bold">→</span>
-                        <div className="flex items-center gap-1.5 rounded-xl border-2 border-gray-200 bg-white px-3 py-1.5 focus-within:border-[#5061E4] transition-colors">
-                          <Clock size={11} className="text-gray-400 shrink-0" />
-                          <input
-                            type="time" value={slot.endTime}
-                            onChange={(e) => updateSlot(day, idx, "endTime", e.target.value)}
-                            className="text-xs font-semibold bg-transparent focus:outline-none w-20"
-                          />
+
+                        {/* Service assignment chips */}
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <Settings2 size={10} className="text-gray-400 shrink-0" />
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Services:</span>
                         </div>
-                        <button onClick={() => removeSlot(day, idx)}
-                          className="w-7 h-7 rounded-lg border-2 border-red-200 bg-red-50 flex items-center justify-center text-red-400 hover:bg-red-100 hover:border-red-400 transition-colors">
-                          <Trash2 size={11} />
-                        </button>
+                        <ServiceChips
+                          services={pricedServices}
+                          selectedIds={slot.serviceIds}
+                          onToggle={(svcId) => toggleService(day, idx, svcId)}
+                        />
+                        {slot.serviceIds.length === 0 && (
+                          <p className="text-[10px] text-red-400 font-semibold mt-1">
+                            ⚠ At least one service must be assigned
+                          </p>
+                        )}
                       </div>
                     ))}
                     <button

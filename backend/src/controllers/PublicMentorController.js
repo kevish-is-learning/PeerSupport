@@ -80,6 +80,7 @@ class PublicMentorController {
               where: { isAvailable: true },
               orderBy: { dayOfWeek: 'asc' },
               take: 1,
+              select: { dayOfWeek: true },
             },
           },
         }),

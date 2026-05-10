@@ -202,12 +202,21 @@ exports.Prisma.WeeklyAvailabilityScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.TimeSlotScalarFieldEnum = {
+exports.Prisma.AvailabilitySlotScalarFieldEnum = {
   id: 'id',
   weeklyAvailabilityId: 'weeklyAvailabilityId',
   startTime: 'startTime',
   endTime: 'endTime',
   maxBookings: 'maxBookings',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SlotServiceScalarFieldEnum = {
+  id: 'id',
+  availabilitySlotId: 'availabilitySlotId',
+  mentorServiceId: 'mentorServiceId',
   createdAt: 'createdAt'
 };
 
@@ -216,7 +225,8 @@ exports.Prisma.BookingScalarFieldEnum = {
   menteeId: 'menteeId',
   mentorProfileId: 'mentorProfileId',
   mentorServiceId: 'mentorServiceId',
-  timeSlotId: 'timeSlotId',
+  availabilitySlotId: 'availabilitySlotId',
+  scheduledDate: 'scheduledDate',
   sessionType: 'sessionType',
   bookingStatus: 'bookingStatus',
   startTime: 'startTime',
@@ -379,7 +389,8 @@ exports.Prisma.ModelName = {
   MentorProfile: 'MentorProfile',
   MentorService: 'MentorService',
   WeeklyAvailability: 'WeeklyAvailability',
-  TimeSlot: 'TimeSlot',
+  AvailabilitySlot: 'AvailabilitySlot',
+  SlotService: 'SlotService',
   Booking: 'Booking',
   Payment: 'Payment',
   Invoice: 'Invoice',

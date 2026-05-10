@@ -7,6 +7,7 @@ import {
   updateMentorApprovalSchema,
 } from '../validators/mentorProfile.validator.js';
 import { SERVICE_TYPE_LABELS, DAY_OF_WEEK_LABELS } from '../constants/services.js';
+import { dateTimeToTimeString } from '../utils/timeUtils.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -40,7 +41,20 @@ const profileInclude = {
     orderBy: { createdAt: 'asc' },
   },
   weeklyAvailability: {
-    include: { timeSlots: true },
+    include: {
+      slots: {
+        include: {
+          slotServices: {
+            include: {
+              mentorService: {
+                select: { id: true, serviceType: true },
+              },
+            },
+          },
+        },
+        orderBy: { startTime: 'asc' },
+      },
+    },
     orderBy: { dayOfWeek: 'asc' },
   },
 };
@@ -68,10 +82,20 @@ const mapProfile = (profile) => ({
     id: a.id,
     dayOfWeek: a.dayOfWeek,
     dayLabel: DAY_OF_WEEK_LABELS[a.dayOfWeek],
-    timeSlots: (a.timeSlots || []).map((ts) => ({
-      id: ts.id,
-      startTime: ts.startTime,
-      endTime: ts.endTime,
+    slots: (a.slots || []).map((slot) => ({
+      id: slot.id,
+      startTime: dateTimeToTimeString(slot.startTime),
+      endTime: dateTimeToTimeString(slot.endTime),
+      maxBookings: slot.maxBookings,
+      isActive: slot.isActive,
+      services: (slot.slotServices || []).map((ss) => ({
+        slotServiceId: ss.id,
+        mentorServiceId: ss.mentorServiceId,
+        serviceType: ss.mentorService?.serviceType,
+        label: ss.mentorService?.serviceType
+          ? SERVICE_TYPE_LABELS[ss.mentorService.serviceType]
+          : null,
+      })),
     })),
   })),
   ugCollegeProfile: profile.ugCollegeProfile,
