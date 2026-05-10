@@ -41,80 +41,82 @@ function MentorCard({ mentor }) {
     : "Availability TBD";
 
   return (
-    <div className="flex flex-col rounded-2xl border-2 border-black bg-white shadow-[5px_5px_0px_0px_#8B5CF6] transition-shadow hover:shadow-[8px_8px_0px_0px_#8B5CF6]">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3 p-5 pb-3">
-        <div className="flex items-center gap-3">
-          <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl border-2 border-black bg-[#F3E8FF]">
-            {mentor.profilePicture ? (
-              <img
-                src={resolveUploadUrl(mentor.profilePicture)}
-                alt={mentor.name}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-xl font-black text-[#8B5CF6]">
-                {mentor.name?.charAt(0) || "M"}
+    <Link href={`/mentee/find-mentors/${mentor.id}`} className="block no-underline">
+      <div className="flex flex-col rounded-2xl border-2 border-black bg-white shadow-[5px_5px_0px_0px_#8B5CF6] transition-shadow hover:shadow-[8px_8px_0px_0px_#8B5CF6]">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 p-5 pb-3">
+          <div className="flex items-center gap-3">
+            <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl border-2 border-black bg-[#F3E8FF]">
+              {mentor.profilePicture ? (
+                <img
+                  src={resolveUploadUrl(mentor.profilePicture)}
+                  alt={mentor.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-xl font-black text-[#8B5CF6]">
+                  {mentor.name?.charAt(0) || "M"}
+                </div>
+              )}
+            </div>
+            <div>
+              <h3 className="text-base font-extrabold text-gray-900 leading-tight">{mentor.name}</h3>
+              <p className="mt-0.5 text-xs font-semibold text-gray-500">{college}</p>
+              <div className="mt-1 flex items-center gap-1">
+                <Star className="h-3.5 w-3.5 fill-[#F59E0B] text-[#F59E0B]" />
+                <span className="text-xs font-bold text-gray-700">
+                  {mentor.rating > 0 ? mentor.rating.toFixed(1) : "New"}
+                </span>
               </div>
-            )}
-          </div>
-          <div>
-            <h3 className="text-base font-extrabold text-gray-900 leading-tight">{mentor.name}</h3>
-            <p className="mt-0.5 text-xs font-semibold text-gray-500">{college}</p>
-            <div className="mt-1 flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 fill-[#F59E0B] text-[#F59E0B]" />
-              <span className="text-xs font-bold text-gray-700">
-                {mentor.rating > 0 ? mentor.rating.toFixed(1) : "New"}
-              </span>
             </div>
           </div>
+          {price !== null && (
+            <div className="text-right flex-shrink-0">
+              <p className="text-[10px] font-semibold text-gray-400">starting from</p>
+              <p className="text-lg font-extrabold text-gray-900">₹{Math.round(price)}</p>
+            </div>
+          )}
         </div>
-        {price !== null && (
-          <div className="text-right flex-shrink-0">
-            <p className="text-[10px] font-semibold text-gray-400">starting from</p>
-            <p className="text-lg font-extrabold text-gray-900">₹{Math.round(price)}</p>
-          </div>
-        )}
-      </div>
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 px-5">
-        {tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-md border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-semibold text-gray-600"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      {/* Stats */}
-      <div className="mt-3 flex items-center gap-4 px-5 text-xs font-semibold text-gray-500">
-        <div className="flex items-center gap-1">
-          <BookOpen className="h-3.5 w-3.5" />
-          {mentor.totalSessions} sessions
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 px-5">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-md border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-semibold text-gray-600"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
-        {mentor.workExperience && (
+
+        {/* Stats */}
+        <div className="mt-3 flex items-center gap-4 px-5 text-xs font-semibold text-gray-500">
           <div className="flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" />
-            {mentor.workExperience}
+            <BookOpen className="h-3.5 w-3.5" />
+            {mentor.totalSessions} sessions
           </div>
-        )}
-      </div>
+          {mentor.workExperience && (
+            <div className="flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5" />
+              {mentor.workExperience}
+            </div>
+          )}
+        </div>
 
-      {/* Availability */}
-      <div className="mx-5 mt-3 rounded-lg bg-[#FFF7ED] px-3 py-2 text-xs font-semibold text-[#92400E]">
-        📅 {nextDayLabel}
-      </div>
+        {/* Availability */}
+        <div className="mx-5 mt-3 rounded-lg bg-[#FFF7ED] px-3 py-2 text-xs font-semibold text-[#92400E]">
+          📅 {nextDayLabel}
+        </div>
 
-      {/* CTA */}
-      <div className="mt-4 px-5 pb-5">
-        <button className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-[#4F46E5] py-3 text-sm font-extrabold text-white shadow-[3px_3px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-none">
-          📅 Book Session
-        </button>
+        {/* CTA */}
+        <div className="mt-4 px-5 pb-5">
+          <div className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-[#4F46E5] py-3 text-sm font-extrabold text-white shadow-[3px_3px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-none">
+            📅 Book Session
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

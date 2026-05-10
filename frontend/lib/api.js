@@ -108,6 +108,9 @@ export const publicMentorApi = {
     ).toString();
     return apiRequest(`/mentors${qs ? `?${qs}` : ''}`);
   },
+  getMentorProfile(mentorId) {
+    return apiRequest(`/mentors/${mentorId}`);
+  },
 };
 
 
@@ -194,6 +197,23 @@ export const bookingApi = {
   /** Cancel a booking */
   cancel(bookingId, data) {
     return apiRequest(`/bookings/${bookingId}/cancel`, { method: 'POST', body: data });
+  },
+};
+
+// ─── Payment APIs (Razorpay) ─────────────────────────────────────────────────
+
+export const paymentApi = {
+  /** Create a Razorpay order for a booking */
+  createOrder(bookingId) {
+    return apiRequest('/payments/create-order', { method: 'POST', body: { bookingId } });
+  },
+  /** Verify Razorpay payment after checkout */
+  verify(data) {
+    return apiRequest('/payments/verify', { method: 'POST', body: data });
+  },
+  /** Handle payment failure */
+  handleFailure(data) {
+    return apiRequest('/payments/failure', { method: 'POST', body: data });
   },
 };
 

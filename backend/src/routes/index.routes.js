@@ -11,6 +11,7 @@ import menteeDashboardRoutes from './menteeDashboard.routes.js';
 import menteeBookingRoutes from './menteeBooking.routes.js';
 import publicMentorRoutes from './publicMentor.routes.js';
 import bookingRoutes from './booking.routes.js';
+import paymentRoutes from './payment.routes.js';
 
 const router = Router();
 
@@ -42,5 +43,7 @@ router.use('/mentor-bookings', mentorBookingRoutes);
 router.use('/mentors', publicMentorRoutes);
 router.use('/admin', adminMentorRoutes);
 router.use('/bookings', bookingRoutes);
+router.use('/payments', paymentRoutes);
 
 export default router;
+

@@ -1,7 +1,144 @@
 import { prisma } from '../config/database.js';
 import { ApiResponse } from '../utils/apiResponse.js';
+import { SERVICE_TYPE_LABELS, DAY_OF_WEEK_LABELS } from '../constants/services.js';
+import { dateTimeToTimeString } from '../utils/timeUtils.js';
 
 class PublicMentorController {
+  /**
+   * GET /api/mentors/:mentorId
+   * Public — get a mentor's full profile for the booking page.
+   */
+  async getMentorProfile(req, res) {
+    try {
+      const { mentorId } = req.params;
+
+      const mentor = await prisma.mentorProfile.findUnique({
+        where: { id: mentorId, approvalStatus: 'APPROVED' },
+        include: {
+          user: {
+            select: { name: true, email: true, profilePicture: true },
+          },
+          services: {
+            where: { isActive: true },
+            orderBy: { pricePerSession: 'asc' },
+          },
+          weeklyAvailability: {
+            where: { isAvailable: true },
+            include: {
+              slots: {
+                where: { isActive: true },
+                include: {
+                  slotServices: {
+                    include: {
+                      mentorService: {
+                        select: { id: true, serviceType: true },
+                      },
+                    },
+                  },
+                },
+                orderBy: { startTime: 'asc' },
+              },
+            },
+            orderBy: { dayOfWeek: 'asc' },
+          },
+          reviews: {
+            orderBy: { createdAt: 'desc' },
+            take: 20,
+            include: {
+              author: {
+                select: { name: true, profilePicture: true },
+              },
+              booking: {
+                select: {
+                  mentorService: {
+                    select: { serviceType: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!mentor) {
+        return res.status(404).json({
+          success: false,
+          message: 'Mentor not found',
+        });
+      }
+
+      // Map services
+      const services = mentor.services.map((s) => ({
+        id: s.id,
+        serviceType: s.serviceType,
+        label: SERVICE_TYPE_LABELS[s.serviceType],
+        description: s.description,
+        pricePerSession: s.pricePerSession,
+        durationMinutes: s.durationMinutes,
+        isActive: s.isActive,
+      }));
+
+      // Map availability
+      const availability = mentor.weeklyAvailability.map((a) => ({
+        id: a.id,
+        dayOfWeek: a.dayOfWeek,
+        dayLabel: DAY_OF_WEEK_LABELS[a.dayOfWeek],
+        slots: (a.slots || []).map((slot) => ({
+          id: slot.id,
+          startTime: dateTimeToTimeString(slot.startTime),
+          endTime: dateTimeToTimeString(slot.endTime),
+          maxBookings: slot.maxBookings,
+          services: (slot.slotServices || []).map((ss) => ({
+            mentorServiceId: ss.mentorServiceId,
+            serviceType: ss.mentorService?.serviceType,
+          })),
+        })),
+      }));
+
+      // Map reviews
+      const reviews = mentor.reviews.map((r) => ({
+        id: r.id,
+        rating: r.rating,
+        review: r.review,
+        createdAt: r.createdAt,
+        authorName: r.author?.name || 'Anonymous',
+        authorPicture: r.author?.profilePicture || null,
+        serviceType: r.booking?.mentorService?.serviceType || null,
+      }));
+
+      const cheapest = services[0];
+
+      const result = {
+        id: mentor.id,
+        name: mentor.user.name,
+        profilePicture: mentor.user.profilePicture,
+        bio: mentor.bio,
+        expertiseTags: mentor.expertiseTags,
+        pgCollege: mentor.pgCollegeProfile,
+        ugCollege: mentor.ugCollegeProfile,
+        workExperience: mentor.workExperience,
+        certifications: mentor.certifications,
+        linkedInUrl: mentor.linkedInUrl,
+        totalSessions: mentor.totalSessions,
+        averageRating: mentor.averageRating,
+        totalReviews: mentor.reviews.length,
+        startingPrice: cheapest?.pricePerSession ?? null,
+        services,
+        availability,
+        reviews,
+      };
+
+      return res.status(200).json(
+        new ApiResponse(200, 'Mentor profile fetched', result)
+      );
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to fetch mentor profile',
+      });
+    }
+  }
+
   async listMentors(req, res) {
     try {
       const {
