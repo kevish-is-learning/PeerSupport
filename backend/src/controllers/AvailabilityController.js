@@ -17,7 +17,7 @@ const formatError = (error) => {
 class AvailabilityController {
   /**
    * GET /api/mentor-availability
-   * Fetch current mentor's weekly availability with slots and services.
+   * Fetch current mentor's availability windows.
    */
   async getMyAvailability(req, res) {
     try {
@@ -34,63 +34,12 @@ class AvailabilityController {
 
   /**
    * PUT /api/mentor-availability
-   * Bulk upsert weekly availability (days + slots + service mappings).
+   * Bulk upsert availability windows.
    */
   async upsertAvailability(req, res) {
     try {
       const availability = await availabilityService.bulkUpsert(req.user.id, req.body);
       return res.status(200).json(new ApiResponse(200, 'Availability updated successfully', { availability }));
-    } catch (error) {
-      const statusCode = getStatusCode(error);
-      return res.status(statusCode).json({
-        success: false,
-        message: formatError(error),
-      });
-    }
-  }
-
-  /**
-   * POST /api/mentor-availability/:dayId/slots
-   * Add a single slot to an existing day.
-   */
-  async addSlot(req, res) {
-    try {
-      const slot = await availabilityService.addSlotToDay(req.user.id, req.params.dayId, req.body);
-      return res.status(201).json(new ApiResponse(201, 'Slot added', { slot }));
-    } catch (error) {
-      const statusCode = getStatusCode(error);
-      return res.status(statusCode).json({
-        success: false,
-        message: formatError(error),
-      });
-    }
-  }
-
-  /**
-   * PUT /api/mentor-availability/slots/:slotId
-   * Update an existing slot.
-   */
-  async updateSlot(req, res) {
-    try {
-      const slot = await availabilityService.updateSlot(req.user.id, req.params.slotId, req.body);
-      return res.status(200).json(new ApiResponse(200, 'Slot updated', { slot }));
-    } catch (error) {
-      const statusCode = getStatusCode(error);
-      return res.status(statusCode).json({
-        success: false,
-        message: formatError(error),
-      });
-    }
-  }
-
-  /**
-   * DELETE /api/mentor-availability/slots/:slotId
-   * Delete a single slot.
-   */
-  async deleteSlot(req, res) {
-    try {
-      const result = await availabilityService.deleteSlot(req.user.id, req.params.slotId);
-      return res.status(200).json(new ApiResponse(200, 'Slot deleted', result));
     } catch (error) {
       const statusCode = getStatusCode(error);
       return res.status(statusCode).json({

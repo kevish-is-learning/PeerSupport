@@ -31,7 +31,7 @@ class PaymentService {
       where: { razorpayOrderId: razorpay_order_id },
       include: {
         booking: {
-          select: { id: true, menteeId: true, bookingStatus: true },
+          select: { id: true, menteeId: true, status: true },
         },
       },
     });
@@ -55,7 +55,7 @@ class PaymentService {
       .digest('hex');
 
     if (generatedSignature !== razorpay_signature) {
-      // Signature invalid → mark payment FAILED and release the slot immediately
+      // Signature invalid → mark payment FAILED and cancel booking immediately
       await prisma.$transaction([
         prisma.payment.update({
           where: { id: payment.id },
@@ -63,7 +63,7 @@ class PaymentService {
         }),
         prisma.booking.update({
           where: { id: payment.booking.id },
-          data: { bookingStatus: 'EXPIRED' },
+          data: { status: 'CANCELLED' },
         }),
       ]);
       throw createServiceError(400, 'Payment verification failed — invalid signature');
@@ -82,7 +82,7 @@ class PaymentService {
       }),
       prisma.booking.update({
         where: { id: payment.booking.id },
-        data: { bookingStatus: 'CONFIRMED' },
+        data: { status: 'CONFIRMED' },
       }),
     ]);
 
@@ -97,7 +97,7 @@ class PaymentService {
   /**
    * Handle payment failure / dismissal — IMMEDIATELY release the slot.
    *
-   * Marks the payment as FAILED and booking as EXPIRED so the slot
+   * Marks the payment as FAILED and booking as CANCELLED so the slot
    * becomes available for other mentees instantly. No 10-minute hold.
    */
   async handlePaymentFailure(userId, payload) {
@@ -112,7 +112,7 @@ class PaymentService {
         booking: { id: bookingId, menteeId: userId },
       },
       include: {
-        booking: { select: { id: true, bookingStatus: true } },
+        booking: { select: { id: true, status: true } },
       },
     });
 
@@ -125,12 +125,12 @@ class PaymentService {
       return { message: 'Payment already succeeded', bookingId };
     }
 
-    // If booking is already expired/cancelled, just acknowledge
-    if (['EXPIRED', 'CANCELLED'].includes(payment.booking.bookingStatus)) {
+    // If booking is already cancelled, just acknowledge
+    if (payment.booking.status === 'CANCELLED') {
       return { message: 'Booking already released', bookingId };
     }
 
-    // Mark payment as FAILED and booking as EXPIRED → instant slot release
+    // Mark payment as FAILED and booking as CANCELLED → instant slot release
     await prisma.$transaction([
       prisma.payment.update({
         where: { id: payment.id },
@@ -138,7 +138,7 @@ class PaymentService {
       }),
       prisma.booking.update({
         where: { id: payment.booking.id },
-        data: { bookingStatus: 'EXPIRED' },
+        data: { status: 'CANCELLED' },
       }),
     ]);
 

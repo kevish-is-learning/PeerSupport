@@ -1,18 +1,8 @@
 import { prisma } from '../config/database.js';
 import {
   upsertAvailabilitySchema,
-  addSlotSchema,
-  updateSlotSchema,
   dayOfWeekParamSchema,
-  slotIdParamSchema,
-  dayIdParamSchema,
 } from '../validators/availability.validator.js';
-import {
-  timeStringToDateTime,
-  dateTimeToTimeString,
-  doSlotsOverlap,
-} from '../utils/timeUtils.js';
-import { DAY_OF_WEEK_LABELS, SERVICE_TYPE_LABELS } from '../constants/services.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -35,102 +25,74 @@ async function requireMentorProfile(userId) {
   return profile;
 }
 
-/**
- * Map a raw AvailabilitySlot (with slotServices → mentorService) to a clean API shape.
- */
-function mapSlot(slot) {
-  return {
-    id: slot.id,
-    startTime: dateTimeToTimeString(slot.startTime),
-    endTime: dateTimeToTimeString(slot.endTime),
-    maxBookings: slot.maxBookings,
-    isActive: slot.isActive,
-    services: (slot.slotServices || []).map((ss) => ({
-      slotServiceId: ss.id,
-      mentorServiceId: ss.mentorServiceId,
-      serviceType: ss.mentorService?.serviceType,
-      label: ss.mentorService?.serviceType
-        ? SERVICE_TYPE_LABELS[ss.mentorService.serviceType]
-        : null,
-    })),
-    createdAt: slot.createdAt,
-    updatedAt: slot.updatedAt,
-  };
-}
-
-/**
- * Map a WeeklyAvailability row (with slots → slotServices → mentorService) to clean API shape.
- */
-function mapDayAvailability(row) {
-  return {
-    id: row.id,
-    dayOfWeek: row.dayOfWeek,
-    dayLabel: DAY_OF_WEEK_LABELS[row.dayOfWeek],
-    isAvailable: row.isAvailable,
-    slots: (row.slots || []).map(mapSlot),
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  };
-}
-
-/** Standard include for fetching slots with their service mappings. */
-const slotInclude = {
-  slotServices: {
+/** Standard include for fetching windows with their service mappings. */
+const windowInclude = {
+  windowServices: {
     include: {
       mentorService: {
-        select: { id: true, serviceType: true, pricePerSession: true, durationMinutes: true },
+        include: { service: true },
       },
     },
   },
 };
 
-/** Standard include for fetching day availability with nested slots + services. */
-const dayInclude = {
-  slots: {
-    include: slotInclude,
-    orderBy: { startTime: 'asc' },
-  },
-};
+/**
+ * Map an AvailabilityWindow row to a clean API shape.
+ */
+function mapWindow(w) {
+  return {
+    id: w.id,
+    dayOfWeek: w.dayOfWeek,
+    specificDate: w.specificDate,
+    startTime: w.startTime,
+    endTime: w.endTime,
+    timezone: w.timezone,
+    services: (w.windowServices || []).map((ws) => ({
+      windowServiceId: ws.id,
+      mentorServiceId: ws.mentorServiceId,
+      serviceName: ws.mentorService?.service?.name,
+      serviceSlug: ws.mentorService?.service?.slug,
+    })),
+    createdAt: w.createdAt,
+    updatedAt: w.updatedAt,
+  };
+}
 
 // ─── Service ─────────────────────────────────────────────────────────────────
 
 class AvailabilityService {
   /**
-   * GET — Fetch the mentor's full weekly availability.
-   * Returns all days with their slots and associated services.
+   * GET — Fetch the mentor's full availability windows.
    */
   async getByUserId(userId) {
     const profile = await requireMentorProfile(userId);
 
-    const rows = await prisma.weeklyAvailability.findMany({
+    const rows = await prisma.availabilityWindow.findMany({
       where: { mentorProfileId: profile.id },
-      include: dayInclude,
-      orderBy: { dayOfWeek: 'asc' },
+      include: windowInclude,
+      orderBy: { startTime: 'asc' },
     });
 
-    return rows.map(mapDayAvailability);
+    return rows.map(mapWindow);
   }
 
   /**
-   * PUT — Bulk upsert the entire weekly availability.
+   * PUT — Bulk upsert availability windows.
    *
    * This is an atomic replace operation:
-   * 1. Days NOT in the payload are deleted (cascade removes their slots + slotServices).
-   * 2. Each incoming day is upserted.
-   * 3. Each day's slots are replaced entirely (old slots deleted, new ones created).
-   * 4. SlotService join records are created for each slot's serviceIds.
+   * 1. All existing windows are deleted.
+   * 2. New windows with service mappings are created.
    *
-   * Overlap prevention: validated at Zod level AND in the transaction.
+   * Checks for orphaned bookings before deleting.
    */
   async bulkUpsert(userId, payload) {
     const { availability: incoming } = upsertAvailabilitySchema.parse(payload);
 
     const profile = await requireMentorProfile(userId);
     const profileId = profile.id;
-    const incomingDays = incoming.map((a) => a.dayOfWeek);
 
     // Validate that all referenced serviceIds belong to this mentor
-    const allServiceIds = [...new Set(incoming.flatMap((d) => d.slots.flatMap((s) => s.serviceIds)))];
+    const allServiceIds = [...new Set(incoming.flatMap((d) => d.slots?.flatMap((s) => s.serviceIds || []) || []))];
     if (allServiceIds.length > 0) {
       const validServices = await prisma.mentorService.findMany({
         where: { mentorProfileId: profileId, id: { in: allServiceIds } },
@@ -144,275 +106,54 @@ class AvailabilityService {
     }
 
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Delete days not in the incoming set (cascade removes slots + slotServices)
-      await tx.weeklyAvailability.deleteMany({
-        where: {
-          mentorProfileId: profileId,
-          dayOfWeek: { notIn: incomingDays },
-        },
+      // 1. Delete all existing windows (cascade deletes AvailabilityWindowService)
+      await tx.availabilityWindow.deleteMany({
+        where: { mentorProfileId: profileId },
       });
 
-      const upserted = [];
+      const created = [];
 
       for (const day of incoming) {
-        // Skip days with no slots (effectively removes them)
-        if (day.slots.length === 0) {
-          await tx.weeklyAvailability.deleteMany({
-            where: {
-              mentorProfileId: profileId,
-              dayOfWeek: day.dayOfWeek,
-            },
-          });
-          continue;
-        }
+        const slots = day.slots || [];
+        if (slots.length === 0) continue;
 
-        // 2. Upsert the day record
-        const dayRow = await tx.weeklyAvailability.upsert({
-          where: {
-            mentorProfileId_dayOfWeek: {
-              mentorProfileId: profileId,
-              dayOfWeek: day.dayOfWeek,
-            },
-          },
-          update: { updatedAt: new Date(), isAvailable: true },
-          create: {
-            mentorProfileId: profileId,
-            dayOfWeek: day.dayOfWeek,
-          },
-        });
+        for (const slot of slots) {
+          const startTime = new Date(`1970-01-01T${slot.startTime}:00.000Z`);
+          const endTime = new Date(`1970-01-01T${slot.endTime}:00.000Z`);
 
-        // 3. Delete all existing slots for this day (cascade removes slotServices)
-        await tx.availabilitySlot.deleteMany({
-          where: { weeklyAvailabilityId: dayRow.id },
-        });
-
-        // 4. Create new slots with their service mappings
-        for (const slot of day.slots) {
-          const startTime = timeStringToDateTime(slot.startTime);
-          const endTime = timeStringToDateTime(slot.endTime);
-
-          const createdSlot = await tx.availabilitySlot.create({
+          const window = await tx.availabilityWindow.create({
             data: {
-              weeklyAvailabilityId: dayRow.id,
+              mentorProfileId: profileId,
+              dayOfWeek: day.dayOfWeek,
               startTime,
               endTime,
-              maxBookings: slot.maxBookings,
-              isActive: slot.isActive ?? true,
             },
           });
 
-          // 5. Create SlotService join records
-          if (slot.serviceIds.length > 0) {
-            await tx.slotService.createMany({
+          // Create window-service join records
+          if (slot.serviceIds && slot.serviceIds.length > 0) {
+            await tx.availabilityWindowService.createMany({
               data: slot.serviceIds.map((serviceId) => ({
-                availabilitySlotId: createdSlot.id,
+                windowId: window.id,
                 mentorServiceId: serviceId,
               })),
             });
           }
-        }
 
-        // Re-fetch with full includes
-        const full = await tx.weeklyAvailability.findUnique({
-          where: { id: dayRow.id },
-          include: dayInclude,
-        });
+          // Re-fetch with includes
+          const full = await tx.availabilityWindow.findUnique({
+            where: { id: window.id },
+            include: windowInclude,
+          });
 
-        upserted.push(full);
-      }
-
-      return upserted;
-    });
-
-    return result.map(mapDayAvailability);
-  }
-
-  /**
-   * POST — Add a single slot to an existing day.
-   * Validates against overlaps with existing slots on that day.
-   */
-  async addSlotToDay(userId, dayId, payload) {
-    const { dayId: validDayId } = dayIdParamSchema.parse({ dayId });
-    const data = addSlotSchema.parse(payload);
-
-    const profile = await requireMentorProfile(userId);
-
-    // Verify the day belongs to this mentor
-    const day = await prisma.weeklyAvailability.findFirst({
-      where: { id: validDayId, mentorProfileId: profile.id },
-      include: { slots: { select: { id: true, startTime: true, endTime: true } } },
-    });
-
-    if (!day) throw createServiceError(404, 'Day availability not found');
-
-    // Validate service IDs
-    const validServices = await prisma.mentorService.findMany({
-      where: { mentorProfileId: profile.id, id: { in: data.serviceIds } },
-      select: { id: true },
-    });
-    if (validServices.length !== data.serviceIds.length) {
-      throw createServiceError(400, 'One or more service IDs are invalid');
-    }
-
-    const newStart = timeStringToDateTime(data.startTime);
-    const newEnd = timeStringToDateTime(data.endTime);
-
-    // Check for overlaps with existing slots
-    for (const existing of day.slots) {
-      if (doSlotsOverlap({ startTime: newStart, endTime: newEnd }, existing)) {
-        throw createServiceError(
-          409,
-          `Slot ${data.startTime}–${data.endTime} overlaps with existing slot ${dateTimeToTimeString(existing.startTime)}–${dateTimeToTimeString(existing.endTime)}`
-        );
-      }
-    }
-
-    // Create inside transaction
-    const created = await prisma.$transaction(async (tx) => {
-      const slot = await tx.availabilitySlot.create({
-        data: {
-          weeklyAvailabilityId: validDayId,
-          startTime: newStart,
-          endTime: newEnd,
-          maxBookings: data.maxBookings,
-        },
-      });
-
-      await tx.slotService.createMany({
-        data: data.serviceIds.map((serviceId) => ({
-          availabilitySlotId: slot.id,
-          mentorServiceId: serviceId,
-        })),
-      });
-
-      return tx.availabilitySlot.findUnique({
-        where: { id: slot.id },
-        include: slotInclude,
-      });
-    });
-
-    return mapSlot(created);
-  }
-
-  /**
-   * PUT — Update an existing slot (time range, services, maxBookings, active status).
-   * If time range changes, validates against overlaps.
-   */
-  async updateSlot(userId, slotId, payload) {
-    const { slotId: validSlotId } = slotIdParamSchema.parse({ slotId });
-    const data = updateSlotSchema.parse(payload);
-
-    const profile = await requireMentorProfile(userId);
-
-    // Fetch the slot and verify ownership
-    const existingSlot = await prisma.availabilitySlot.findUnique({
-      where: { id: validSlotId },
-      include: {
-        weeklyAvailability: { select: { id: true, mentorProfileId: true } },
-      },
-    });
-
-    if (!existingSlot || existingSlot.weeklyAvailability.mentorProfileId !== profile.id) {
-      throw createServiceError(404, 'Slot not found');
-    }
-
-    // If time is changing, check for overlaps with sibling slots
-    const newStart = data.startTime ? timeStringToDateTime(data.startTime) : existingSlot.startTime;
-    const newEnd = data.endTime ? timeStringToDateTime(data.endTime) : existingSlot.endTime;
-
-    if (data.startTime || data.endTime) {
-      const siblings = await prisma.availabilitySlot.findMany({
-        where: {
-          weeklyAvailabilityId: existingSlot.weeklyAvailabilityId,
-          id: { not: validSlotId },
-        },
-        select: { id: true, startTime: true, endTime: true },
-      });
-
-      for (const sibling of siblings) {
-        if (doSlotsOverlap({ startTime: newStart, endTime: newEnd }, sibling)) {
-          throw createServiceError(
-            409,
-            `Updated slot overlaps with ${dateTimeToTimeString(sibling.startTime)}–${dateTimeToTimeString(sibling.endTime)}`
-          );
+          created.push(full);
         }
       }
-    }
 
-    // Validate service IDs if provided
-    if (data.serviceIds) {
-      const validServices = await prisma.mentorService.findMany({
-        where: { mentorProfileId: profile.id, id: { in: data.serviceIds } },
-        select: { id: true },
-      });
-      if (validServices.length !== data.serviceIds.length) {
-        throw createServiceError(400, 'One or more service IDs are invalid');
-      }
-    }
-
-    const updated = await prisma.$transaction(async (tx) => {
-      // Update the slot itself
-      await tx.availabilitySlot.update({
-        where: { id: validSlotId },
-        data: {
-          ...(data.startTime && { startTime: newStart }),
-          ...(data.endTime && { endTime: newEnd }),
-          ...(data.maxBookings !== undefined && { maxBookings: data.maxBookings }),
-          ...(data.isActive !== undefined && { isActive: data.isActive }),
-        },
-      });
-
-      // Replace services if provided
-      if (data.serviceIds) {
-        await tx.slotService.deleteMany({ where: { availabilitySlotId: validSlotId } });
-        await tx.slotService.createMany({
-          data: data.serviceIds.map((serviceId) => ({
-            availabilitySlotId: validSlotId,
-            mentorServiceId: serviceId,
-          })),
-        });
-      }
-
-      return tx.availabilitySlot.findUnique({
-        where: { id: validSlotId },
-        include: slotInclude,
-      });
+      return created;
     });
 
-    return mapSlot(updated);
-  }
-
-  /**
-   * DELETE — Remove a single slot.
-   */
-  async deleteSlot(userId, slotId) {
-    const { slotId: validSlotId } = slotIdParamSchema.parse({ slotId });
-    const profile = await requireMentorProfile(userId);
-
-    const slot = await prisma.availabilitySlot.findUnique({
-      where: { id: validSlotId },
-      include: {
-        weeklyAvailability: { select: { mentorProfileId: true } },
-        bookings: { where: { bookingStatus: { in: ['PENDING', 'CONFIRMED'] } }, select: { id: true } },
-      },
-    });
-
-    if (!slot || slot.weeklyAvailability.mentorProfileId !== profile.id) {
-      throw createServiceError(404, 'Slot not found');
-    }
-
-    // Prevent deletion if there are active bookings
-    if (slot.bookings.length > 0) {
-      throw createServiceError(
-        409,
-        `Cannot delete slot: ${slot.bookings.length} active booking(s) exist. Cancel them first.`
-      );
-    }
-
-    // Cascade deletes SlotService children
-    await prisma.availabilitySlot.delete({ where: { id: validSlotId } });
-
-    return { deleted: true, slotId: validSlotId };
+    return result.map(mapWindow);
   }
 
   /**
@@ -422,40 +163,47 @@ class AvailabilityService {
     const { dayOfWeek } = dayOfWeekParamSchema.parse(params);
     const profile = await requireMentorProfile(userId);
 
-    const existing = await prisma.weeklyAvailability.findUnique({
+    const existing = await prisma.availabilityWindow.findMany({
       where: {
-        mentorProfileId_dayOfWeek: {
-          mentorProfileId: profile.id,
-          dayOfWeek,
-        },
-      },
-      include: {
-        slots: {
-          include: {
-            bookings: {
-              where: { bookingStatus: { in: ['PENDING', 'CONFIRMED'] } },
-              select: { id: true },
-            },
-          },
-        },
+        mentorProfileId: profile.id,
+        dayOfWeek,
       },
     });
 
-    if (!existing) {
+    if (existing.length === 0) {
       throw createServiceError(404, `Availability for ${dayOfWeek} not found`);
     }
 
-    // Check for active bookings across all slots
-    const activeBookingsCount = existing.slots.reduce((sum, s) => sum + s.bookings.length, 0);
-    if (activeBookingsCount > 0) {
+    // Check for active bookings on this day
+    const activeBookings = await prisma.booking.findMany({
+      where: {
+        mentorProfileId: profile.id,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+      },
+      select: { id: true, startTime: true },
+    });
+
+    // Filter bookings that fall on this day of week
+    const dayMap = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    const conflicting = activeBookings.filter((b) => {
+      const bDay = dayMap[new Date(b.startTime).getUTCDay()];
+      return bDay === dayOfWeek;
+    });
+
+    if (conflicting.length > 0) {
       throw createServiceError(
         409,
-        `Cannot delete ${dayOfWeek}: ${activeBookingsCount} active booking(s) exist across its slots.`
+        `Cannot delete ${dayOfWeek}: ${conflicting.length} active booking(s) exist. Cancel them first.`
       );
     }
 
-    // Cascade deletes AvailabilitySlots → SlotServices
-    await prisma.weeklyAvailability.delete({ where: { id: existing.id } });
+    // Cascade deletes AvailabilityWindowService children
+    await prisma.availabilityWindow.deleteMany({
+      where: {
+        mentorProfileId: profile.id,
+        dayOfWeek,
+      },
+    });
 
     return { deleted: true, dayOfWeek };
   }

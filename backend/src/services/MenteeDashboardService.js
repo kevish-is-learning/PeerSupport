@@ -13,10 +13,10 @@ class MenteeDashboardService {
     
     const now = new Date();
     const upcomingSessions = bookings.filter(
-      (b) => b.bookingStatus === 'CONFIRMED' && new Date(b.startTime) > now
+      (b) => b.status === 'CONFIRMED' && new Date(b.startTime) > now
     ).length;
 
-    const completedBookings = bookings.filter((b) => b.bookingStatus === 'COMPLETED');
+    const completedBookings = bookings.filter((b) => b.status === 'COMPLETED');
     const totalMinutesLearned = completedBookings.reduce((sum, b) => sum + (b.mentorService?.durationMinutes || 0), 0);
     const hoursLearned = Math.floor(totalMinutesLearned / 60);
 
@@ -32,7 +32,7 @@ class MenteeDashboardService {
     const upcoming = await prisma.booking.findMany({
       where: {
         menteeId,
-        bookingStatus: 'CONFIRMED',
+        status: 'CONFIRMED',
         startTime: { gt: now },
       },
       orderBy: { startTime: 'asc' },
@@ -45,7 +45,9 @@ class MenteeDashboardService {
             },
           },
         },
-        mentorService: true,
+        mentorService: {
+          include: { service: true },
+        },
       },
     });
 
@@ -53,10 +55,9 @@ class MenteeDashboardService {
       id: b.id,
       mentorName: b.mentorProfile.user.name,
       mentorPicture: b.mentorProfile.user.profilePicture,
-      serviceType: b.mentorService.serviceType,
+      serviceName: b.mentorService?.service?.name || 'Session',
       startTime: b.startTime,
       endTime: b.endTime,
-      sessionType: b.sessionType,
       meetingLink: b.meetingLink,
     }));
   }

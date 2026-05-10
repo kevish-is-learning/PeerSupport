@@ -1,11 +1,8 @@
 import { z } from 'zod';
-import { VALID_SERVICE_TYPES, VALID_DAYS } from '../constants/services.js';
 
 // ─── Shared Enums ────────────────────────────────────────────────────────────
 
-const serviceTypeEnum = z.enum(VALID_SERVICE_TYPES, {
-  errorMap: () => ({ message: `Service type must be one of: ${VALID_SERVICE_TYPES.join(', ')}` }),
-});
+const VALID_DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 
 const dayOfWeekEnum = z.enum(VALID_DAYS, {
   errorMap: () => ({ message: `Day must be one of: ${VALID_DAYS.join(', ')}` }),
@@ -17,18 +14,16 @@ const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 const timeStringSchema = z.string().regex(timePattern, 'Time must be in HH:mm format (e.g., 09:00, 14:30)');
 
-// ─── Slot Schema (for a single slot within a day) ────────────────────────────
+// ─── Slot Schema (for a single window within a day) ──────────────────────────
 
 const slotInputSchema = z
   .object({
     startTime: timeStringSchema,
     endTime: timeStringSchema,
-    maxBookings: z.number().int().min(1, 'maxBookings must be at least 1').default(1),
-    isActive: z.boolean().default(true),
-    // Array of MentorService IDs that this slot supports
+    // Array of MentorService IDs offered during this window
     serviceIds: z
       .array(z.string().uuid('Each serviceId must be a valid UUID'))
-      .min(1, 'Each slot must support at least one service'),
+      .min(1, 'Each window must support at least one service'),
   })
   .refine(
     (slot) => {
@@ -39,7 +34,7 @@ const slotInputSchema = z
       return endMins - startMins >= 15;
     },
     {
-      message: 'Slot must be at least 15 minutes long and end time must be after start time',
+      message: 'Window must be at least 15 minutes long and end time must be after start time',
     }
   );
 
@@ -70,7 +65,7 @@ const dayAvailabilitySchema = z
       }
       return true;
     },
-    { message: 'Time slots cannot overlap on the same day' }
+    { message: 'Time windows cannot overlap on the same day' }
   );
 
 // ─── Bulk Upsert Availability ────────────────────────────────────────────────
@@ -91,64 +86,13 @@ export const upsertAvailabilitySchema = z.object({
     ),
 });
 
-// ─── Single Slot Add/Update ──────────────────────────────────────────────────
-
-export const addSlotSchema = z.object({
-  startTime: timeStringSchema,
-  endTime: timeStringSchema,
-  maxBookings: z.number().int().min(1).default(1),
-  serviceIds: z
-    .array(z.string().uuid())
-    .min(1, 'At least one service is required'),
-}).refine(
-  (slot) => {
-    const [startH, startM] = slot.startTime.split(':').map(Number);
-    const [endH, endM] = slot.endTime.split(':').map(Number);
-    return (endH * 60 + endM) - (startH * 60 + startM) >= 15;
-  },
-  { message: 'Slot must be at least 15 minutes long' }
-);
-
-export const updateSlotSchema = z.object({
-  startTime: timeStringSchema.optional(),
-  endTime: timeStringSchema.optional(),
-  maxBookings: z.number().int().min(1).optional(),
-  isActive: z.boolean().optional(),
-  serviceIds: z
-    .array(z.string().uuid())
-    .min(1, 'At least one service is required')
-    .optional(),
-}).refine(
-  (slot) => {
-    if (slot.startTime && slot.endTime) {
-      const [startH, startM] = slot.startTime.split(':').map(Number);
-      const [endH, endM] = slot.endTime.split(':').map(Number);
-      return (endH * 60 + endM) - (startH * 60 + startM) >= 15;
-    }
-    return true;
-  },
-  { message: 'Slot must be at least 15 minutes long' }
-);
-
 // ─── Params ──────────────────────────────────────────────────────────────────
 
 export const dayOfWeekParamSchema = z.object({
   dayOfWeek: dayOfWeekEnum,
 });
 
-export const slotIdParamSchema = z.object({
-  slotId: z.string().uuid('Invalid slot ID'),
-});
-
-export const dayIdParamSchema = z.object({
-  dayId: z.string().uuid('Invalid day ID'),
-});
-
 export default {
   upsertAvailabilitySchema,
-  addSlotSchema,
-  updateSlotSchema,
   dayOfWeekParamSchema,
-  slotIdParamSchema,
-  dayIdParamSchema,
 };

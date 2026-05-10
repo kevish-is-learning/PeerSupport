@@ -7,13 +7,8 @@ import {
   bookingIdParamSchema,
   mentorIdParamSchema,
 } from '../validators/booking.validator.js';
-import {
-  dateTimeToTimeString,
-  combineDateAndTime,
-  getDayOfWeekFromDate,
-  isFutureDate,
-} from '../utils/timeUtils.js';
-import { SERVICE_TYPE_LABELS } from '../constants/services.js';
+import { generateSlots } from '../utils/slotGenerator.js';
+import { istToUtc, utcToIst } from '../utils/timezoneUtils.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -29,29 +24,20 @@ const createServiceError = (statusCode, message) => {
 function mapBooking(b) {
   return {
     id: b.id,
-    sessionType: b.sessionType,
-    bookingStatus: b.bookingStatus,
-    scheduledDate: b.scheduledDate,
+    status: b.status,
     startTime: b.startTime,
     endTime: b.endTime,
     meetingLink: b.meetingLink,
     purposeOfCall: b.purposeOfCall,
     notes: b.notes,
-    isFeedbackSubmitted: b.isFeedbackSubmitted,
+    cancelledReason: b.cancelledReason,
     service: b.mentorService
       ? {
           id: b.mentorService.id,
-          serviceType: b.mentorService.serviceType,
-          label: SERVICE_TYPE_LABELS[b.mentorService.serviceType],
-          pricePerSession: b.mentorService.pricePerSession,
+          serviceName: b.mentorService.service?.name,
+          serviceSlug: b.mentorService.service?.slug,
+          price: b.mentorService.price,
           durationMinutes: b.mentorService.durationMinutes,
-        }
-      : null,
-    slot: b.availabilitySlot
-      ? {
-          id: b.availabilitySlot.id,
-          startTime: dateTimeToTimeString(b.availabilitySlot.startTime),
-          endTime: dateTimeToTimeString(b.availabilitySlot.endTime),
         }
       : null,
     mentee: b.mentee
@@ -93,10 +79,7 @@ const bookingInclude = {
     },
   },
   mentorService: {
-    select: { id: true, serviceType: true, pricePerSession: true, durationMinutes: true },
-  },
-  availabilitySlot: {
-    select: { id: true, startTime: true, endTime: true },
+    include: { service: true },
   },
   payment: {
     select: { id: true, amount: true, paymentStatus: true, paidAt: true, currency: true },
@@ -107,122 +90,83 @@ const bookingInclude = {
 
 class BookingService {
   /**
-   * PUBLIC — Get available slots for a mentor, filtered by service type and date.
+   * PUBLIC — Get available slots for a mentor, filtered by service and date.
    *
-   * Flow:
-   * 1. Determine which DayOfWeek the requested date falls on.
-   * 2. Find the mentor's WeeklyAvailability for that day.
-   * 3. Find AvailabilitySlots that are:
-   *    - active
-   *    - have a SlotService mapping for the requested service type
-   * 4. For each slot, count existing bookings on that date.
-   * 5. Return slots with remaining capacity.
-   *
-   * IMPORTANT: Only CONFIRMED/COMPLETED/RESCHEDULED bookings and
-   * PENDING bookings with active payment (not FAILED) block capacity.
-   * Failed payments release the slot immediately.
+   * Uses the new on-demand slot generation from AvailabilityWindows.
    */
   async getAvailableSlots(mentorId, query) {
     const { mentorId: validMentorId } = mentorIdParamSchema.parse({ mentorId });
-    const { serviceType, date } = availableSlotsQuerySchema.parse(query);
+    const { serviceType: serviceSlug, date } = availableSlotsQuerySchema.parse(query);
 
     const requestedDate = new Date(date + 'T00:00:00.000Z');
 
     // Must be a future date (or today)
-    if (!isFutureDate(requestedDate)) {
+    if (requestedDate < new Date(new Date().toISOString().split('T')[0] + 'T00:00:00.000Z')) {
       throw createServiceError(400, 'Cannot book slots in the past');
     }
 
-    const dayOfWeek = getDayOfWeekFromDate(requestedDate);
-
-    // Find the mentor's service of this type
+    // Find the mentor service for this slug
     const mentorService = await prisma.mentorService.findFirst({
       where: {
         mentorProfileId: validMentorId,
-        serviceType,
+        service: { slug: serviceSlug },
         isActive: true,
       },
-      select: { id: true, pricePerSession: true, durationMinutes: true },
+      include: { service: true },
     });
 
     if (!mentorService) {
       throw createServiceError(404, 'This mentor does not offer this service');
     }
 
-    // Find the day's availability
-    const dayAvailability = await prisma.weeklyAvailability.findUnique({
+    // Get day of week for the requested date
+    const dayMap = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    const dayOfWeek = dayMap[requestedDate.getUTCDay()];
+
+    // Get availability windows for this day
+    const windows = await prisma.availabilityWindow.findMany({
       where: {
-        mentorProfileId_dayOfWeek: {
-          mentorProfileId: validMentorId,
-          dayOfWeek,
+        mentorProfileId: validMentorId,
+        dayOfWeek,
+        windowServices: {
+          some: { mentorServiceId: mentorService.id },
         },
       },
-      select: { id: true, isAvailable: true },
     });
 
-    if (!dayAvailability || !dayAvailability.isAvailable) {
+    if (windows.length === 0) {
       return { slots: [], message: 'Mentor is not available on this day' };
     }
 
-    // Find all active slots that support this service
-    const slots = await prisma.availabilitySlot.findMany({
+    // Get existing bookings that could conflict
+    const bookings = await prisma.booking.findMany({
       where: {
-        weeklyAvailabilityId: dayAvailability.id,
-        isActive: true,
-        slotServices: {
-          some: {
-            mentorServiceId: mentorService.id,
-          },
-        },
+        mentorProfileId: validMentorId,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+        startTime: { gte: requestedDate },
+        endTime: { lte: new Date(requestedDate.getTime() + 24 * 60 * 60 * 1000) },
       },
-      include: {
-        // Count bookings for this date:
-        // - CONFIRMED/COMPLETED/RESCHEDULED bookings always count
-        // - PENDING bookings count only if their payment is NOT FAILED
-        //   (i.e., user is actively in the payment flow)
-        bookings: {
-          where: {
-            scheduledDate: requestedDate,
-            OR: [
-              { bookingStatus: { in: ['CONFIRMED', 'COMPLETED', 'RESCHEDULED'] } },
-              {
-                bookingStatus: 'PENDING',
-                payment: {
-                  paymentStatus: { not: 'FAILED' },
-                },
-              },
-            ],
-          },
-          select: { id: true },
-        },
-      },
-      orderBy: { startTime: 'asc' },
+      select: { startTime: true, endTime: true },
     });
 
-    const availableSlots = slots
-      .map((slot) => {
-        const currentBookings = slot.bookings.length;
-        const remainingCapacity = slot.maxBookings - currentBookings;
-
-        return {
-          id: slot.id,
-          startTime: dateTimeToTimeString(slot.startTime),
-          endTime: dateTimeToTimeString(slot.endTime),
-          maxBookings: slot.maxBookings,
-          currentBookings,
-          remainingCapacity,
-          isAvailable: remainingCapacity > 0,
-        };
-      })
-      .filter((s) => s.isAvailable); // Only return slots with remaining capacity
+    // Generate slots using the on-demand generator
+    const slots = generateSlots(windows, bookings, mentorService.durationMinutes, {
+      bufferMinutes: mentorService.bufferMinutes || 0,
+      leadTimeMinutes: 15,
+      referenceDate: requestedDate,
+    });
 
     return {
-      slots: availableSlots,
+      slots: slots.map((s) => ({
+        startTime: s.start.toISOString(),
+        endTime: s.end.toISOString(),
+        isAvailable: true,
+      })),
       service: {
         id: mentorService.id,
-        serviceType,
-        label: SERVICE_TYPE_LABELS[serviceType],
-        pricePerSession: mentorService.pricePerSession,
+        serviceName: mentorService.service?.name,
+        serviceSlug: mentorService.service?.slug,
+        price: mentorService.price,
         durationMinutes: mentorService.durationMinutes,
       },
       date,
@@ -232,156 +176,75 @@ class BookingService {
 
   /**
    * POST — Initiate a booking with payment.
-   *
-   * This is the NEW unified flow:
-   * 1. Validate all entities (slot, service, slot-service mapping, capacity).
-   * 2. Create Booking (PENDING) + Payment (PENDING) in a transaction.
-   * 3. Create Razorpay order.
-   * 4. Save the razorpayOrderId on the Payment record.
-   * 5. Return the booking + Razorpay order details for the frontend.
-   *
-   * The slot is held ONLY while the user is on the payment page.
-   * If payment fails or the user dismisses → slot is released instantly.
    */
   async initiateBooking(menteeId, payload) {
     const data = createBookingSchema.parse(payload);
 
-    const scheduledDate = new Date(data.scheduledDate + 'T00:00:00.000Z');
+    const startTimeUtc = new Date(data.startTime);
+    const endTimeUtc = new Date(data.endTime);
 
-    if (!isFutureDate(scheduledDate)) {
+    if (startTimeUtc <= new Date()) {
       throw createServiceError(400, 'Cannot book a slot in the past');
     }
 
-    // Verify the scheduled date matches the slot's day of week
-    const targetDayOfWeek = getDayOfWeekFromDate(scheduledDate);
+    // Verify mentor service exists
+    const service = await prisma.mentorService.findFirst({
+      where: {
+        id: data.mentorServiceId,
+        mentorProfileId: data.mentorProfileId,
+        isActive: true,
+      },
+      include: { service: true },
+    });
 
+    if (!service) {
+      throw createServiceError(404, 'Service not found or inactive');
+    }
+
+    // Prevent self-booking
+    const mentorProfile = await prisma.mentorProfile.findUnique({
+      where: { id: data.mentorProfileId },
+      select: { userId: true },
+    });
+
+    if (mentorProfile?.userId === menteeId) {
+      throw createServiceError(400, 'You cannot book your own session');
+    }
+
+    // Check for conflicts
+    const conflicting = await prisma.booking.findFirst({
+      where: {
+        mentorProfileId: data.mentorProfileId,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+        startTime: { lt: endTimeUtc },
+        endTime: { gt: startTimeUtc },
+      },
+    });
+
+    if (conflicting) {
+      throw createServiceError(409, 'This slot is already booked');
+    }
+
+    // Create booking + payment in transaction
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Verify the slot exists and is active
-      const slot = await tx.availabilitySlot.findUnique({
-        where: { id: data.availabilitySlotId },
-        include: {
-          weeklyAvailability: {
-            select: { mentorProfileId: true, dayOfWeek: true, isAvailable: true },
-          },
-        },
-      });
-
-      if (!slot || !slot.isActive) {
-        throw createServiceError(404, 'This slot is not available');
-      }
-
-      if (!slot.weeklyAvailability.isAvailable) {
-        throw createServiceError(400, 'Mentor is not available on this day');
-      }
-
-      // Verify the slot's day matches the scheduled date
-      if (slot.weeklyAvailability.dayOfWeek !== targetDayOfWeek) {
-        throw createServiceError(
-          400,
-          `Scheduled date ${data.scheduledDate} is a ${targetDayOfWeek}, but this slot is for ${slot.weeklyAvailability.dayOfWeek}`
-        );
-      }
-
-      // Verify the slot belongs to the correct mentor
-      if (slot.weeklyAvailability.mentorProfileId !== data.mentorProfileId) {
-        throw createServiceError(400, 'Slot does not belong to this mentor');
-      }
-
-      // 2. Verify the service exists and is active
-      const service = await tx.mentorService.findFirst({
-        where: {
-          id: data.mentorServiceId,
-          mentorProfileId: data.mentorProfileId,
-          isActive: true,
-        },
-        select: { id: true, pricePerSession: true },
-      });
-
-      if (!service) {
-        throw createServiceError(404, 'Service not found or inactive');
-      }
-
-      // 3. Verify the SlotService mapping exists (this service is offered in this slot)
-      const slotServiceMapping = await tx.slotService.findUnique({
-        where: {
-          availabilitySlotId_mentorServiceId: {
-            availabilitySlotId: data.availabilitySlotId,
-            mentorServiceId: data.mentorServiceId,
-          },
-        },
-      });
-
-      if (!slotServiceMapping) {
-        throw createServiceError(
-          400,
-          'This service is not offered in the selected time slot'
-        );
-      }
-
-      // 4. Count existing bookings for this slot + date
-      //    Only count CONFIRMED/COMPLETED/RESCHEDULED and PENDING with non-FAILED payment
-      const existingCount = await tx.booking.count({
-        where: {
-          availabilitySlotId: data.availabilitySlotId,
-          scheduledDate,
-          OR: [
-            { bookingStatus: { in: ['CONFIRMED', 'COMPLETED', 'RESCHEDULED'] } },
-            {
-              bookingStatus: 'PENDING',
-              payment: {
-                paymentStatus: { not: 'FAILED' },
-              },
-            },
-          ],
-        },
-      });
-
-      if (existingCount >= slot.maxBookings) {
-        throw createServiceError(409, 'This slot is fully booked for the selected date');
-      }
-
-      // 5. Prevent self-booking
-      const mentorProfile = await tx.mentorProfile.findUnique({
-        where: { id: data.mentorProfileId },
-        select: { userId: true },
-      });
-
-      if (mentorProfile?.userId === menteeId) {
-        throw createServiceError(400, 'You cannot book your own session');
-      }
-
-      // 6. Resolve real start/end DateTimes from slot time + scheduled date
-      const startTime = combineDateAndTime(scheduledDate, slot.startTime);
-      const endTime = combineDateAndTime(scheduledDate, slot.endTime);
-
-      // 7. Create the booking
       const newBooking = await tx.booking.create({
         data: {
           menteeId,
           mentorProfileId: data.mentorProfileId,
           mentorServiceId: data.mentorServiceId,
-          availabilitySlotId: data.availabilitySlotId,
-          scheduledDate,
-          sessionType: data.sessionType,
-          startTime,
-          endTime,
+          startTime: startTimeUtc,
+          endTime: endTimeUtc,
           purposeOfCall: data.purposeOfCall,
           notes: data.notes,
-          sharedResume: data.sharedResume,
+          status: 'PENDING',
         },
-        include: {
-          ...bookingInclude,
-          mentee: {
-            select: { id: true, name: true, email: true, profilePicture: true },
-          },
-        },
+        include: bookingInclude,
       });
 
-      // 8. Create PENDING payment
       const payment = await tx.payment.create({
         data: {
           bookingId: newBooking.id,
-          amount: service.pricePerSession,
+          amount: service.price,
           currency: 'INR',
           paymentStatus: 'PENDING',
         },
@@ -390,7 +253,7 @@ class BookingService {
       return { booking: newBooking, payment, service };
     });
 
-    // 9. Create Razorpay order (outside transaction — external API call)
+    // Create Razorpay order
     const amountInPaise = Math.round(result.payment.amount * 100);
 
     const razorpayOrder = await razorpayInstance.orders.create({
@@ -400,17 +263,16 @@ class BookingService {
       notes: {
         bookingId: result.booking.id,
         menteeId,
-        serviceType: result.service?.serviceType || '',
+        serviceName: result.service?.service?.name || '',
       },
     });
 
-    // 10. Save Razorpay order ID on the payment record
+    // Save Razorpay order ID
     await prisma.payment.update({
       where: { id: result.payment.id },
       data: { razorpayOrderId: razorpayOrder.id },
     });
 
-    // Return both booking info and Razorpay order details
     return {
       booking: mapBooking(result.booking),
       order: {
@@ -441,7 +303,7 @@ class BookingService {
         id: true,
         menteeId: true,
         mentorProfileId: true,
-        bookingStatus: true,
+        status: true,
         mentorProfile: { select: { userId: true } },
       },
     });
@@ -455,14 +317,14 @@ class BookingService {
       throw createServiceError(403, 'You are not authorized to cancel this booking');
     }
 
-    if (!['PENDING', 'CONFIRMED'].includes(booking.bookingStatus)) {
-      throw createServiceError(400, `Cannot cancel a booking with status: ${booking.bookingStatus}`);
+    if (!['PENDING', 'CONFIRMED'].includes(booking.status)) {
+      throw createServiceError(400, `Cannot cancel a booking with status: ${booking.status}`);
     }
 
     const updated = await prisma.booking.update({
       where: { id: validId },
       data: {
-        bookingStatus: 'CANCELLED',
+        status: 'CANCELLED',
         cancelledReason,
       },
       include: bookingInclude,
@@ -487,7 +349,7 @@ class BookingService {
 
     bookings.forEach((b) => {
       const mapped = mapBooking(b);
-      if (new Date(b.startTime) > now && b.bookingStatus !== 'CANCELLED') {
+      if (new Date(b.startTime) > now && b.status !== 'CANCELLED') {
         upcoming.push(mapped);
       } else {
         past.push(mapped);

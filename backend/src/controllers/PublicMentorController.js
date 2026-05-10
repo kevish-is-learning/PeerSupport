@@ -1,7 +1,5 @@
 import { prisma } from '../config/database.js';
 import { ApiResponse } from '../utils/apiResponse.js';
-import { SERVICE_TYPE_LABELS, DAY_OF_WEEK_LABELS } from '../constants/services.js';
-import { dateTimeToTimeString } from '../utils/timeUtils.js';
 
 class PublicMentorController {
   /**
@@ -18,28 +16,22 @@ class PublicMentorController {
           user: {
             select: { name: true, email: true, profilePicture: true },
           },
-          services: {
+          mentorServices: {
             where: { isActive: true },
-            orderBy: { pricePerSession: 'asc' },
+            include: { service: true },
+            orderBy: { price: 'asc' },
           },
-          weeklyAvailability: {
-            where: { isAvailable: true },
+          availabilityWindows: {
             include: {
-              slots: {
-                where: { isActive: true },
+              windowServices: {
                 include: {
-                  slotServices: {
-                    include: {
-                      mentorService: {
-                        select: { id: true, serviceType: true },
-                      },
-                    },
+                  mentorService: {
+                    include: { service: true },
                   },
                 },
-                orderBy: { startTime: 'asc' },
               },
             },
-            orderBy: { dayOfWeek: 'asc' },
+            orderBy: { startTime: 'asc' },
           },
           reviews: {
             orderBy: { createdAt: 'desc' },
@@ -51,7 +43,7 @@ class PublicMentorController {
               booking: {
                 select: {
                   mentorService: {
-                    select: { serviceType: true },
+                    include: { service: true },
                   },
                 },
               },
@@ -68,30 +60,26 @@ class PublicMentorController {
       }
 
       // Map services
-      const services = mentor.services.map((s) => ({
-        id: s.id,
-        serviceType: s.serviceType,
-        label: SERVICE_TYPE_LABELS[s.serviceType],
-        description: s.description,
-        pricePerSession: s.pricePerSession,
-        durationMinutes: s.durationMinutes,
-        isActive: s.isActive,
+      const services = mentor.mentorServices.map((ms) => ({
+        id: ms.id,
+        serviceId: ms.serviceId,
+        serviceName: ms.service?.name,
+        serviceSlug: ms.service?.slug,
+        price: ms.price,
+        durationMinutes: ms.durationMinutes,
+        bufferMinutes: ms.bufferMinutes,
+        isActive: ms.isActive,
       }));
 
       // Map availability
-      const availability = mentor.weeklyAvailability.map((a) => ({
-        id: a.id,
-        dayOfWeek: a.dayOfWeek,
-        dayLabel: DAY_OF_WEEK_LABELS[a.dayOfWeek],
-        slots: (a.slots || []).map((slot) => ({
-          id: slot.id,
-          startTime: dateTimeToTimeString(slot.startTime),
-          endTime: dateTimeToTimeString(slot.endTime),
-          maxBookings: slot.maxBookings,
-          services: (slot.slotServices || []).map((ss) => ({
-            mentorServiceId: ss.mentorServiceId,
-            serviceType: ss.mentorService?.serviceType,
-          })),
+      const availability = mentor.availabilityWindows.map((w) => ({
+        id: w.id,
+        dayOfWeek: w.dayOfWeek,
+        startTime: w.startTime,
+        endTime: w.endTime,
+        services: (w.windowServices || []).map((ws) => ({
+          mentorServiceId: ws.mentorServiceId,
+          serviceName: ws.mentorService?.service?.name,
         })),
       }));
 
@@ -103,7 +91,7 @@ class PublicMentorController {
         createdAt: r.createdAt,
         authorName: r.author?.name || 'Anonymous',
         authorPicture: r.author?.profilePicture || null,
-        serviceType: r.booking?.mentorService?.serviceType || null,
+        serviceName: r.booking?.mentorService?.service?.name || null,
       }));
 
       const cheapest = services[0];
@@ -122,7 +110,7 @@ class PublicMentorController {
         totalSessions: mentor.totalSessions,
         averageRating: mentor.averageRating,
         totalReviews: mentor.reviews.length,
-        startingPrice: cheapest?.pricePerSession ?? null,
+        startingPrice: cheapest?.price ?? null,
         services,
         availability,
         reviews,
@@ -194,7 +182,7 @@ class PublicMentorController {
       // Sort
       let orderBy = { averageRating: 'desc' };
       if (sort === 'sessions') orderBy = { totalSessions: 'desc' };
-      if (sort === 'price_asc') orderBy = { services: { _count: 'asc' } };
+      if (sort === 'price_asc') orderBy = { mentorServices: { _count: 'asc' } };
 
       const skip = (Number(page) - 1) * Number(limit);
 
@@ -208,13 +196,13 @@ class PublicMentorController {
             user: {
               select: { name: true, profilePicture: true },
             },
-            services: {
+            mentorServices: {
               where: { isActive: true },
-              orderBy: { pricePerSession: 'asc' },
+              include: { service: true },
+              orderBy: { price: 'asc' },
               take: 1,
             },
-            weeklyAvailability: {
-              where: { isAvailable: true },
+            availabilityWindows: {
               orderBy: { dayOfWeek: 'asc' },
               take: 1,
               select: { dayOfWeek: true },
@@ -225,8 +213,8 @@ class PublicMentorController {
       ]);
 
       const mappedMentors = mentors.map((m) => {
-        const cheapestService = m.services[0];
-        const nextAvailable = m.weeklyAvailability[0];
+        const cheapestService = m.mentorServices[0];
+        const nextAvailable = m.availabilityWindows[0];
 
         return {
           id: m.id,
@@ -238,7 +226,7 @@ class PublicMentorController {
           bio: m.bio,
           rating: m.averageRating,
           totalSessions: m.totalSessions,
-          startingPrice: cheapestService?.pricePerSession ?? null,
+          startingPrice: cheapestService?.price ?? null,
           nextAvailableDay: nextAvailable?.dayOfWeek ?? null,
           workExperience: m.workExperience,
         };

@@ -1,6 +1,5 @@
 import { prisma } from '../config/database.js';
 import { upsertServicesSchema, serviceTypeParamSchema } from '../validators/mentorService.validator.js';
-import { SERVICE_TYPE_LABELS, VALID_SERVICE_TYPES } from '../constants/services.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -13,10 +12,12 @@ const createServiceError = (statusCode, message) => {
  */
 const mapService = (row) => ({
   id: row.id,
-  serviceType: row.serviceType,
-  label: SERVICE_TYPE_LABELS[row.serviceType],
-  pricePerSession: row.pricePerSession,
+  serviceId: row.serviceId,
+  serviceName: row.service?.name,
+  serviceSlug: row.service?.slug,
+  price: row.price,
   durationMinutes: row.durationMinutes,
+  bufferMinutes: row.bufferMinutes,
   isActive: row.isActive,
   createdAt: row.createdAt,
   updatedAt: row.updatedAt,
@@ -24,13 +25,17 @@ const mapService = (row) => ({
 
 class MentorServiceService {
   /**
-   * Returns the catalogue of available service types with display labels.
-   * No auth required — useful for the frontend to populate dropdowns.
+   * Returns the catalogue of available services.
    */
-  getServiceTypes() {
-    return VALID_SERVICE_TYPES.map((type) => ({
-      value: type,
-      label: SERVICE_TYPE_LABELS[type],
+  async getServiceTypes() {
+    const services = await prisma.service.findMany({
+      orderBy: { name: 'asc' },
+    });
+    return services.map((s) => ({
+      id: s.id,
+      value: s.slug,
+      label: s.name,
+      description: s.description,
     }));
   }
 
@@ -49,6 +54,7 @@ class MentorServiceService {
 
     const services = await prisma.mentorService.findMany({
       where: { mentorProfileId: profile.id },
+      include: { service: true },
       orderBy: { createdAt: 'asc' },
     });
 
@@ -72,7 +78,18 @@ class MentorServiceService {
     }
 
     const profileId = profile.id;
-    const incomingTypes = incoming.map((s) => s.serviceType);
+
+    // Resolve serviceType slugs to service IDs
+    const slugs = incoming.map((s) => s.serviceType);
+    const serviceRows = await prisma.service.findMany({
+      where: { slug: { in: slugs } },
+    });
+    const slugToId = {};
+    for (const svc of serviceRows) {
+      slugToId[svc.slug] = svc.id;
+    }
+
+    const incomingServiceIds = incoming.map((s) => slugToId[s.serviceType]).filter(Boolean);
 
     // Run inside a transaction for atomicity
     const result = await prisma.$transaction(async (tx) => {
@@ -80,32 +97,36 @@ class MentorServiceService {
       await tx.mentorService.deleteMany({
         where: {
           mentorProfileId: profileId,
-          serviceType: { notIn: incomingTypes },
+          serviceId: { notIn: incomingServiceIds },
         },
       });
 
       // 2. Upsert each incoming service
       const upserted = [];
       for (const svc of incoming) {
+        const serviceId = slugToId[svc.serviceType];
+        if (!serviceId) continue;
+
         const row = await tx.mentorService.upsert({
           where: {
-            mentorProfileId_serviceType: {
+            mentorProfileId_serviceId: {
               mentorProfileId: profileId,
-              serviceType: svc.serviceType,
+              serviceId,
             },
           },
           update: {
-            pricePerSession: svc.pricePerSession,
+            price: svc.pricePerSession,
             durationMinutes: svc.durationMinutes ?? 30,
             isActive: svc.isActive ?? true,
           },
           create: {
             mentorProfileId: profileId,
-            serviceType: svc.serviceType,
-            pricePerSession: svc.pricePerSession,
+            serviceId,
+            price: svc.pricePerSession,
             durationMinutes: svc.durationMinutes ?? 30,
             isActive: svc.isActive ?? true,
           },
+          include: { service: true },
         });
         upserted.push(row);
       }
@@ -117,7 +138,7 @@ class MentorServiceService {
   }
 
   /**
-   * Delete a single service by type for the authenticated mentor.
+   * Delete a single service by type (slug) for the authenticated mentor.
    */
   async deleteByType(userId, params) {
     const { serviceType } = serviceTypeParamSchema.parse(params);
@@ -131,17 +152,26 @@ class MentorServiceService {
       throw createServiceError(404, 'Mentor profile not found');
     }
 
+    // Resolve slug to service ID
+    const serviceRow = await prisma.service.findUnique({
+      where: { slug: serviceType },
+    });
+
+    if (!serviceRow) {
+      throw createServiceError(404, `Service ${serviceType} not found`);
+    }
+
     const existing = await prisma.mentorService.findUnique({
       where: {
-        mentorProfileId_serviceType: {
+        mentorProfileId_serviceId: {
           mentorProfileId: profile.id,
-          serviceType,
+          serviceId: serviceRow.id,
         },
       },
     });
 
     if (!existing) {
-      throw createServiceError(404, `Service ${serviceType} not found`);
+      throw createServiceError(404, `Service ${serviceType} not configured for this mentor`);
     }
 
     await prisma.mentorService.delete({

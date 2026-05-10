@@ -6,8 +6,6 @@ import {
   updateMentorProfileSchema,
   updateMentorApprovalSchema,
 } from '../validators/mentorProfile.validator.js';
-import { SERVICE_TYPE_LABELS, DAY_OF_WEEK_LABELS } from '../constants/services.js';
-import { dateTimeToTimeString } from '../utils/timeUtils.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -37,25 +35,22 @@ const profileInclude = {
       profilePicture: true,
     },
   },
-  services: {
+  mentorServices: {
+    where: { isActive: true },
+    include: { service: true },
     orderBy: { createdAt: 'asc' },
   },
-  weeklyAvailability: {
+  availabilityWindows: {
     include: {
-      slots: {
+      windowServices: {
         include: {
-          slotServices: {
-            include: {
-              mentorService: {
-                select: { id: true, serviceType: true },
-              },
-            },
+          mentorService: {
+            include: { service: true },
           },
         },
-        orderBy: { startTime: 'asc' },
       },
     },
-    orderBy: { dayOfWeek: 'asc' },
+    orderBy: { startTime: 'asc' },
   },
 };
 
@@ -69,33 +64,27 @@ const mapProfile = (profile) => ({
   contactNumber: profile.contactNumber,
   bio: profile.bio,
   expertiseTags: profile.expertiseTags,
-  // Normalized services with labels
-  services: (profile.services || []).map((s) => ({
-    id: s.id,
-    serviceType: s.serviceType,
-    label: SERVICE_TYPE_LABELS[s.serviceType],
-    pricePerSession: s.pricePerSession,
-    isActive: s.isActive,
+  // Normalized services
+  services: (profile.mentorServices || []).map((ms) => ({
+    id: ms.id,
+    serviceId: ms.serviceId,
+    serviceName: ms.service?.name,
+    serviceSlug: ms.service?.slug,
+    price: ms.price,
+    durationMinutes: ms.durationMinutes,
+    bufferMinutes: ms.bufferMinutes,
+    isActive: ms.isActive,
   })),
-  // Normalized availability with labels
-  availability: (profile.weeklyAvailability || []).map((a) => ({
-    id: a.id,
-    dayOfWeek: a.dayOfWeek,
-    dayLabel: DAY_OF_WEEK_LABELS[a.dayOfWeek],
-    slots: (a.slots || []).map((slot) => ({
-      id: slot.id,
-      startTime: dateTimeToTimeString(slot.startTime),
-      endTime: dateTimeToTimeString(slot.endTime),
-      maxBookings: slot.maxBookings,
-      isActive: slot.isActive,
-      services: (slot.slotServices || []).map((ss) => ({
-        slotServiceId: ss.id,
-        mentorServiceId: ss.mentorServiceId,
-        serviceType: ss.mentorService?.serviceType,
-        label: ss.mentorService?.serviceType
-          ? SERVICE_TYPE_LABELS[ss.mentorService.serviceType]
-          : null,
-      })),
+  // Normalized availability windows
+  availability: (profile.availabilityWindows || []).map((w) => ({
+    id: w.id,
+    dayOfWeek: w.dayOfWeek,
+    startTime: w.startTime,
+    endTime: w.endTime,
+    services: (w.windowServices || []).map((ws) => ({
+      windowServiceId: ws.id,
+      mentorServiceId: ws.mentorServiceId,
+      serviceName: ws.mentorService?.service?.name,
     })),
   })),
   ugCollegeProfile: profile.ugCollegeProfile,

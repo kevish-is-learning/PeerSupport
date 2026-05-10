@@ -1,9 +1,4 @@
 import { z } from 'zod';
-import { VALID_SERVICE_TYPES } from '../constants/services.js';
-
-const serviceTypeEnum = z.enum(VALID_SERVICE_TYPES, {
-  errorMap: () => ({ message: `Service type must be one of: ${VALID_SERVICE_TYPES.join(', ')}` }),
-});
 
 // ─── Create Booking ──────────────────────────────────────────────────────────
 
@@ -12,27 +7,15 @@ const serviceTypeEnum = z.enum(VALID_SERVICE_TYPES, {
  * The mentee selects:
  *   - which mentor (mentorProfileId)
  *   - which service (mentorServiceId)
- *   - which slot (availabilitySlotId)
- *   - which date (scheduledDate)
+ *   - start/end time (ISO strings)
  */
 export const createBookingSchema = z.object({
   mentorProfileId: z.string().uuid('Invalid mentor profile ID'),
   mentorServiceId: z.string().uuid('Invalid service ID'),
-  availabilitySlotId: z.string().uuid('Invalid slot ID'),
-  scheduledDate: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
-    .refine(
-      (dateStr) => {
-        const d = new Date(dateStr + 'T00:00:00.000Z');
-        return !isNaN(d.getTime());
-      },
-      { message: 'Invalid date' }
-    ),
-  sessionType: z.enum(['ONE_ON_ONE', 'GROUP_DISCUSSION']).default('ONE_ON_ONE'),
+  startTime: z.string().datetime({ message: 'Start time must be an ISO datetime' }),
+  endTime: z.string().datetime({ message: 'End time must be an ISO datetime' }),
   purposeOfCall: z.string().max(1000).optional(),
   notes: z.string().max(2000).optional(),
-  sharedResume: z.boolean().default(false),
 });
 
 // ─── Cancel Booking ──────────────────────────────────────────────────────────
@@ -45,10 +28,10 @@ export const cancelBookingSchema = z.object({
 
 /**
  * Query parameters for fetching available slots.
- * Mentee selects a service and a date → we find matching slots.
+ * Mentee selects a service slug and a date → we find matching slots.
  */
 export const availableSlotsQuerySchema = z.object({
-  serviceType: serviceTypeEnum,
+  serviceType: z.string().min(1, 'Service type (slug) is required'),
   date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')

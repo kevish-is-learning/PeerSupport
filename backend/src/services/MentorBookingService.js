@@ -1,5 +1,4 @@
 import { prisma } from '../config/database.js';
-import { SERVICE_TYPE_LABELS } from '../constants/services.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -9,19 +8,19 @@ const createServiceError = (statusCode, message) => {
 
 const mapBooking = (b) => ({
   id: b.id,
-  sessionType: b.sessionType,
-  bookingStatus: b.bookingStatus,
+  status: b.status,
   startTime: b.startTime,
   endTime: b.endTime,
   meetingLink: b.meetingLink,
   purposeOfCall: b.purposeOfCall,
   notes: b.notes,
-  isFeedbackSubmitted: b.isFeedbackSubmitted,
+  cancelledReason: b.cancelledReason,
   service: b.mentorService
     ? {
-        serviceType: b.mentorService.serviceType,
-        label: SERVICE_TYPE_LABELS[b.mentorService.serviceType],
-        pricePerSession: b.mentorService.pricePerSession,
+        id: b.mentorService.id,
+        serviceName: b.mentorService.service?.name,
+        serviceSlug: b.mentorService.service?.slug,
+        price: b.mentorService.price,
         durationMinutes: b.mentorService.durationMinutes,
       }
     : null,
@@ -51,7 +50,7 @@ const bookingInclude = {
     select: { id: true, name: true, email: true, profilePicture: true },
   },
   mentorService: {
-    select: { serviceType: true, pricePerSession: true, durationMinutes: true },
+    include: { service: true },
   },
   payment: {
     select: { id: true, amount: true, paymentStatus: true, paidAt: true, currency: true },
@@ -77,7 +76,7 @@ class MentorBookingService {
 
     const [totalSessions, completedPayments, activeBookingMentees] = await Promise.all([
       prisma.booking.count({
-        where: { mentorProfileId: profileId, bookingStatus: { in: ['COMPLETED', 'CONFIRMED'] } },
+        where: { mentorProfileId: profileId, status: { in: ['COMPLETED', 'CONFIRMED'] } },
       }),
       prisma.payment.aggregate({
         where: {
@@ -87,7 +86,7 @@ class MentorBookingService {
         _sum: { amount: true },
       }),
       prisma.booking.findMany({
-        where: { mentorProfileId: profileId, bookingStatus: { not: 'CANCELLED' } },
+        where: { mentorProfileId: profileId, status: { not: 'CANCELLED' } },
         distinct: ['menteeId'],
         select: { menteeId: true },
       }),
@@ -102,7 +101,7 @@ class MentorBookingService {
       prisma.booking.count({
         where: {
           mentorProfileId: profileId,
-          bookingStatus: { in: ['COMPLETED', 'CONFIRMED'] },
+          status: { in: ['COMPLETED', 'CONFIRMED'] },
           startTime: { gte: monthStart },
         },
       }),
@@ -132,7 +131,7 @@ class MentorBookingService {
     const profile = await this.requireProfile(userId);
 
     const bookings = await prisma.booking.findMany({
-      where: { mentorProfileId: profile.id, bookingStatus: { not: 'CANCELLED' } },
+      where: { mentorProfileId: profile.id, status: { not: 'CANCELLED' } },
       distinct: ['menteeId'],
       select: {
         menteeId: true,
@@ -179,14 +178,14 @@ class MentorBookingService {
           booking: {
             include: {
               mentee: { select: { name: true, email: true } },
-              mentorService: { select: { serviceType: true } },
+              mentorService: { include: { service: true } },
             },
           },
         },
         orderBy: { createdAt: 'desc' },
       }),
       prisma.booking.count({
-        where: { mentorProfileId: profileId, bookingStatus: 'PENDING' },
+        where: { mentorProfileId: profileId, status: 'PENDING' },
       }),
       prisma.payment.aggregate({
         where: { paymentStatus: 'SUCCESS', booking: { mentorProfileId: profileId } },
@@ -201,9 +200,7 @@ class MentorBookingService {
       id: p.id,
       transactionRef: p.id.substring(0, 13).toUpperCase(),
       mentee: p.booking.mentee?.name ?? 'Unknown',
-      service: p.booking.mentorService
-        ? SERVICE_TYPE_LABELS[p.booking.mentorService.serviceType]
-        : 'Session',
+      service: p.booking.mentorService?.service?.name || 'Session',
       date: p.createdAt,
       amount: p.amount,
       currency: p.currency,

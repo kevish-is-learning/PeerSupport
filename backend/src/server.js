@@ -13,7 +13,6 @@ import passport from './config/passport.js';
 import { connectDatabase } from './config/database.js';
 import { initSocket } from './config/socket.js';
 import routes from "./routes/index.routes.js";
-import { startBookingExpiryJob } from './services/BookingExpiryService.js';
 
 export const app = express();
 const httpServer = createServer(app);
@@ -97,8 +96,6 @@ const startServer = async () => {
       console.log(`🔌 Socket.io ready`);
       console.log(`🔐 Environment: ${process.env.NODE_ENV || 'development'}`);
 
-      // Start background job to auto-expire stale PENDING bookings
-      startBookingExpiryJob();
     });
   } catch (error) {
     console.error('Failed to start server:', {

@@ -17,7 +17,9 @@ class MenteeBookingController {
               },
             },
           },
-          mentorService: true,
+          mentorService: {
+            include: { service: true },
+          },
         },
       });
 
@@ -30,21 +32,20 @@ class MenteeBookingController {
           id: b.id,
           mentorName: b.mentorProfile.user.name,
           mentorPicture: b.mentorProfile.user.profilePicture,
-          serviceType: b.mentorService.serviceType,
+          serviceName: b.mentorService?.service?.name || 'Session',
           startTime: b.startTime,
           endTime: b.endTime,
-          durationMinutes: b.mentorService.durationMinutes,
-          sessionType: b.sessionType,
+          durationMinutes: b.mentorService?.durationMinutes,
           meetingLink: b.meetingLink,
-          bookingStatus: b.bookingStatus,
+          status: b.status,
         };
 
-        if (new Date(b.startTime) > now && b.bookingStatus !== 'CANCELLED') {
+        if (new Date(b.startTime) > now && b.status !== 'CANCELLED') {
           upcoming.push(sessionData);
         } else if (new Date(b.startTime) <= now) {
           past.push({
             ...sessionData,
-            rating: b.mentorProfile.averageRating, // Simulation for now
+            rating: b.mentorProfile.averageRating,
           });
         }
       });

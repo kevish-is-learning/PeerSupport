@@ -1,6 +1,5 @@
 import { prisma } from '../config/database.js';
 import { upsertAvailabilitySchema, dayOfWeekParamSchema } from '../validators/mentorService.validator.js';
-import { DAY_OF_WEEK_LABELS } from '../constants/services.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -9,57 +8,16 @@ const createServiceError = (statusCode, message) => {
 };
 
 /**
- * Normalizes an array of time slots by sorting and merging any 
- * overlapping or contiguous intervals.
- */
-const normalizeTimeSlots = (slots) => {
-  if (!slots || slots.length === 0) return [];
-
-  const timeToMins = (t) => {
-    const [h, m] = t.split(':').map(Number);
-    return h * 60 + m;
-  };
-
-  const minsToTime = (mins) => {
-    const h = String(Math.floor(mins / 60)).padStart(2, '0');
-    const m = String(mins % 60).padStart(2, '0');
-    return `${h}:${m}`;
-  };
-
-  const parsed = slots.map(s => ({
-    start: timeToMins(s.startTime),
-    end: timeToMins(s.endTime)
-  })).sort((a, b) => a.start - b.start);
-
-  const merged = [parsed[0]];
-  for (let i = 1; i < parsed.length; i++) {
-    const prev = merged[merged.length - 1];
-    const curr = parsed[i];
-
-    if (curr.start <= prev.end) {
-      prev.end = Math.max(prev.end, curr.end);
-    } else {
-      merged.push(curr);
-    }
-  }
-
-  return merged.map(m => ({
-    startTime: minsToTime(m.start),
-    endTime: minsToTime(m.end)
-  }));
-};
-
-/**
- * Maps a raw WeeklyAvailability row (with timeSlots) to a clean API shape.
+ * Maps a raw AvailabilityWindow row to a clean API shape.
  */
 const mapAvailability = (row) => ({
   id: row.id,
   dayOfWeek: row.dayOfWeek,
-  dayLabel: DAY_OF_WEEK_LABELS[row.dayOfWeek],
-  timeSlots: (row.timeSlots || []).map((ts) => ({
-    id: ts.id,
-    startTime: ts.startTime,
-    endTime: ts.endTime,
+  startTime: row.startTime,
+  endTime: row.endTime,
+  services: (row.windowServices || []).map((ws) => ({
+    mentorServiceId: ws.mentorServiceId,
+    serviceName: ws.mentorService?.service?.name,
   })),
   createdAt: row.createdAt,
   updatedAt: row.updatedAt,
@@ -67,7 +25,7 @@ const mapAvailability = (row) => ({
 
 class MentorAvailabilityService {
   /**
-   * Fetch weekly availability for a mentor (by userId).
+   * Fetch availability windows for a mentor (by userId).
    */
   async getByUserId(userId) {
     const profile = await prisma.mentorProfile.findUnique({
@@ -79,19 +37,26 @@ class MentorAvailabilityService {
       throw createServiceError(404, 'Mentor profile not found');
     }
 
-    const rows = await prisma.weeklyAvailability.findMany({
+    const rows = await prisma.availabilityWindow.findMany({
       where: { mentorProfileId: profile.id },
-      include: { timeSlots: true },
-      orderBy: { dayOfWeek: 'asc' },
+      include: {
+        windowServices: {
+          include: {
+            mentorService: {
+              include: { service: true },
+            },
+          },
+        },
+      },
+      orderBy: { startTime: 'asc' },
     });
 
     return rows.map(mapAvailability);
   }
 
   /**
-   * Bulk upsert weekly availability.
+   * Bulk upsert availability windows.
    * Replaces the full set: days not in the payload are removed.
-   * Each day's time slots are replaced completely.
    */
   async bulkUpsert(userId, payload) {
     const { availability: incoming } = upsertAvailabilitySchema.parse(payload);
@@ -106,74 +71,42 @@ class MentorAvailabilityService {
     }
 
     const profileId = profile.id;
-    const incomingDays = incoming.map((a) => a.dayOfWeek);
 
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Delete days that are no longer in the incoming set
-      //    (cascades to their TimeSlot children)
-      await tx.weeklyAvailability.deleteMany({
-        where: {
-          mentorProfileId: profileId,
-          dayOfWeek: { notIn: incomingDays },
-        },
+      // Delete all existing windows for this mentor
+      await tx.availabilityWindow.deleteMany({
+        where: { mentorProfileId: profileId },
       });
 
-      const upserted = [];
+      const created = [];
 
       for (const day of incoming) {
-        // Skip days with no time slots (effectively removes them)
-        if (day.timeSlots.length === 0) {
-          await tx.weeklyAvailability.deleteMany({
-            where: {
+        if (!day.timeSlots || day.timeSlots.length === 0) continue;
+
+        for (const slot of day.timeSlots) {
+          const window = await tx.availabilityWindow.create({
+            data: {
               mentorProfileId: profileId,
               dayOfWeek: day.dayOfWeek,
+              startTime: new Date(`1970-01-01T${slot.startTime}:00.000Z`),
+              endTime: new Date(`1970-01-01T${slot.endTime}:00.000Z`),
+            },
+            include: {
+              windowServices: {
+                include: {
+                  mentorService: {
+                    include: { service: true },
+                  },
+                },
+              },
             },
           });
-          continue;
+
+          created.push(window);
         }
-
-        // Upsert the day record
-        const dayRow = await tx.weeklyAvailability.upsert({
-          where: {
-            mentorProfileId_dayOfWeek: {
-              mentorProfileId: profileId,
-              dayOfWeek: day.dayOfWeek,
-            },
-          },
-          update: { updatedAt: new Date() },
-          create: {
-            mentorProfileId: profileId,
-            dayOfWeek: day.dayOfWeek,
-          },
-        });
-
-        // Replace all time slots for this day
-        await tx.timeSlot.deleteMany({
-          where: { weeklyAvailabilityId: dayRow.id },
-        });
-
-        if (day.timeSlots.length > 0) {
-          const normalizedSlots = normalizeTimeSlots(day.timeSlots);
-          
-          await tx.timeSlot.createMany({
-            data: normalizedSlots.map((slot) => ({
-              weeklyAvailabilityId: dayRow.id,
-              startTime: slot.startTime,
-              endTime: slot.endTime,
-            })),
-          });
-        }
-
-        // Re-fetch with slots
-        const full = await tx.weeklyAvailability.findUnique({
-          where: { id: dayRow.id },
-          include: { timeSlots: true },
-        });
-
-        upserted.push(full);
       }
 
-      return upserted;
+      return created;
     });
 
     return result.map(mapAvailability);
@@ -194,22 +127,22 @@ class MentorAvailabilityService {
       throw createServiceError(404, 'Mentor profile not found');
     }
 
-    const existing = await prisma.weeklyAvailability.findUnique({
+    const existing = await prisma.availabilityWindow.findMany({
       where: {
-        mentorProfileId_dayOfWeek: {
-          mentorProfileId: profile.id,
-          dayOfWeek,
-        },
+        mentorProfileId: profile.id,
+        dayOfWeek,
       },
     });
 
-    if (!existing) {
+    if (existing.length === 0) {
       throw createServiceError(404, `Availability for ${dayOfWeek} not found`);
     }
 
-    // Cascade deletes TimeSlot children
-    await prisma.weeklyAvailability.delete({
-      where: { id: existing.id },
+    await prisma.availabilityWindow.deleteMany({
+      where: {
+        mentorProfileId: profile.id,
+        dayOfWeek,
+      },
     });
 
     return { deleted: true, dayOfWeek };
