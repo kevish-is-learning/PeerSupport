@@ -11,10 +11,10 @@ export default function AuthPage({ searchParams }) {
   const initialRole = searchParams?.role === "MENTOR" ? "MENTOR" : "MENTEE";
 
   return (
-    <main className="min-h-screen text-[#0d0d0f] flex min-h-[100dvh]">
+    <main className="min-h-screen text-[#0d0d0f] flex">
       {/* Left side illustration */}
       <div className="hidden lg:flex w-1/2 bg-[#d7d1cc] relative overflow-hidden flex-col items-center justify-center">
-        <div className="absolute top-[20%] w-[350px] aspect-[4/7] border border-black border-b-0 overflow-hidden pt-4 z-10 box-border bg-white" style={{ backgroundImage: 'linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)', backgroundSize: '70px 70px' }}>
+        <div className="absolute top-[20%] w-[350px] aspect-4/7 border border-black border-b-0 overflow-hidden pt-4 z-10 box-border bg-white" style={{ backgroundImage: 'linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)', backgroundSize: '70px 70px' }}>
           <div className="w-[85%] aspect-square bg-[#f55246] mx-auto mt-[20%] flex items-center justify-center relative">
             {/* The circle with face */}
             <svg viewBox="0 0 100 100" className="w-[80%] h-[80%] absolute z-20">
@@ -28,7 +28,7 @@ export default function AuthPage({ searchParams }) {
           </div>
 
           <div className="absolute bottom-0 w-[110%] ml-[-5%] z-20 flex flex-wrap leading-none" style={{ gap: '0px' }}>
-             <div className="w-full flex justify-between px-[5%] -mb-[1px]">
+             <div className="w-full flex justify-between px-[5%] -mb-px">
                <div className="w-[30%] aspect-square bg-[#86a6f6]" style={{ clipPath: 'polygon(50% 0, 0 100%, 100% 100%)' }}></div>
                <div className="w-[30%] aspect-square bg-[#86a6f6]" style={{ clipPath: 'polygon(50% 0, 0 100%, 100% 100%)' }}></div>
                <div className="w-[30%] aspect-square bg-[#86a6f6]" style={{ clipPath: 'polygon(50% 0, 0 100%, 100% 100%)' }}></div>

@@ -146,6 +146,43 @@ class BookingServiceV2 {
       notes: data.notes,
     });
 
+    // Create payment record
+    const payment = await prisma.payment.create({
+      data: {
+        bookingId: booking.id,
+        amount: mentorService.price,
+        currency: 'INR',
+        paymentStatus: 'PENDING',
+      },
+    });
+
+    // Fetch the mentee for Razorpay prefill
+    const mentee = await prisma.user.findUnique({
+      where: { id: menteeId },
+      select: { name: true, email: true },
+    });
+
+    // Create Razorpay order
+    const amountInPaise = Math.round(payment.amount * 100);
+    const { razorpayInstance } = await import('../../config/razorpay.js');
+    
+    const razorpayOrder = await razorpayInstance.orders.create({
+      amount: amountInPaise,
+      currency: payment.currency || 'INR',
+      receipt: `booking_${booking.id.substring(0, 8)}`,
+      notes: {
+        bookingId: booking.id,
+        menteeId,
+        serviceName: mentorService.service?.name || '',
+      },
+    });
+
+    // Save Razorpay order ID
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { razorpayOrderId: razorpayOrder.id },
+    });
+
     // Fetch the full booking with includes
     const fullBooking = await prisma.booking.findUnique({
       where: { id: booking.id },
@@ -163,6 +200,17 @@ class BookingServiceV2 {
     return {
       booking: mapBooking(fullBooking),
       bookingId: booking.id,
+      order: {
+        orderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        bookingId: booking.id,
+        keyId: process.env.RAZORPAY_KEY_ID,
+        prefill: {
+          name: mentee?.name,
+          email: mentee?.email,
+        },
+      },
     };
   }
 

@@ -36,7 +36,7 @@ export default function CircularFeatureCard({
         <h3 className="mt-1.5 line-clamp-2 text-[0.65rem] font-extrabold leading-tight text-[#1f2937] sm:text-[0.7rem]">
           {title}
         </h3>
-        <p className="mt-0.5 line-clamp-2 max-w-[5.5rem] text-[0.58rem] leading-tight text-[#6b7280] sm:max-w-[6rem] sm:text-[0.6rem]">
+        <p className="mt-0.5 line-clamp-2 max-w-22 text-[0.58rem] leading-tight text-[#6b7280] sm:max-w-24 sm:text-[0.6rem]">
           {description}
         </p>
       </article>

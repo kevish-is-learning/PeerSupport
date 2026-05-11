@@ -69,8 +69,11 @@ const mapProfile = (profile) => ({
     id: ms.id,
     serviceId: ms.serviceId,
     serviceName: ms.service?.name,
+    label: ms.service?.name, // Added for frontend compatibility
     serviceSlug: ms.service?.slug,
+    serviceType: ms.service?.slug, // Added for frontend compatibility
     price: ms.price,
+    pricePerSession: ms.price, // Added for frontend compatibility
     durationMinutes: ms.durationMinutes,
     bufferMinutes: ms.bufferMinutes,
     isActive: ms.isActive,

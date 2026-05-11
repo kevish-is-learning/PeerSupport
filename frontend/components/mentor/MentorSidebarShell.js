@@ -62,13 +62,6 @@ export default function MentorSidebarShell({ children }) {
   const approved = isMentorApproved(user);
   const approvalMeta = getMentorApprovalMeta(user);
 
-  const activeItem = useMemo(
-    () =>
-      MENTOR_NAV_ITEMS.find((item) => normalizeMentorPath(item.href) === normalizedPath) ||
-      MENTOR_NAV_ITEMS[0],
-    [normalizedPath]
-  );
-
   const showRestrictedView =
     Boolean(user) &&
     user.role === "MENTOR" &&
@@ -85,15 +78,6 @@ export default function MentorSidebarShell({ children }) {
     }
   };
 
-  // if (!hasCheckedSession || isLoading) {
-  //   return (
-  //     <main className="min-h-screen bg-[#0a0c10] p-4 text-[#f7f8fb] sm:p-6 lg:p-8">
-  //       <div className="mx-auto flex min-h-[80vh] w-full items-center justify-center rounded-4xl border border-white/20 bg-[#10131a] px-6 py-12">
-  //         <p className="text-lg font-semibold">Loading mentor workspace...</p>
-  //       </div>
-  //     </main>
-  //   );
-  // }
 
   if (!user || user.role !== "MENTOR" || !user.onboardingCompleted) {
     return null;
@@ -109,7 +93,7 @@ export default function MentorSidebarShell({ children }) {
           <span className="font-extrabold text-[#111] text-lg">Peer Support</span>
         </div>
 
-        <nav className="mt-6 px-4 flex flex-col gap-2 flex-grow">
+        <nav className="mt-6 px-4 flex flex-col gap-2 grow">
           {MENTOR_NAV_ITEMS.map((item) => {
             const isActive = normalizeMentorPath(item.href) === normalizedPath;
             const isLocked = item.requiresApproval && !approved;
@@ -134,10 +118,10 @@ export default function MentorSidebarShell({ children }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition-all ${
+                className={`flex items-center gap-3 rounded-xl px-3 py-3 font-bold transition-all ${
                   isActive
-                    ? "text-[#5061E4]"
-                    : "text-gray-500 hover:text-black hover:bg-gray-50"
+                    ? "text-[#5061E4] text-lg bg-gray-50"
+                    : "text-gray-500 hover:text-black hover:bg-gray-50 text-sm"
                 }`}
               >
                 <Icon size={18} />
@@ -151,7 +135,7 @@ export default function MentorSidebarShell({ children }) {
           <button
             type="button"
             onClick={onLogout}
-            className="flex w-full items-center gap-3 rounded-xl border-2 border-black bg-[#FDE9E6] px-4 py-3 text-sm font-bold text-black transition-all hover:bg-[#facdc5]"
+            className="flex w-full items-center gap-3 rounded-xl border-2 border-black bg-[#FDE9E6] px-4 py-3 text-sm font-bold text-black transition-all hover:bg-[#facdc5] cursor-pointer"
           >
             <LogOut size={18} />
             Logout

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { publicMentorApi, bookingApi, resolveUploadUrl } from "../../../../lib/api";
 import useAuthStore from "../../../../store/useAuthStore";
+import MentorBookingPage from "../../../../components/mentee/v2/MentorBookingPage";
 
 /* ─── Constants ────────────────────────────────────────────── */
 const DAY_SHORT = {
@@ -226,7 +227,7 @@ function ReviewCard({ review }) {
   return (
     <div className="rounded-2xl border-2 border-gray-200 bg-white p-4">
       <div className="flex items-start gap-3">
-        <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border-2 border-gray-200 bg-[#F3E8FF]">
+        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-gray-200 bg-[#F3E8FF]">
           {review.authorPicture ? (
             <img src={resolveUploadUrl(review.authorPicture)} alt="" className="h-full w-full object-cover" />
           ) : (
@@ -296,6 +297,7 @@ export default function MentorProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] font-sans">
+      <script src="https://checkout.razorpay.com/v1/checkout.js" async />
       <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
 
         {/* Back */}
@@ -310,7 +312,7 @@ export default function MentorProfilePage() {
         <div className="rounded-2xl border-2 border-black bg-white p-6 shadow-[5px_5px_0px_0px_#8B5CF6]">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-2xl border-3 border-black bg-[#F3E8FF]">
+              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-3 border-black bg-[#F3E8FF]">
                 {mentor.profilePicture ? (
                   <img src={resolveUploadUrl(mentor.profilePicture)} alt={mentor.name} className="h-full w-full object-cover" />
                 ) : (
@@ -368,25 +370,25 @@ export default function MentorProfilePage() {
             <ul className="space-y-2">
               {mentor.totalSessions > 0 && (
                 <li className="flex items-start gap-2 text-sm text-gray-600">
-                  <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#22C55E]" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#22C55E]" />
                   Mentored {mentor.totalSessions}+ students
                 </li>
               )}
               {college && (
                 <li className="flex items-start gap-2 text-sm text-gray-600">
-                  <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#22C55E]" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#22C55E]" />
                   Alumni of {college}
                 </li>
               )}
               {mentor.certifications && (
                 <li className="flex items-start gap-2 text-sm text-gray-600">
-                  <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#22C55E]" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#22C55E]" />
                   {mentor.certifications}
                 </li>
               )}
               {mentor.averageRating >= 4.5 && (
                 <li className="flex items-start gap-2 text-sm text-gray-600">
-                  <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#22C55E]" />
+                  <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#22C55E]" />
                   Top-rated mentor ({mentor.averageRating.toFixed(1)} ⭐)
                 </li>
               )}
@@ -410,28 +412,7 @@ export default function MentorProfilePage() {
 
         {/* ── Book a Session ── */}
         <div id="book" className="mt-6 rounded-2xl border-2 border-black bg-white p-5 shadow-[4px_4px_0px_0px_#22C55E]">
-          <h2 className="mb-2 flex items-center gap-2 text-lg font-black text-gray-900">
-            <Calendar className="h-5 w-5 text-[#22C55E]" /> Book a Session
-          </h2>
-          <p className="mb-4 text-sm text-gray-500">Select a service to view available dates and time slots</p>
-
-          {mentor.services?.length > 0 ? (
-            <div className="space-y-3">
-              {mentor.services.map((svc) => (
-                <ServiceAccordion
-                  key={svc.id}
-                  service={svc}
-                  isOpen={openService === svc.id}
-                  onToggle={() => setOpenService(openService === svc.id ? null : svc.id)}
-                  mentor={mentor}
-                  user={user}
-                  router={router}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-400">This mentor hasn&apos;t set up services yet.</p>
-          )}
+          <MentorBookingPage mentorProfileId={mentor.id} />
         </div>
 
         {/* ── Reviews ── */}

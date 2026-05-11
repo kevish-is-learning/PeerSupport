@@ -385,7 +385,7 @@ export default function MentorOnboardingWizard({
                       )}
                     </div>
                     <span
-                      className={`text-[9px] leading-tight sm:text-xs font-bold text-center break-words mt-1 ${
+                      className={`text-[9px] leading-tight sm:text-xs font-bold text-center wrap-break-word mt-1 ${
                         isActive || isCompleted ? "text-black" : "text-gray-400"
                       }`}
                     >
@@ -920,7 +920,7 @@ export default function MentorOnboardingWizard({
               <button
                 onClick={handleCompleteProfile}
                 disabled={isSubmitting}
-                className="px-4 sm:px-8 py-2 sm:py-2.5 rounded-full border-1 sm:border-2 border-black bg-[#5f6cf3] text-white font-bold text-xs sm:text-base hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all flex items-center justify-center shrink-0 disabled:opacity-50"
+                className="px-4 sm:px-8 py-2 sm:py-2.5 rounded-full border sm:border-2 border-black bg-[#5f6cf3] text-white font-bold text-xs sm:text-base hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all flex items-center justify-center shrink-0 disabled:opacity-50"
               >
                 {isSubmitting ? "Saving..." : "Complete Profile"}
                 {!isSubmitting && (

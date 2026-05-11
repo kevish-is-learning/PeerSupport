@@ -3,9 +3,7 @@ import { VALID_SERVICE_TYPES, VALID_DAYS } from '../constants/services.js';
 
 // ─── Service Validators ─────────────────────────────────────────────────────
 
-const serviceTypeEnum = z.enum(VALID_SERVICE_TYPES, {
-  errorMap: () => ({ message: `Service type must be one of: ${VALID_SERVICE_TYPES.join(', ')}` }),
-});
+const serviceTypeEnum = z.string().min(1, 'Service type is required');
 
 const singleServiceSchema = z.object({
   serviceType: serviceTypeEnum,

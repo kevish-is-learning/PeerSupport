@@ -418,7 +418,7 @@ export default function MentorProfilePage() {
             ))}
           </div>
 
-          <div className="w-full rounded-[2rem] border-[3px] border-black bg-white p-10 relative shadow-[10px_10px_0_0_#5061E4] mb-10">
+          <div className="w-full rounded-4xl border-[3px] border-black bg-white p-10 relative shadow-[10px_10px_0_0_#5061E4] mb-10">
             <div className="flex justify-center mb-6">
               <div className="h-14 w-14 rounded-xl border-[3px] border-black bg-[#F59E0B] flex items-center justify-center shadow-[4px_4px_0_0_#000]">
                 <span className="text-2xl font-black">{wizardStep + 1}</span>

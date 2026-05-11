@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import MentorBookingPage from "../../../components/mentee/v2/MentorBookingPage";
-import { publicMentorApi } from "../../../lib/api";
+import MentorBookingPage from "../../../../components/mentee/v2/MentorBookingPage";
+import { publicMentorApi } from "../../../../lib/api";
 import { Loader2, ArrowLeft, Star, MapPin } from "lucide-react";
 import Link from "next/link";
 
@@ -36,6 +36,7 @@ export default function BookMentorPage({ params }) {
 
   return (
     <div className="min-h-screen bg-[#FFF7F5]">
+      <script src="https://checkout.razorpay.com/v1/checkout.js" async />
       {/* Top bar */}
       <div className="border-b-2 border-black bg-white px-6 py-4">
         <div className="mx-auto flex max-w-6xl items-center gap-4">

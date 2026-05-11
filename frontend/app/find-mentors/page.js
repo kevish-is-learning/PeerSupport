@@ -46,7 +46,7 @@ function MentorCard({ mentor }) {
         {/* Header */}
         <div className="flex items-start justify-between gap-3 p-5 pb-3">
           <div className="flex items-center gap-3">
-            <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl border-2 border-black bg-[#F3E8FF]">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border-2 border-black bg-[#F3E8FF]">
               {mentor.profilePicture ? (
                 <img
                   src={resolveUploadUrl(mentor.profilePicture)}
@@ -71,7 +71,7 @@ function MentorCard({ mentor }) {
             </div>
           </div>
           {price !== null && (
-            <div className="text-right flex-shrink-0">
+            <div className="text-right shrink-0">
               <p className="text-[10px] font-semibold text-gray-400">starting from</p>
               <p className="text-lg font-extrabold text-gray-900">₹{Math.round(price)}</p>
             </div>
@@ -216,7 +216,7 @@ export default function FindMentorsPage() {
         {/* Search bar */}
         <div className="mx-auto mt-8 max-w-2xl px-4">
           <div className="flex items-center gap-3 rounded-full border-2 border-black bg-white px-5 py-3 shadow-[4px_4px_0px_0px_#1E1E1E]">
-            <Search className="h-5 w-5 flex-shrink-0 text-gray-400" />
+            <Search className="h-5 w-5 shrink-0 text-gray-400" />
             <input
               type="text"
               value={search}
@@ -238,7 +238,7 @@ export default function FindMentorsPage() {
         <div className="flex gap-8">
 
           {/* ── Sidebar filters ── */}
-          <aside className="w-56 flex-shrink-0 hidden lg:block">
+          <aside className="w-56 shrink-0 hidden lg:block">
             <div className="rounded-2xl border-2 border-black bg-white p-5 shadow-[5px_5px_0px_0px_#1E1E1E]">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2 font-extrabold text-gray-900">

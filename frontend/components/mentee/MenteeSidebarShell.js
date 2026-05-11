@@ -2,13 +2,25 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo } from "react";
-import { Home, Calendar as CalendarIcon, Search, User, LogOut } from "lucide-react";
+import { useEffect } from "react";
 import useAuthStore from "../../store/useAuthStore";
 import {
-  getWorkspaceRouteByRole,
+  MENTEE_NAV_ITEMS,
   normalizeMenteePath,
 } from "./menteeNavigation";
+import { LogOut, LayoutDashboard, Search, CalendarDays, User as UserIcon, HelpCircle } from "lucide-react";
+
+// Map labels to icons since menteeNavigation doesn't have them
+const getIconForNav = (label) => {
+  switch (label) {
+    case "Dashboard": return LayoutDashboard;
+    case "Find Mentors": return Search;
+    case "Bookings": return CalendarDays;
+    case "Profile": return UserIcon;
+    case "Help Center": return HelpCircle;
+    default: return LayoutDashboard;
+  }
+};
 
 export default function MenteeSidebarShell({ children }) {
   const pathname = usePathname();
@@ -16,7 +28,6 @@ export default function MenteeSidebarShell({ children }) {
 
   const {
     user,
-    isLoading,
     hasCheckedSession,
     fetchCurrentUser,
     logout,
@@ -39,23 +50,19 @@ export default function MenteeSidebarShell({ children }) {
     }
 
     if (user.role !== "MENTEE") {
-      router.replace(getWorkspaceRouteByRole(user.role));
+      const targetPath =
+        user.role === "MENTOR"
+          ? "/mentor/dashboard"
+          : user.role === "ADMIN"
+            ? "/admin/dashboard"
+            : "/auth?mode=login";
+      router.replace(targetPath);
       return;
     }
 
-    if (!user.onboardingCompleted) {
-      router.replace("/onboarding");
-    }
   }, [hasCheckedSession, user, router]);
 
   const normalizedPath = normalizeMenteePath(pathname);
-
-  const NAV_ITEMS = [
-    { label: "Home", href: "/mentee/dashboard", icon: Home },
-    { label: "My Sessions", href: "/mentee/sessions", icon: CalendarIcon },
-    { label: "Explore Mentors", href: "/find-mentors", icon: Search },
-    { label: "Profile", href: "/mentee/profile", icon: User },
-  ];
 
   const onLogout = async () => {
     try {
@@ -66,63 +73,57 @@ export default function MenteeSidebarShell({ children }) {
     }
   };
 
-  if (!hasCheckedSession) {
-    return (
-      <main className="min-h-screen bg-[#FCF8F5] p-4 flex items-center justify-center">
-        <p className="text-lg font-bold text-gray-900">Loading mentee workspace...</p>
-      </main>
-    );
-  }
-
-  if (!user || user.role !== "MENTEE" || !user.onboardingCompleted) {
+  if (!user || user.role !== "MENTEE") {
     return null;
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-[#FCF8F5] text-gray-900 font-sans">
-      {/* Sidebar */}
-      <aside className="sticky top-0 flex h-screen w-64 flex-col border-r-2 border-black bg-white px-6 py-8">
-        <div className="mb-10 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black bg-[#8B5CF6] text-xl font-black text-white shadow-[2px_2px_0px_0px_#1E1E1E]">
+    <main className="h-screen bg-[#FFF7F5] flex text-black overflow-hidden">
+      <aside className="w-64 shrink-0 border-r-2 border-black bg-white flex flex-col h-screen">
+        <div className="p-6 flex items-center gap-3 border-b-0">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5061E4] border-2 border-black text-white font-bold">
             P
           </div>
-          <span className="text-xl font-extrabold tracking-tight">Peer Support</span>
+          <span className="font-extrabold text-[#111] text-lg">Peer Support</span>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-2">
-          {NAV_ITEMS.map((item) => {
+        <nav className="mt-6 px-4 flex flex-col gap-2 grow">
+          {MENTEE_NAV_ITEMS.map((item) => {
             const isActive = normalizeMenteePath(item.href) === normalizedPath;
+            const Icon = getIconForNav(item.label);
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-4 rounded-xl px-4 py-3 text-sm font-bold transition-colors ${
+                className={`flex items-center gap-3 rounded-xl px-3 py-3 font-bold transition-all ${
                   isActive
-                    ? "bg-[#F3E8FF] text-[#8B5CF6]"
-                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                    ? "text-[#5061E4] text-lg bg-gray-50"
+                    : "text-gray-500 hover:text-black hover:bg-gray-50 text-sm"
                 }`}
               >
-                <item.icon className="h-5 w-5" />
+                <Icon size={18} />
                 {item.label}
               </Link>
             );
           })}
         </nav>
 
-        <button
-          type="button"
-          onClick={onLogout}
-          className="mt-auto flex w-full items-center gap-3 rounded-xl border-2 border-black bg-[#FDE6D5] px-4 py-3 text-sm font-bold text-gray-900 transition-transform active:translate-y-1"
-        >
-          <LogOut className="h-5 w-5" />
-          Logout
-        </button>
+        <div className="p-4 mt-auto">
+          <button
+            type="button"
+            onClick={onLogout}
+            className="flex w-full items-center gap-3 rounded-xl border-2 border-black bg-[#FDE9E6] px-4 py-3 text-sm font-bold text-black transition-all hover:bg-[#facdc5] cursor-pointer"
+          >
+            <LogOut size={18} />
+            Logout
+          </button>
+        </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto p-8 lg:p-12">
+      <section className="flex-1 flex flex-col h-screen overflow-hidden">
         {children}
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }

@@ -140,7 +140,7 @@ export default function MenteeProfileSettingsPage() {
             <h3 className="mb-4 text-lg font-bold text-gray-900">Resume</h3>
             <div className="rounded-xl border border-gray-200 p-4">
               <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-[#F3E8FF] text-[#8B5CF6]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#F3E8FF] text-[#8B5CF6]">
                   <FileText className="h-6 w-6" />
                 </div>
                 <div className="min-w-0 flex-1">

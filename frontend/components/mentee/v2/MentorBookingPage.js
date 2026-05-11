@@ -73,14 +73,12 @@ export default function MentorBookingPage({ mentorProfileId }) {
 
   const loadServices = async () => {
     try {
-      // Fetch mentor's active services via the slot query — we need the service catalogue
-      // and then filter by what this mentor offers
-      const catRes = await v2Api.getServices();
-      const allServices = catRes?.data?.services || [];
-
-      // We'll load services lazily when fetching slots
-      // For now, just set the catalogue
-      setMentorServices(allServices);
+      // Fetch mentor's active services from their profile
+      const res = await publicMentorApi.getMentorProfile(mentorProfileId);
+      const services = res?.data?.services || [];
+      
+      // Map them to match the expected format (id -> serviceId for the V2 API, or keep as is)
+      setMentorServices(services);
     } catch (e) {
       toast.error("Failed to load mentor services");
     } finally {
@@ -145,6 +143,7 @@ export default function MentorBookingPage({ mentorProfileId }) {
 
     setBooking(true);
     try {
+      // 1. Create booking and generate Razorpay order (unified v2 API call)
       const res = await v2Api.createBooking({
         mentorProfileId,
         mentorServiceId: selectedService.id,
@@ -152,14 +151,62 @@ export default function MentorBookingPage({ mentorProfileId }) {
         endTime: selectedSlot.endTime,
       });
 
-      setBookingResult(res?.data);
+      const { booking, order } = res?.data;
+      if (!booking?.id || !order?.orderId) {
+        throw new Error("Failed to initiate booking or generate payment order");
+      }
+
       setConfirmModal(false);
 
-      // Mock payment
-      const mockPaymentId = `razorpay-mock-${crypto.randomUUID()}`;
-      console.log("Mock payment ID:", mockPaymentId);
+      // 2. Open Razorpay checkout — slot is held from this moment
+      const options = {
+        key: order.keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: "Peer Support",
+        description: `${selectedService.name || selectedService.serviceName}`,
+        order_id: order.orderId,
+        prefill: order.prefill,
+        theme: { color: "#5061E4" },
+        handler: async (response) => {
+          // Payment success → verify & confirm the booking
+          try {
+            // We use the existing paymentApi.verify which expects razorpay response + bookingId
+            const { paymentApi } = await import("../../../lib/api");
+            await paymentApi.verify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              bookingId: booking.id,
+            });
+            setBookingResult(res.data);
+            toast.success("Booking confirmed! 🎉");
+          } catch (err) {
+            toast.error("Payment verification failed. Please contact support.");
+          }
+        },
+        modal: {
+          ondismiss: async () => {
+            // User dismissed → release the slot immediately
+            const { paymentApi } = await import("../../../lib/api");
+            await paymentApi.handleFailure({ razorpay_order_id: order.orderId, bookingId: booking.id }).catch(() => {});
+            toast.error("Payment cancelled. The slot has been released.");
+          },
+        },
+      };
 
-      toast.success("Booking confirmed! 🎉");
+      if (typeof window !== "undefined" && window.Razorpay) {
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", async (r) => {
+          // Payment failed → release the slot immediately
+          const { paymentApi } = await import("../../../lib/api");
+          await paymentApi.handleFailure({ razorpay_order_id: order.orderId, bookingId: booking.id }).catch(() => {});
+          toast.error(r.error?.description || "Payment failed. The slot has been released.");
+        });
+        rzp.open();
+      } else {
+        toast.error("Payment gateway not loaded. Please refresh the page.");
+      }
     } catch (e) {
       if (e.status === 409) {
         toast.error("This slot was just booked by someone else. Please choose another slot.", {
@@ -172,9 +219,9 @@ export default function MentorBookingPage({ mentorProfileId }) {
       } else {
         toast.error(e.message || "Booking failed");
       }
+      setConfirmModal(false);
     } finally {
       setBooking(false);
-      setConfirmModal(false);
     }
   };
 

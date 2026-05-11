@@ -62,7 +62,7 @@ const UpcomingSessionCard = ({ session }) => (
 const RecommendedMentorCard = ({ mentor }) => (
   <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-4">
     <div className="flex gap-3">
-      <div className="h-12 w-12 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 flex-shrink-0">
+      <div className="h-12 w-12 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shrink-0">
         {mentor.profilePicture ? (
           <img
             src={resolveUploadUrl(mentor.profilePicture)}

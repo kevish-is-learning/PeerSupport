@@ -153,7 +153,7 @@ export default function MyMenteesPage() {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border-1 border-[#1f2937] bg-[#EDE9FE] text-[#5061E4]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#1f2937] bg-[#EDE9FE] text-[#5061E4]">
                       <Video size={24} strokeWidth={2.5} />
                     </div>
                     <div>

@@ -14,8 +14,11 @@ const mapService = (row) => ({
   id: row.id,
   serviceId: row.serviceId,
   serviceName: row.service?.name,
+  label: row.service?.name, // Added for frontend compatibility
   serviceSlug: row.service?.slug,
+  serviceType: row.service?.slug, // Added for frontend compatibility
   price: row.price,
+  pricePerSession: row.price, // Added for frontend compatibility
   durationMinutes: row.durationMinutes,
   bufferMinutes: row.bufferMinutes,
   isActive: row.isActive,
