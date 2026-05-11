@@ -78,7 +78,7 @@ export default function MenteeSidebarShell({ children }) {
   }
 
   return (
-    <main className="h-screen bg-[#FFF7F5] flex text-black overflow-hidden">
+    <main className="h-screen bg-[#FFF7F5] flex text-black">
       <aside className="w-64 shrink-0 border-r-2 border-black bg-white flex flex-col h-screen">
         <div className="p-6 flex items-center gap-3 border-b-0">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5061E4] border-2 border-black text-white font-bold">

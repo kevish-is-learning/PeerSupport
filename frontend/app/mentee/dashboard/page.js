@@ -36,7 +36,7 @@ const UpcomingSessionCard = ({ session }) => (
       </div>
       <div>
         <h4 className="font-bold text-gray-900">{session.mentorName}</h4>
-        <p className="text-sm font-medium text-gray-500">{session.serviceType.replace(/_/g, " ")}</p>
+        <p className="text-sm font-medium text-gray-500">{session?.serviceType?.replace(/_/g, " ")}</p>
         <div className="mt-2 flex items-center gap-2">
           <span className="inline-flex items-center rounded bg-[#8B5CF6] px-2 py-0.5 text-xs font-bold text-white">
             1:1
