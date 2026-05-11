@@ -10,6 +10,7 @@ import {
   Calendar
 } from "lucide-react";
 import HighlightPill from "../ui/HighlightPill";
+import PillButton from "../ui/PillButton";
 
 const features = [
   {
@@ -146,13 +147,10 @@ export default function CommunitySection() {
           </ul>
 
           <div className="mt-10">
-            <Link
-              href="/mentee/find-mentors"
-              className="inline-flex items-center gap-2 rounded-full border-[3px] border-[#1f2937] bg-[#F59E0B] px-8 py-3.5 text-base font-extrabold text-[#1f2937] shadow-[6px_6px_0_0_#1f2937] transition-transform hover:-translate-y-0.5 active:translate-y-0"
-            >
-              Join the Community
-              <ArrowRight size={20} strokeWidth={2.5} aria-hidden />
-            </Link>
+           <PillButton href="/mentee/find-mentors" variant="yellow">
+            Join the Community
+            <ArrowRight size={16} strokeWidth={2.5} aria-hidden />
+            </PillButton>
           </div>
         </div>
 

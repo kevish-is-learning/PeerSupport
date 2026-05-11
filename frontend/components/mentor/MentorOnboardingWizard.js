@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, Check, Upload, User, GraduationCap, Briefcase, BookOpen, CheckCircle, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, Upload, User, GraduationCap, Briefcase, BookOpen, CheckCircle, Sparkles, Mail, Phone } from "lucide-react";
 import useAuthStore from "../../store/useAuthStore";
 import { mentorProfileApi, mentorServiceApi, resolveUploadUrl, authApi } from "../../lib/api";
 
@@ -293,10 +293,10 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="w-full max-w-5xl mx-auto py-6">
       <button 
         onClick={() => router.push("/")}
-        className="flex items-center text-sm text-gray-600 hover:text-black mb-6 font-medium transition-colors"
+        className="flex items-center text-sm text-gray-600 hover:text-black mb-6 font-medium transition-colors cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4 mr-1" />
         Back to Home
@@ -308,7 +308,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
       </div>
 
       {/* Stepper Header */}
-      <div className="bg-white border-2 border-black rounded-2xl p-2 sm:p-6 mb-6 shadow-[6px_6px_0_rgba(0,0,0,1)] relative overflow-hidden">
+      <div className="bg-white border-2 border-black rounded-2xl p-2 sm:p-6 mb-6 shadow-[6px_6px_0_#FFB705] relative overflow-hidden">
         <div 
           ref={stepsContainerRef}
           className="flex w-full items-center overflow-x-auto no-scrollbar scroll-smooth [&::-webkit-scrollbar]:hidden"
@@ -330,7 +330,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                       isCompleted
                         ? "border-yellow-400 bg-yellow-400 text-black"
                         : isActive
-                        ? "border-[#5f6cf3] bg-[#5f6cf3] text-white"
+                        ? "border-yellow-400 bg-yellow-400 text-black"
                         : "border-gray-200 text-gray-400"
                     }`}
                   >
@@ -388,7 +388,7 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
                     />
                     <label
                       htmlFor="profilePhoto"
-                      className="cursor-pointer inline-flex items-center bg-[#ffc20f] border-2 border-black px-4 py-2 rounded-xl font-bold text-sm hover:bg-[#e6ae0d] transition-colors shadow-[2px_2px_0_rgba(0,0,0,1)]"
+                      className="cursor-pointer inline-flex items-center bg-[#ffc20f] border-2 border-black px-4 py-2 rounded-xl  text-sm hover:bg-[#e6ae0d] transition-colors shadow-[2px_2px_0_rgba(0,0,0,1)]"
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Photo
@@ -399,40 +399,47 @@ export default function MentorOnboardingWizard({ existingProfile, onComplete }) 
 
               <div>
                 <label className="block text-sm font-semibold mb-2">Full Name</label>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                {/* have a user icon inside the input */}
+                <div className="relative flex items-center">
+                  <User size={18} className="absolute left-2 font-bold text-orange-400" />
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder="Enter your full name"
+                  className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 pl-8 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                 />
+                </div>
               </div>
               
               <div>
                 <label className="block text-sm font-semibold mb-2">Email Address</label>
-                <input
+                <div className="relative flex items-center">
+                  <Mail size={18} className="absolute left-2 font-bold text-orange-400" />
+                  <input
                   type="email"
                   name="email"
                   value={formData.email}
                   disabled
                   placeholder="your.email@example.com"
-                  className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all text-gray-500"
+                  className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 pl-8 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all text-gray-500"
                 />
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-semibold mb-2">Contact Number</label>
                 <div className="relative flex items-center">
-                  <span className="absolute left-4 font-bold text-gray-500">+91</span>
+                  <Phone size={18} className="absolute left-2 font-bold text-orange-400" />
                   <input
                     type="tel"
                     name="contactNumber"
                     value={formData.contactNumber}
                     onChange={handleChange}
-                    maxLength="10"
+                    maxLength="11"
                     placeholder="9876543210"
-                    className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] pl-12 pr-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                    className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] pr-4 py-3 pl-8 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                   />
                 </div>
               </div>
