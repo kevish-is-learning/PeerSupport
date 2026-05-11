@@ -17,13 +17,27 @@ const IST_OFFSET_MINUTES = 330; // +5:30
  * @returns {Date} UTC Date
  */
 export function istToUtc(istDateTimeStr) {
-  // Parse as-is (no timezone suffix → treated as local, but we'll do manual offset)
-  const [datePart, timePart] = istDateTimeStr.split('T');
+  if (!istDateTimeStr) {
+    return new Date(NaN);
+  }
+
+  // If the string already includes a timezone (Z or +/-HH:MM), trust native parsing.
+  if (/[zZ]|[+-]\d{2}:\d{2}$/.test(istDateTimeStr)) {
+    return new Date(istDateTimeStr);
+  }
+
+  // Parse as IST without timezone suffix and subtract IST offset.
+  const [datePart, timePartRaw] = istDateTimeStr.split('T');
+  const timePart = (timePartRaw || '00:00:00').split(/[+-]/)[0];
   const [year, month, day] = datePart.split('-').map(Number);
-  const [hours, minutes, seconds = 0] = (timePart || '00:00:00').split(':').map(Number);
+  const [h, m, sRaw = '0'] = timePart.split(':');
+  const [seconds] = sRaw.split('.');
+  const hours = Number(h);
+  const minutes = Number(m);
+  const secs = Number(seconds || 0);
 
   // Create a UTC date then subtract IST offset to get actual UTC
-  const istMs = Date.UTC(year, month - 1, day, hours, minutes, seconds);
+  const istMs = Date.UTC(year, month - 1, day, hours, minutes, secs);
   const utcMs = istMs - IST_OFFSET_MINUTES * 60 * 1000;
 
   return new Date(utcMs);

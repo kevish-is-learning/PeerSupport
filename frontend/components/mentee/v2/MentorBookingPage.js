@@ -94,7 +94,7 @@ export default function MentorBookingPage({ mentorProfileId }) {
     try {
       const dateStr = date.toISOString().split("T")[0];
       const res = await v2Api.getSlots(mentorProfileId, {
-        serviceId: service.id,
+        serviceId: service.serviceId || service.id,
         date: dateStr,
       });
 
@@ -286,6 +286,7 @@ export default function MentorBookingPage({ mentorProfileId }) {
           Select a Service
         </h3>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+       {   console.log("-----",mentorServices)}
           {mentorServices.map((svc) => {
             const isSelected = selectedService?.id === svc.id;
             return (
@@ -301,7 +302,7 @@ export default function MentorBookingPage({ mentorProfileId }) {
                   boxShadow: isSelected ? "5px 5px 0 0 #5061E4" : "4px 4px 0 0 #d1d5db",
                 }}
               >
-                <h4 className="font-bold text-[#111]">{svc.name}</h4>
+                <h4 className="font-bold text-[#111]">{svc.label}</h4>
                 {svc.description && (
                   <p className="mt-1 text-xs text-gray-500 line-clamp-2">{svc.description}</p>
                 )}

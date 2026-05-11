@@ -16,8 +16,8 @@
 import { prisma } from '../../config/database.js';
 import { slotsQuerySchema, mentorIdParamSchema } from '../../validators/v2.validator.js';
 import { generateSlots } from '../../utils/slotGenerator.js';
-import { timeStringToDateTime, dateTimeToTimeString, getDayOfWeekFromDate } from '../../utils/timeUtils.js';
-import { utcToIst } from '../../utils/timezoneUtils.js';
+import { dateTimeToTimeString, getDayOfWeekFromDate } from '../../utils/timeUtils.js';
+import { istTimeAndDateToUtc, istToUtc, utcToIst } from '../../utils/timezoneUtils.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -95,15 +95,15 @@ class SlotQueryService {
 
     // 5. Fetch ALL PENDING/CONFIRMED bookings for this mentor on this date
     //    (cross-service — any booking blocks the mentor's time)
-    const dateStart = new Date(date + 'T00:00:00.000Z');
-    const dateEnd = new Date(date + 'T23:59:59.999Z');
+    const dateStart = istToUtc(`${date}T00:00:00`);
+    const dateEnd = istToUtc(`${date}T23:59:59.999`);
 
     const existingBookings = await prisma.booking.findMany({
       where: {
         mentorProfileId: validMentorId,
         status: { in: ['PENDING', 'CONFIRMED'] },
-        startTime: { gte: dateStart },
-        endTime: { lte: dateEnd },
+        startTime: { lt: dateEnd },
+        endTime: { gt: dateStart },
       },
       select: {
         startTime: true,
@@ -117,8 +117,14 @@ class SlotQueryService {
 
     for (const window of windows) {
       // Combine window's canonical time with the requested date
-      const windowStart = this._combineDateTime(requestedDate, window.startTime);
-      const windowEnd = this._combineDateTime(requestedDate, window.endTime);
+      const windowStart = istTimeAndDateToUtc(
+        date,
+        dateTimeToTimeString(window.startTime)
+      );
+      const windowEnd = istTimeAndDateToUtc(
+        date,
+        dateTimeToTimeString(window.endTime)
+      );
 
       const slots = generateSlots(
         { startTime: windowStart, endTime: windowEnd },
@@ -149,22 +155,6 @@ class SlotQueryService {
       date,
       dayOfWeek,
     };
-  }
-
-  /**
-   * Combine a date (YYYY-MM-DD as Date) with a canonical time (1970-01-01T...).
-   */
-  _combineDateTime(dateObj, canonicalTime) {
-    const t = new Date(canonicalTime);
-    return new Date(Date.UTC(
-      dateObj.getUTCFullYear(),
-      dateObj.getUTCMonth(),
-      dateObj.getUTCDate(),
-      t.getUTCHours(),
-      t.getUTCMinutes(),
-      0,
-      0
-    ));
   }
 
   _mapService(ms) {

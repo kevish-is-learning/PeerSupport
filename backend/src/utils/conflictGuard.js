@@ -160,7 +160,6 @@ export async function rescheduleBookingWithGuard(bookingId, newStartTime, newEnd
       data: {
         startTime: newStartTime,
         endTime: newEndTime,
-        rescheduledFromId: bookingId,
       },
     });
 

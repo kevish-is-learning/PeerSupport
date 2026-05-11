@@ -8,7 +8,8 @@
 
 import { prisma } from '../../config/database.js';
 import { upsertAvailabilitySchema } from '../../validators/v2.validator.js';
-import { timeStringToDateTime, dateTimeToTimeString } from '../../utils/timeUtils.js';
+import { timeStringToDateTime, dateTimeToTimeString, timeToMinutes } from '../../utils/timeUtils.js';
+import { utcToIstDateString, utcToIstTimeString } from '../../utils/timezoneUtils.js';
 
 const createServiceError = (statusCode, message, data) => {
   const error = new Error(message);
@@ -216,12 +217,13 @@ class AvailabilityWindowService {
     // Check day match
     if (windowDef.dayOfWeek) {
       const dayMap = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-      const bookingDay = dayMap[bookingStart.getUTCDay()];
+      const bookingDateStr = utcToIstDateString(bookingStart);
+      const bookingDay = dayMap[new Date(`${bookingDateStr}T00:00:00.000Z`).getUTCDay()];
       if (bookingDay !== windowDef.dayOfWeek) return false;
     }
 
     if (windowDef.specificDate) {
-      const bookingDateStr = bookingStart.toISOString().split('T')[0];
+      const bookingDateStr = utcToIstDateString(bookingStart);
       if (bookingDateStr !== windowDef.specificDate) return false;
     }
 
@@ -231,8 +233,8 @@ class AvailabilityWindowService {
     const windowStartMin = wStartH * 60 + wStartM;
     const windowEndMin = wEndH * 60 + wEndM;
 
-    const bookingStartMin = bookingStart.getUTCHours() * 60 + bookingStart.getUTCMinutes();
-    const bookingEndMin = bookingEnd.getUTCHours() * 60 + bookingEnd.getUTCMinutes();
+    const bookingStartMin = timeToMinutes(utcToIstTimeString(bookingStart));
+    const bookingEndMin = timeToMinutes(utcToIstTimeString(bookingEnd));
 
     return bookingStartMin >= windowStartMin && bookingEndMin <= windowEndMin;
   }

@@ -1,5 +1,7 @@
 import { prisma } from '../config/database.js';
 import { razorpayInstance } from '../config/razorpay.js';
+import { emitSlotUpdate } from '../config/socket.js';
+import { utcToIst } from '../utils/timezoneUtils.js';
 import crypto from 'crypto';
 
 const createServiceError = (statusCode, message) => {
@@ -56,7 +58,7 @@ class PaymentService {
 
     if (generatedSignature !== razorpay_signature) {
       // Signature invalid → mark payment FAILED and cancel booking immediately
-      await prisma.$transaction([
+      const [, updatedBooking] = await prisma.$transaction([
         prisma.payment.update({
           where: { id: payment.id },
           data: { paymentStatus: 'FAILED' },
@@ -64,8 +66,21 @@ class PaymentService {
         prisma.booking.update({
           where: { id: payment.booking.id },
           data: { status: 'CANCELLED' },
+          select: {
+            mentorProfileId: true,
+            mentorServiceId: true,
+            startTime: true,
+            endTime: true,
+          },
         }),
       ]);
+
+      emitSlotUpdate(updatedBooking.mentorProfileId, {
+        startTime: utcToIst(updatedBooking.startTime),
+        endTime: utcToIst(updatedBooking.endTime),
+        serviceId: updatedBooking.mentorServiceId,
+        action: 'released',
+      });
       throw createServiceError(400, 'Payment verification failed — invalid signature');
     }
 
@@ -131,7 +146,7 @@ class PaymentService {
     }
 
     // Mark payment as FAILED and booking as CANCELLED → instant slot release
-    await prisma.$transaction([
+    const [, updatedBooking] = await prisma.$transaction([
       prisma.payment.update({
         where: { id: payment.id },
         data: { paymentStatus: 'FAILED' },
@@ -139,8 +154,21 @@ class PaymentService {
       prisma.booking.update({
         where: { id: payment.booking.id },
         data: { status: 'CANCELLED' },
+        select: {
+          mentorProfileId: true,
+          mentorServiceId: true,
+          startTime: true,
+          endTime: true,
+        },
       }),
     ]);
+
+    emitSlotUpdate(updatedBooking.mentorProfileId, {
+      startTime: utcToIst(updatedBooking.startTime),
+      endTime: utcToIst(updatedBooking.endTime),
+      serviceId: updatedBooking.mentorServiceId,
+      action: 'released',
+    });
 
     return { message: 'Payment failure recorded — slot released', bookingId };
   }

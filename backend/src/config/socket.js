@@ -68,8 +68,8 @@ export function getIO() {
  *
  * @param {string} mentorProfileId
  * @param {Object} payload
- * @param {string} payload.startTime - UTC ISO string
- * @param {string} payload.endTime   - UTC ISO string
+ * @param {string} payload.startTime - IST ISO string
+ * @param {string} payload.endTime   - IST ISO string
  * @param {string} payload.serviceId - The mentor service ID
  * @param {'taken'|'released'} payload.action
  */

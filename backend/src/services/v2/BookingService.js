@@ -15,7 +15,9 @@ import {
   bookingIdParamSchema,
 } from '../../validators/v2.validator.js';
 import { createBookingWithGuard, rescheduleBookingWithGuard } from '../../utils/conflictGuard.js';
-import { istToUtc, utcToIst } from '../../utils/timezoneUtils.js';
+import { generateSlots } from '../../utils/slotGenerator.js';
+import { dateTimeToTimeString, getDayOfWeekFromDate } from '../../utils/timeUtils.js';
+import { istTimeAndDateToUtc, istToUtc, utcToIst, utcToIstDateString } from '../../utils/timezoneUtils.js';
 import { emitSlotUpdate } from '../../config/socket.js';
 
 const createServiceError = (statusCode, message) => {
@@ -135,6 +137,13 @@ class BookingServiceV2 {
       throw createServiceError(400, 'You cannot book your own session');
     }
 
+    await this._assertSlotAvailable({
+      mentorProfileId: data.mentorProfileId,
+      mentorService,
+      startTimeUtc,
+      endTimeUtc,
+    });
+
     // Create booking with conflict guard (SELECT FOR UPDATE)
     const booking = await createBookingWithGuard({
       menteeId,
@@ -165,23 +174,46 @@ class BookingServiceV2 {
     // Create Razorpay order
     const amountInPaise = Math.round(payment.amount * 100);
     const { razorpayInstance } = await import('../../config/razorpay.js');
-    
-    const razorpayOrder = await razorpayInstance.orders.create({
-      amount: amountInPaise,
-      currency: payment.currency || 'INR',
-      receipt: `booking_${booking.id.substring(0, 8)}`,
-      notes: {
-        bookingId: booking.id,
-        menteeId,
-        serviceName: mentorService.service?.name || '',
-      },
-    });
 
-    // Save Razorpay order ID
-    await prisma.payment.update({
-      where: { id: payment.id },
-      data: { razorpayOrderId: razorpayOrder.id },
-    });
+    let razorpayOrder;
+    try {
+      razorpayOrder = await razorpayInstance.orders.create({
+        amount: amountInPaise,
+        currency: payment.currency || 'INR',
+        receipt: `booking_${booking.id.substring(0, 8)}`,
+        notes: {
+          bookingId: booking.id,
+          menteeId,
+          serviceName: mentorService.service?.name || '',
+        },
+      });
+
+      // Save Razorpay order ID
+      await prisma.payment.update({
+        where: { id: payment.id },
+        data: { razorpayOrderId: razorpayOrder.id },
+      });
+    } catch (err) {
+      await prisma.$transaction([
+        prisma.payment.update({
+          where: { id: payment.id },
+          data: { paymentStatus: 'FAILED' },
+        }),
+        prisma.booking.update({
+          where: { id: booking.id },
+          data: { status: 'CANCELLED' },
+        }),
+      ]);
+
+      emitSlotUpdate(data.mentorProfileId, {
+        startTime: utcToIst(startTimeUtc),
+        endTime: utcToIst(endTimeUtc),
+        serviceId: data.mentorServiceId,
+        action: 'released',
+      });
+
+      throw createServiceError(502, 'Failed to create payment order');
+    }
 
     // Fetch the full booking with includes
     const fullBooking = await prisma.booking.findUnique({
@@ -191,8 +223,8 @@ class BookingServiceV2 {
 
     // Emit real-time slot update (taken)
     emitSlotUpdate(data.mentorProfileId, {
-      startTime: startTimeUtc.toISOString(),
-      endTime: endTimeUtc.toISOString(),
+      startTime: utcToIst(startTimeUtc),
+      endTime: utcToIst(endTimeUtc),
       serviceId: data.mentorServiceId,
       action: 'taken',
     });
@@ -256,8 +288,8 @@ class BookingServiceV2 {
 
     // Emit real-time slot update (released)
     emitSlotUpdate(updated.mentorProfileId, {
-      startTime: updated.startTime.toISOString(),
-      endTime: updated.endTime.toISOString(),
+      startTime: utcToIst(updated.startTime),
+      endTime: utcToIst(updated.endTime),
       serviceId: updated.mentorServiceId,
       action: 'released',
     });
@@ -287,6 +319,14 @@ class BookingServiceV2 {
       where: { id: validId },
       include: {
         mentorProfile: { select: { userId: true } },
+        mentorService: {
+          select: {
+            id: true,
+            serviceId: true,
+            durationMinutes: true,
+            bufferMinutes: true,
+          },
+        },
       },
     });
 
@@ -298,6 +338,26 @@ class BookingServiceV2 {
       throw createServiceError(403, 'Not authorized to reschedule this booking');
     }
 
+    if (!existing.mentorService) {
+      throw createServiceError(404, 'Mentor service not found for this booking');
+    }
+
+    const expectedDuration = existing.mentorService.durationMinutes * 60 * 1000;
+    const actualDuration = newEndUtc.getTime() - newStartUtc.getTime();
+    if (actualDuration !== expectedDuration) {
+      throw createServiceError(
+        400,
+        `Slot duration must be ${existing.mentorService.durationMinutes} minutes for this service`
+      );
+    }
+
+    await this._assertSlotAvailable({
+      mentorProfileId: existing.mentorProfileId,
+      mentorService: existing.mentorService,
+      startTimeUtc: newStartUtc,
+      endTimeUtc: newEndUtc,
+    });
+
     // Reschedule with conflict guard
     const updated = await rescheduleBookingWithGuard(validId, newStartUtc, newEndUtc);
 
@@ -307,7 +367,87 @@ class BookingServiceV2 {
       include: bookingInclude,
     });
 
+    const changed =
+      existing.startTime.getTime() !== newStartUtc.getTime() ||
+      existing.endTime.getTime() !== newEndUtc.getTime();
+
+    if (changed) {
+      emitSlotUpdate(existing.mentorProfileId, {
+        startTime: utcToIst(existing.startTime),
+        endTime: utcToIst(existing.endTime),
+        serviceId: existing.mentorServiceId,
+        action: 'released',
+      });
+
+      emitSlotUpdate(existing.mentorProfileId, {
+        startTime: utcToIst(newStartUtc),
+        endTime: utcToIst(newEndUtc),
+        serviceId: existing.mentorServiceId,
+        action: 'taken',
+      });
+    }
+
     return mapBooking(fullBooking);
+  }
+
+  async _assertSlotAvailable({ mentorProfileId, mentorService, startTimeUtc, endTimeUtc }) {
+    const dateStr = utcToIstDateString(startTimeUtc);
+    const requestedDate = new Date(`${dateStr}T00:00:00.000Z`);
+    const dayOfWeek = getDayOfWeekFromDate(requestedDate);
+
+    const windows = await prisma.availabilityWindow.findMany({
+      where: {
+        mentorProfileId,
+        OR: [{ dayOfWeek }, { specificDate: requestedDate }],
+        windowServices: {
+          some: {
+            mentorServiceId: mentorService.id,
+          },
+        },
+      },
+      orderBy: { startTime: 'asc' },
+    });
+
+    if (windows.length === 0) {
+      throw createServiceError(400, 'No availability windows found for this date');
+    }
+
+    const now = new Date();
+    const slots = [];
+
+    for (const window of windows) {
+      const windowStart = istTimeAndDateToUtc(
+        dateStr,
+        dateTimeToTimeString(window.startTime)
+      );
+      const windowEnd = istTimeAndDateToUtc(
+        dateStr,
+        dateTimeToTimeString(window.endTime)
+      );
+
+      slots.push(
+        ...generateSlots(
+          { startTime: windowStart, endTime: windowEnd },
+          mentorService.durationMinutes,
+          [],
+          {
+            bufferMinutes: mentorService.bufferMinutes ?? 0,
+            now,
+            minLeadMinutes: 15,
+          }
+        )
+      );
+    }
+
+    const match = slots.some(
+      (s) =>
+        s.startTime.getTime() === startTimeUtc.getTime() &&
+        s.endTime.getTime() === endTimeUtc.getTime()
+    );
+
+    if (!match) {
+      throw createServiceError(400, 'Selected slot is not available');
+    }
   }
 
   /**

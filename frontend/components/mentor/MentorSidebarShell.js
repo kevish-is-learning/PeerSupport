@@ -143,7 +143,7 @@ export default function MentorSidebarShell({ children }) {
         </div>
       </aside>
 
-      <section className="flex-1 flex flex-col h-screen overflow-hidden">
+      <section className="flex-1 flex flex-col h-screen">
         {showRestrictedView ? (
           <div className="p-8 lg:p-12 h-full overflow-y-auto w-full">
             <div className="mt-5 rounded-3xl border-[3px] border-black bg-[#fff7dd] p-6 sm:p-8" style={{ boxShadow: "6px 6px 0 0 #000" }}>
