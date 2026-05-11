@@ -205,7 +205,7 @@ export default function MentorProfilePage() {
   // Fetch service types catalogue from backend
   useEffect(() => {
     mentorServiceApi.getTypes().then((res) => {
-      setServiceTypeCatalogue(res.data?.types || []);
+      setServiceTypeCatalogue(Array.isArray(res.data?.types) ? res.data.types : []);
     }).catch(() => {});
     loadProfile();
   }, []);

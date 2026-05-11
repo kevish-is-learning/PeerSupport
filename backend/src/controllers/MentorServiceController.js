@@ -14,7 +14,7 @@ class MentorServiceController {
    */
   async getServiceTypes(_req, res) {
     try {
-      const types = mentorServiceService.getServiceTypes();
+      const types = await mentorServiceService.getServiceTypes();
       return res.status(200).json(new ApiResponse(200, 'Service types fetched', { types }));
     } catch (error) {
       return res.status(500).json({ success: false, message: 'Failed to fetch service types' });
