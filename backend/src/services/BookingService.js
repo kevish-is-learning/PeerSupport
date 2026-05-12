@@ -119,15 +119,11 @@ class BookingService {
       throw createServiceError(404, 'This mentor does not offer this service');
     }
 
-    // Get day of week for the requested date
-    const dayMap = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-    const dayOfWeek = dayMap[requestedDate.getUTCDay()];
-
-    // Get availability windows for this day
+    // Get availability windows for this date
     const windows = await prisma.availabilityWindow.findMany({
       where: {
         mentorProfileId: validMentorId,
-        dayOfWeek,
+        specificDate: requestedDate,
         windowServices: {
           some: { mentorServiceId: mentorService.id },
         },
@@ -135,7 +131,7 @@ class BookingService {
     });
 
     if (windows.length === 0) {
-      return { slots: [], message: 'Mentor is not available on this day' };
+      return { slots: [], message: 'Mentor is not available on this date' };
     }
 
     // Get existing bookings that could conflict
@@ -170,7 +166,6 @@ class BookingService {
         durationMinutes: mentorService.durationMinutes,
       },
       date,
-      dayOfWeek,
     };
   }
 

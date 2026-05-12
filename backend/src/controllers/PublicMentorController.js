@@ -77,7 +77,9 @@ class PublicMentorController {
       // Map availability
       const availability = mentor.availabilityWindows.map((w) => ({
         id: w.id,
-        dayOfWeek: w.dayOfWeek,
+        specificDate: w.specificDate
+          ? new Date(w.specificDate).toISOString().split('T')[0]
+          : null,
         startTime: w.startTime,
         endTime: w.endTime,
         services: (w.windowServices || []).map((ws) => ({
@@ -206,9 +208,9 @@ class PublicMentorController {
               take: 1,
             },
             availabilityWindows: {
-              orderBy: { dayOfWeek: 'asc' },
+              orderBy: { specificDate: 'asc' },
               take: 1,
-              select: { dayOfWeek: true },
+              select: { specificDate: true },
             },
           },
         }),
@@ -230,7 +232,9 @@ class PublicMentorController {
           rating: m.averageRating,
           totalSessions: m.totalSessions,
           startingPrice: cheapestService?.price ?? null,
-          nextAvailableDay: nextAvailable?.dayOfWeek ?? null,
+          nextAvailableDate: nextAvailable?.specificDate
+            ? new Date(nextAvailable.specificDate).toISOString().split('T')[0]
+            : null,
           workExperience: m.workExperience,
         };
       });

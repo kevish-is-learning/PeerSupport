@@ -13,7 +13,7 @@ router.get('/', availabilityController.getMyAvailability);
 // PUT  /api/mentor-availability — bulk upsert availability windows
 router.put('/', availabilityController.upsertAvailability);
 
-// DELETE /api/mentor-availability/:dayOfWeek — delete all availability for a day
-router.delete('/:dayOfWeek', availabilityController.deleteDay);
+// DELETE /api/mentor-availability/date/:date — delete all availability for a date
+router.delete('/date/:date', availabilityController.deleteDate);
 
 export default router;

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { VALID_SERVICE_TYPES, VALID_DAYS } from '../constants/services.js';
+import { VALID_SERVICE_TYPES } from '../constants/services.js';
 
 // ─── Service Validators ─────────────────────────────────────────────────────
 
@@ -37,10 +37,6 @@ export const serviceTypeParamSchema = z.object({
 
 // ─── Availability Validators ─────────────────────────────────────────────────
 
-const dayOfWeekEnum = z.enum(VALID_DAYS, {
-  errorMap: () => ({ message: `Day must be one of: ${VALID_DAYS.join(', ')}` }),
-});
-
 const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 const timeSlotSchema = z
@@ -59,7 +55,7 @@ const timeSlotSchema = z
   });
 
 const dayAvailabilitySchema = z.object({
-  dayOfWeek: dayOfWeekEnum,
+  specificDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   timeSlots: z.array(timeSlotSchema).default([]),
 }).refine((day) => {
   if (day.timeSlots.length <= 1) return true;
@@ -80,25 +76,25 @@ const dayAvailabilitySchema = z.object({
   return true;
 }, { message: 'Time slots cannot overlap or conflict on the same day' });
 
-/** Bulk upsert: array of day-level availability */
+/** Bulk upsert: array of date-level availability */
 export const upsertAvailabilitySchema = z.object({
   availability: z.array(dayAvailabilitySchema).refine(
     (items) => {
-      const days = items.map((i) => i.dayOfWeek);
-      return new Set(days).size === days.length;
+      const dates = items.map((i) => i.specificDate);
+      return new Set(dates).size === dates.length;
     },
-    { message: 'Duplicate days are not allowed' },
+    { message: 'Duplicate dates are not allowed' },
   ),
 });
 
-/** Params: single day for delete */
-export const dayOfWeekParamSchema = z.object({
-  dayOfWeek: dayOfWeekEnum,
+/** Params: single date for delete */
+export const dateParamSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
 export default {
   upsertServicesSchema,
   serviceTypeParamSchema,
   upsertAvailabilitySchema,
-  dayOfWeekParamSchema,
+  dateParamSchema,
 };

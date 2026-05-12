@@ -1,5 +1,6 @@
 import { prisma } from '../config/database.js';
-import { upsertAvailabilitySchema, dayOfWeekParamSchema } from '../validators/mentorService.validator.js';
+import { upsertAvailabilitySchema, dateParamSchema } from '../validators/mentorService.validator.js';
+import { utcToIstDateString } from '../utils/timezoneUtils.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -12,7 +13,9 @@ const createServiceError = (statusCode, message) => {
  */
 const mapAvailability = (row) => ({
   id: row.id,
-  dayOfWeek: row.dayOfWeek,
+  specificDate: row.specificDate
+    ? new Date(row.specificDate).toISOString().split('T')[0]
+    : null,
   startTime: row.startTime,
   endTime: row.endTime,
   services: (row.windowServices || []).map((ws) => ({
@@ -87,7 +90,9 @@ class MentorAvailabilityService {
           const window = await tx.availabilityWindow.create({
             data: {
               mentorProfileId: profileId,
-              dayOfWeek: day.dayOfWeek,
+              specificDate: day.specificDate
+                ? new Date(`${day.specificDate}T00:00:00.000Z`)
+                : null,
               startTime: new Date(`1970-01-01T${slot.startTime}:00.000Z`),
               endTime: new Date(`1970-01-01T${slot.endTime}:00.000Z`),
             },
@@ -113,10 +118,10 @@ class MentorAvailabilityService {
   }
 
   /**
-   * Delete all availability for a specific day.
+   * Delete all availability for a specific date.
    */
-  async deleteByDay(userId, params) {
-    const { dayOfWeek } = dayOfWeekParamSchema.parse(params);
+  async deleteByDate(userId, params) {
+    const { date } = dateParamSchema.parse(params);
 
     const profile = await prisma.mentorProfile.findUnique({
       where: { userId },
@@ -130,22 +135,38 @@ class MentorAvailabilityService {
     const existing = await prisma.availabilityWindow.findMany({
       where: {
         mentorProfileId: profile.id,
-        dayOfWeek,
+        specificDate: new Date(`${date}T00:00:00.000Z`),
       },
     });
 
     if (existing.length === 0) {
-      throw createServiceError(404, `Availability for ${dayOfWeek} not found`);
+      throw createServiceError(404, `Availability for ${date} not found`);
+    }
+
+    const activeBookings = await prisma.booking.findMany({
+      where: {
+        mentorProfileId: profile.id,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+      },
+      select: { id: true, startTime: true },
+    });
+
+    const conflicting = activeBookings.filter((b) => utcToIstDateString(b.startTime) === date);
+    if (conflicting.length > 0) {
+      throw createServiceError(
+        409,
+        `Cannot delete ${date}: ${conflicting.length} active booking(s) exist. Cancel them first.`
+      );
     }
 
     await prisma.availabilityWindow.deleteMany({
       where: {
         mentorProfileId: profile.id,
-        dayOfWeek,
+        specificDate: new Date(`${date}T00:00:00.000Z`),
       },
     });
 
-    return { deleted: true, dayOfWeek };
+    return { deleted: true, specificDate: date };
   }
 }
 

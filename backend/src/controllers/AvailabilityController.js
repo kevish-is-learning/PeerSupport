@@ -50,13 +50,13 @@ class AvailabilityController {
   }
 
   /**
-   * DELETE /api/mentor-availability/:dayOfWeek
-   * Remove all availability for a specific day.
+   * DELETE /api/mentor-availability/date/:date
+   * Remove all availability for a specific date.
    */
-  async deleteDay(req, res) {
+  async deleteDate(req, res) {
     try {
-      const result = await availabilityService.deleteByDay(req.user.id, req.params);
-      return res.status(200).json(new ApiResponse(200, 'Day availability removed', result));
+      const result = await availabilityService.deleteByDate(req.user.id, req.params);
+      return res.status(200).json(new ApiResponse(200, 'Date availability removed', result));
     } catch (error) {
       const statusCode = getStatusCode(error);
       return res.status(statusCode).json({

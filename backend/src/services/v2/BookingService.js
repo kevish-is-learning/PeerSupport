@@ -16,7 +16,7 @@ import {
 } from '../../validators/v2.validator.js';
 import { createBookingWithGuard, rescheduleBookingWithGuard } from '../../utils/conflictGuard.js';
 import { generateSlots } from '../../utils/slotGenerator.js';
-import { dateTimeToTimeString, getDayOfWeekFromDate } from '../../utils/timeUtils.js';
+import { dateTimeToTimeString } from '../../utils/timeUtils.js';
 import { istTimeAndDateToUtc, istToUtc, utcToIst, utcToIstDateString } from '../../utils/timezoneUtils.js';
 import { emitSlotUpdate } from '../../config/socket.js';
 
@@ -393,12 +393,11 @@ class BookingServiceV2 {
   async _assertSlotAvailable({ mentorProfileId, mentorService, startTimeUtc, endTimeUtc }) {
     const dateStr = utcToIstDateString(startTimeUtc);
     const requestedDate = new Date(`${dateStr}T00:00:00.000Z`);
-    const dayOfWeek = getDayOfWeekFromDate(requestedDate);
 
     const windows = await prisma.availabilityWindow.findMany({
       where: {
         mentorProfileId,
-        OR: [{ dayOfWeek }, { specificDate: requestedDate }],
+        specificDate: requestedDate,
         windowServices: {
           some: {
             mentorServiceId: mentorService.id,

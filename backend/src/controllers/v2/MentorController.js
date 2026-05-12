@@ -94,6 +94,74 @@ class MentorController {
       });
     }
   }
+
+  /** PUT /api/v2/mentor/availability/dates/:date */
+  async replaceAvailabilityForDate(req, res) {
+    try {
+      const windows = await availabilityWindowService.replaceDateWindows(
+        req.user.id,
+        req.params.date,
+        req.body
+      );
+      return res.status(200).json(new ApiResponse(200, 'Availability updated', { windows }));
+    } catch (error) {
+      const statusCode = getStatusCode(error);
+      return res.status(statusCode).json({
+        success: false,
+        message: formatError(error),
+        ...(error.data || {}),
+      });
+    }
+  }
+
+  /** POST /api/v2/mentor/availability/windows */
+  async createAvailabilityWindow(req, res) {
+    try {
+      const window = await availabilityWindowService.createWindow(req.user.id, req.body);
+      return res.status(201).json(new ApiResponse(201, 'Availability window created', { window }));
+    } catch (error) {
+      const statusCode = getStatusCode(error);
+      return res.status(statusCode).json({
+        success: false,
+        message: formatError(error),
+        ...(error.data || {}),
+      });
+    }
+  }
+
+  /** PATCH /api/v2/mentor/availability/windows/:id */
+  async updateAvailabilityWindow(req, res) {
+    try {
+      const window = await availabilityWindowService.updateWindow(
+        req.user.id,
+        req.params.id,
+        req.body
+      );
+      return res.status(200).json(new ApiResponse(200, 'Availability window updated', { window }));
+    } catch (error) {
+      const statusCode = getStatusCode(error);
+      return res.status(statusCode).json({
+        success: false,
+        message: formatError(error),
+        ...(error.data || {}),
+      });
+    }
+  }
+
+  /** DELETE /api/v2/mentor/availability/windows/:id */
+  async deleteAvailabilityWindow(req, res) {
+    try {
+      const result = await availabilityWindowService.deleteWindow(req.user.id, req.params.id);
+      return res.status(200).json(new ApiResponse(200, 'Availability window deleted', result));
+    } catch (error) {
+      const statusCode = getStatusCode(error);
+      return res.status(statusCode).json({
+        success: false,
+        message: formatError(error),
+        ...(error.data || {}),
+      });
+    }
+  }
 }
 
 export default new MentorController();

@@ -84,16 +84,23 @@ export default function MentorSidebarShell({ children }) {
   }
 
   return (
-    <main className="h-screen bg-[#FFF7F5] flex text-black">
-      <aside className="w-64 shrink-0 border-r-2 border-black bg-white flex flex-col h-screen">
-        <div className="p-6 flex items-center gap-3 border-b-0">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5061E4] border-2 border-black text-white font-bold">
-            P
+    <main className="h-screen bg-[#FAF9F6] flex text-black">
+      <aside className="w-72 shrink-0 border-r-[3px] border-black bg-white flex flex-col h-screen">
+        <div className="p-8 flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#5061E4] border-[3px] border-black text-white font-black text-xl shadow-[2px_2px_0_0_#000]">
+              P
+            </div>
+            <span className="font-black text-[#111] text-xl tracking-tight">Peer Support</span>
           </div>
-          <span className="font-extrabold text-[#111] text-lg">Peer Support</span>
+          <div className="ml-0.5">
+            <span className="inline-block rounded-lg border-2 border-black bg-[#F59E0B] px-3 py-1 text-[10px] font-black text-black uppercase tracking-wider shadow-[2px_2px_0_0_#000]">
+              Mentor
+            </span>
+          </div>
         </div>
 
-        <nav className="mt-6 px-4 flex flex-col gap-2 grow">
+        <nav className="mt-4 px-6 flex flex-col gap-3 grow">
           {MENTOR_NAV_ITEMS.map((item) => {
             const isActive = normalizeMentorPath(item.href) === normalizedPath;
             const isLocked = item.requiresApproval && !approved;
@@ -103,13 +110,13 @@ export default function MentorSidebarShell({ children }) {
               return (
                 <div
                   key={item.href}
-                  className="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-gray-400"
+                  className="flex items-center justify-between rounded-2xl px-4 py-4 text-sm text-gray-300 border-2 border-transparent"
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon size={18} />
-                    <span className="font-semibold">{item.label}</span>
+                  <div className="flex items-center gap-4">
+                    <Icon size={20} strokeWidth={2.5} />
+                    <span className="font-bold">{item.label}</span>
                   </div>
-                  <span className="text-[0.65rem] uppercase tracking-[0.15em]">Locked</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Locked</span>
                 </div>
               );
             }
@@ -118,26 +125,26 @@ export default function MentorSidebarShell({ children }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 rounded-xl px-3 py-3 font-bold transition-all ${
+                className={`flex items-center gap-4 rounded-2xl px-4 py-4 font-black transition-all ${
                   isActive
-                    ? "text-[#5061E4] text-lg bg-gray-50"
-                    : "text-gray-500 hover:text-black hover:bg-gray-50 text-sm"
+                    ? "text-[#5061E4] text-lg bg-[#FAF9F6] border-[3px] border-black shadow-[4px_4px_0_0_#5061E4]"
+                    : "text-gray-400 hover:text-black hover:bg-gray-50 text-base"
                 }`}
               >
-                <Icon size={18} />
+                <Icon size={20} strokeWidth={isActive ? 3 : 2.5} />
                 {item.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 mt-auto">
+        <div className="p-6 mt-auto">
           <button
             type="button"
             onClick={onLogout}
-            className="flex w-full items-center gap-3 rounded-xl border-2 border-black bg-[#FDE9E6] px-4 py-3 text-sm font-bold text-black transition-all hover:bg-[#facdc5] cursor-pointer"
+            className="flex w-full items-center justify-center gap-3 rounded-2xl border-[3px] border-black bg-[#FDE9E6] px-5 py-4 text-base font-black text-black transition-all shadow-[4px_4px_0_0_#000] hover:bg-[#facdc5] active:translate-x-1 active:translate-y-1 active:shadow-none cursor-pointer"
           >
-            <LogOut size={18} />
+            <LogOut size={20} strokeWidth={3} />
             Logout
           </button>
         </div>

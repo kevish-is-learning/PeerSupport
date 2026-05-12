@@ -1,13 +1,5 @@
 import { z } from 'zod';
 
-// ─── Shared Enums ────────────────────────────────────────────────────────────
-
-const VALID_DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
-
-const dayOfWeekEnum = z.enum(VALID_DAYS, {
-  errorMap: () => ({ message: `Day must be one of: ${VALID_DAYS.join(', ')}` }),
-});
-
 // ─── Time Validation ─────────────────────────────────────────────────────────
 
 const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
@@ -42,7 +34,7 @@ const slotInputSchema = z
 
 const dayAvailabilitySchema = z
   .object({
-    dayOfWeek: dayOfWeekEnum,
+    specificDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     slots: z.array(slotInputSchema).default([]),
   })
   .refine(
@@ -71,28 +63,28 @@ const dayAvailabilitySchema = z
 // ─── Bulk Upsert Availability ────────────────────────────────────────────────
 
 /**
- * Full weekly availability payload.
- * Replaces the entire week: days not included are removed.
+ * Full availability payload.
+ * Replaces the entire set: dates not included are removed.
  */
 export const upsertAvailabilitySchema = z.object({
   availability: z
     .array(dayAvailabilitySchema)
     .refine(
       (items) => {
-        const days = items.map((i) => i.dayOfWeek);
-        return new Set(days).size === days.length;
+        const dates = items.map((i) => i.specificDate);
+        return new Set(dates).size === dates.length;
       },
-      { message: 'Duplicate days are not allowed' }
+      { message: 'Duplicate dates are not allowed' }
     ),
 });
 
 // ─── Params ──────────────────────────────────────────────────────────────────
 
-export const dayOfWeekParamSchema = z.object({
-  dayOfWeek: dayOfWeekEnum,
+export const dateParamSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
 export default {
   upsertAvailabilitySchema,
-  dayOfWeekParamSchema,
+  dateParamSchema,
 };

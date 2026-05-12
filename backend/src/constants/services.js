@@ -15,17 +15,3 @@ export const SERVICE_TYPE_LABELS = Object.freeze({
 /** All valid service-type enum values. */
 export const VALID_SERVICE_TYPES = Object.keys(SERVICE_TYPE_LABELS);
 
-/**
- * Day-of-week constants matching the Prisma `DayOfWeek` enum.
- */
-export const DAY_OF_WEEK_LABELS = Object.freeze({
-  MONDAY: 'Monday',
-  TUESDAY: 'Tuesday',
-  WEDNESDAY: 'Wednesday',
-  THURSDAY: 'Thursday',
-  FRIDAY: 'Friday',
-  SATURDAY: 'Saturday',
-  SUNDAY: 'Sunday',
-});
-
-export const VALID_DAYS = Object.keys(DAY_OF_WEEK_LABELS);

@@ -4,8 +4,7 @@
  * GET /mentors/:id/slots?serviceId=&date=
  *
  * Generates available slots on-demand:
- * 1. Find the mentor's availability windows for the given date
- *    (recurring dayOfWeek OR specificDate match).
+ * 1. Find the mentor's availability windows for the given date.
  * 2. Filter windows that offer the requested service.
  * 3. Get the service's duration and buffer config.
  * 4. Fetch all PENDING/CONFIRMED bookings for the mentor on that date.
@@ -16,7 +15,7 @@
 import { prisma } from '../../config/database.js';
 import { slotsQuerySchema, mentorIdParamSchema } from '../../validators/v2.validator.js';
 import { generateSlots } from '../../utils/slotGenerator.js';
-import { dateTimeToTimeString, getDayOfWeekFromDate } from '../../utils/timeUtils.js';
+import { dateTimeToTimeString } from '../../utils/timeUtils.js';
 import { istTimeAndDateToUtc, istToUtc, utcToIst } from '../../utils/timezoneUtils.js';
 
 const createServiceError = (statusCode, message) => {
@@ -61,19 +60,14 @@ class SlotQueryService {
       throw createServiceError(404, 'This mentor does not offer this service or it is inactive');
     }
 
-    // 3. Determine the day of week for the requested date
+    // 3. Normalize the requested date
     const requestedDate = new Date(date + 'T00:00:00.000Z');
-    const dayOfWeek = getDayOfWeekFromDate(requestedDate);
 
-    // 4. Find matching availability windows
-    //    Either: dayOfWeek matches OR specificDate matches
+    // 4. Find matching availability windows for the specific date
     const windows = await prisma.availabilityWindow.findMany({
       where: {
         mentorProfileId: validMentorId,
-        OR: [
-          { dayOfWeek },
-          { specificDate: requestedDate },
-        ],
+        specificDate: requestedDate,
         windowServices: {
           some: {
             mentorServiceId: mentorService.id,
@@ -88,7 +82,6 @@ class SlotQueryService {
         slots: [],
         service: this._mapService(mentorService),
         date,
-        dayOfWeek,
         message: 'No availability windows found for this service on this date',
       };
     }
@@ -153,7 +146,6 @@ class SlotQueryService {
       slots: slotsIST,
       service: this._mapService(mentorService),
       date,
-      dayOfWeek,
     };
   }
 

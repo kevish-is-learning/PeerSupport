@@ -53,4 +53,33 @@ router.put(
   mentorController.upsertAvailability
 );
 
+router.put(
+  '/mentor/availability/dates/:date',
+  authenticateJWT,
+  authorizeRoles('MENTOR'),
+  mentorController.replaceAvailabilityForDate
+);
+
+// Date-specific availability windows (CRUD)
+router.post(
+  '/mentor/availability/windows',
+  authenticateJWT,
+  authorizeRoles('MENTOR'),
+  mentorController.createAvailabilityWindow
+);
+
+router.patch(
+  '/mentor/availability/windows/:id',
+  authenticateJWT,
+  authorizeRoles('MENTOR'),
+  mentorController.updateAvailabilityWindow
+);
+
+router.delete(
+  '/mentor/availability/windows/:id',
+  authenticateJWT,
+  authorizeRoles('MENTOR'),
+  mentorController.deleteAvailabilityWindow
+);
+
 export default router;

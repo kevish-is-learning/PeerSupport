@@ -10,7 +10,7 @@ const getStatusCode = (error) => {
 class MentorAvailabilityController {
   /**
    * GET /api/mentor-availability
-   * Fetch current mentor's weekly availability.
+   * Fetch current mentor's availability.
    */
   async getMyAvailability(req, res) {
     try {
@@ -27,7 +27,7 @@ class MentorAvailabilityController {
 
   /**
    * PUT /api/mentor-availability
-   * Bulk upsert weekly availability.
+   * Bulk upsert availability.
    */
   async upsertAvailability(req, res) {
     try {
@@ -43,13 +43,13 @@ class MentorAvailabilityController {
   }
 
   /**
-   * DELETE /api/mentor-availability/:dayOfWeek
-   * Remove all availability for a specific day.
+   * DELETE /api/mentor-availability/date/:date
+   * Remove all availability for a specific date.
    */
-  async deleteDay(req, res) {
+  async deleteDate(req, res) {
     try {
-      const result = await mentorAvailabilityService.deleteByDay(req.user.id, req.params);
-      return res.status(200).json(new ApiResponse(200, 'Day availability removed', result));
+      const result = await mentorAvailabilityService.deleteByDate(req.user.id, req.params);
+      return res.status(200).json(new ApiResponse(200, 'Date availability removed', result));
     } catch (error) {
       const statusCode = getStatusCode(error);
       return res.status(statusCode).json({

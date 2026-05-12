@@ -156,34 +156,27 @@ export default function AvailabilityCalendar() {
       }
     }
 
+    if (!selectedDate) {
+      toast.error("Please select a date");
+      return;
+    }
+
     setSaving(true);
     try {
-      if (!selectedDate) {
-        toast.error("Please select a date");
-        return;
-      }
+      const res = await v2Api.replaceAvailabilityForDate(
+        selectedDate,
+        formWindows.map((fw) => ({
+          startTime: fw.startTime,
+          endTime: fw.endTime,
+          mentorServiceIds: fw.mentorServiceIds,
+        }))
+      );
 
-      // Build the full windows array: keep other dates + add new ones
-      const otherWindows = windows
-        .filter((w) => w.specificDate !== selectedDate)
-        .map((w) => ({
-          specificDate: w.specificDate,
-          startTime: w.startTime,
-          endTime: w.endTime,
-          mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
-        }));
-
-      const newWindows = formWindows.map((fw) => ({
-        specificDate: selectedDate,
-        startTime: fw.startTime,
-        endTime: fw.endTime,
-        mentorServiceIds: fw.mentorServiceIds,
-      }));
-
-      const allWindows = [...otherWindows, ...newWindows];
-
-      const res = await v2Api.upsertAvailability(allWindows);
-      setWindows(res?.data?.windows || []);
+      const updatedWindows = res?.data?.windows || [];
+      setWindows((prev) => [
+        ...prev.filter((w) => w.specificDate !== selectedDate),
+        ...updatedWindows,
+      ]);
       toast.success(`${formatDisplayDate(selectedDate)} availability saved`);
       setModalOpen(false);
     } catch (e) {
@@ -192,6 +185,8 @@ export default function AvailabilityCalendar() {
       } else {
         toast.error(e.message || "Failed to save availability");
       }
+      // Refresh to keep state consistent after partial failures
+      loadData();
     } finally {
       setSaving(false);
     }
@@ -205,29 +200,25 @@ export default function AvailabilityCalendar() {
         return;
       }
 
-      const otherWindows = windows
-        .filter((w) => w.specificDate !== selectedDate)
-        .map((w) => ({
-          specificDate: w.specificDate,
-          startTime: w.startTime,
-          endTime: w.endTime,
-          mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
-        }));
-
-      if (otherWindows.length === 0) {
-        // Can't send empty array if at least 1 required — just delete all
-        // Actually the validator requires min 1, so we need to handle this edge case
-        toast.error("You need at least one availability window");
-        setSaving(false);
+      const windowsForDate = windows.filter((w) => w.specificDate === selectedDate);
+      if (windowsForDate.length === 0) {
+        toast.error("No availability windows found for this date");
         return;
       }
 
-      const res = await v2Api.upsertAvailability(otherWindows);
-      setWindows(res?.data?.windows || []);
+      await Promise.all(
+        windowsForDate.map((w) => v2Api.deleteAvailabilityWindow(w.id))
+      );
+
+      setWindows((prev) => prev.filter((w) => w.specificDate !== selectedDate));
       toast.success(`${formatDisplayDate(selectedDate)} availability removed`);
       setModalOpen(false);
     } catch (e) {
-      toast.error(e.message || "Failed to remove availability");
+      if (e.status === 409) {
+        toast.error(e.message || "Conflicting bookings exist");
+      } else {
+        toast.error(e.message || "Failed to remove availability");
+      }
     } finally {
       setSaving(false);
     }

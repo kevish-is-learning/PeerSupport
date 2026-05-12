@@ -274,6 +274,25 @@ export const v2Api = {
   upsertAvailability(windows) {
     return apiRequest('/v2/mentor/availability', { method: 'PUT', body: { windows } });
   },
+  /** Replace availability windows for a specific date */
+  replaceAvailabilityForDate(date, windows) {
+    return apiRequest(`/v2/mentor/availability/dates/${date}`, {
+      method: 'PUT',
+      body: { windows },
+    });
+  },
+  /** Create a date-specific availability window */
+  createAvailabilityWindow(data) {
+    return apiRequest('/v2/mentor/availability/windows', { method: 'POST', body: data });
+  },
+  /** Update a date-specific availability window */
+  updateAvailabilityWindow(windowId, data) {
+    return apiRequest(`/v2/mentor/availability/windows/${windowId}`, { method: 'PATCH', body: data });
+  },
+  /** Delete a date-specific availability window */
+  deleteAvailabilityWindow(windowId) {
+    return apiRequest(`/v2/mentor/availability/windows/${windowId}`, { method: 'DELETE' });
+  },
 
   // ─── Slot Generation (mentee side) ───────────────────────────────────
   /** Generate available slots for a mentor + service + date */

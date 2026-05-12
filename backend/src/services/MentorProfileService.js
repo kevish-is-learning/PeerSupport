@@ -81,7 +81,9 @@ const mapProfile = (profile) => ({
   // Normalized availability windows
   availability: (profile.availabilityWindows || []).map((w) => ({
     id: w.id,
-    dayOfWeek: w.dayOfWeek,
+    specificDate: w.specificDate
+      ? new Date(w.specificDate).toISOString().split('T')[0]
+      : null,
     startTime: w.startTime,
     endTime: w.endTime,
     services: (w.windowServices || []).map((ws) => ({
@@ -183,8 +185,6 @@ class MentorProfileService {
         ...restData,
         pgCollegeProfile: pgProfile,
         collegeDocumentUrl: nextCollegeDocumentUrl,
-        isVerified: false,
-        approvalStatus: 'PENDING',
       },
       include: profileInclude,
     });

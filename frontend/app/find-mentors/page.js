@@ -6,10 +6,11 @@ import { Search, Star, BookOpen, Clock, Filter, ChevronDown, X } from "lucide-re
 import { publicMentorApi, resolveUploadUrl } from "../../lib/api";
 
 /* ─── Helpers ─────────────────────────────────────────────── */
-const DAY_LABELS = {
-  MONDAY: "Mon", TUESDAY: "Tue", WEDNESDAY: "Wed",
-  THURSDAY: "Thu", FRIDAY: "Fri", SATURDAY: "Sat", SUNDAY: "Sun",
-};
+function formatNextAvailable(dateStr) {
+  if (!dateStr) return "Availability TBD";
+  const d = new Date(`${dateStr}T00:00:00`);
+  return `Next available: ${d.toLocaleDateString("en-IN", { month: "short", day: "numeric" })}`;
+}
 
 const SPECIALIZATIONS = [
   "All Specializations", "CAT Prep", "GMAT Prep", "Interview Prep",
@@ -36,9 +37,7 @@ function MentorCard({ mentor }) {
   const price = mentor.startingPrice;
   const tags = (mentor.expertiseTags || []).slice(0, 3);
 
-  const nextDayLabel = mentor.nextAvailableDay
-    ? `Next available: ${DAY_LABELS[mentor.nextAvailableDay] ?? mentor.nextAvailableDay}`
-    : "Availability TBD";
+  const nextDayLabel = formatNextAvailable(mentor.nextAvailableDate);
 
   return (
     <Link href={`/mentee/find-mentors/${mentor.id}`} className="block no-underline">

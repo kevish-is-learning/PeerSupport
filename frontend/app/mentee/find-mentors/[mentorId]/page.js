@@ -13,10 +13,6 @@ import useAuthStore from "../../../../store/useAuthStore";
 import MentorBookingPage from "../../../../components/mentee/v2/MentorBookingPage";
 
 /* ─── Constants ────────────────────────────────────────────── */
-const DAY_SHORT = {
-  MONDAY: "Mon", TUESDAY: "Tue", WEDNESDAY: "Wed",
-  THURSDAY: "Thu", FRIDAY: "Fri", SATURDAY: "Sat", SUNDAY: "Sun",
-};
 
 function formatTime(t) {
   if (!t) return "";
@@ -26,31 +22,24 @@ function formatTime(t) {
 }
 
 function getNextDatesForService(availability, serviceId, count = 3) {
-  const validDays = [];
-  for (const day of availability) {
-    const hasSlot = day.slots?.some((s) =>
-      s.services?.some((sv) => sv.mentorServiceId === serviceId)
-    );
-    if (hasSlot) validDays.push(day.dayOfWeek);
-  }
-  if (!validDays.length) return [];
-
-  const dayMap = { SUNDAY: 0, MONDAY: 1, TUESDAY: 2, WEDNESDAY: 3, THURSDAY: 4, FRIDAY: 5, SATURDAY: 6 };
-  const today = new Date();
-  const dates = [];
-  for (let i = 0; i < 30 && dates.length < count; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    const dayName = Object.keys(dayMap).find((k) => dayMap[k] === d.getDay());
-    if (validDays.includes(dayName)) {
-      dates.push({
+  const todayStr = new Date().toISOString().split("T")[0];
+  const dates = availability
+    .filter((entry) => entry.specificDate)
+    .filter((entry) => entry.specificDate >= todayStr)
+    .filter((entry) =>
+      entry.services?.some((sv) => sv.mentorServiceId === serviceId)
+    )
+    .map((entry) => {
+      const d = new Date(`${entry.specificDate}T00:00:00`);
+      return {
         date: d,
-        dateStr: d.toISOString().split("T")[0],
-        label: `${d.toLocaleDateString("en-IN", { month: "short", day: "numeric" })}, ${DAY_SHORT[dayName]}`,
-      });
-    }
-  }
-  return dates;
+        dateStr: entry.specificDate,
+        label: d.toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
+      };
+    })
+    .sort((a, b) => a.dateStr.localeCompare(b.dateStr));
+
+  return dates.slice(0, count);
 }
 
 /* ─── Loading Skeleton ─────────────────────────────────────── */
