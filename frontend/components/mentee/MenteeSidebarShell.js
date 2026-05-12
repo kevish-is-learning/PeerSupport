@@ -8,17 +8,16 @@ import {
   MENTEE_NAV_ITEMS,
   normalizeMenteePath,
 } from "./menteeNavigation";
-import { LogOut, LayoutDashboard, Search, CalendarDays, User as UserIcon, HelpCircle } from "lucide-react";
+import { LogOut, Home, CalendarDays, Compass, User as UserIcon } from "lucide-react";
 
-// Map labels to icons since menteeNavigation doesn't have them
+// Map labels to icons
 const getIconForNav = (label) => {
   switch (label) {
-    case "Dashboard": return LayoutDashboard;
-    case "Find Mentors": return Search;
-    case "Bookings": return CalendarDays;
+    case "Home": return Home;
+    case "My Sessions": return CalendarDays;
+    case "Explore Mentors": return Compass;
     case "Profile": return UserIcon;
-    case "Help Center": return HelpCircle;
-    default: return LayoutDashboard;
+    default: return Home;
   }
 };
 
@@ -80,14 +79,22 @@ export default function MenteeSidebarShell({ children }) {
   return (
     <main className="h-screen bg-[#FFF7F5] flex text-black">
       <aside className="w-64 shrink-0 border-r-2 border-black bg-white flex flex-col h-screen">
-        <div className="p-6 flex items-center gap-3 border-b-0">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#5061E4] border-2 border-black text-white font-bold">
-            P
+        {/* Logo & Role Badge */}
+        <div className="p-6 pb-2">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#7C3AED] text-white font-bold text-sm">
+              P
+            </div>
+            <span className="font-extrabold text-[#111] text-lg">Peer Support</span>
           </div>
-          <span className="font-extrabold text-[#111] text-lg">Peer Support</span>
+          <div className="mt-3">
+            <span className="inline-block rounded-md bg-[#10B981] px-3 py-1 text-xs font-bold text-white">
+              Mentee
+            </span>
+          </div>
         </div>
 
-        <nav className="mt-6 px-4 flex flex-col gap-2 grow">
+        <nav className="mt-6 px-4 flex flex-col gap-1.5 grow">
           {MENTEE_NAV_ITEMS.map((item) => {
             const isActive = normalizeMenteePath(item.href) === normalizedPath;
             const Icon = getIconForNav(item.label);
@@ -98,7 +105,7 @@ export default function MenteeSidebarShell({ children }) {
                 href={item.href}
                 className={`flex items-center gap-3 rounded-xl px-3 py-3 font-bold transition-all ${
                   isActive
-                    ? "text-[#5061E4] text-lg bg-gray-50"
+                    ? "text-[#7C3AED] text-base bg-[#F3E8FF]"
                     : "text-gray-500 hover:text-black hover:bg-gray-50 text-sm"
                 }`}
               >
@@ -121,7 +128,7 @@ export default function MenteeSidebarShell({ children }) {
         </div>
       </aside>
 
-      <section className="flex-1 flex flex-col h-screen">
+      <section className="flex-1 flex flex-col h-screen overflow-hidden">
         {children}
       </section>
     </main>

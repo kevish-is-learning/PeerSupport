@@ -212,6 +212,9 @@ class PublicMentorController {
               take: 1,
               select: { specificDate: true },
             },
+            _count: {
+              select: { reviews: true },
+            },
           },
         }),
         prisma.mentorProfile.count({ where }),
@@ -236,6 +239,7 @@ class PublicMentorController {
             ? new Date(nextAvailable.specificDate).toISOString().split('T')[0]
             : null,
           workExperience: m.workExperience,
+          totalReviews: m._count?.reviews || 0,
         };
       });
 

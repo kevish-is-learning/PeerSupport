@@ -1,9 +1,8 @@
 export const MENTEE_NAV_ITEMS = [
-  { label: "Dashboard", href: "/mentee/dashboard" },
-  { label: "Find Mentors", href: "/mentee/find-mentors" },
-  { label: "Bookings", href: "/mentee/bookings" },
+  { label: "Home", href: "/mentee/dashboard" },
+  { label: "My Sessions", href: "/mentee/sessions" },
+  { label: "Explore Mentors", href: "/mentee/find-mentors" },
   { label: "Profile", href: "/mentee/profile" },
-  { label: "Help Center", href: "/mentee/help-center" },
 ];
 
 export const normalizeMenteePath = (path) => {
