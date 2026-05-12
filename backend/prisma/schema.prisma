@@ -217,17 +217,23 @@ model Service {
 // ============================================================
 
 /// Links a mentor to a service with pricing and duration config.
+/// Supports both catalogue-based (serviceId set) and custom (title set) services.
 model MentorService {
   id String @id @default(uuid())
 
   mentorProfileId String
-  serviceId       String
+  serviceId       String?
 
-  /// Price in INR
+  /// Custom service title (used when serviceId is null, or as override)
+  title           String?
+  /// Custom service description
+  description     String?
+
+  /// Price in INR (₹50 – ₹2000)
   price           Float
   /// Session duration: 15, 30, 45, or 60 minutes
   durationMinutes Int
-  /// Optional buffer between consecutive slots (minutes)
+  /// Buffer between consecutive slots: 0, 5, 10, or 15 minutes
   bufferMinutes   Int      @default(0)
   isActive        Boolean  @default(true)
 
@@ -235,7 +241,7 @@ model MentorService {
   updatedAt DateTime @updatedAt
 
   mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
-  service       Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service       Service?      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   windowServices AvailabilityWindowService[]
   bookings       Booking[]

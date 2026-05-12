@@ -36,6 +36,7 @@ export type Service = $Result.DefaultSelection<Prisma.$ServicePayload>
 /**
  * Model MentorService
  * Links a mentor to a service with pricing and duration config.
+ * Supports both catalogue-based (serviceId set) and custom (title set) services.
  */
 export type MentorService = $Result.DefaultSelection<Prisma.$MentorServicePayload>
 /**
@@ -6673,6 +6674,8 @@ export namespace Prisma {
     id: string | null
     mentorProfileId: string | null
     serviceId: string | null
+    title: string | null
+    description: string | null
     price: number | null
     durationMinutes: number | null
     bufferMinutes: number | null
@@ -6685,6 +6688,8 @@ export namespace Prisma {
     id: string | null
     mentorProfileId: string | null
     serviceId: string | null
+    title: string | null
+    description: string | null
     price: number | null
     durationMinutes: number | null
     bufferMinutes: number | null
@@ -6697,6 +6702,8 @@ export namespace Prisma {
     id: number
     mentorProfileId: number
     serviceId: number
+    title: number
+    description: number
     price: number
     durationMinutes: number
     bufferMinutes: number
@@ -6723,6 +6730,8 @@ export namespace Prisma {
     id?: true
     mentorProfileId?: true
     serviceId?: true
+    title?: true
+    description?: true
     price?: true
     durationMinutes?: true
     bufferMinutes?: true
@@ -6735,6 +6744,8 @@ export namespace Prisma {
     id?: true
     mentorProfileId?: true
     serviceId?: true
+    title?: true
+    description?: true
     price?: true
     durationMinutes?: true
     bufferMinutes?: true
@@ -6747,6 +6758,8 @@ export namespace Prisma {
     id?: true
     mentorProfileId?: true
     serviceId?: true
+    title?: true
+    description?: true
     price?: true
     durationMinutes?: true
     bufferMinutes?: true
@@ -6845,7 +6858,9 @@ export namespace Prisma {
   export type MentorServiceGroupByOutputType = {
     id: string
     mentorProfileId: string
-    serviceId: string
+    serviceId: string | null
+    title: string | null
+    description: string | null
     price: number
     durationMinutes: number
     bufferMinutes: number
@@ -6877,6 +6892,8 @@ export namespace Prisma {
     id?: boolean
     mentorProfileId?: boolean
     serviceId?: boolean
+    title?: boolean
+    description?: boolean
     price?: boolean
     durationMinutes?: boolean
     bufferMinutes?: boolean
@@ -6884,7 +6901,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    service?: boolean | MentorService$serviceArgs<ExtArgs>
     windowServices?: boolean | MentorService$windowServicesArgs<ExtArgs>
     bookings?: boolean | MentorService$bookingsArgs<ExtArgs>
     _count?: boolean | MentorServiceCountOutputTypeDefaultArgs<ExtArgs>
@@ -6894,6 +6911,8 @@ export namespace Prisma {
     id?: boolean
     mentorProfileId?: boolean
     serviceId?: boolean
+    title?: boolean
+    description?: boolean
     price?: boolean
     durationMinutes?: boolean
     bufferMinutes?: boolean
@@ -6901,13 +6920,15 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    service?: boolean | MentorService$serviceArgs<ExtArgs>
   }, ExtArgs["result"]["mentorService"]>
 
   export type MentorServiceSelectScalar = {
     id?: boolean
     mentorProfileId?: boolean
     serviceId?: boolean
+    title?: boolean
+    description?: boolean
     price?: boolean
     durationMinutes?: boolean
     bufferMinutes?: boolean
@@ -6918,30 +6939,38 @@ export namespace Prisma {
 
   export type MentorServiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    service?: boolean | MentorService$serviceArgs<ExtArgs>
     windowServices?: boolean | MentorService$windowServicesArgs<ExtArgs>
     bookings?: boolean | MentorService$bookingsArgs<ExtArgs>
     _count?: boolean | MentorServiceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MentorServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
-    service?: boolean | ServiceDefaultArgs<ExtArgs>
+    service?: boolean | MentorService$serviceArgs<ExtArgs>
   }
 
   export type $MentorServicePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "MentorService"
     objects: {
       mentorProfile: Prisma.$MentorProfilePayload<ExtArgs>
-      service: Prisma.$ServicePayload<ExtArgs>
+      service: Prisma.$ServicePayload<ExtArgs> | null
       windowServices: Prisma.$AvailabilityWindowServicePayload<ExtArgs>[]
       bookings: Prisma.$BookingPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       mentorProfileId: string
-      serviceId: string
+      serviceId: string | null
       /**
-       * Price in INR
+       * Custom service title (used when serviceId is null, or as override)
+       */
+      title: string | null
+      /**
+       * Custom service description
+       */
+      description: string | null
+      /**
+       * Price in INR (₹50 – ₹2000)
        */
       price: number
       /**
@@ -6949,7 +6978,7 @@ export namespace Prisma {
        */
       durationMinutes: number
       /**
-       * Optional buffer between consecutive slots (minutes)
+       * Buffer between consecutive slots: 0, 5, 10, or 15 minutes
        */
       bufferMinutes: number
       isActive: boolean
@@ -7320,7 +7349,7 @@ export namespace Prisma {
   export interface Prisma__MentorServiceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     mentorProfile<T extends MentorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfileDefaultArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    service<T extends ServiceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ServiceDefaultArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    service<T extends MentorService$serviceArgs<ExtArgs> = {}>(args?: Subset<T, MentorService$serviceArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     windowServices<T extends MentorService$windowServicesArgs<ExtArgs> = {}>(args?: Subset<T, MentorService$windowServicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvailabilityWindowServicePayload<ExtArgs>, T, "findMany"> | Null>
     bookings<T extends MentorService$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, MentorService$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany"> | Null>
     /**
@@ -7355,6 +7384,8 @@ export namespace Prisma {
     readonly id: FieldRef<"MentorService", 'String'>
     readonly mentorProfileId: FieldRef<"MentorService", 'String'>
     readonly serviceId: FieldRef<"MentorService", 'String'>
+    readonly title: FieldRef<"MentorService", 'String'>
+    readonly description: FieldRef<"MentorService", 'String'>
     readonly price: FieldRef<"MentorService", 'Float'>
     readonly durationMinutes: FieldRef<"MentorService", 'Int'>
     readonly bufferMinutes: FieldRef<"MentorService", 'Int'>
@@ -7676,6 +7707,21 @@ export namespace Prisma {
      * Filter which MentorServices to delete
      */
     where?: MentorServiceWhereInput
+  }
+
+  /**
+   * MentorService.service
+   */
+  export type MentorService$serviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Service
+     */
+    select?: ServiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ServiceInclude<ExtArgs> | null
+    where?: ServiceWhereInput
   }
 
   /**
@@ -15872,6 +15918,8 @@ export namespace Prisma {
     id: 'id',
     mentorProfileId: 'mentorProfileId',
     serviceId: 'serviceId',
+    title: 'title',
+    description: 'description',
     price: 'price',
     durationMinutes: 'durationMinutes',
     bufferMinutes: 'bufferMinutes',
@@ -16644,7 +16692,9 @@ export namespace Prisma {
     NOT?: MentorServiceWhereInput | MentorServiceWhereInput[]
     id?: StringFilter<"MentorService"> | string
     mentorProfileId?: StringFilter<"MentorService"> | string
-    serviceId?: StringFilter<"MentorService"> | string
+    serviceId?: StringNullableFilter<"MentorService"> | string | null
+    title?: StringNullableFilter<"MentorService"> | string | null
+    description?: StringNullableFilter<"MentorService"> | string | null
     price?: FloatFilter<"MentorService"> | number
     durationMinutes?: IntFilter<"MentorService"> | number
     bufferMinutes?: IntFilter<"MentorService"> | number
@@ -16652,7 +16702,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"MentorService"> | Date | string
     updatedAt?: DateTimeFilter<"MentorService"> | Date | string
     mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
-    service?: XOR<ServiceRelationFilter, ServiceWhereInput>
+    service?: XOR<ServiceNullableRelationFilter, ServiceWhereInput> | null
     windowServices?: AvailabilityWindowServiceListRelationFilter
     bookings?: BookingListRelationFilter
   }
@@ -16660,7 +16710,9 @@ export namespace Prisma {
   export type MentorServiceOrderByWithRelationInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
-    serviceId?: SortOrder
+    serviceId?: SortOrderInput | SortOrder
+    title?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     price?: SortOrder
     durationMinutes?: SortOrder
     bufferMinutes?: SortOrder
@@ -16680,7 +16732,9 @@ export namespace Prisma {
     OR?: MentorServiceWhereInput[]
     NOT?: MentorServiceWhereInput | MentorServiceWhereInput[]
     mentorProfileId?: StringFilter<"MentorService"> | string
-    serviceId?: StringFilter<"MentorService"> | string
+    serviceId?: StringNullableFilter<"MentorService"> | string | null
+    title?: StringNullableFilter<"MentorService"> | string | null
+    description?: StringNullableFilter<"MentorService"> | string | null
     price?: FloatFilter<"MentorService"> | number
     durationMinutes?: IntFilter<"MentorService"> | number
     bufferMinutes?: IntFilter<"MentorService"> | number
@@ -16688,7 +16742,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"MentorService"> | Date | string
     updatedAt?: DateTimeFilter<"MentorService"> | Date | string
     mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
-    service?: XOR<ServiceRelationFilter, ServiceWhereInput>
+    service?: XOR<ServiceNullableRelationFilter, ServiceWhereInput> | null
     windowServices?: AvailabilityWindowServiceListRelationFilter
     bookings?: BookingListRelationFilter
   }, "id" | "mentorProfileId_serviceId">
@@ -16696,7 +16750,9 @@ export namespace Prisma {
   export type MentorServiceOrderByWithAggregationInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
-    serviceId?: SortOrder
+    serviceId?: SortOrderInput | SortOrder
+    title?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     price?: SortOrder
     durationMinutes?: SortOrder
     bufferMinutes?: SortOrder
@@ -16716,7 +16772,9 @@ export namespace Prisma {
     NOT?: MentorServiceScalarWhereWithAggregatesInput | MentorServiceScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"MentorService"> | string
     mentorProfileId?: StringWithAggregatesFilter<"MentorService"> | string
-    serviceId?: StringWithAggregatesFilter<"MentorService"> | string
+    serviceId?: StringNullableWithAggregatesFilter<"MentorService"> | string | null
+    title?: StringNullableWithAggregatesFilter<"MentorService"> | string | null
+    description?: StringNullableWithAggregatesFilter<"MentorService"> | string | null
     price?: FloatWithAggregatesFilter<"MentorService"> | number
     durationMinutes?: IntWithAggregatesFilter<"MentorService"> | number
     bufferMinutes?: IntWithAggregatesFilter<"MentorService"> | number
@@ -17855,6 +17913,8 @@ export namespace Prisma {
 
   export type MentorServiceCreateInput = {
     id?: string
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -17862,7 +17922,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     mentorProfile: MentorProfileCreateNestedOneWithoutMentorServicesInput
-    service: ServiceCreateNestedOneWithoutMentorServicesInput
+    service?: ServiceCreateNestedOneWithoutMentorServicesInput
     windowServices?: AvailabilityWindowServiceCreateNestedManyWithoutMentorServiceInput
     bookings?: BookingCreateNestedManyWithoutMentorServiceInput
   }
@@ -17870,7 +17930,9 @@ export namespace Prisma {
   export type MentorServiceUncheckedCreateInput = {
     id?: string
     mentorProfileId: string
-    serviceId: string
+    serviceId?: string | null
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -17883,6 +17945,8 @@ export namespace Prisma {
 
   export type MentorServiceUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -17890,7 +17954,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorServicesNestedInput
-    service?: ServiceUpdateOneRequiredWithoutMentorServicesNestedInput
+    service?: ServiceUpdateOneWithoutMentorServicesNestedInput
     windowServices?: AvailabilityWindowServiceUpdateManyWithoutMentorServiceNestedInput
     bookings?: BookingUpdateManyWithoutMentorServiceNestedInput
   }
@@ -17898,7 +17962,9 @@ export namespace Prisma {
   export type MentorServiceUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -17912,7 +17978,9 @@ export namespace Prisma {
   export type MentorServiceCreateManyInput = {
     id?: string
     mentorProfileId: string
-    serviceId: string
+    serviceId?: string | null
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -17923,6 +17991,8 @@ export namespace Prisma {
 
   export type MentorServiceUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -17934,7 +18004,9 @@ export namespace Prisma {
   export type MentorServiceUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -19243,9 +19315,9 @@ export namespace Prisma {
     isNot?: MentorProfileWhereInput
   }
 
-  export type ServiceRelationFilter = {
-    is?: ServiceWhereInput
-    isNot?: ServiceWhereInput
+  export type ServiceNullableRelationFilter = {
+    is?: ServiceWhereInput | null
+    isNot?: ServiceWhereInput | null
   }
 
   export type AvailabilityWindowServiceListRelationFilter = {
@@ -19267,6 +19339,8 @@ export namespace Prisma {
     id?: SortOrder
     mentorProfileId?: SortOrder
     serviceId?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
     price?: SortOrder
     durationMinutes?: SortOrder
     bufferMinutes?: SortOrder
@@ -19285,6 +19359,8 @@ export namespace Prisma {
     id?: SortOrder
     mentorProfileId?: SortOrder
     serviceId?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
     price?: SortOrder
     durationMinutes?: SortOrder
     bufferMinutes?: SortOrder
@@ -19297,6 +19373,8 @@ export namespace Prisma {
     id?: SortOrder
     mentorProfileId?: SortOrder
     serviceId?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
     price?: SortOrder
     durationMinutes?: SortOrder
     bufferMinutes?: SortOrder
@@ -20295,10 +20373,12 @@ export namespace Prisma {
     update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutMentorServicesInput, MentorProfileUpdateWithoutMentorServicesInput>, MentorProfileUncheckedUpdateWithoutMentorServicesInput>
   }
 
-  export type ServiceUpdateOneRequiredWithoutMentorServicesNestedInput = {
+  export type ServiceUpdateOneWithoutMentorServicesNestedInput = {
     create?: XOR<ServiceCreateWithoutMentorServicesInput, ServiceUncheckedCreateWithoutMentorServicesInput>
     connectOrCreate?: ServiceCreateOrConnectWithoutMentorServicesInput
     upsert?: ServiceUpsertWithoutMentorServicesInput
+    disconnect?: ServiceWhereInput | boolean
+    delete?: ServiceWhereInput | boolean
     connect?: ServiceWhereUniqueInput
     update?: XOR<XOR<ServiceUpdateToOneWithWhereWithoutMentorServicesInput, ServiceUpdateWithoutMentorServicesInput>, ServiceUncheckedUpdateWithoutMentorServicesInput>
   }
@@ -21603,20 +21683,24 @@ export namespace Prisma {
 
   export type MentorServiceCreateWithoutMentorProfileInput = {
     id?: string
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    service: ServiceCreateNestedOneWithoutMentorServicesInput
+    service?: ServiceCreateNestedOneWithoutMentorServicesInput
     windowServices?: AvailabilityWindowServiceCreateNestedManyWithoutMentorServiceInput
     bookings?: BookingCreateNestedManyWithoutMentorServiceInput
   }
 
   export type MentorServiceUncheckedCreateWithoutMentorProfileInput = {
     id?: string
-    serviceId: string
+    serviceId?: string | null
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -21876,7 +21960,9 @@ export namespace Prisma {
     NOT?: MentorServiceScalarWhereInput | MentorServiceScalarWhereInput[]
     id?: StringFilter<"MentorService"> | string
     mentorProfileId?: StringFilter<"MentorService"> | string
-    serviceId?: StringFilter<"MentorService"> | string
+    serviceId?: StringNullableFilter<"MentorService"> | string | null
+    title?: StringNullableFilter<"MentorService"> | string | null
+    description?: StringNullableFilter<"MentorService"> | string | null
     price?: FloatFilter<"MentorService"> | number
     durationMinutes?: IntFilter<"MentorService"> | number
     bufferMinutes?: IntFilter<"MentorService"> | number
@@ -22007,6 +22093,8 @@ export namespace Prisma {
 
   export type MentorServiceCreateWithoutServiceInput = {
     id?: string
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -22021,6 +22109,8 @@ export namespace Prisma {
   export type MentorServiceUncheckedCreateWithoutServiceInput = {
     id?: string
     mentorProfileId: string
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -22548,6 +22638,8 @@ export namespace Prisma {
 
   export type MentorServiceCreateWithoutWindowServicesInput = {
     id?: string
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -22555,14 +22647,16 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     mentorProfile: MentorProfileCreateNestedOneWithoutMentorServicesInput
-    service: ServiceCreateNestedOneWithoutMentorServicesInput
+    service?: ServiceCreateNestedOneWithoutMentorServicesInput
     bookings?: BookingCreateNestedManyWithoutMentorServiceInput
   }
 
   export type MentorServiceUncheckedCreateWithoutWindowServicesInput = {
     id?: string
     mentorProfileId: string
-    serviceId: string
+    serviceId?: string | null
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -22625,6 +22719,8 @@ export namespace Prisma {
 
   export type MentorServiceUpdateWithoutWindowServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -22632,14 +22728,16 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorServicesNestedInput
-    service?: ServiceUpdateOneRequiredWithoutMentorServicesNestedInput
+    service?: ServiceUpdateOneWithoutMentorServicesNestedInput
     bookings?: BookingUpdateManyWithoutMentorServiceNestedInput
   }
 
   export type MentorServiceUncheckedUpdateWithoutWindowServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -22757,6 +22855,8 @@ export namespace Prisma {
 
   export type MentorServiceCreateWithoutBookingsInput = {
     id?: string
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -22764,14 +22864,16 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     mentorProfile: MentorProfileCreateNestedOneWithoutMentorServicesInput
-    service: ServiceCreateNestedOneWithoutMentorServicesInput
+    service?: ServiceCreateNestedOneWithoutMentorServicesInput
     windowServices?: AvailabilityWindowServiceCreateNestedManyWithoutMentorServiceInput
   }
 
   export type MentorServiceUncheckedCreateWithoutBookingsInput = {
     id?: string
     mentorProfileId: string
-    serviceId: string
+    serviceId?: string | null
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -23000,6 +23102,8 @@ export namespace Prisma {
 
   export type MentorServiceUpdateWithoutBookingsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -23007,14 +23111,16 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorServicesNestedInput
-    service?: ServiceUpdateOneRequiredWithoutMentorServicesNestedInput
+    service?: ServiceUpdateOneWithoutMentorServicesNestedInput
     windowServices?: AvailabilityWindowServiceUpdateManyWithoutMentorServiceNestedInput
   }
 
   export type MentorServiceUncheckedUpdateWithoutBookingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -24129,7 +24235,9 @@ export namespace Prisma {
 
   export type MentorServiceCreateManyMentorProfileInput = {
     id?: string
-    serviceId: string
+    serviceId?: string | null
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -24194,20 +24302,24 @@ export namespace Prisma {
 
   export type MentorServiceUpdateWithoutMentorProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    service?: ServiceUpdateOneRequiredWithoutMentorServicesNestedInput
+    service?: ServiceUpdateOneWithoutMentorServicesNestedInput
     windowServices?: AvailabilityWindowServiceUpdateManyWithoutMentorServiceNestedInput
     bookings?: BookingUpdateManyWithoutMentorServiceNestedInput
   }
 
   export type MentorServiceUncheckedUpdateWithoutMentorProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -24220,7 +24332,9 @@ export namespace Prisma {
 
   export type MentorServiceUncheckedUpdateManyWithoutMentorProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceId?: StringFieldUpdateOperationsInput | string
+    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -24402,6 +24516,8 @@ export namespace Prisma {
   export type MentorServiceCreateManyServiceInput = {
     id?: string
     mentorProfileId: string
+    title?: string | null
+    description?: string | null
     price: number
     durationMinutes: number
     bufferMinutes?: number
@@ -24412,6 +24528,8 @@ export namespace Prisma {
 
   export type MentorServiceUpdateWithoutServiceInput = {
     id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -24426,6 +24544,8 @@ export namespace Prisma {
   export type MentorServiceUncheckedUpdateWithoutServiceInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number
@@ -24439,6 +24559,8 @@ export namespace Prisma {
   export type MentorServiceUncheckedUpdateManyWithoutServiceInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
     durationMinutes?: IntFieldUpdateOperationsInput | number
     bufferMinutes?: IntFieldUpdateOperationsInput | number

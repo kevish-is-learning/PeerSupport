@@ -12,7 +12,9 @@ router.get('/types', mentorServiceController.getServiceTypes);
 router.use(authenticateJWT, authorizeRoles('MENTOR'));
 
 router.get('/', mentorServiceController.getMyServices);
-router.put('/', mentorServiceController.upsertServices);
-router.delete('/:serviceType', mentorServiceController.deleteService);
+router.post('/', mentorServiceController.createService);
+router.put('/:id', mentorServiceController.updateService);
+router.patch('/:id/toggle', mentorServiceController.toggleActive);
+router.delete('/:id', mentorServiceController.deleteService);
 
 export default router;

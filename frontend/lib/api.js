@@ -140,13 +140,25 @@ export const mentorServiceApi = {
   getMine() {
     return apiRequest('/mentor-services');
   },
-  /** Bulk upsert services + pricing */
+  /** Create a new custom service */
+  create(data) {
+    return apiRequest('/mentor-services', { method: 'POST', body: data });
+  },
+  /** Update a service by ID */
+  update(id, data) {
+    return apiRequest(`/mentor-services/${id}`, { method: 'PUT', body: data });
+  },
+  /** Toggle active/inactive */
+  toggle(id) {
+    return apiRequest(`/mentor-services/${id}/toggle`, { method: 'PATCH' });
+  },
+  /** Delete a service by ID */
+  remove(id) {
+    return apiRequest(`/mentor-services/${id}`, { method: 'DELETE' });
+  },
+  /** Bulk upsert services + pricing (legacy) */
   upsert(services) {
     return apiRequest('/mentor-services', { method: 'PUT', body: { services } });
-  },
-  /** Delete a single service by type */
-  remove(serviceType) {
-    return apiRequest(`/mentor-services/${serviceType}`, { method: 'DELETE' });
   },
 };
 

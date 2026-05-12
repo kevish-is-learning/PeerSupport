@@ -194,6 +194,8 @@ exports.Prisma.MentorServiceScalarFieldEnum = {
   id: 'id',
   mentorProfileId: 'mentorProfileId',
   serviceId: 'serviceId',
+  title: 'title',
+  description: 'description',
   price: 'price',
   durationMinutes: 'durationMinutes',
   bufferMinutes: 'bufferMinutes',

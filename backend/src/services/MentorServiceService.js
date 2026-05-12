@@ -1,5 +1,9 @@
 import { prisma } from '../config/database.js';
-import { upsertServicesSchema, serviceTypeParamSchema } from '../validators/mentorService.validator.js';
+
+const VALID_DURATIONS = [15, 30, 45, 60];
+const VALID_BUFFERS = [0, 5, 10, 15];
+const MIN_PRICE = 50;
+const MAX_PRICE = 2000;
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -13,18 +17,32 @@ const createServiceError = (statusCode, message) => {
 const mapService = (row) => ({
   id: row.id,
   serviceId: row.serviceId,
-  serviceName: row.service?.name,
-  label: row.service?.name, // Added for frontend compatibility
+  title: row.title || row.service?.name || 'Untitled Service',
+  description: row.description || row.service?.description || '',
+  serviceName: row.title || row.service?.name,
+  label: row.title || row.service?.name,
   serviceSlug: row.service?.slug,
-  serviceType: row.service?.slug, // Added for frontend compatibility
+  serviceType: row.service?.slug,
   price: row.price,
-  pricePerSession: row.price, // Added for frontend compatibility
+  pricePerSession: row.price,
   durationMinutes: row.durationMinutes,
   bufferMinutes: row.bufferMinutes,
   isActive: row.isActive,
   createdAt: row.createdAt,
   updatedAt: row.updatedAt,
 });
+
+/**
+ * Helper: resolve mentor profile id from user id.
+ */
+async function getProfileId(userId) {
+  const profile = await prisma.mentorProfile.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+  if (!profile) throw createServiceError(404, 'Mentor profile not found');
+  return profile.id;
+}
 
 class MentorServiceService {
   /**
@@ -46,17 +64,10 @@ class MentorServiceService {
    * Fetch all services for a mentor (by userId).
    */
   async getByUserId(userId) {
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-      select: { id: true },
-    });
-
-    if (!profile) {
-      throw createServiceError(404, 'Mentor profile not found');
-    }
+    const profileId = await getProfileId(userId);
 
     const services = await prisma.mentorService.findMany({
-      where: { mentorProfileId: profile.id },
+      where: { mentorProfileId: profileId },
       include: { service: true },
       orderBy: { createdAt: 'asc' },
     });
@@ -65,38 +76,134 @@ class MentorServiceService {
   }
 
   /**
-   * Bulk upsert services + pricing.
-   * Replaces the full set: services not in the payload are deleted.
+   * Create a new custom service.
+   * Active by default.
    */
-  async bulkUpsert(userId, payload) {
-    const { services: incoming } = upsertServicesSchema.parse(payload);
+  async createService(userId, data) {
+    const profileId = await getProfileId(userId);
 
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-      select: { id: true },
-    });
+    const { title, description, price, durationMinutes, bufferMinutes } = data;
 
-    if (!profile) {
-      throw createServiceError(404, 'Mentor profile not found');
+    if (!title || !title.trim()) {
+      throw createServiceError(400, 'Service title is required');
+    }
+    if (price == null || price < MIN_PRICE || price > MAX_PRICE) {
+      throw createServiceError(400, `Price must be between ₹${MIN_PRICE} and ₹${MAX_PRICE}`);
+    }
+    if (!VALID_DURATIONS.includes(durationMinutes)) {
+      throw createServiceError(400, 'Duration must be 15, 30, 45, or 60 minutes');
+    }
+    const buf = bufferMinutes ?? 0;
+    if (!VALID_BUFFERS.includes(buf)) {
+      throw createServiceError(400, 'Buffer must be 0, 5, 10, or 15 minutes');
     }
 
-    const profileId = profile.id;
+    const service = await prisma.mentorService.create({
+      data: {
+        mentorProfileId: profileId,
+        title: title.trim(),
+        description: description?.trim() || null,
+        price,
+        durationMinutes,
+        bufferMinutes: buf,
+        isActive: true,
+      },
+      include: { service: true },
+    });
 
-    // Resolve serviceType slugs to service IDs
-    const slugs = incoming.map((s) => s.serviceType);
+    return mapService(service);
+  }
+
+  /**
+   * Update an existing service by ID.
+   */
+  async updateService(userId, id, data) {
+    const profileId = await getProfileId(userId);
+
+    const existing = await prisma.mentorService.findFirst({
+      where: { id, mentorProfileId: profileId },
+    });
+    if (!existing) throw createServiceError(404, 'Service not found');
+
+    if (data.title !== undefined && !data.title.trim()) {
+      throw createServiceError(400, 'Service title cannot be empty');
+    }
+    if (data.price !== undefined && (data.price < MIN_PRICE || data.price > MAX_PRICE)) {
+      throw createServiceError(400, `Price must be between ₹${MIN_PRICE} and ₹${MAX_PRICE}`);
+    }
+    if (data.durationMinutes !== undefined && !VALID_DURATIONS.includes(data.durationMinutes)) {
+      throw createServiceError(400, 'Duration must be 15, 30, 45, or 60 minutes');
+    }
+    if (data.bufferMinutes !== undefined && !VALID_BUFFERS.includes(data.bufferMinutes)) {
+      throw createServiceError(400, 'Buffer must be 0, 5, 10, or 15 minutes');
+    }
+
+    const updateData = {};
+    if (data.title !== undefined) updateData.title = data.title.trim();
+    if (data.description !== undefined) updateData.description = data.description?.trim() || null;
+    if (data.price !== undefined) updateData.price = data.price;
+    if (data.durationMinutes !== undefined) updateData.durationMinutes = data.durationMinutes;
+    if (data.bufferMinutes !== undefined) updateData.bufferMinutes = data.bufferMinutes;
+
+    const updated = await prisma.mentorService.update({
+      where: { id },
+      data: updateData,
+      include: { service: true },
+    });
+
+    return mapService(updated);
+  }
+
+  /**
+   * Toggle the isActive flag for a service.
+   */
+  async toggleActive(userId, id) {
+    const profileId = await getProfileId(userId);
+
+    const existing = await prisma.mentorService.findFirst({
+      where: { id, mentorProfileId: profileId },
+    });
+    if (!existing) throw createServiceError(404, 'Service not found');
+
+    const updated = await prisma.mentorService.update({
+      where: { id },
+      data: { isActive: !existing.isActive },
+      include: { service: true },
+    });
+
+    return mapService(updated);
+  }
+
+  /**
+   * Delete a service by ID.
+   */
+  async deleteService(userId, id) {
+    const profileId = await getProfileId(userId);
+
+    const existing = await prisma.mentorService.findFirst({
+      where: { id, mentorProfileId: profileId },
+    });
+    if (!existing) throw createServiceError(404, 'Service not found');
+
+    await prisma.mentorService.delete({ where: { id } });
+    return { deleted: true, id };
+  }
+
+  // ─── Legacy: bulk upsert (backward compat) ──────────────────────────────
+  async bulkUpsert(userId, payload) {
+    const { services: incoming } = payload;
+    const profileId = await getProfileId(userId);
+
+    const slugs = incoming.map((s) => s.serviceType).filter(Boolean);
     const serviceRows = await prisma.service.findMany({
       where: { slug: { in: slugs } },
     });
     const slugToId = {};
-    for (const svc of serviceRows) {
-      slugToId[svc.slug] = svc.id;
-    }
+    for (const svc of serviceRows) slugToId[svc.slug] = svc.id;
 
     const incomingServiceIds = incoming.map((s) => slugToId[s.serviceType]).filter(Boolean);
 
-    // Run inside a transaction for atomicity
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Delete services that are no longer in the incoming set
       await tx.mentorService.deleteMany({
         where: {
           mentorProfileId: profileId,
@@ -104,18 +211,13 @@ class MentorServiceService {
         },
       });
 
-      // 2. Upsert each incoming service
       const upserted = [];
       for (const svc of incoming) {
         const serviceId = slugToId[svc.serviceType];
         if (!serviceId) continue;
-
         const row = await tx.mentorService.upsert({
           where: {
-            mentorProfileId_serviceId: {
-              mentorProfileId: profileId,
-              serviceId,
-            },
+            mentorProfileId_serviceId: { mentorProfileId: profileId, serviceId },
           },
           update: {
             price: svc.pricePerSession,
@@ -133,55 +235,10 @@ class MentorServiceService {
         });
         upserted.push(row);
       }
-
       return upserted;
     });
 
     return result.map(mapService);
-  }
-
-  /**
-   * Delete a single service by type (slug) for the authenticated mentor.
-   */
-  async deleteByType(userId, params) {
-    const { serviceType } = serviceTypeParamSchema.parse(params);
-
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-      select: { id: true },
-    });
-
-    if (!profile) {
-      throw createServiceError(404, 'Mentor profile not found');
-    }
-
-    // Resolve slug to service ID
-    const serviceRow = await prisma.service.findUnique({
-      where: { slug: serviceType },
-    });
-
-    if (!serviceRow) {
-      throw createServiceError(404, `Service ${serviceType} not found`);
-    }
-
-    const existing = await prisma.mentorService.findUnique({
-      where: {
-        mentorProfileId_serviceId: {
-          mentorProfileId: profile.id,
-          serviceId: serviceRow.id,
-        },
-      },
-    });
-
-    if (!existing) {
-      throw createServiceError(404, `Service ${serviceType} not configured for this mentor`);
-    }
-
-    await prisma.mentorService.delete({
-      where: { id: existing.id },
-    });
-
-    return { deleted: true, serviceType };
   }
 }
 

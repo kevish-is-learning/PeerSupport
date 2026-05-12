@@ -1,6 +1,6 @@
 "use client";
 
-import ServiceConfigPanel from "../../../components/mentor/v2/ServiceConfigPanel";
+import ServicesSection from "./ServicesSection";
 import AvailabilityCalendar from "../../../components/mentor/v2/AvailabilityCalendar";
 import { useState } from "react";
 import { Settings, CalendarDays } from "lucide-react";
@@ -14,7 +14,7 @@ export default function MentorAvailabilityV2Page() {
   const [activeTab, setActiveTab] = useState("services");
 
   return (
-    <div className="w-full h-full overflow-y-auto p-8 lg:p-12 bg-[#FFF7F5]">
+    <div className="w-full h-full overflow-y-auto p-8 lg:p-12 bg-[#FAF9F6]">
       <header className="mb-6">
         <h1 className="text-3xl font-extrabold tracking-tight text-[#111]">Availability</h1>
         <p className="mt-1 text-gray-500 font-medium">
@@ -31,14 +31,11 @@ export default function MentorAvailabilityV2Page() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 rounded-xl border-[3px] px-5 py-2.5 text-sm font-bold transition-all hover:-translate-y-0.5 ${
+              className={`flex items-center gap-2 rounded-xl border-[3px] px-5 py-2.5 text-sm font-black transition-all ${
                 isActive
-                  ? "border-black bg-[#5061E4] text-white"
-                  : "border-gray-300 bg-white text-gray-600 hover:border-black"
+                  ? "border-black bg-[#10B981] text-white shadow-[3px_3px_0_0_#000]"
+                  : "border-black bg-white text-black hover:bg-gray-50"
               }`}
-              style={{
-                boxShadow: isActive ? "4px 4px 0 0 #000" : "3px 3px 0 0 #d1d5db",
-              }}
             >
               <Icon size={16} />
               {tab.label}
@@ -48,7 +45,7 @@ export default function MentorAvailabilityV2Page() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === "services" && <ServiceConfigPanel />}
+      {activeTab === "services" && <ServicesSection />}
       {activeTab === "availability" && <AvailabilityCalendar />}
     </div>
   );
