@@ -43,14 +43,32 @@ const mapBooking = (b) => ({
     : null,
   createdAt: b.createdAt,
   updatedAt: b.updatedAt,
+  discussionTopic: b.discussionTopic,
+  specificQuestions: b.specificQuestions,
+  menteeEmail: b.menteeEmail || b.mentee?.email,
+  menteePhone: b.menteePhone,
+  // Normalize fields for SessionDetailsModal
+  mentorName: b.mentorProfile?.user?.name || "Mentor",
+  mentorPicture: b.mentorProfile?.user?.profilePicture,
+  serviceName: b.mentorService?.label || b.mentorService?.serviceName || "Mentoring Session",
+  price: b.payment?.amount || b.mentorService?.price || 0,
+  durationMinutes: b.mentorService?.durationMinutes || 60,
 });
 
 const bookingInclude = {
   mentee: {
     select: { id: true, name: true, email: true, profilePicture: true },
   },
-    payment: {
+  payment: {
     select: { id: true, amount: true, paymentStatus: true, paidAt: true, currency: true },
+  },
+  mentorService: true,
+  mentorProfile: {
+    include: {
+      user: {
+        select: { name: true, profilePicture: true },
+      },
+    },
   },
 };
 

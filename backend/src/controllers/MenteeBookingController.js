@@ -18,7 +18,7 @@ class MenteeBookingController {
             },
           },
           mentorService: true,
-          paymentOrder: true,
+          payment: true,
         },
       });
 
@@ -41,7 +41,7 @@ class MenteeBookingController {
           specificQuestions: b.specificQuestions,
           menteeEmail: b.menteeEmail,
           menteePhone: b.menteePhone,
-          price: b.paymentOrder?.amount || b.mentorService?.price || 0,
+          price: b.payment?.amount || b.mentorService?.price || 0,
         };
 
         if (new Date(b.startTime) > now && b.status !== 'CANCELLED') {

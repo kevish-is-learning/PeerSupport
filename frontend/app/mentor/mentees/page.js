@@ -5,6 +5,7 @@ import { Search, Video, FileText, User, Calendar, Clock, MessageSquare, Loader2,
 import { mentorBookingApi, resolveUploadUrl } from "../../../lib/api";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import SessionDetailsModal from "../../../components/mentee/v2/SessionDetailsModal";
 
 export default function MyMenteesPage() {
   const [mentees, setMentees] = useState([]);
@@ -13,6 +14,7 @@ export default function MyMenteesPage() {
   const [loading, setLoading] = useState(true);
   const [sessionsLoading, setSessionsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSessionDetails, setSelectedSessionDetails] = useState(null);
 
   // 1. Fetch initial list of mentees
   useEffect(() => {
@@ -192,7 +194,10 @@ export default function MyMenteesPage() {
                 )}
 
                 <div className="mt-6 flex justify-center gap-3 w-full">
-                  <button className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#5061E4] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer ">
+                  <button 
+                    onClick={() => setSelectedSessionDetails(session)}
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#5061E4] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer "
+                  >
                     <FileText size={16} />
                     Booking Details
                   </button>
@@ -208,6 +213,10 @@ export default function MyMenteesPage() {
           )}
         </div>
       </div>
+
+      {selectedSessionDetails && (
+        <SessionDetailsModal session={selectedSessionDetails} onClose={() => setSelectedSessionDetails(null)} />
+      )}
     </div>
   );
 }
