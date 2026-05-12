@@ -166,13 +166,13 @@ class AvailabilityWindowService {
     }
 
     // Perform the atomic replace
-    const result = await prisma.$transaction(async (tx) => {
+    const createdIds = await prisma.$transaction(async (tx) => {
       // Delete all existing windows (cascade deletes AvailabilityWindowService)
       await tx.availabilityWindow.deleteMany({
         where: { mentorProfileId: profileId },
       });
 
-      const created = [];
+      const ids = [];
 
       for (const w of incoming) {
         const startTime = timeStringToDateTime(w.startTime);
@@ -199,24 +199,25 @@ class AvailabilityWindowService {
           });
         }
 
-        // Re-fetch with includes
-        const full = await tx.availabilityWindow.findUnique({
-          where: { id: window.id },
-          include: {
-            windowServices: {
-              include: {
-                mentorService: {
-                  include: { service: true },
-                },
-              },
-            },
-          },
-        });
-
-        created.push(full);
+        ids.push(window.id);
       }
 
-      return created;
+      return ids;
+    }, { timeout: 15000 });
+
+    // Re-fetch full objects outside the transaction to avoid timeout
+    const result = await prisma.availabilityWindow.findMany({
+      where: { id: { in: createdIds } },
+      include: {
+        windowServices: {
+          include: {
+            mentorService: {
+              include: { service: true },
+            },
+          },
+        },
+      },
+      orderBy: [{ specificDate: 'asc' }, { startTime: 'asc' }],
     });
 
     return result.map(this._mapWindow);
@@ -433,7 +434,7 @@ class AvailabilityWindowService {
 
     await this._assertNoOrphanedBookings(profile.id, [...remainingDefs, ...newDefs]);
 
-    const created = await prisma.$transaction(async (tx) => {
+    const createdIds = await prisma.$transaction(async (tx) => {
       await tx.availabilityWindow.deleteMany({
         where: {
           mentorProfileId: profile.id,
@@ -441,7 +442,7 @@ class AvailabilityWindowService {
         },
       });
 
-      const createdWindows = [];
+      const ids = [];
       for (const w of incoming) {
         const window = await tx.availabilityWindow.create({
           data: {
@@ -463,23 +464,25 @@ class AvailabilityWindowService {
           });
         }
 
-        const full = await tx.availabilityWindow.findUnique({
-          where: { id: window.id },
-          include: {
-            windowServices: {
-              include: {
-                mentorService: {
-                  include: { service: true },
-                },
-              },
-            },
-          },
-        });
-
-        createdWindows.push(full);
+        ids.push(window.id);
       }
 
-      return createdWindows;
+      return ids;
+    }, { timeout: 15000 });
+
+    // Re-fetch full objects outside the transaction to avoid timeout
+    const created = await prisma.availabilityWindow.findMany({
+      where: { id: { in: createdIds } },
+      include: {
+        windowServices: {
+          include: {
+            mentorService: {
+              include: { service: true },
+            },
+          },
+        },
+      },
+      orderBy: { startTime: 'asc' },
     });
 
     return created.map(this._mapWindow);
@@ -644,7 +647,7 @@ class AvailabilityWindowService {
       services: (w.windowServices || []).map((ws) => ({
         windowServiceId: ws.id,
         mentorServiceId: ws.mentorServiceId,
-        serviceName: ws.mentorService?.service?.name,
+        serviceName: ws.mentorService?.title || ws.mentorService?.service?.name,
         serviceSlug: ws.mentorService?.service?.slug,
         price: ws.mentorService?.price,
         durationMinutes: ws.mentorService?.durationMinutes,
