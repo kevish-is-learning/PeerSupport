@@ -51,6 +51,10 @@ function mapBooking(b) {
     purposeOfCall: b.purposeOfCall,
     notes: b.notes,
     cancelledReason: b.cancelledReason,
+    menteePhone: b.menteePhone,
+    menteeEmail: b.menteeEmail,
+    discussionTopic: b.discussionTopic,
+    specificQuestions: b.specificQuestions,
     service: b.mentorService
       ? {
           id: b.mentorService.id,
@@ -149,6 +153,10 @@ class BookingServiceV2 {
       endTime: endTimeUtc,
       purposeOfCall: data.purposeOfCall,
       notes: data.notes,
+      menteePhone: data.menteePhone,
+      menteeEmail: data.menteeEmail,
+      discussionTopic: data.discussionTopic,
+      specificQuestions: data.specificQuestions,
     });
 
     // Create payment record

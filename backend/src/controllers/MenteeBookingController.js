@@ -17,7 +17,9 @@ class MenteeBookingController {
               },
             },
           },
-                  },
+          mentorService: true,
+          paymentOrder: true,
+        },
       });
 
       const now = new Date();
@@ -29,12 +31,17 @@ class MenteeBookingController {
           id: b.id,
           mentorName: b.mentorProfile.user.name,
           mentorPicture: b.mentorProfile.user.profilePicture,
-          serviceName: b.mentorService?.service?.name || 'Session',
+          serviceName: b.mentorService?.label || b.mentorService?.serviceName || 'Session',
           startTime: b.startTime,
           endTime: b.endTime,
           durationMinutes: b.mentorService?.durationMinutes,
           meetingLink: b.meetingLink,
           status: b.status,
+          discussionTopic: b.discussionTopic,
+          specificQuestions: b.specificQuestions,
+          menteeEmail: b.menteeEmail,
+          menteePhone: b.menteePhone,
+          price: b.paymentOrder?.amount || b.mentorService?.price || 0,
         };
 
         if (new Date(b.startTime) > now && b.status !== 'CANCELLED') {

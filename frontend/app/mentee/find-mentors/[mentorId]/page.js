@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import {
-  ArrowLeft, Star, BookOpen, Clock, ChevronDown, ChevronUp,
-  Calendar, GraduationCap, Briefcase, CalendarCheck, Loader2, Check,
+  ArrowLeft, Star, GraduationCap, Briefcase, BookOpen, Clock, CalendarCheck
 } from "lucide-react";
-import { publicMentorApi, v2Api, resolveUploadUrl } from "../../../../lib/api";
-import useAuthStore from "../../../../store/useAuthStore";
-
-/* ─── Helpers ──────────────────────────────────────────────── */
+import { publicMentorApi, resolveUploadUrl } from "../../../../lib/api";
 function parseWorkExp(raw) {
   if (!raw) return null;
   const parts = raw.split("|");
@@ -31,53 +27,6 @@ function formatSlotTime(iso) {
   return d.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true });
 }
 
-function getAvailableDates(availability, serviceId, count = 14) {
-  const dates = [];
-  const today = new Date();
-  
-  // Filter availability windows for this specific service
-  const relevantWindows = availability?.filter(w => 
-    w.services?.some(s => s.mentorServiceId === serviceId) || w.services?.length === 0
-  ) || [];
-
-  if (relevantWindows.length === 0) return []; // No availability at all for this service
-
-  const dayOfWeekMap = {
-    0: 'SUNDAY',
-    1: 'MONDAY',
-    2: 'TUESDAY',
-    3: 'WEDNESDAY',
-    4: 'THURSDAY',
-    5: 'FRIDAY',
-    6: 'SATURDAY'
-  };
-
-  const d = new Date(today);
-  d.setHours(0, 0, 0, 0);
-
-  // Look ahead up to 60 days to find `count` dates
-  let lookAhead = 0;
-  while (dates.length < count && lookAhead < 60) {
-    const dStr = d.toLocaleDateString("en-CA"); // YYYY-MM-DD in local time
-    const dayStr = dayOfWeekMap[d.getDay()];
-
-    const isAvailable = relevantWindows.some(w => {
-      if (w.specificDate === dStr) return true;
-      if (w.dayOfWeek === dayStr && !w.specificDate) return true;
-      return false;
-    });
-
-    if (isAvailable) {
-      dates.push(new Date(d));
-    }
-
-    d.setDate(d.getDate() + 1);
-    lookAhead++;
-  }
-
-  return dates;
-}
-
 /* ─── Loading Skeleton ─────────────────────────────────────── */
 function LoadingSkeleton() {
   return (
@@ -95,220 +44,7 @@ function LoadingSkeleton() {
 }
 
 /* ─── Service Accordion ────────────────────────────────────── */
-function ServiceAccordion({ service, availability, isOpen, onToggle, mentorProfileId, user, router }) {
-  const [dates] = useState(() => getAvailableDates(availability, service.serviceId || service.id, 14));
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [slots, setSlots] = useState([]);
-  const [selectedSlot, setSelectedSlot] = useState(null);
-  const [slotsLoading, setSlotsLoading] = useState(false);
-  const [booking, setBooking] = useState(false);
-
-  const fetchSlots = useCallback(async (date) => {
-    setSlotsLoading(true);
-    setSlots([]);
-    setSelectedSlot(null);
-    try {
-      const dateStr = date.toLocaleDateString("en-CA");
-      const res = await v2Api.getSlots(mentorProfileId, {
-        serviceId: service.serviceId || service.id,
-        date: dateStr,
-      });
-      setSlots(res?.data?.slots || []);
-    } catch {
-      setSlots([]);
-    } finally {
-      setSlotsLoading(false);
-    }
-  }, [mentorProfileId, service]);
-
-  const handleDateSelect = (date) => {
-    setSelectedDate(date);
-    fetchSlots(date);
-  };
-
-  const handleContinueToBook = async () => {
-    if (!selectedSlot || !user) {
-      if (!user) router.push("/auth?mode=login");
-      return;
-    }
-    setBooking(true);
-    try {
-      const res = await v2Api.createBooking({
-        mentorProfileId,
-        mentorServiceId: service.id,
-        startTime: selectedSlot.startTime,
-        endTime: selectedSlot.endTime,
-      });
-      const { booking: bk, order } = res?.data;
-      if (!bk?.id || !order?.orderId) throw new Error("Failed to initiate booking");
-
-      const options = {
-        key: order.keyId,
-        amount: order.amount,
-        currency: order.currency,
-        name: "Peer Support",
-        description: service.serviceName || service.label,
-        order_id: order.orderId,
-        prefill: order.prefill,
-        theme: { color: "#7C3AED" },
-        handler: async (response) => {
-          try {
-            const { paymentApi } = await import("../../../../lib/api");
-            await paymentApi.verify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              bookingId: bk.id,
-            });
-            toast.success("Booking confirmed! 🎉");
-            setSelectedSlot(null);
-            if (selectedDate) fetchSlots(selectedDate);
-          } catch {
-            toast.error("Payment verification failed.");
-          }
-        },
-        modal: {
-          ondismiss: async () => {
-            const { paymentApi } = await import("../../../../lib/api");
-            await paymentApi.handleFailure({ razorpay_order_id: order.orderId, bookingId: bk.id }).catch(() => {});
-            toast.error("Payment cancelled. Slot released.");
-          },
-        },
-      };
-
-      if (typeof window !== "undefined" && window.Razorpay) {
-        const rzp = new window.Razorpay(options);
-        rzp.on("payment.failed", async (r) => {
-          const { paymentApi } = await import("../../../../lib/api");
-          await paymentApi.handleFailure({ razorpay_order_id: order.orderId, bookingId: bk.id }).catch(() => {});
-          toast.error(r.error?.description || "Payment failed.");
-        });
-        rzp.open();
-      } else {
-        toast.error("Payment gateway not loaded. Refresh the page.");
-      }
-    } catch (e) {
-      if (e.status === 409) {
-        toast.error("Slot just booked by someone else.");
-        if (selectedDate) fetchSlots(selectedDate);
-      } else {
-        toast.error(e.message || "Booking failed");
-      }
-    } finally {
-      setBooking(false);
-    }
-  };
-
-  const dur = service.durationMinutes || 60;
-  const price = service.pricePerSession || service.price;
-
-  return (
-    <div className="rounded-xl border-2 border-gray-200 bg-white overflow-hidden transition-all hover:border-gray-300">
-      {/* ── Collapsed header ── */}
-      <button
-        onClick={onToggle}
-        className="flex w-full items-center justify-between p-5 text-left cursor-pointer"
-      >
-        <div>
-          <h3 className="text-base font-bold text-gray-900">{service.serviceName || service.label}</h3>
-          <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
-            <span className="font-semibold text-[#7C3AED]">
-              ₹ {price ? Math.round(price).toLocaleString("en-IN") : "—"}
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" /> {dur === 60 ? "1 hour" : `${dur} min`}
-            </span>
-          </div>
-        </div>
-        {isOpen ? <ChevronUp className="h-5 w-5 text-gray-400" /> : <ChevronDown className="h-5 w-5 text-gray-400" />}
-      </button>
-
-      {/* ── Expanded body ── */}
-      {isOpen && (
-        <div className="border-t border-dashed border-gray-200 px-5 pb-5 pt-4 space-y-5">
-
-          {/* ── Select a Date ── */}
-          <div>
-            <p className="mb-3 text-sm font-bold text-gray-900">Select a Date</p>
-            {dates.length === 0 ? (
-              <p className="text-sm text-gray-400 italic">No upcoming dates available</p>
-            ) : (
-              <div className="grid grid-cols-2 gap-2">
-                {dates.map((date) => {
-                  const isSel = selectedDate && date.toDateString() === selectedDate.toDateString();
-                  const label = date.toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "short" });
-                  return (
-                    <button
-                      key={date.toISOString()}
-                      onClick={() => handleDateSelect(date)}
-                      className={`rounded-xl border-2 px-4 py-2.5 text-sm font-bold transition-all cursor-pointer ${
-                        isSel
-                          ? "border-[#7C3AED] bg-[#7C3AED] text-white"
-                          : "border-gray-200 bg-white text-gray-700 hover:border-[#7C3AED]"
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* ── Select a Time Slot ── */}
-          {selectedDate && (
-            <div>
-              <p className="mb-3 text-sm font-bold text-gray-900">Select a Time Slot</p>
-              {slotsLoading ? (
-                <div className="flex h-20 items-center justify-center">
-                  <Loader2 className="animate-spin text-[#7C3AED]" size={24} />
-                </div>
-              ) : slots.length === 0 ? (
-                <p className="text-sm text-gray-400 italic">No slots available for this date</p>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  {slots.map((slot, idx) => {
-                    const isSel = selectedSlot?.startTime === slot.startTime;
-                    return (
-                      <button
-                        key={`${slot.startTime}-${idx}`}
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`rounded-xl border-2 px-4 py-2.5 text-sm font-bold transition-all cursor-pointer ${
-                          isSel
-                            ? "border-[#16A34A] bg-[#16A34A] text-white"
-                            : "border-gray-200 bg-white text-gray-700 hover:border-[#16A34A]"
-                        }`}
-                      >
-                        {formatSlotTime(slot.startTime)}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── Continue to Book Session CTA ── */}
-          {selectedSlot && (
-            <button
-              onClick={handleContinueToBook}
-              disabled={booking}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7C3AED] py-3.5 text-sm font-extrabold text-white transition-all hover:bg-[#6D28D9] disabled:opacity-50 cursor-pointer"
-            >
-              {booking ? (
-                <Loader2 className="animate-spin" size={16} />
-              ) : (
-                <CalendarCheck className="h-4 w-4" />
-              )}
-              {booking ? "Processing..." : "Continue to Book Session"}
-            </button>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
+import MentorBookingPage from "../../../../components/mentee/v2/MentorBookingPage";
 /* ─── Review Card ──────────────────────────────────────────── */
 function ReviewCard({ review }) {
   return (
@@ -345,11 +81,8 @@ function ReviewCard({ review }) {
 /* ─── Main Page ────────────────────────────────────────────── */
 export default function MentorProfilePage() {
   const params = useParams();
-  const router = useRouter();
-  const { user } = useAuthStore();
   const [mentor, setMentor] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [openService, setOpenService] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -488,32 +221,8 @@ export default function MentorProfilePage() {
         {/* ══════════ BOTTOM: BOOK + REVIEWS ══════════ */}
         <div id="book-section" className="mt-6 grid gap-6 lg:grid-cols-[3fr_2fr]">
           {/* ── Book a Session ── */}
-          <div className="rounded-2xl border-2 border-black bg-white p-5 shadow-[5px_5px_0px_0px_#C4B5FD]">
-            <h2 className="mb-1 flex items-center gap-2 text-lg font-black text-gray-900">
-              <Calendar className="h-5 w-5" /> Book a Session
-            </h2>
-            <p className="mb-4 text-sm text-gray-400">Select a service to view available dates and time slots</p>
-
-            {services.length === 0 ? (
-              <div className="rounded-xl border-2 border-gray-200 bg-gray-50 p-8 text-center">
-                <p className="text-sm font-bold text-gray-400">No services available yet</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {services.map((svc) => (
-                  <ServiceAccordion
-                    key={svc.id}
-                    service={svc}
-                    availability={mentor.availability}
-                    isOpen={openService === svc.id}
-                    onToggle={() => setOpenService(openService === svc.id ? null : svc.id)}
-                    mentorProfileId={mentor.id}
-                    user={user}
-                    router={router}
-                  />
-                ))}
-              </div>
-            )}
+          <div className="w-full">
+            <MentorBookingPage mentorProfileId={mentor.id} />
           </div>
 
           {/* ── Reviews & Ratings ── */}

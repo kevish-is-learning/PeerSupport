@@ -8640,6 +8640,10 @@ export namespace Prisma {
     meetingLink: string | null
     purposeOfCall: string | null
     notes: string | null
+    menteePhone: string | null
+    menteeEmail: string | null
+    discussionTopic: string | null
+    specificQuestions: string | null
     cancelledReason: string | null
     rescheduledFromId: string | null
     createdAt: Date | null
@@ -8658,6 +8662,10 @@ export namespace Prisma {
     meetingLink: string | null
     purposeOfCall: string | null
     notes: string | null
+    menteePhone: string | null
+    menteeEmail: string | null
+    discussionTopic: string | null
+    specificQuestions: string | null
     cancelledReason: string | null
     rescheduledFromId: string | null
     createdAt: Date | null
@@ -8676,6 +8684,10 @@ export namespace Prisma {
     meetingLink: number
     purposeOfCall: number
     notes: number
+    menteePhone: number
+    menteeEmail: number
+    discussionTopic: number
+    specificQuestions: number
     cancelledReason: number
     rescheduledFromId: number
     createdAt: number
@@ -8696,6 +8708,10 @@ export namespace Prisma {
     meetingLink?: true
     purposeOfCall?: true
     notes?: true
+    menteePhone?: true
+    menteeEmail?: true
+    discussionTopic?: true
+    specificQuestions?: true
     cancelledReason?: true
     rescheduledFromId?: true
     createdAt?: true
@@ -8714,6 +8730,10 @@ export namespace Prisma {
     meetingLink?: true
     purposeOfCall?: true
     notes?: true
+    menteePhone?: true
+    menteeEmail?: true
+    discussionTopic?: true
+    specificQuestions?: true
     cancelledReason?: true
     rescheduledFromId?: true
     createdAt?: true
@@ -8732,6 +8752,10 @@ export namespace Prisma {
     meetingLink?: true
     purposeOfCall?: true
     notes?: true
+    menteePhone?: true
+    menteeEmail?: true
+    discussionTopic?: true
+    specificQuestions?: true
     cancelledReason?: true
     rescheduledFromId?: true
     createdAt?: true
@@ -8823,6 +8847,10 @@ export namespace Prisma {
     meetingLink: string | null
     purposeOfCall: string | null
     notes: string | null
+    menteePhone: string | null
+    menteeEmail: string | null
+    discussionTopic: string | null
+    specificQuestions: string | null
     cancelledReason: string | null
     rescheduledFromId: string | null
     createdAt: Date
@@ -8858,6 +8886,10 @@ export namespace Prisma {
     meetingLink?: boolean
     purposeOfCall?: boolean
     notes?: boolean
+    menteePhone?: boolean
+    menteeEmail?: boolean
+    discussionTopic?: boolean
+    specificQuestions?: boolean
     cancelledReason?: boolean
     rescheduledFromId?: boolean
     createdAt?: boolean
@@ -8882,6 +8914,10 @@ export namespace Prisma {
     meetingLink?: boolean
     purposeOfCall?: boolean
     notes?: boolean
+    menteePhone?: boolean
+    menteeEmail?: boolean
+    discussionTopic?: boolean
+    specificQuestions?: boolean
     cancelledReason?: boolean
     rescheduledFromId?: boolean
     createdAt?: boolean
@@ -8903,6 +8939,10 @@ export namespace Prisma {
     meetingLink?: boolean
     purposeOfCall?: boolean
     notes?: boolean
+    menteePhone?: boolean
+    menteeEmail?: boolean
+    discussionTopic?: boolean
+    specificQuestions?: boolean
     cancelledReason?: boolean
     rescheduledFromId?: boolean
     createdAt?: boolean
@@ -8951,6 +8991,19 @@ export namespace Prisma {
       meetingLink: string | null
       purposeOfCall: string | null
       notes: string | null
+      /**
+       * Contact info collected during booking
+       */
+      menteePhone: string | null
+      menteeEmail: string | null
+      /**
+       * What the mentee wants to discuss
+       */
+      discussionTopic: string | null
+      /**
+       * Specific questions for the mentor
+       */
+      specificQuestions: string | null
       cancelledReason: string | null
       rescheduledFromId: string | null
       createdAt: Date
@@ -9365,6 +9418,10 @@ export namespace Prisma {
     readonly meetingLink: FieldRef<"Booking", 'String'>
     readonly purposeOfCall: FieldRef<"Booking", 'String'>
     readonly notes: FieldRef<"Booking", 'String'>
+    readonly menteePhone: FieldRef<"Booking", 'String'>
+    readonly menteeEmail: FieldRef<"Booking", 'String'>
+    readonly discussionTopic: FieldRef<"Booking", 'String'>
+    readonly specificQuestions: FieldRef<"Booking", 'String'>
     readonly cancelledReason: FieldRef<"Booking", 'String'>
     readonly rescheduledFromId: FieldRef<"Booking", 'String'>
     readonly createdAt: FieldRef<"Booking", 'DateTime'>
@@ -14845,6 +14902,10 @@ export namespace Prisma {
     meetingLink: 'meetingLink',
     purposeOfCall: 'purposeOfCall',
     notes: 'notes',
+    menteePhone: 'menteePhone',
+    menteeEmail: 'menteeEmail',
+    discussionTopic: 'discussionTopic',
+    specificQuestions: 'specificQuestions',
     cancelledReason: 'cancelledReason',
     rescheduledFromId: 'rescheduledFromId',
     createdAt: 'createdAt',
@@ -15738,6 +15799,10 @@ export namespace Prisma {
     meetingLink?: StringNullableFilter<"Booking"> | string | null
     purposeOfCall?: StringNullableFilter<"Booking"> | string | null
     notes?: StringNullableFilter<"Booking"> | string | null
+    menteePhone?: StringNullableFilter<"Booking"> | string | null
+    menteeEmail?: StringNullableFilter<"Booking"> | string | null
+    discussionTopic?: StringNullableFilter<"Booking"> | string | null
+    specificQuestions?: StringNullableFilter<"Booking"> | string | null
     cancelledReason?: StringNullableFilter<"Booking"> | string | null
     rescheduledFromId?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
@@ -15762,6 +15827,10 @@ export namespace Prisma {
     meetingLink?: SortOrderInput | SortOrder
     purposeOfCall?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    menteePhone?: SortOrderInput | SortOrder
+    menteeEmail?: SortOrderInput | SortOrder
+    discussionTopic?: SortOrderInput | SortOrder
+    specificQuestions?: SortOrderInput | SortOrder
     cancelledReason?: SortOrderInput | SortOrder
     rescheduledFromId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -15789,6 +15858,10 @@ export namespace Prisma {
     meetingLink?: StringNullableFilter<"Booking"> | string | null
     purposeOfCall?: StringNullableFilter<"Booking"> | string | null
     notes?: StringNullableFilter<"Booking"> | string | null
+    menteePhone?: StringNullableFilter<"Booking"> | string | null
+    menteeEmail?: StringNullableFilter<"Booking"> | string | null
+    discussionTopic?: StringNullableFilter<"Booking"> | string | null
+    specificQuestions?: StringNullableFilter<"Booking"> | string | null
     cancelledReason?: StringNullableFilter<"Booking"> | string | null
     rescheduledFromId?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
@@ -15813,6 +15886,10 @@ export namespace Prisma {
     meetingLink?: SortOrderInput | SortOrder
     purposeOfCall?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
+    menteePhone?: SortOrderInput | SortOrder
+    menteeEmail?: SortOrderInput | SortOrder
+    discussionTopic?: SortOrderInput | SortOrder
+    specificQuestions?: SortOrderInput | SortOrder
     cancelledReason?: SortOrderInput | SortOrder
     rescheduledFromId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -15837,6 +15914,10 @@ export namespace Prisma {
     meetingLink?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     purposeOfCall?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     notes?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    menteePhone?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    menteeEmail?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    discussionTopic?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    specificQuestions?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     cancelledReason?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     rescheduledFromId?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
@@ -16893,6 +16974,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -16917,6 +17002,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -16935,6 +17024,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16959,6 +17052,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16980,6 +17077,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -16995,6 +17096,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17013,6 +17118,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18207,6 +18316,10 @@ export namespace Prisma {
     meetingLink?: SortOrder
     purposeOfCall?: SortOrder
     notes?: SortOrder
+    menteePhone?: SortOrder
+    menteeEmail?: SortOrder
+    discussionTopic?: SortOrder
+    specificQuestions?: SortOrder
     cancelledReason?: SortOrder
     rescheduledFromId?: SortOrder
     createdAt?: SortOrder
@@ -18225,6 +18338,10 @@ export namespace Prisma {
     meetingLink?: SortOrder
     purposeOfCall?: SortOrder
     notes?: SortOrder
+    menteePhone?: SortOrder
+    menteeEmail?: SortOrder
+    discussionTopic?: SortOrder
+    specificQuestions?: SortOrder
     cancelledReason?: SortOrder
     rescheduledFromId?: SortOrder
     createdAt?: SortOrder
@@ -18243,6 +18360,10 @@ export namespace Prisma {
     meetingLink?: SortOrder
     purposeOfCall?: SortOrder
     notes?: SortOrder
+    menteePhone?: SortOrder
+    menteeEmail?: SortOrder
+    discussionTopic?: SortOrder
+    specificQuestions?: SortOrder
     cancelledReason?: SortOrder
     rescheduledFromId?: SortOrder
     createdAt?: SortOrder
@@ -19928,6 +20049,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -19950,6 +20075,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -20142,6 +20271,10 @@ export namespace Prisma {
     meetingLink?: StringNullableFilter<"Booking"> | string | null
     purposeOfCall?: StringNullableFilter<"Booking"> | string | null
     notes?: StringNullableFilter<"Booking"> | string | null
+    menteePhone?: StringNullableFilter<"Booking"> | string | null
+    menteeEmail?: StringNullableFilter<"Booking"> | string | null
+    discussionTopic?: StringNullableFilter<"Booking"> | string | null
+    specificQuestions?: StringNullableFilter<"Booking"> | string | null
     cancelledReason?: StringNullableFilter<"Booking"> | string | null
     rescheduledFromId?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
@@ -20399,6 +20532,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -20421,6 +20558,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -20817,6 +20958,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -20839,6 +20984,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -21758,6 +21907,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -21781,6 +21934,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -21833,6 +21990,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21856,6 +22017,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21978,6 +22143,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -22001,6 +22170,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -22095,6 +22268,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22118,6 +22295,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22202,6 +22383,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -22225,6 +22410,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -22364,6 +22553,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22387,6 +22580,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22652,6 +22849,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -22676,6 +22877,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22698,6 +22903,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22718,6 +22927,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22785,6 +22998,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -22901,6 +23118,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22923,6 +23144,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22943,6 +23168,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23044,6 +23273,10 @@ export namespace Prisma {
     meetingLink?: string | null
     purposeOfCall?: string | null
     notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
     cancelledReason?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
@@ -23077,6 +23310,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23099,6 +23336,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23119,6 +23360,10 @@ export namespace Prisma {
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

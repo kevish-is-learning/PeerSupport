@@ -59,6 +59,10 @@ export async function checkConflictWithLock(tx, mentorProfileId, startTime, endT
  * @param {Date}   params.endTime
  * @param {string} [params.purposeOfCall]
  * @param {string} [params.notes]
+ * @param {string} [params.menteePhone]
+ * @param {string} [params.menteeEmail]
+ * @param {string} [params.discussionTopic]
+ * @param {string} [params.specificQuestions]
  * @returns {Promise<Object>} The created booking
  */
 export async function createBookingWithGuard(params) {
@@ -70,6 +74,10 @@ export async function createBookingWithGuard(params) {
     endTime,
     purposeOfCall,
     notes,
+    menteePhone,
+    menteeEmail,
+    discussionTopic,
+    specificQuestions,
   } = params;
 
   return prisma.$transaction(async (tx) => {
@@ -99,6 +107,10 @@ export async function createBookingWithGuard(params) {
         status: 'PENDING',
         purposeOfCall,
         notes,
+        menteePhone,
+        menteeEmail,
+        discussionTopic,
+        specificQuestions,
       },
     });
 

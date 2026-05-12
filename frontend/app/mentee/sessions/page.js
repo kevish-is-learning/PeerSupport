@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { Calendar as CalendarIcon, Clock, Video, MapPin, Star } from "lucide-react";
 import { menteeBookingApi, resolveUploadUrl } from "../../../lib/api";
 import { format } from "date-fns";
+import SessionDetailsModal from "../../../components/mentee/v2/SessionDetailsModal";
 
-const SessionCard = ({ session, isUpcoming }) => (
+const SessionCard = ({ session, isUpcoming, onDetailsClick }) => (
   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-xl border border-gray-200 bg-white p-4">
     <div className="flex items-center gap-4 w-full sm:w-auto">
       <div className="h-16 w-16 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shrink-0">
@@ -53,7 +54,7 @@ const SessionCard = ({ session, isUpcoming }) => (
         <>
           <button
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl border-2 border-black bg-white px-4 py-2 text-sm font-bold shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
-            onClick={() => alert("Details coming soon.")}
+            onClick={() => onDetailsClick?.(session)}
           >
             <MapPin className="h-4 w-4" />
             Details
@@ -72,7 +73,7 @@ const SessionCard = ({ session, isUpcoming }) => (
       ) : (
         <button
           className="w-full sm:w-auto rounded-xl border-2 border-black bg-white px-6 py-2 text-sm font-bold shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
-          onClick={() => alert("Notes feature coming soon.")}
+          onClick={() => onDetailsClick?.(session)}
         >
           View Notes
         </button>
@@ -85,6 +86,7 @@ export default function MenteeSessionsPage() {
   const [sessionsData, setSessionsData] = useState({ upcoming: [], past: [] });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedSession, setSelectedSession] = useState(null);
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -121,7 +123,7 @@ export default function MenteeSessionsPage() {
   const { upcoming, past } = sessionsData;
 
   return (
-    <div className="mx-auto w-full max-w-4xl pb-10">
+    <div className="mx-auto w-full max-w-7xl p-10">
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900">My Sessions</h1>
         <p className="mt-1 text-sm font-medium text-gray-500">Manage your upcoming and past mentoring sessions</p>
@@ -138,7 +140,7 @@ export default function MenteeSessionsPage() {
             {upcoming.length > 0 ? (
               <div className="space-y-4">
                 {upcoming.map((session) => (
-                  <SessionCard key={session.id} session={session} isUpcoming={true} />
+                  <SessionCard key={session.id} session={session} isUpcoming={true} onDetailsClick={setSelectedSession} />
                 ))}
               </div>
             ) : (
@@ -159,7 +161,7 @@ export default function MenteeSessionsPage() {
             {past.length > 0 ? (
               <div className="space-y-4">
                 {past.map((session) => (
-                  <SessionCard key={session.id} session={session} isUpcoming={false} />
+                  <SessionCard key={session.id} session={session} isUpcoming={false} onDetailsClick={setSelectedSession} />
                 ))}
               </div>
             ) : (
@@ -170,6 +172,9 @@ export default function MenteeSessionsPage() {
           </div>
         </div>
       </div>
+      {selectedSession && (
+        <SessionDetailsModal session={selectedSession} onClose={() => setSelectedSession(null)} />
+      )}
     </div>
   );
 }

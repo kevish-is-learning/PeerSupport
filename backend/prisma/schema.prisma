@@ -313,6 +313,16 @@ model Booking {
 
   notes String?
 
+  /// Contact info collected during booking
+  menteePhone String?
+  menteeEmail String?
+
+  /// What the mentee wants to discuss
+  discussionTopic String?
+
+  /// Specific questions for the mentor
+  specificQuestions String?
+
   cancelledReason String?
 
   rescheduledFromId String?

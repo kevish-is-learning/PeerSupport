@@ -115,6 +115,11 @@ export const createBookingSchema = z.object({
   endTime: z.string().min(1, 'End time is required'),       // IST datetime string
   purposeOfCall: z.string().max(1000).optional(),
   notes: z.string().max(2000).optional(),
+  // 3-step form fields
+  menteePhone: z.string().min(10, 'Phone number must be at least 10 digits').max(15).optional(),
+  menteeEmail: z.string().email('Invalid email address').optional(),
+  discussionTopic: z.string().min(10, 'Please describe what you want to discuss (min 10 characters)').max(1000).optional(),
+  specificQuestions: z.string().max(2000).optional(),
 });
 
 // ─── PATCH /bookings/:id/reschedule ──────────────────────────────────────────
