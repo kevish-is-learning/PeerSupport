@@ -1,19 +1,35 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { v2Api } from "../../../lib/api";
 import { toast } from "sonner";
 import {
-  Loader2, Plus, Trash2, Save, X, Clock, ChevronLeft, ChevronRight, CalendarDays,
+  Loader2, Plus, Trash2, Save, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
 
-const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-const DAY_LABELS = { MONDAY: "Mon", TUESDAY: "Tue", WEDNESDAY: "Wed", THURSDAY: "Thu", FRIDAY: "Fri", SATURDAY: "Sat", SUNDAY: "Sun" };
-const DAY_FULL = { MONDAY: "Monday", TUESDAY: "Tuesday", WEDNESDAY: "Wednesday", THURSDAY: "Thursday", FRIDAY: "Friday", SATURDAY: "Saturday", SUNDAY: "Sunday" };
+function formatLocalDate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
-function getDayOfWeek(date) {
-  const map = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
-  return map[date.getDay()];
+function isPastDate(date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(date);
+  target.setHours(0, 0, 0, 0);
+  return target < today;
+}
+
+function formatDisplayDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(`${dateStr}T00:00:00`);
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function generateCalendarDays(year, month) {
@@ -35,7 +51,7 @@ export default function AvailabilityCalendar() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   // Calendar state
   const now = new Date();
@@ -64,8 +80,8 @@ export default function AvailabilityCalendar() {
     }
   };
 
-  // Which days-of-week have windows
-  const activeDays = new Set(windows.map((w) => w.dayOfWeek).filter(Boolean));
+  // Which dates have windows
+  const activeDates = new Set(windows.map((w) => w.specificDate).filter(Boolean));
 
   const prevMonth = () => {
     if (calMonth === 0) { setCalYear((y) => y - 1); setCalMonth(11); }
@@ -80,10 +96,16 @@ export default function AvailabilityCalendar() {
   const calDays = generateCalendarDays(calYear, calMonth);
   const monthLabel = new Date(calYear, calMonth).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
-  const openModal = (day) => {
-    setSelectedDay(day);
-    // Load existing windows for this day
-    const existing = windows.filter((w) => w.dayOfWeek === day);
+  const openModal = (date) => {
+    if (isPastDate(date)) {
+      toast.error("You can't set availability in the past");
+      return;
+    }
+
+    const dateStr = formatLocalDate(date);
+    setSelectedDate(dateStr);
+    // Load existing windows for this date
+    const existing = windows.filter((w) => w.specificDate === dateStr);
     if (existing.length > 0) {
       setFormWindows(
         existing.map((w) => ({
@@ -136,18 +158,23 @@ export default function AvailabilityCalendar() {
 
     setSaving(true);
     try {
-      // Build the full windows array: keep non-selected-day windows + add new ones
+      if (!selectedDate) {
+        toast.error("Please select a date");
+        return;
+      }
+
+      // Build the full windows array: keep other dates + add new ones
       const otherWindows = windows
-        .filter((w) => w.dayOfWeek !== selectedDay)
+        .filter((w) => w.specificDate !== selectedDate)
         .map((w) => ({
-          dayOfWeek: w.dayOfWeek,
+          specificDate: w.specificDate,
           startTime: w.startTime,
           endTime: w.endTime,
           mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
         }));
 
       const newWindows = formWindows.map((fw) => ({
-        dayOfWeek: selectedDay,
+        specificDate: selectedDate,
         startTime: fw.startTime,
         endTime: fw.endTime,
         mentorServiceIds: fw.mentorServiceIds,
@@ -157,7 +184,7 @@ export default function AvailabilityCalendar() {
 
       const res = await v2Api.upsertAvailability(allWindows);
       setWindows(res?.data?.windows || []);
-      toast.success(`${DAY_FULL[selectedDay]} availability saved`);
+      toast.success(`${formatDisplayDate(selectedDate)} availability saved`);
       setModalOpen(false);
     } catch (e) {
       if (e.status === 409) {
@@ -173,10 +200,15 @@ export default function AvailabilityCalendar() {
   const removeDay = async () => {
     setSaving(true);
     try {
+      if (!selectedDate) {
+        toast.error("Please select a date");
+        return;
+      }
+
       const otherWindows = windows
-        .filter((w) => w.dayOfWeek !== selectedDay)
+        .filter((w) => w.specificDate !== selectedDate)
         .map((w) => ({
-          dayOfWeek: w.dayOfWeek,
+          specificDate: w.specificDate,
           startTime: w.startTime,
           endTime: w.endTime,
           mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
@@ -192,7 +224,7 @@ export default function AvailabilityCalendar() {
 
       const res = await v2Api.upsertAvailability(otherWindows);
       setWindows(res?.data?.windows || []);
-      toast.success(`${DAY_FULL[selectedDay]} availability removed`);
+      toast.success(`${formatDisplayDate(selectedDate)} availability removed`);
       setModalOpen(false);
     } catch (e) {
       toast.error(e.message || "Failed to remove availability");
@@ -214,7 +246,7 @@ export default function AvailabilityCalendar() {
       <div className="mb-6">
         <h2 className="text-2xl font-extrabold tracking-tight text-[#111]">Availability</h2>
         <p className="mt-1 text-sm font-medium text-gray-500">
-          Click a date or day to set your availability windows
+          Click a date to set your availability windows
         </p>
       </div>
 
@@ -250,8 +282,9 @@ export default function AvailabilityCalendar() {
               return <div key={`pad-${idx}`} className="h-12" />;
             }
 
-            const dayOfWeek = getDayOfWeek(date);
-            const hasAvailability = activeDays.has(dayOfWeek);
+            const dateStr = formatLocalDate(date);
+            const hasAvailability = activeDates.has(dateStr);
+            const isPast = isPastDate(date);
             const isToday =
               date.getDate() === now.getDate() &&
               date.getMonth() === now.getMonth() &&
@@ -259,13 +292,14 @@ export default function AvailabilityCalendar() {
 
             return (
               <button
-                key={date.toISOString()}
-                onClick={() => openModal(dayOfWeek)}
+                key={dateStr}
+                onClick={() => openModal(date)}
                 className={`relative flex h-12 items-center justify-center rounded-lg border-2 text-sm font-bold transition-all hover:-translate-y-0.5 ${
                   hasAvailability
                     ? "border-[#5061E4] bg-[#EEF0FF] text-[#5061E4] hover:bg-[#DDE1FF]"
                     : "border-gray-200 bg-white text-gray-600 hover:border-gray-400"
-                } ${isToday ? "ring-2 ring-[#F59E0B] ring-offset-1" : ""}`}
+                } ${isToday ? "ring-2 ring-[#F59E0B] ring-offset-1" : ""} ${isPast ? "opacity-40" : ""}`}
+                disabled={isPast}
               >
                 {date.getDate()}
                 {hasAvailability && (
@@ -277,34 +311,6 @@ export default function AvailabilityCalendar() {
         </div>
       </div>
 
-      {/* Active days summary */}
-      <div className="mt-6 grid grid-cols-7 gap-2">
-        {DAYS.map((day) => {
-          const dayWindows = windows.filter((w) => w.dayOfWeek === day);
-          const isActive = dayWindows.length > 0;
-
-          return (
-            <button
-              key={day}
-              onClick={() => openModal(day)}
-              className={`rounded-xl border-[3px] border-black p-3 text-center transition-all hover:-translate-y-0.5 ${
-                isActive ? "bg-[#EEF0FF]" : "bg-gray-50"
-              }`}
-              style={{ boxShadow: isActive ? "3px 3px 0 0 #5061E4" : "3px 3px 0 0 #d1d5db" }}
-            >
-              <p className="text-xs font-extrabold">{DAY_LABELS[day]}</p>
-              {isActive ? (
-                <p className="mt-1 text-[10px] font-semibold text-[#5061E4]">
-                  {dayWindows.length} window{dayWindows.length > 1 ? "s" : ""}
-                </p>
-              ) : (
-                <p className="mt-1 text-[10px] font-semibold text-gray-400">—</p>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
       {/* Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -313,7 +319,9 @@ export default function AvailabilityCalendar() {
             style={{ boxShadow: "8px 8px 0 0 #5061E4" }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-extrabold">{DAY_FULL[selectedDay]} Availability</h3>
+              <h3 className="text-xl font-extrabold">
+                {formatDisplayDate(selectedDate)} Availability
+              </h3>
               <button onClick={() => setModalOpen(false)} className="rounded-lg border-2 border-black p-1.5 hover:bg-gray-100">
                 <X size={16} />
               </button>
@@ -400,7 +408,7 @@ export default function AvailabilityCalendar() {
                 disabled={saving}
                 className="flex items-center gap-2 rounded-xl border-2 border-red-300 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50"
               >
-                <Trash2 size={14} /> Remove Day
+                <Trash2 size={14} /> Remove Date
               </button>
 
               <button
