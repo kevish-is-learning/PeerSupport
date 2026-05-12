@@ -18,15 +18,14 @@ class PublicMentorController {
           },
           mentorServices: {
             where: { isActive: true },
-            include: { service: true },
-            orderBy: { price: 'asc' },
+                        orderBy: { price: 'asc' },
           },
           availabilityWindows: {
             include: {
               windowServices: {
                 include: {
                   mentorService: {
-                    include: { service: true },
+                    select: { title: true },
                   },
                 },
               },
@@ -41,9 +40,9 @@ class PublicMentorController {
                 select: { name: true, profilePicture: true },
               },
               booking: {
-                select: {
+                include: {
                   mentorService: {
-                    include: { service: true },
+                    select: { title: true },
                   },
                 },
               },
@@ -62,11 +61,11 @@ class PublicMentorController {
       // Map services
       const services = mentor.mentorServices.map((ms) => ({
         id: ms.id,
-        serviceId: ms.serviceId,
-        serviceName: ms.service?.name,
-        label: ms.service?.name, // Added for frontend compatibility
-        serviceSlug: ms.service?.slug,
-        serviceType: ms.service?.slug, // Added for frontend compatibility
+        serviceId: ms.id,
+        serviceName: ms.title,
+        label: ms.title, // Added for frontend compatibility
+        serviceSlug: ms.title?.toLowerCase().replace(/\s+/g, '-'),
+        serviceType: ms.title?.toLowerCase().replace(/\s+/g, '-'), // Added for frontend compatibility
         price: ms.price,
         pricePerSession: ms.price, // Added for frontend compatibility
         durationMinutes: ms.durationMinutes,
@@ -80,11 +79,12 @@ class PublicMentorController {
         specificDate: w.specificDate
           ? new Date(w.specificDate).toISOString().split('T')[0]
           : null,
+        dayOfWeek: w.dayOfWeek,
         startTime: w.startTime,
         endTime: w.endTime,
         services: (w.windowServices || []).map((ws) => ({
           mentorServiceId: ws.mentorServiceId,
-          serviceName: ws.mentorService?.service?.name,
+          serviceName: ws.mentorService?.title,
         })),
       }));
 
@@ -96,7 +96,7 @@ class PublicMentorController {
         createdAt: r.createdAt,
         authorName: r.author?.name || 'Anonymous',
         authorPicture: r.author?.profilePicture || null,
-        serviceName: r.booking?.mentorService?.service?.name || null,
+        serviceName: r.booking?.mentorService?.title || null,
       }));
 
       const cheapest = services[0];
@@ -203,8 +203,7 @@ class PublicMentorController {
             },
             mentorServices: {
               where: { isActive: true },
-              include: { service: true },
-              orderBy: { price: 'asc' },
+                            orderBy: { price: 'asc' },
               take: 1,
             },
             availabilityWindows: {

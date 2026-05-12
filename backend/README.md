@@ -124,7 +124,6 @@ for each availability window matching the date:
 backend/
 ├── prisma/
 │   ├── schema.prisma          # Database schema
-│   └── seed.js                # Seeds 6 fixed services
 ├── src/
 │   ├── config/
 │   │   ├── database.js        # Prisma client

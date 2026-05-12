@@ -181,19 +181,9 @@ exports.Prisma.MentorProfileScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ServiceScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  slug: 'slug',
-  description: 'description',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.MentorServiceScalarFieldEnum = {
   id: 'id',
   mentorProfileId: 'mentorProfileId',
-  serviceId: 'serviceId',
   title: 'title',
   description: 'description',
   price: 'price',
@@ -369,7 +359,6 @@ exports.Prisma.ModelName = {
   User: 'User',
   MenteeProfile: 'MenteeProfile',
   MentorProfile: 'MentorProfile',
-  Service: 'Service',
   MentorService: 'MentorService',
   AvailabilityWindow: 'AvailabilityWindow',
   AvailabilityWindowService: 'AvailabilityWindowService',

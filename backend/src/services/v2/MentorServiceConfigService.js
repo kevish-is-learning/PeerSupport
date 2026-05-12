@@ -41,10 +41,7 @@ class MentorServiceConfigService {
 
     const services = await prisma.mentorService.findMany({
       where: { mentorProfileId: profile.id },
-      include: {
-        service: true,
-      },
-      orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: 'asc' },
     });
 
     return services.map((ms) => ({
@@ -117,8 +114,7 @@ class MentorServiceConfigService {
             bufferMinutes: svc.bufferMinutes ?? 0,
             isActive: svc.isActive ?? true,
           },
-          include: { service: true },
-        });
+                  });
         upserted.push(row);
       }
 

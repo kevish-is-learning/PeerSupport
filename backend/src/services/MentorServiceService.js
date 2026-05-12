@@ -16,13 +16,13 @@ const createServiceError = (statusCode, message) => {
  */
 const mapService = (row) => ({
   id: row.id,
-  serviceId: row.serviceId,
-  title: row.title || row.service?.name || 'Untitled Service',
-  description: row.description || row.service?.description || '',
-  serviceName: row.title || row.service?.name,
-  label: row.title || row.service?.name,
-  serviceSlug: row.service?.slug,
-  serviceType: row.service?.slug,
+  serviceId: row.id,
+  title: row.title || 'Untitled Service',
+  description: row.description || '',
+  serviceName: row.title,
+  label: row.title,
+  serviceSlug: row.title?.toLowerCase().replace(/\s+/g, '-'),
+  serviceType: row.title?.toLowerCase().replace(/\s+/g, '-'),
   price: row.price,
   pricePerSession: row.price,
   durationMinutes: row.durationMinutes,
@@ -68,8 +68,7 @@ class MentorServiceService {
 
     const services = await prisma.mentorService.findMany({
       where: { mentorProfileId: profileId },
-      include: { service: true },
-      orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: 'asc' },
     });
 
     return services.map(mapService);
@@ -108,8 +107,7 @@ class MentorServiceService {
         bufferMinutes: buf,
         isActive: true,
       },
-      include: { service: true },
-    });
+          });
 
     return mapService(service);
   }
@@ -148,8 +146,7 @@ class MentorServiceService {
     const updated = await prisma.mentorService.update({
       where: { id },
       data: updateData,
-      include: { service: true },
-    });
+          });
 
     return mapService(updated);
   }
@@ -168,8 +165,7 @@ class MentorServiceService {
     const updated = await prisma.mentorService.update({
       where: { id },
       data: { isActive: !existing.isActive },
-      include: { service: true },
-    });
+          });
 
     return mapService(updated);
   }
@@ -231,8 +227,7 @@ class MentorServiceService {
             durationMinutes: svc.durationMinutes ?? 30,
             isActive: svc.isActive ?? true,
           },
-          include: { service: true },
-        });
+                  });
         upserted.push(row);
       }
       return upserted;

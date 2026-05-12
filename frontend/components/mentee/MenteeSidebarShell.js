@@ -128,7 +128,7 @@ export default function MenteeSidebarShell({ children }) {
         </div>
       </aside>
 
-      <section className="flex-1 flex flex-col h-screen overflow-hidden">
+      <section className="flex-1 flex flex-col h-screen py-10">
         {children}
       </section>
     </main>

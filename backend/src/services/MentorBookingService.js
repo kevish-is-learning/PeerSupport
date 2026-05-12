@@ -49,10 +49,7 @@ const bookingInclude = {
   mentee: {
     select: { id: true, name: true, email: true, profilePicture: true },
   },
-  mentorService: {
-    include: { service: true },
-  },
-  payment: {
+    payment: {
     select: { id: true, amount: true, paymentStatus: true, paidAt: true, currency: true },
   },
 };
@@ -178,8 +175,7 @@ class MentorBookingService {
           booking: {
             include: {
               mentee: { select: { name: true, email: true } },
-              mentorService: { include: { service: true } },
-            },
+                          },
           },
         },
         orderBy: { createdAt: 'desc' },

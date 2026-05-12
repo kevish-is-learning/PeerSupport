@@ -12,14 +12,12 @@ import {
   Briefcase,
   BookOpen,
   CheckCircle,
-  Sparkles,
   Mail,
   Phone,
 } from "lucide-react";
 import useAuthStore from "../../store/useAuthStore";
 import {
   mentorProfileApi,
-  mentorServiceApi,
   resolveUploadUrl,
   authApi,
 } from "../../lib/api";
@@ -31,10 +29,9 @@ const STEPS = [
   { id: 2, title: "Education Details", icon: GraduationCap },
   { id: 3, title: "Professional Background", icon: Briefcase },
   { id: 4, title: "Expertise & Profile", icon: BookOpen },
-  { id: 5, title: "Services Offered", icon: Sparkles },
 ];
 
-// Service types are now fetched from the backend API — no more hardcoding.
+// Services are configured later from the mentor dashboard — not during onboarding.
 
 const EXPERTISE_OPTIONS = [
   "Interview Preparation",
@@ -58,21 +55,7 @@ export default function MentorOnboardingWizard({
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [serviceTypes, setServiceTypes] = useState([]);
-
   const stepsContainerRef = useRef(null);
-
-  // Fetch service types from the backend (single source of truth)
-  useEffect(() => {
-    mentorServiceApi
-      .getTypes()
-      .then((res) => {
-        setServiceTypes(Array.isArray(res.data?.types) ? res.data.types : []);
-      })
-      .catch(() => {
-        toast.error("Failed to load service types");
-      });
-  }, []);
 
   useEffect(() => {
     const container = stepsContainerRef.current;
@@ -120,10 +103,6 @@ export default function MentorOnboardingWizard({
 
     expertiseTags: existingProfile?.expertiseTags || [],
     bio: existingProfile?.bio || "",
-    // Store selected service enum values (e.g. "SOP_REVIEW")
-    selectedServiceTypes: (existingProfile?.services || []).map(
-      (s) => s.serviceType,
-    ),
   });
 
   const [files, setFiles] = useState({
@@ -155,17 +134,7 @@ export default function MentorOnboardingWizard({
     });
   };
 
-  const handleServiceToggle = (serviceType) => {
-    setFormData((prev) => {
-      const isSelected = prev.selectedServiceTypes.includes(serviceType);
-      return {
-        ...prev,
-        selectedServiceTypes: isSelected
-          ? prev.selectedServiceTypes.filter((s) => s !== serviceType)
-          : [...prev.selectedServiceTypes, serviceType],
-      };
-    });
-  };
+
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
@@ -217,7 +186,7 @@ export default function MentorOnboardingWizard({
       }
     }
 
-    if (currentStep < 5) setCurrentStep((prev) => prev + 1);
+    if (currentStep < 4) setCurrentStep((prev) => prev + 1);
   };
 
   const handlePrevious = () => {
@@ -267,7 +236,7 @@ export default function MentorOnboardingWizard({
     return payload;
   };
 
-  const submitProfile = async (payload, selectedTypes) => {
+  const submitProfile = async (payload) => {
     try {
       if (typeof authApi.updateProfile === "function") {
         await authApi.updateProfile({ name: formData.fullName });
@@ -280,22 +249,6 @@ export default function MentorOnboardingWizard({
       ? await mentorProfileApi.update(payload)
       : await mentorProfileApi.create(payload);
 
-    // Save selected services via the dedicated services endpoint
-    // Services selected during onboarding get a default price of 0 (to be set up later)
-    if (selectedTypes && selectedTypes.length > 0) {
-      try {
-        await mentorServiceApi.upsert(
-          selectedTypes.map((serviceType) => ({
-            serviceType,
-            pricePerSession: 0,
-            isActive: true,
-          })),
-        );
-      } catch (_) {
-        // Non-fatal: services can be configured later from the profile page
-      }
-    }
-
     await fetchCurrentUser();
     toast.success(result?.message || "Mentor profile saved");
     onComplete?.();
@@ -306,25 +259,9 @@ export default function MentorOnboardingWizard({
       toast.error("Bio is required.");
       return;
     }
-    // Move to step 5 (Services Offered) instead of submitting immediately
-    setCurrentStep(5);
-  };
-
-  const handleCompleteProfile = async () => {
     setIsSubmitting(true);
     try {
-      await submitProfile(buildPayload(), formData.selectedServiceTypes);
-    } catch (err) {
-      toast.error(err?.message || "Failed to save profile");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleSkipServices = async () => {
-    setIsSubmitting(true);
-    try {
-      await submitProfile(buildPayload(), []);
+      await submitProfile(buildPayload());
     } catch (err) {
       toast.error(err?.message || "Failed to save profile");
     } finally {
@@ -831,55 +768,7 @@ export default function MentorOnboardingWizard({
             </div>
           )}
 
-          {currentStep === 5 && (
-            <div className="space-y-6">
-              <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700 font-medium">
-                ✨ You can skip this for now and set it up later from your
-                profile settings
-              </div>
 
-              <div>
-                <p className="text-sm font-semibold mb-3">
-                  Choose Services{" "}
-                  <span className="font-normal text-gray-500">
-                    (Select all that apply)
-                  </span>
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {serviceTypes?.map((svc) => {
-                    const isSelected = formData.selectedServiceTypes.includes(
-                      svc.value,
-                    );
-                    return (
-                      <button
-                        key={svc.value}
-                        type="button"
-                        onClick={() => handleServiceToggle(svc.value)}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 font-bold text-sm text-left transition-all ${
-                          isSelected
-                            ? "bg-[#5f6cf3] text-white border-[#5f6cf3] shadow-[3px_3px_0_rgba(0,0,0,0.8)]"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-black"
-                        }`}
-                      >
-                        <span
-                          className={`w-5 h-5 shrink-0 rounded border-2 flex items-center justify-center ${
-                            isSelected
-                              ? "border-white bg-white"
-                              : "border-gray-400"
-                          }`}
-                        >
-                          {isSelected && (
-                            <Check className="w-3 h-3 text-[#5f6cf3]" />
-                          )}
-                        </span>
-                        {svc.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Footer Actions */}
@@ -900,34 +789,16 @@ export default function MentorOnboardingWizard({
             <UniversalButton onClick={handleNext} className="cursor-pointer">
               Next &rarr;
             </UniversalButton>
-          ) : currentStep === 4 ? (
+          ) : (
             <UniversalButton
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="cursor-pointer"
             >
-              Next &rarr;
+              {isSubmitting ? "Saving..." : "Complete Profile"}
+              {!isSubmitting && (
+                <Check className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" /> 
+              )}
             </UniversalButton>
-          ) : (
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleSkipServices}
-                disabled={isSubmitting}
-                className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-full border-2 border-black bg-white text-black font-bold text-xs sm:text-sm hover:bg-gray-50 transition-all disabled:opacity-50"
-              >
-                {isSubmitting ? "Saving..." : "Skip for now"}
-              </button>
-              <button
-                onClick={handleCompleteProfile}
-                disabled={isSubmitting}
-                className="px-4 sm:px-8 py-2 sm:py-2.5 rounded-full border sm:border-2 border-black bg-[#5f6cf3] text-white font-bold text-xs sm:text-base hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all flex items-center justify-center shrink-0 disabled:opacity-50"
-              >
-                {isSubmitting ? "Saving..." : "Complete Profile"}
-                {!isSubmitting && (
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />
-                )}
-              </button>
-            </div>
           )}
         </div>
       </div>

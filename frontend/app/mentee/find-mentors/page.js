@@ -215,7 +215,7 @@ function MentorCard({ mentor }) {
 
         {/* ── CTA ── */}
         <div className="mt-4 px-5 pb-5">
-          <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#9333EA] py-3 text-sm font-extrabold text-white shadow-[0_2px_8px_rgba(124,58,237,0.35)] transition-all group-hover:shadow-[0_4px_16px_rgba(124,58,237,0.5)] group-hover:-translate-y-0.5 active:translate-y-0">
+          <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#7C3AED] to-[#9333EA] py-3 text-sm font-extrabold text-white shadow-[0_2px_8px_rgba(124,58,237,0.35)] transition-all group-hover:shadow-[0_4px_16px_rgba(124,58,237,0.5)] group-hover:-translate-y-0.5 active:translate-y-0">
             <CalendarCheck className="h-4 w-4" />
             Book Session
           </div>
@@ -270,7 +270,7 @@ export default function ExploreMentorsPage() {
   return (
     <div className="flex h-full overflow-hidden">
       {/* ════════════ FILTER SIDEBAR ════════════ */}
-      <aside className="w-64 shrink-0 border-r border-gray-200 bg-white overflow-y-auto">
+      <aside className="w-64 shrink-0 border-r overflow-y-auto">
         <div className="p-5">
           {/* Header */}
           <div className="mb-6 flex items-center gap-2">
@@ -358,7 +358,7 @@ export default function ExploreMentorsPage() {
       </aside>
 
       {/* ════════════ MAIN CONTENT ════════════ */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col">
         {/* Search bar */}
         <div className="px-6 pt-5 pb-4">
           <div className="flex items-center gap-3 rounded-2xl border-2 border-gray-200 bg-white px-4 py-3 transition-colors focus-within:border-[#7C3AED]">
@@ -400,7 +400,7 @@ export default function ExploreMentorsPage() {
         </div>
 
         {/* Mentor Grid (scrollable) */}
-        <div className="flex-1 overflow-y-auto px-6 pb-8">
+        <div className="flex-1 px-6 pb-8">
           {/* Loading skeletons */}
           {isLoading && (
             <div className="grid gap-5 sm:grid-cols-2">

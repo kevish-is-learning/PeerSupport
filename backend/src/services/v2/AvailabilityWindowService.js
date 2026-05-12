@@ -46,10 +46,7 @@ class AvailabilityWindowService {
       include: {
         windowServices: {
           include: {
-            mentorService: {
-              include: { service: true },
-            },
-          },
+                      },
         },
       },
       orderBy: [{ specificDate: 'asc' }, { startTime: 'asc' }],
@@ -67,10 +64,7 @@ class AvailabilityWindowService {
       include: {
         windowServices: {
           include: {
-            mentorService: {
-              include: { service: true },
-            },
-          },
+                      },
         },
       },
       orderBy: [{ specificDate: 'asc' }, { startTime: 'asc' }],
@@ -131,10 +125,7 @@ class AvailabilityWindowService {
           startTime: true,
           endTime: true,
           status: true,
-          mentorService: {
-            include: { service: true },
-          },
-        },
+                  },
       });
 
       if (activeBookings.length > 0) {
@@ -211,10 +202,7 @@ class AvailabilityWindowService {
       include: {
         windowServices: {
           include: {
-            mentorService: {
-              include: { service: true },
-            },
-          },
+                      },
         },
       },
       orderBy: [{ specificDate: 'asc' }, { startTime: 'asc' }],
@@ -259,10 +247,7 @@ class AvailabilityWindowService {
       include: {
         windowServices: {
           include: {
-            mentorService: {
-              include: { service: true },
-            },
-          },
+                      },
         },
       },
     });
@@ -352,10 +337,7 @@ class AvailabilityWindowService {
       include: {
         windowServices: {
           include: {
-            mentorService: {
-              include: { service: true },
-            },
-          },
+                      },
         },
       },
     });
@@ -476,10 +458,7 @@ class AvailabilityWindowService {
       include: {
         windowServices: {
           include: {
-            mentorService: {
-              include: { service: true },
-            },
-          },
+                      },
         },
       },
       orderBy: { startTime: 'asc' },
@@ -602,10 +581,7 @@ class AvailabilityWindowService {
         startTime: true,
         endTime: true,
         status: true,
-        mentorService: {
-          include: { service: true },
-        },
-      },
+              },
     });
 
     if (activeBookings.length === 0) return;

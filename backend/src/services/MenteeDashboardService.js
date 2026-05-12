@@ -8,8 +8,6 @@ class MenteeDashboardService {
         mentorService: true,
       },
     });
-
-    const totalSessions = bookings.length;
     
     const now = new Date();
     const upcomingSessions = bookings.filter(
@@ -19,6 +17,7 @@ class MenteeDashboardService {
     const completedBookings = bookings.filter((b) => b.status === 'COMPLETED');
     const totalMinutesLearned = completedBookings.reduce((sum, b) => sum + (b.mentorService?.durationMinutes || 0), 0);
     const hoursLearned = Math.floor(totalMinutesLearned / 60);
+    const totalSessions  = completedBookings.length;
 
     return {
       totalSessions,
@@ -45,10 +44,7 @@ class MenteeDashboardService {
             },
           },
         },
-        mentorService: {
-          include: { service: true },
-        },
-      },
+              },
     });
 
     return upcoming.map((b) => ({

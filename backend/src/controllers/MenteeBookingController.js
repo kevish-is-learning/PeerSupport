@@ -17,10 +17,7 @@ class MenteeBookingController {
               },
             },
           },
-          mentorService: {
-            include: { service: true },
-          },
-        },
+                  },
       });
 
       const now = new Date();

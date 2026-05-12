@@ -35,10 +35,7 @@ const bookingInclude = {
       user: { select: { name: true, profilePicture: true } },
     },
   },
-  mentorService: {
-    include: { service: true },
-  },
-  payment: {
+    payment: {
     select: { id: true, amount: true, paymentStatus: true, paidAt: true, currency: true },
   },
 };
@@ -111,8 +108,7 @@ class BookingServiceV2 {
         mentorProfileId: data.mentorProfileId,
         isActive: true,
       },
-      include: { service: true },
-    });
+          });
 
     if (!mentorService) {
       throw createServiceError(404, 'Service not found or inactive for this mentor');

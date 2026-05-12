@@ -152,7 +152,7 @@ export default function MenteeDashboardPage() {
       <div className="mb-8 grid gap-6 sm:grid-cols-3">
         <StatCard
           icon={BookOpen}
-          value={stats.totalSessions}
+          value={stats.totalSessions || 0}
           label="Total Sessions"
           shadowColor="#8B5CF6"
         />

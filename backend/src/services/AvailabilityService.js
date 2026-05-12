@@ -30,10 +30,7 @@ async function requireMentorProfile(userId) {
 const windowInclude = {
   windowServices: {
     include: {
-      mentorService: {
-        include: { service: true },
-      },
-    },
+          },
   },
 };
 

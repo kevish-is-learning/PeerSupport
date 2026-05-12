@@ -196,23 +196,6 @@ model MentorProfile {
 }
 
 // ============================================================
-// SERVICES (Seeded lookup table — 6 fixed rows)
-// ============================================================
-
-model Service {
-  id   String @id @default(uuid())
-  name String @unique
-  slug String @unique
-
-  description String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  mentorServices MentorService[]
-}
-
-// ============================================================
 // MENTOR SERVICES
 // ============================================================
 
@@ -222,7 +205,6 @@ model MentorService {
   id String @id @default(uuid())
 
   mentorProfileId String
-  serviceId       String?
 
   /// Custom service title (used when serviceId is null, or as override)
   title           String?
@@ -241,14 +223,11 @@ model MentorService {
   updatedAt DateTime @updatedAt
 
   mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
-  service       Service?      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   windowServices AvailabilityWindowService[]
   bookings       Booking[]
 
-  @@unique([mentorProfileId, serviceId])
   @@index([mentorProfileId])
-  @@index([serviceId])
 }
 
 // ============================================================

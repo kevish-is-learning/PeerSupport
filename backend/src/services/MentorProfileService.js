@@ -37,15 +37,14 @@ const profileInclude = {
   },
   mentorServices: {
     where: { isActive: true },
-    include: { service: true },
-    orderBy: { createdAt: 'asc' },
+        orderBy: { createdAt: 'asc' },
   },
   availabilityWindows: {
     include: {
       windowServices: {
         include: {
           mentorService: {
-            include: { service: true },
+            select: { title: true },
           },
         },
       },
@@ -67,11 +66,11 @@ const mapProfile = (profile) => ({
   // Normalized services
   services: (profile.mentorServices || []).map((ms) => ({
     id: ms.id,
-    serviceId: ms.serviceId,
-    serviceName: ms.service?.name,
-    label: ms.service?.name, // Added for frontend compatibility
-    serviceSlug: ms.service?.slug,
-    serviceType: ms.service?.slug, // Added for frontend compatibility
+    serviceId: ms.id,
+    serviceName: ms.title,
+    label: ms.title, // Added for frontend compatibility
+    serviceSlug: ms.title?.toLowerCase().replace(/\s+/g, '-'),
+    serviceType: ms.title?.toLowerCase().replace(/\s+/g, '-'), // Added for frontend compatibility
     price: ms.price,
     pricePerSession: ms.price, // Added for frontend compatibility
     durationMinutes: ms.durationMinutes,
@@ -89,7 +88,7 @@ const mapProfile = (profile) => ({
     services: (w.windowServices || []).map((ws) => ({
       windowServiceId: ws.id,
       mentorServiceId: ws.mentorServiceId,
-      serviceName: ws.mentorService?.service?.name,
+      serviceName: ws.mentorService?.title,
     })),
   })),
   ugCollegeProfile: profile.ugCollegeProfile,

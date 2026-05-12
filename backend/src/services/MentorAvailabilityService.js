@@ -45,10 +45,7 @@ class MentorAvailabilityService {
       include: {
         windowServices: {
           include: {
-            mentorService: {
-              include: { service: true },
-            },
-          },
+                      },
         },
       },
       orderBy: { startTime: 'asc' },
@@ -99,10 +96,7 @@ class MentorAvailabilityService {
             include: {
               windowServices: {
                 include: {
-                  mentorService: {
-                    include: { service: true },
-                  },
-                },
+                                  },
               },
             },
           });

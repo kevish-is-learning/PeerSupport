@@ -29,11 +29,6 @@ export type MenteeProfile = $Result.DefaultSelection<Prisma.$MenteeProfilePayloa
  */
 export type MentorProfile = $Result.DefaultSelection<Prisma.$MentorProfilePayload>
 /**
- * Model Service
- * 
- */
-export type Service = $Result.DefaultSelection<Prisma.$ServicePayload>
-/**
  * Model MentorService
  * Links a mentor to a service with pricing and duration config.
  * Supports both catalogue-based (serviceId set) and custom (title set) services.
@@ -323,16 +318,6 @@ export class PrismaClient<
     * ```
     */
   get mentorProfile(): Prisma.MentorProfileDelegate<ExtArgs>;
-
-  /**
-   * `prisma.service`: Exposes CRUD operations for the **Service** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Services
-    * const services = await prisma.service.findMany()
-    * ```
-    */
-  get service(): Prisma.ServiceDelegate<ExtArgs>;
 
   /**
    * `prisma.mentorService`: Exposes CRUD operations for the **MentorService** model.
@@ -867,7 +852,6 @@ export namespace Prisma {
     User: 'User',
     MenteeProfile: 'MenteeProfile',
     MentorProfile: 'MentorProfile',
-    Service: 'Service',
     MentorService: 'MentorService',
     AvailabilityWindow: 'AvailabilityWindow',
     AvailabilityWindowService: 'AvailabilityWindowService',
@@ -892,7 +876,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "menteeProfile" | "mentorProfile" | "service" | "mentorService" | "availabilityWindow" | "availabilityWindowService" | "booking" | "payment" | "invoice" | "sessionFeedback" | "review" | "payout"
+      modelProps: "user" | "menteeProfile" | "mentorProfile" | "mentorService" | "availabilityWindow" | "availabilityWindowService" | "booking" | "payment" | "invoice" | "sessionFeedback" | "review" | "payout"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1103,76 +1087,6 @@ export namespace Prisma {
           count: {
             args: Prisma.MentorProfileCountArgs<ExtArgs>
             result: $Utils.Optional<MentorProfileCountAggregateOutputType> | number
-          }
-        }
-      }
-      Service: {
-        payload: Prisma.$ServicePayload<ExtArgs>
-        fields: Prisma.ServiceFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.ServiceFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.ServiceFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload>
-          }
-          findFirst: {
-            args: Prisma.ServiceFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.ServiceFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload>
-          }
-          findMany: {
-            args: Prisma.ServiceFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload>[]
-          }
-          create: {
-            args: Prisma.ServiceCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload>
-          }
-          createMany: {
-            args: Prisma.ServiceCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.ServiceCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload>[]
-          }
-          delete: {
-            args: Prisma.ServiceDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload>
-          }
-          update: {
-            args: Prisma.ServiceUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload>
-          }
-          deleteMany: {
-            args: Prisma.ServiceDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.ServiceUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.ServiceUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ServicePayload>
-          }
-          aggregate: {
-            args: Prisma.ServiceAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateService>
-          }
-          groupBy: {
-            args: Prisma.ServiceGroupByArgs<ExtArgs>
-            result: $Utils.Optional<ServiceGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.ServiceCountArgs<ExtArgs>
-            result: $Utils.Optional<ServiceCountAggregateOutputType> | number
           }
         }
       }
@@ -2075,37 +1989,6 @@ export namespace Prisma {
    */
   export type MentorProfileCountOutputTypeCountPayoutsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PayoutWhereInput
-  }
-
-
-  /**
-   * Count Type ServiceCountOutputType
-   */
-
-  export type ServiceCountOutputType = {
-    mentorServices: number
-  }
-
-  export type ServiceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    mentorServices?: boolean | ServiceCountOutputTypeCountMentorServicesArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * ServiceCountOutputType without action
-   */
-  export type ServiceCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ServiceCountOutputType
-     */
-    select?: ServiceCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * ServiceCountOutputType without action
-   */
-  export type ServiceCountOutputTypeCountMentorServicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: MentorServiceWhereInput
   }
 
 
@@ -5687,966 +5570,6 @@ export namespace Prisma {
 
 
   /**
-   * Model Service
-   */
-
-  export type AggregateService = {
-    _count: ServiceCountAggregateOutputType | null
-    _min: ServiceMinAggregateOutputType | null
-    _max: ServiceMaxAggregateOutputType | null
-  }
-
-  export type ServiceMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    slug: string | null
-    description: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type ServiceMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    slug: string | null
-    description: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type ServiceCountAggregateOutputType = {
-    id: number
-    name: number
-    slug: number
-    description: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type ServiceMinAggregateInputType = {
-    id?: true
-    name?: true
-    slug?: true
-    description?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type ServiceMaxAggregateInputType = {
-    id?: true
-    name?: true
-    slug?: true
-    description?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type ServiceCountAggregateInputType = {
-    id?: true
-    name?: true
-    slug?: true
-    description?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type ServiceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Service to aggregate.
-     */
-    where?: ServiceWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Services to fetch.
-     */
-    orderBy?: ServiceOrderByWithRelationInput | ServiceOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: ServiceWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Services from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Services.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Services
-    **/
-    _count?: true | ServiceCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: ServiceMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: ServiceMaxAggregateInputType
-  }
-
-  export type GetServiceAggregateType<T extends ServiceAggregateArgs> = {
-        [P in keyof T & keyof AggregateService]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateService[P]>
-      : GetScalarType<T[P], AggregateService[P]>
-  }
-
-
-
-
-  export type ServiceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ServiceWhereInput
-    orderBy?: ServiceOrderByWithAggregationInput | ServiceOrderByWithAggregationInput[]
-    by: ServiceScalarFieldEnum[] | ServiceScalarFieldEnum
-    having?: ServiceScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: ServiceCountAggregateInputType | true
-    _min?: ServiceMinAggregateInputType
-    _max?: ServiceMaxAggregateInputType
-  }
-
-  export type ServiceGroupByOutputType = {
-    id: string
-    name: string
-    slug: string
-    description: string | null
-    createdAt: Date
-    updatedAt: Date
-    _count: ServiceCountAggregateOutputType | null
-    _min: ServiceMinAggregateOutputType | null
-    _max: ServiceMaxAggregateOutputType | null
-  }
-
-  type GetServiceGroupByPayload<T extends ServiceGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<ServiceGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof ServiceGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], ServiceGroupByOutputType[P]>
-            : GetScalarType<T[P], ServiceGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type ServiceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    slug?: boolean
-    description?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    mentorServices?: boolean | Service$mentorServicesArgs<ExtArgs>
-    _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["service"]>
-
-  export type ServiceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    slug?: boolean
-    description?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["service"]>
-
-  export type ServiceSelectScalar = {
-    id?: boolean
-    name?: boolean
-    slug?: boolean
-    description?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type ServiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    mentorServices?: boolean | Service$mentorServicesArgs<ExtArgs>
-    _count?: boolean | ServiceCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type ServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-
-  export type $ServicePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Service"
-    objects: {
-      mentorServices: Prisma.$MentorServicePayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      name: string
-      slug: string
-      description: string | null
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["service"]>
-    composites: {}
-  }
-
-  type ServiceGetPayload<S extends boolean | null | undefined | ServiceDefaultArgs> = $Result.GetResult<Prisma.$ServicePayload, S>
-
-  type ServiceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ServiceFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: ServiceCountAggregateInputType | true
-    }
-
-  export interface ServiceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Service'], meta: { name: 'Service' } }
-    /**
-     * Find zero or one Service that matches the filter.
-     * @param {ServiceFindUniqueArgs} args - Arguments to find a Service
-     * @example
-     * // Get one Service
-     * const service = await prisma.service.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends ServiceFindUniqueArgs>(args: SelectSubset<T, ServiceFindUniqueArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one Service that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {ServiceFindUniqueOrThrowArgs} args - Arguments to find a Service
-     * @example
-     * // Get one Service
-     * const service = await prisma.service.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends ServiceFindUniqueOrThrowArgs>(args: SelectSubset<T, ServiceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first Service that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ServiceFindFirstArgs} args - Arguments to find a Service
-     * @example
-     * // Get one Service
-     * const service = await prisma.service.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends ServiceFindFirstArgs>(args?: SelectSubset<T, ServiceFindFirstArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first Service that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ServiceFindFirstOrThrowArgs} args - Arguments to find a Service
-     * @example
-     * // Get one Service
-     * const service = await prisma.service.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends ServiceFindFirstOrThrowArgs>(args?: SelectSubset<T, ServiceFindFirstOrThrowArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more Services that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ServiceFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Services
-     * const services = await prisma.service.findMany()
-     * 
-     * // Get first 10 Services
-     * const services = await prisma.service.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const serviceWithIdOnly = await prisma.service.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends ServiceFindManyArgs>(args?: SelectSubset<T, ServiceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a Service.
-     * @param {ServiceCreateArgs} args - Arguments to create a Service.
-     * @example
-     * // Create one Service
-     * const Service = await prisma.service.create({
-     *   data: {
-     *     // ... data to create a Service
-     *   }
-     * })
-     * 
-     */
-    create<T extends ServiceCreateArgs>(args: SelectSubset<T, ServiceCreateArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many Services.
-     * @param {ServiceCreateManyArgs} args - Arguments to create many Services.
-     * @example
-     * // Create many Services
-     * const service = await prisma.service.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends ServiceCreateManyArgs>(args?: SelectSubset<T, ServiceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Services and returns the data saved in the database.
-     * @param {ServiceCreateManyAndReturnArgs} args - Arguments to create many Services.
-     * @example
-     * // Create many Services
-     * const service = await prisma.service.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Services and only return the `id`
-     * const serviceWithIdOnly = await prisma.service.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends ServiceCreateManyAndReturnArgs>(args?: SelectSubset<T, ServiceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a Service.
-     * @param {ServiceDeleteArgs} args - Arguments to delete one Service.
-     * @example
-     * // Delete one Service
-     * const Service = await prisma.service.delete({
-     *   where: {
-     *     // ... filter to delete one Service
-     *   }
-     * })
-     * 
-     */
-    delete<T extends ServiceDeleteArgs>(args: SelectSubset<T, ServiceDeleteArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one Service.
-     * @param {ServiceUpdateArgs} args - Arguments to update one Service.
-     * @example
-     * // Update one Service
-     * const service = await prisma.service.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends ServiceUpdateArgs>(args: SelectSubset<T, ServiceUpdateArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more Services.
-     * @param {ServiceDeleteManyArgs} args - Arguments to filter Services to delete.
-     * @example
-     * // Delete a few Services
-     * const { count } = await prisma.service.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends ServiceDeleteManyArgs>(args?: SelectSubset<T, ServiceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Services.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ServiceUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Services
-     * const service = await prisma.service.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends ServiceUpdateManyArgs>(args: SelectSubset<T, ServiceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one Service.
-     * @param {ServiceUpsertArgs} args - Arguments to update or create a Service.
-     * @example
-     * // Update or create a Service
-     * const service = await prisma.service.upsert({
-     *   create: {
-     *     // ... data to create a Service
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Service we want to update
-     *   }
-     * })
-     */
-    upsert<T extends ServiceUpsertArgs>(args: SelectSubset<T, ServiceUpsertArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of Services.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ServiceCountArgs} args - Arguments to filter Services to count.
-     * @example
-     * // Count the number of Services
-     * const count = await prisma.service.count({
-     *   where: {
-     *     // ... the filter for the Services we want to count
-     *   }
-     * })
-    **/
-    count<T extends ServiceCountArgs>(
-      args?: Subset<T, ServiceCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], ServiceCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Service.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ServiceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends ServiceAggregateArgs>(args: Subset<T, ServiceAggregateArgs>): Prisma.PrismaPromise<GetServiceAggregateType<T>>
-
-    /**
-     * Group by Service.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ServiceGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends ServiceGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: ServiceGroupByArgs['orderBy'] }
-        : { orderBy?: ServiceGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, ServiceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetServiceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Service model
-   */
-  readonly fields: ServiceFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Service.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__ServiceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    mentorServices<T extends Service$mentorServicesArgs<ExtArgs> = {}>(args?: Subset<T, Service$mentorServicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorServicePayload<ExtArgs>, T, "findMany"> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Service model
-   */ 
-  interface ServiceFieldRefs {
-    readonly id: FieldRef<"Service", 'String'>
-    readonly name: FieldRef<"Service", 'String'>
-    readonly slug: FieldRef<"Service", 'String'>
-    readonly description: FieldRef<"Service", 'String'>
-    readonly createdAt: FieldRef<"Service", 'DateTime'>
-    readonly updatedAt: FieldRef<"Service", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Service findUnique
-   */
-  export type ServiceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    /**
-     * Filter, which Service to fetch.
-     */
-    where: ServiceWhereUniqueInput
-  }
-
-  /**
-   * Service findUniqueOrThrow
-   */
-  export type ServiceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    /**
-     * Filter, which Service to fetch.
-     */
-    where: ServiceWhereUniqueInput
-  }
-
-  /**
-   * Service findFirst
-   */
-  export type ServiceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    /**
-     * Filter, which Service to fetch.
-     */
-    where?: ServiceWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Services to fetch.
-     */
-    orderBy?: ServiceOrderByWithRelationInput | ServiceOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Services.
-     */
-    cursor?: ServiceWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Services from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Services.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Services.
-     */
-    distinct?: ServiceScalarFieldEnum | ServiceScalarFieldEnum[]
-  }
-
-  /**
-   * Service findFirstOrThrow
-   */
-  export type ServiceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    /**
-     * Filter, which Service to fetch.
-     */
-    where?: ServiceWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Services to fetch.
-     */
-    orderBy?: ServiceOrderByWithRelationInput | ServiceOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Services.
-     */
-    cursor?: ServiceWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Services from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Services.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Services.
-     */
-    distinct?: ServiceScalarFieldEnum | ServiceScalarFieldEnum[]
-  }
-
-  /**
-   * Service findMany
-   */
-  export type ServiceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    /**
-     * Filter, which Services to fetch.
-     */
-    where?: ServiceWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Services to fetch.
-     */
-    orderBy?: ServiceOrderByWithRelationInput | ServiceOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Services.
-     */
-    cursor?: ServiceWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Services from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Services.
-     */
-    skip?: number
-    distinct?: ServiceScalarFieldEnum | ServiceScalarFieldEnum[]
-  }
-
-  /**
-   * Service create
-   */
-  export type ServiceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Service.
-     */
-    data: XOR<ServiceCreateInput, ServiceUncheckedCreateInput>
-  }
-
-  /**
-   * Service createMany
-   */
-  export type ServiceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Services.
-     */
-    data: ServiceCreateManyInput | ServiceCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Service createManyAndReturn
-   */
-  export type ServiceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many Services.
-     */
-    data: ServiceCreateManyInput | ServiceCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Service update
-   */
-  export type ServiceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Service.
-     */
-    data: XOR<ServiceUpdateInput, ServiceUncheckedUpdateInput>
-    /**
-     * Choose, which Service to update.
-     */
-    where: ServiceWhereUniqueInput
-  }
-
-  /**
-   * Service updateMany
-   */
-  export type ServiceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Services.
-     */
-    data: XOR<ServiceUpdateManyMutationInput, ServiceUncheckedUpdateManyInput>
-    /**
-     * Filter which Services to update
-     */
-    where?: ServiceWhereInput
-  }
-
-  /**
-   * Service upsert
-   */
-  export type ServiceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Service to update in case it exists.
-     */
-    where: ServiceWhereUniqueInput
-    /**
-     * In case the Service found by the `where` argument doesn't exist, create a new Service with this data.
-     */
-    create: XOR<ServiceCreateInput, ServiceUncheckedCreateInput>
-    /**
-     * In case the Service was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<ServiceUpdateInput, ServiceUncheckedUpdateInput>
-  }
-
-  /**
-   * Service delete
-   */
-  export type ServiceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    /**
-     * Filter which Service to delete.
-     */
-    where: ServiceWhereUniqueInput
-  }
-
-  /**
-   * Service deleteMany
-   */
-  export type ServiceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Services to delete
-     */
-    where?: ServiceWhereInput
-  }
-
-  /**
-   * Service.mentorServices
-   */
-  export type Service$mentorServicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MentorService
-     */
-    select?: MentorServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MentorServiceInclude<ExtArgs> | null
-    where?: MentorServiceWhereInput
-    orderBy?: MentorServiceOrderByWithRelationInput | MentorServiceOrderByWithRelationInput[]
-    cursor?: MentorServiceWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: MentorServiceScalarFieldEnum | MentorServiceScalarFieldEnum[]
-  }
-
-  /**
-   * Service without action
-   */
-  export type ServiceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Model MentorService
    */
 
@@ -6673,7 +5596,6 @@ export namespace Prisma {
   export type MentorServiceMinAggregateOutputType = {
     id: string | null
     mentorProfileId: string | null
-    serviceId: string | null
     title: string | null
     description: string | null
     price: number | null
@@ -6687,7 +5609,6 @@ export namespace Prisma {
   export type MentorServiceMaxAggregateOutputType = {
     id: string | null
     mentorProfileId: string | null
-    serviceId: string | null
     title: string | null
     description: string | null
     price: number | null
@@ -6701,7 +5622,6 @@ export namespace Prisma {
   export type MentorServiceCountAggregateOutputType = {
     id: number
     mentorProfileId: number
-    serviceId: number
     title: number
     description: number
     price: number
@@ -6729,7 +5649,6 @@ export namespace Prisma {
   export type MentorServiceMinAggregateInputType = {
     id?: true
     mentorProfileId?: true
-    serviceId?: true
     title?: true
     description?: true
     price?: true
@@ -6743,7 +5662,6 @@ export namespace Prisma {
   export type MentorServiceMaxAggregateInputType = {
     id?: true
     mentorProfileId?: true
-    serviceId?: true
     title?: true
     description?: true
     price?: true
@@ -6757,7 +5675,6 @@ export namespace Prisma {
   export type MentorServiceCountAggregateInputType = {
     id?: true
     mentorProfileId?: true
-    serviceId?: true
     title?: true
     description?: true
     price?: true
@@ -6858,7 +5775,6 @@ export namespace Prisma {
   export type MentorServiceGroupByOutputType = {
     id: string
     mentorProfileId: string
-    serviceId: string | null
     title: string | null
     description: string | null
     price: number
@@ -6891,7 +5807,6 @@ export namespace Prisma {
   export type MentorServiceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     mentorProfileId?: boolean
-    serviceId?: boolean
     title?: boolean
     description?: boolean
     price?: boolean
@@ -6901,7 +5816,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
-    service?: boolean | MentorService$serviceArgs<ExtArgs>
     windowServices?: boolean | MentorService$windowServicesArgs<ExtArgs>
     bookings?: boolean | MentorService$bookingsArgs<ExtArgs>
     _count?: boolean | MentorServiceCountOutputTypeDefaultArgs<ExtArgs>
@@ -6910,7 +5824,6 @@ export namespace Prisma {
   export type MentorServiceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     mentorProfileId?: boolean
-    serviceId?: boolean
     title?: boolean
     description?: boolean
     price?: boolean
@@ -6920,13 +5833,11 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
-    service?: boolean | MentorService$serviceArgs<ExtArgs>
   }, ExtArgs["result"]["mentorService"]>
 
   export type MentorServiceSelectScalar = {
     id?: boolean
     mentorProfileId?: boolean
-    serviceId?: boolean
     title?: boolean
     description?: boolean
     price?: boolean
@@ -6939,28 +5850,24 @@ export namespace Prisma {
 
   export type MentorServiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
-    service?: boolean | MentorService$serviceArgs<ExtArgs>
     windowServices?: boolean | MentorService$windowServicesArgs<ExtArgs>
     bookings?: boolean | MentorService$bookingsArgs<ExtArgs>
     _count?: boolean | MentorServiceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MentorServiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
-    service?: boolean | MentorService$serviceArgs<ExtArgs>
   }
 
   export type $MentorServicePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "MentorService"
     objects: {
       mentorProfile: Prisma.$MentorProfilePayload<ExtArgs>
-      service: Prisma.$ServicePayload<ExtArgs> | null
       windowServices: Prisma.$AvailabilityWindowServicePayload<ExtArgs>[]
       bookings: Prisma.$BookingPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       mentorProfileId: string
-      serviceId: string | null
       /**
        * Custom service title (used when serviceId is null, or as override)
        */
@@ -7349,7 +6256,6 @@ export namespace Prisma {
   export interface Prisma__MentorServiceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     mentorProfile<T extends MentorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfileDefaultArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    service<T extends MentorService$serviceArgs<ExtArgs> = {}>(args?: Subset<T, MentorService$serviceArgs<ExtArgs>>): Prisma__ServiceClient<$Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     windowServices<T extends MentorService$windowServicesArgs<ExtArgs> = {}>(args?: Subset<T, MentorService$windowServicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvailabilityWindowServicePayload<ExtArgs>, T, "findMany"> | Null>
     bookings<T extends MentorService$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, MentorService$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany"> | Null>
     /**
@@ -7383,7 +6289,6 @@ export namespace Prisma {
   interface MentorServiceFieldRefs {
     readonly id: FieldRef<"MentorService", 'String'>
     readonly mentorProfileId: FieldRef<"MentorService", 'String'>
-    readonly serviceId: FieldRef<"MentorService", 'String'>
     readonly title: FieldRef<"MentorService", 'String'>
     readonly description: FieldRef<"MentorService", 'String'>
     readonly price: FieldRef<"MentorService", 'Float'>
@@ -7707,21 +6612,6 @@ export namespace Prisma {
      * Filter which MentorServices to delete
      */
     where?: MentorServiceWhereInput
-  }
-
-  /**
-   * MentorService.service
-   */
-  export type MentorService$serviceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Service
-     */
-    select?: ServiceSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ServiceInclude<ExtArgs> | null
-    where?: ServiceWhereInput
   }
 
   /**
@@ -15902,22 +14792,9 @@ export namespace Prisma {
   export type MentorProfileScalarFieldEnum = (typeof MentorProfileScalarFieldEnum)[keyof typeof MentorProfileScalarFieldEnum]
 
 
-  export const ServiceScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    slug: 'slug',
-    description: 'description',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeof ServiceScalarFieldEnum]
-
-
   export const MentorServiceScalarFieldEnum: {
     id: 'id',
     mentorProfileId: 'mentorProfileId',
-    serviceId: 'serviceId',
     title: 'title',
     description: 'description',
     price: 'price',
@@ -16626,73 +15503,12 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"MentorProfile"> | Date | string
   }
 
-  export type ServiceWhereInput = {
-    AND?: ServiceWhereInput | ServiceWhereInput[]
-    OR?: ServiceWhereInput[]
-    NOT?: ServiceWhereInput | ServiceWhereInput[]
-    id?: StringFilter<"Service"> | string
-    name?: StringFilter<"Service"> | string
-    slug?: StringFilter<"Service"> | string
-    description?: StringNullableFilter<"Service"> | string | null
-    createdAt?: DateTimeFilter<"Service"> | Date | string
-    updatedAt?: DateTimeFilter<"Service"> | Date | string
-    mentorServices?: MentorServiceListRelationFilter
-  }
-
-  export type ServiceOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    slug?: SortOrder
-    description?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    mentorServices?: MentorServiceOrderByRelationAggregateInput
-  }
-
-  export type ServiceWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    name?: string
-    slug?: string
-    AND?: ServiceWhereInput | ServiceWhereInput[]
-    OR?: ServiceWhereInput[]
-    NOT?: ServiceWhereInput | ServiceWhereInput[]
-    description?: StringNullableFilter<"Service"> | string | null
-    createdAt?: DateTimeFilter<"Service"> | Date | string
-    updatedAt?: DateTimeFilter<"Service"> | Date | string
-    mentorServices?: MentorServiceListRelationFilter
-  }, "id" | "name" | "slug">
-
-  export type ServiceOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    slug?: SortOrder
-    description?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: ServiceCountOrderByAggregateInput
-    _max?: ServiceMaxOrderByAggregateInput
-    _min?: ServiceMinOrderByAggregateInput
-  }
-
-  export type ServiceScalarWhereWithAggregatesInput = {
-    AND?: ServiceScalarWhereWithAggregatesInput | ServiceScalarWhereWithAggregatesInput[]
-    OR?: ServiceScalarWhereWithAggregatesInput[]
-    NOT?: ServiceScalarWhereWithAggregatesInput | ServiceScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Service"> | string
-    name?: StringWithAggregatesFilter<"Service"> | string
-    slug?: StringWithAggregatesFilter<"Service"> | string
-    description?: StringNullableWithAggregatesFilter<"Service"> | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"Service"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Service"> | Date | string
-  }
-
   export type MentorServiceWhereInput = {
     AND?: MentorServiceWhereInput | MentorServiceWhereInput[]
     OR?: MentorServiceWhereInput[]
     NOT?: MentorServiceWhereInput | MentorServiceWhereInput[]
     id?: StringFilter<"MentorService"> | string
     mentorProfileId?: StringFilter<"MentorService"> | string
-    serviceId?: StringNullableFilter<"MentorService"> | string | null
     title?: StringNullableFilter<"MentorService"> | string | null
     description?: StringNullableFilter<"MentorService"> | string | null
     price?: FloatFilter<"MentorService"> | number
@@ -16702,7 +15518,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"MentorService"> | Date | string
     updatedAt?: DateTimeFilter<"MentorService"> | Date | string
     mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
-    service?: XOR<ServiceNullableRelationFilter, ServiceWhereInput> | null
     windowServices?: AvailabilityWindowServiceListRelationFilter
     bookings?: BookingListRelationFilter
   }
@@ -16710,7 +15525,6 @@ export namespace Prisma {
   export type MentorServiceOrderByWithRelationInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
-    serviceId?: SortOrderInput | SortOrder
     title?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     price?: SortOrder
@@ -16720,19 +15534,16 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     mentorProfile?: MentorProfileOrderByWithRelationInput
-    service?: ServiceOrderByWithRelationInput
     windowServices?: AvailabilityWindowServiceOrderByRelationAggregateInput
     bookings?: BookingOrderByRelationAggregateInput
   }
 
   export type MentorServiceWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    mentorProfileId_serviceId?: MentorServiceMentorProfileIdServiceIdCompoundUniqueInput
     AND?: MentorServiceWhereInput | MentorServiceWhereInput[]
     OR?: MentorServiceWhereInput[]
     NOT?: MentorServiceWhereInput | MentorServiceWhereInput[]
     mentorProfileId?: StringFilter<"MentorService"> | string
-    serviceId?: StringNullableFilter<"MentorService"> | string | null
     title?: StringNullableFilter<"MentorService"> | string | null
     description?: StringNullableFilter<"MentorService"> | string | null
     price?: FloatFilter<"MentorService"> | number
@@ -16742,15 +15553,13 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"MentorService"> | Date | string
     updatedAt?: DateTimeFilter<"MentorService"> | Date | string
     mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
-    service?: XOR<ServiceNullableRelationFilter, ServiceWhereInput> | null
     windowServices?: AvailabilityWindowServiceListRelationFilter
     bookings?: BookingListRelationFilter
-  }, "id" | "mentorProfileId_serviceId">
+  }, "id">
 
   export type MentorServiceOrderByWithAggregationInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
-    serviceId?: SortOrderInput | SortOrder
     title?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     price?: SortOrder
@@ -16772,7 +15581,6 @@ export namespace Prisma {
     NOT?: MentorServiceScalarWhereWithAggregatesInput | MentorServiceScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"MentorService"> | string
     mentorProfileId?: StringWithAggregatesFilter<"MentorService"> | string
-    serviceId?: StringNullableWithAggregatesFilter<"MentorService"> | string | null
     title?: StringNullableWithAggregatesFilter<"MentorService"> | string | null
     description?: StringNullableWithAggregatesFilter<"MentorService"> | string | null
     price?: FloatWithAggregatesFilter<"MentorService"> | number
@@ -17844,73 +16652,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ServiceCreateInput = {
-    id?: string
-    name: string
-    slug: string
-    description?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    mentorServices?: MentorServiceCreateNestedManyWithoutServiceInput
-  }
-
-  export type ServiceUncheckedCreateInput = {
-    id?: string
-    name: string
-    slug: string
-    description?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    mentorServices?: MentorServiceUncheckedCreateNestedManyWithoutServiceInput
-  }
-
-  export type ServiceUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    mentorServices?: MentorServiceUpdateManyWithoutServiceNestedInput
-  }
-
-  export type ServiceUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    mentorServices?: MentorServiceUncheckedUpdateManyWithoutServiceNestedInput
-  }
-
-  export type ServiceCreateManyInput = {
-    id?: string
-    name: string
-    slug: string
-    description?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ServiceUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ServiceUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type MentorServiceCreateInput = {
     id?: string
     title?: string | null
@@ -17922,7 +16663,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     mentorProfile: MentorProfileCreateNestedOneWithoutMentorServicesInput
-    service?: ServiceCreateNestedOneWithoutMentorServicesInput
     windowServices?: AvailabilityWindowServiceCreateNestedManyWithoutMentorServiceInput
     bookings?: BookingCreateNestedManyWithoutMentorServiceInput
   }
@@ -17930,7 +16670,6 @@ export namespace Prisma {
   export type MentorServiceUncheckedCreateInput = {
     id?: string
     mentorProfileId: string
-    serviceId?: string | null
     title?: string | null
     description?: string | null
     price: number
@@ -17954,7 +16693,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorServicesNestedInput
-    service?: ServiceUpdateOneWithoutMentorServicesNestedInput
     windowServices?: AvailabilityWindowServiceUpdateManyWithoutMentorServiceNestedInput
     bookings?: BookingUpdateManyWithoutMentorServiceNestedInput
   }
@@ -17962,7 +16700,6 @@ export namespace Prisma {
   export type MentorServiceUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
-    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
@@ -17978,7 +16715,6 @@ export namespace Prisma {
   export type MentorServiceCreateManyInput = {
     id?: string
     mentorProfileId: string
-    serviceId?: string | null
     title?: string | null
     description?: string | null
     price: number
@@ -18004,7 +16740,6 @@ export namespace Prisma {
   export type MentorServiceUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
-    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
@@ -19283,41 +18018,9 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type ServiceCountOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    slug?: SortOrder
-    description?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type ServiceMaxOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    slug?: SortOrder
-    description?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type ServiceMinOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    slug?: SortOrder
-    description?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
   export type MentorProfileRelationFilter = {
     is?: MentorProfileWhereInput
     isNot?: MentorProfileWhereInput
-  }
-
-  export type ServiceNullableRelationFilter = {
-    is?: ServiceWhereInput | null
-    isNot?: ServiceWhereInput | null
   }
 
   export type AvailabilityWindowServiceListRelationFilter = {
@@ -19330,15 +18033,9 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type MentorServiceMentorProfileIdServiceIdCompoundUniqueInput = {
-    mentorProfileId: string
-    serviceId: string
-  }
-
   export type MentorServiceCountOrderByAggregateInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
-    serviceId?: SortOrder
     title?: SortOrder
     description?: SortOrder
     price?: SortOrder
@@ -19358,7 +18055,6 @@ export namespace Prisma {
   export type MentorServiceMaxOrderByAggregateInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
-    serviceId?: SortOrder
     title?: SortOrder
     description?: SortOrder
     price?: SortOrder
@@ -19372,7 +18068,6 @@ export namespace Prisma {
   export type MentorServiceMinOrderByAggregateInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
-    serviceId?: SortOrder
     title?: SortOrder
     description?: SortOrder
     price?: SortOrder
@@ -20283,58 +18978,10 @@ export namespace Prisma {
     deleteMany?: PayoutScalarWhereInput | PayoutScalarWhereInput[]
   }
 
-  export type MentorServiceCreateNestedManyWithoutServiceInput = {
-    create?: XOR<MentorServiceCreateWithoutServiceInput, MentorServiceUncheckedCreateWithoutServiceInput> | MentorServiceCreateWithoutServiceInput[] | MentorServiceUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: MentorServiceCreateOrConnectWithoutServiceInput | MentorServiceCreateOrConnectWithoutServiceInput[]
-    createMany?: MentorServiceCreateManyServiceInputEnvelope
-    connect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-  }
-
-  export type MentorServiceUncheckedCreateNestedManyWithoutServiceInput = {
-    create?: XOR<MentorServiceCreateWithoutServiceInput, MentorServiceUncheckedCreateWithoutServiceInput> | MentorServiceCreateWithoutServiceInput[] | MentorServiceUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: MentorServiceCreateOrConnectWithoutServiceInput | MentorServiceCreateOrConnectWithoutServiceInput[]
-    createMany?: MentorServiceCreateManyServiceInputEnvelope
-    connect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-  }
-
-  export type MentorServiceUpdateManyWithoutServiceNestedInput = {
-    create?: XOR<MentorServiceCreateWithoutServiceInput, MentorServiceUncheckedCreateWithoutServiceInput> | MentorServiceCreateWithoutServiceInput[] | MentorServiceUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: MentorServiceCreateOrConnectWithoutServiceInput | MentorServiceCreateOrConnectWithoutServiceInput[]
-    upsert?: MentorServiceUpsertWithWhereUniqueWithoutServiceInput | MentorServiceUpsertWithWhereUniqueWithoutServiceInput[]
-    createMany?: MentorServiceCreateManyServiceInputEnvelope
-    set?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-    disconnect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-    delete?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-    connect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-    update?: MentorServiceUpdateWithWhereUniqueWithoutServiceInput | MentorServiceUpdateWithWhereUniqueWithoutServiceInput[]
-    updateMany?: MentorServiceUpdateManyWithWhereWithoutServiceInput | MentorServiceUpdateManyWithWhereWithoutServiceInput[]
-    deleteMany?: MentorServiceScalarWhereInput | MentorServiceScalarWhereInput[]
-  }
-
-  export type MentorServiceUncheckedUpdateManyWithoutServiceNestedInput = {
-    create?: XOR<MentorServiceCreateWithoutServiceInput, MentorServiceUncheckedCreateWithoutServiceInput> | MentorServiceCreateWithoutServiceInput[] | MentorServiceUncheckedCreateWithoutServiceInput[]
-    connectOrCreate?: MentorServiceCreateOrConnectWithoutServiceInput | MentorServiceCreateOrConnectWithoutServiceInput[]
-    upsert?: MentorServiceUpsertWithWhereUniqueWithoutServiceInput | MentorServiceUpsertWithWhereUniqueWithoutServiceInput[]
-    createMany?: MentorServiceCreateManyServiceInputEnvelope
-    set?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-    disconnect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-    delete?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-    connect?: MentorServiceWhereUniqueInput | MentorServiceWhereUniqueInput[]
-    update?: MentorServiceUpdateWithWhereUniqueWithoutServiceInput | MentorServiceUpdateWithWhereUniqueWithoutServiceInput[]
-    updateMany?: MentorServiceUpdateManyWithWhereWithoutServiceInput | MentorServiceUpdateManyWithWhereWithoutServiceInput[]
-    deleteMany?: MentorServiceScalarWhereInput | MentorServiceScalarWhereInput[]
-  }
-
   export type MentorProfileCreateNestedOneWithoutMentorServicesInput = {
     create?: XOR<MentorProfileCreateWithoutMentorServicesInput, MentorProfileUncheckedCreateWithoutMentorServicesInput>
     connectOrCreate?: MentorProfileCreateOrConnectWithoutMentorServicesInput
     connect?: MentorProfileWhereUniqueInput
-  }
-
-  export type ServiceCreateNestedOneWithoutMentorServicesInput = {
-    create?: XOR<ServiceCreateWithoutMentorServicesInput, ServiceUncheckedCreateWithoutMentorServicesInput>
-    connectOrCreate?: ServiceCreateOrConnectWithoutMentorServicesInput
-    connect?: ServiceWhereUniqueInput
   }
 
   export type AvailabilityWindowServiceCreateNestedManyWithoutMentorServiceInput = {
@@ -20371,16 +19018,6 @@ export namespace Prisma {
     upsert?: MentorProfileUpsertWithoutMentorServicesInput
     connect?: MentorProfileWhereUniqueInput
     update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutMentorServicesInput, MentorProfileUpdateWithoutMentorServicesInput>, MentorProfileUncheckedUpdateWithoutMentorServicesInput>
-  }
-
-  export type ServiceUpdateOneWithoutMentorServicesNestedInput = {
-    create?: XOR<ServiceCreateWithoutMentorServicesInput, ServiceUncheckedCreateWithoutMentorServicesInput>
-    connectOrCreate?: ServiceCreateOrConnectWithoutMentorServicesInput
-    upsert?: ServiceUpsertWithoutMentorServicesInput
-    disconnect?: ServiceWhereInput | boolean
-    delete?: ServiceWhereInput | boolean
-    connect?: ServiceWhereUniqueInput
-    update?: XOR<XOR<ServiceUpdateToOneWithWhereWithoutMentorServicesInput, ServiceUpdateWithoutMentorServicesInput>, ServiceUncheckedUpdateWithoutMentorServicesInput>
   }
 
   export type AvailabilityWindowServiceUpdateManyWithoutMentorServiceNestedInput = {
@@ -21691,14 +20328,12 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    service?: ServiceCreateNestedOneWithoutMentorServicesInput
     windowServices?: AvailabilityWindowServiceCreateNestedManyWithoutMentorServiceInput
     bookings?: BookingCreateNestedManyWithoutMentorServiceInput
   }
 
   export type MentorServiceUncheckedCreateWithoutMentorProfileInput = {
     id?: string
-    serviceId?: string | null
     title?: string | null
     description?: string | null
     price: number
@@ -21960,7 +20595,6 @@ export namespace Prisma {
     NOT?: MentorServiceScalarWhereInput | MentorServiceScalarWhereInput[]
     id?: StringFilter<"MentorService"> | string
     mentorProfileId?: StringFilter<"MentorService"> | string
-    serviceId?: StringNullableFilter<"MentorService"> | string | null
     title?: StringNullableFilter<"MentorService"> | string | null
     description?: StringNullableFilter<"MentorService"> | string | null
     price?: FloatFilter<"MentorService"> | number
@@ -22091,62 +20725,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Payout"> | Date | string
   }
 
-  export type MentorServiceCreateWithoutServiceInput = {
-    id?: string
-    title?: string | null
-    description?: string | null
-    price: number
-    durationMinutes: number
-    bufferMinutes?: number
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    mentorProfile: MentorProfileCreateNestedOneWithoutMentorServicesInput
-    windowServices?: AvailabilityWindowServiceCreateNestedManyWithoutMentorServiceInput
-    bookings?: BookingCreateNestedManyWithoutMentorServiceInput
-  }
-
-  export type MentorServiceUncheckedCreateWithoutServiceInput = {
-    id?: string
-    mentorProfileId: string
-    title?: string | null
-    description?: string | null
-    price: number
-    durationMinutes: number
-    bufferMinutes?: number
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    windowServices?: AvailabilityWindowServiceUncheckedCreateNestedManyWithoutMentorServiceInput
-    bookings?: BookingUncheckedCreateNestedManyWithoutMentorServiceInput
-  }
-
-  export type MentorServiceCreateOrConnectWithoutServiceInput = {
-    where: MentorServiceWhereUniqueInput
-    create: XOR<MentorServiceCreateWithoutServiceInput, MentorServiceUncheckedCreateWithoutServiceInput>
-  }
-
-  export type MentorServiceCreateManyServiceInputEnvelope = {
-    data: MentorServiceCreateManyServiceInput | MentorServiceCreateManyServiceInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type MentorServiceUpsertWithWhereUniqueWithoutServiceInput = {
-    where: MentorServiceWhereUniqueInput
-    update: XOR<MentorServiceUpdateWithoutServiceInput, MentorServiceUncheckedUpdateWithoutServiceInput>
-    create: XOR<MentorServiceCreateWithoutServiceInput, MentorServiceUncheckedCreateWithoutServiceInput>
-  }
-
-  export type MentorServiceUpdateWithWhereUniqueWithoutServiceInput = {
-    where: MentorServiceWhereUniqueInput
-    data: XOR<MentorServiceUpdateWithoutServiceInput, MentorServiceUncheckedUpdateWithoutServiceInput>
-  }
-
-  export type MentorServiceUpdateManyWithWhereWithoutServiceInput = {
-    where: MentorServiceScalarWhereInput
-    data: XOR<MentorServiceUpdateManyMutationInput, MentorServiceUncheckedUpdateManyWithoutServiceInput>
-  }
-
   export type MentorProfileCreateWithoutMentorServicesInput = {
     id?: string
     username: string
@@ -22206,29 +20784,6 @@ export namespace Prisma {
   export type MentorProfileCreateOrConnectWithoutMentorServicesInput = {
     where: MentorProfileWhereUniqueInput
     create: XOR<MentorProfileCreateWithoutMentorServicesInput, MentorProfileUncheckedCreateWithoutMentorServicesInput>
-  }
-
-  export type ServiceCreateWithoutMentorServicesInput = {
-    id?: string
-    name: string
-    slug: string
-    description?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ServiceUncheckedCreateWithoutMentorServicesInput = {
-    id?: string
-    name: string
-    slug: string
-    description?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ServiceCreateOrConnectWithoutMentorServicesInput = {
-    where: ServiceWhereUniqueInput
-    create: XOR<ServiceCreateWithoutMentorServicesInput, ServiceUncheckedCreateWithoutMentorServicesInput>
   }
 
   export type AvailabilityWindowServiceCreateWithoutMentorServiceInput = {
@@ -22368,35 +20923,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
-  }
-
-  export type ServiceUpsertWithoutMentorServicesInput = {
-    update: XOR<ServiceUpdateWithoutMentorServicesInput, ServiceUncheckedUpdateWithoutMentorServicesInput>
-    create: XOR<ServiceCreateWithoutMentorServicesInput, ServiceUncheckedCreateWithoutMentorServicesInput>
-    where?: ServiceWhereInput
-  }
-
-  export type ServiceUpdateToOneWithWhereWithoutMentorServicesInput = {
-    where?: ServiceWhereInput
-    data: XOR<ServiceUpdateWithoutMentorServicesInput, ServiceUncheckedUpdateWithoutMentorServicesInput>
-  }
-
-  export type ServiceUpdateWithoutMentorServicesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ServiceUncheckedUpdateWithoutMentorServicesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AvailabilityWindowServiceUpsertWithWhereUniqueWithoutMentorServiceInput = {
@@ -22647,14 +21173,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     mentorProfile: MentorProfileCreateNestedOneWithoutMentorServicesInput
-    service?: ServiceCreateNestedOneWithoutMentorServicesInput
     bookings?: BookingCreateNestedManyWithoutMentorServiceInput
   }
 
   export type MentorServiceUncheckedCreateWithoutWindowServicesInput = {
     id?: string
     mentorProfileId: string
-    serviceId?: string | null
     title?: string | null
     description?: string | null
     price: number
@@ -22728,14 +21252,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorServicesNestedInput
-    service?: ServiceUpdateOneWithoutMentorServicesNestedInput
     bookings?: BookingUpdateManyWithoutMentorServiceNestedInput
   }
 
   export type MentorServiceUncheckedUpdateWithoutWindowServicesInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
-    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
@@ -22864,14 +21386,12 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     mentorProfile: MentorProfileCreateNestedOneWithoutMentorServicesInput
-    service?: ServiceCreateNestedOneWithoutMentorServicesInput
     windowServices?: AvailabilityWindowServiceCreateNestedManyWithoutMentorServiceInput
   }
 
   export type MentorServiceUncheckedCreateWithoutBookingsInput = {
     id?: string
     mentorProfileId: string
-    serviceId?: string | null
     title?: string | null
     description?: string | null
     price: number
@@ -23111,14 +21631,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorServicesNestedInput
-    service?: ServiceUpdateOneWithoutMentorServicesNestedInput
     windowServices?: AvailabilityWindowServiceUpdateManyWithoutMentorServiceNestedInput
   }
 
   export type MentorServiceUncheckedUpdateWithoutBookingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
-    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
@@ -24235,7 +22753,6 @@ export namespace Prisma {
 
   export type MentorServiceCreateManyMentorProfileInput = {
     id?: string
-    serviceId?: string | null
     title?: string | null
     description?: string | null
     price: number
@@ -24310,14 +22827,12 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    service?: ServiceUpdateOneWithoutMentorServicesNestedInput
     windowServices?: AvailabilityWindowServiceUpdateManyWithoutMentorServiceNestedInput
     bookings?: BookingUpdateManyWithoutMentorServiceNestedInput
   }
 
   export type MentorServiceUncheckedUpdateWithoutMentorProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
@@ -24332,7 +22847,6 @@ export namespace Prisma {
 
   export type MentorServiceUncheckedUpdateManyWithoutMentorProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
-    serviceId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: FloatFieldUpdateOperationsInput | number
@@ -24513,62 +23027,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type MentorServiceCreateManyServiceInput = {
-    id?: string
-    mentorProfileId: string
-    title?: string | null
-    description?: string | null
-    price: number
-    durationMinutes: number
-    bufferMinutes?: number
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type MentorServiceUpdateWithoutServiceInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    price?: FloatFieldUpdateOperationsInput | number
-    durationMinutes?: IntFieldUpdateOperationsInput | number
-    bufferMinutes?: IntFieldUpdateOperationsInput | number
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorServicesNestedInput
-    windowServices?: AvailabilityWindowServiceUpdateManyWithoutMentorServiceNestedInput
-    bookings?: BookingUpdateManyWithoutMentorServiceNestedInput
-  }
-
-  export type MentorServiceUncheckedUpdateWithoutServiceInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    mentorProfileId?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    price?: FloatFieldUpdateOperationsInput | number
-    durationMinutes?: IntFieldUpdateOperationsInput | number
-    bufferMinutes?: IntFieldUpdateOperationsInput | number
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    windowServices?: AvailabilityWindowServiceUncheckedUpdateManyWithoutMentorServiceNestedInput
-    bookings?: BookingUncheckedUpdateManyWithoutMentorServiceNestedInput
-  }
-
-  export type MentorServiceUncheckedUpdateManyWithoutServiceInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    mentorProfileId?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    price?: FloatFieldUpdateOperationsInput | number
-    durationMinutes?: IntFieldUpdateOperationsInput | number
-    bufferMinutes?: IntFieldUpdateOperationsInput | number
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type AvailabilityWindowServiceCreateManyMentorServiceInput = {
     id?: string
     windowId: string
@@ -24705,10 +23163,6 @@ export namespace Prisma {
      */
     export type MentorProfileCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorProfileCountOutputTypeDefaultArgs<ExtArgs>
     /**
-     * @deprecated Use ServiceCountOutputTypeDefaultArgs instead
-     */
-    export type ServiceCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ServiceCountOutputTypeDefaultArgs<ExtArgs>
-    /**
      * @deprecated Use MentorServiceCountOutputTypeDefaultArgs instead
      */
     export type MentorServiceCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorServiceCountOutputTypeDefaultArgs<ExtArgs>
@@ -24728,10 +23182,6 @@ export namespace Prisma {
      * @deprecated Use MentorProfileDefaultArgs instead
      */
     export type MentorProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorProfileDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ServiceDefaultArgs instead
-     */
-    export type ServiceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ServiceDefaultArgs<ExtArgs>
     /**
      * @deprecated Use MentorServiceDefaultArgs instead
      */

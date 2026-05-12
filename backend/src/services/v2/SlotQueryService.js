@@ -50,11 +50,10 @@ class SlotQueryService {
     const mentorService = await prisma.mentorService.findFirst({
       where: {
         mentorProfileId: validMentorId,
-        serviceId,
+        id: serviceId,
         isActive: true,
       },
-      include: { service: true },
-    });
+          });
 
     if (!mentorService) {
       throw createServiceError(404, 'This mentor does not offer this service or it is inactive');
@@ -152,9 +151,9 @@ class SlotQueryService {
   _mapService(ms) {
     return {
       id: ms.id,
-      serviceId: ms.serviceId,
-      serviceName: ms.service?.name,
-      serviceSlug: ms.service?.slug,
+      serviceId: ms.id,
+      serviceName: ms.title,
+      serviceSlug: ms.title?.toLowerCase().replace(/\s+/g, '-'),
       price: ms.price,
       durationMinutes: ms.durationMinutes,
       bufferMinutes: ms.bufferMinutes,
