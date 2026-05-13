@@ -10,6 +10,7 @@ import mentorBookingRoutes from './mentorBooking.routes.js';
 import menteeDashboardRoutes from './menteeDashboard.routes.js';
 import menteeBookingRoutes from './menteeBooking.routes.js';
 import publicMentorRoutes from './publicMentor.routes.js';
+import publicMenteeRoutes from './publicMentee.routes.js';
 import bookingRoutes from './booking.routes.js';
 import paymentRoutes from './payment.routes.js';
 
@@ -45,6 +46,7 @@ router.use('/mentor-services', mentorServiceRoutes);
 router.use('/mentor-availability', mentorAvailabilityRoutes);
 router.use('/mentor-bookings', mentorBookingRoutes);
 router.use('/mentors', publicMentorRoutes);
+router.use('/mentees', publicMenteeRoutes);
 router.use('/admin', adminMentorRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/payments', paymentRoutes);

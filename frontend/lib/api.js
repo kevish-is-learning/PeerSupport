@@ -113,6 +113,12 @@ export const publicMentorApi = {
   },
 };
 
+export const publicMenteeApi = {
+  getMenteeProfile(menteeId) {
+    return apiRequest(`/mentees/${menteeId}`);
+  },
+};
+
 
 export const mentorProfileApi = {
   getMine() {

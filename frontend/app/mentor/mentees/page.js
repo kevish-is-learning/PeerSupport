@@ -147,7 +147,10 @@ export default function MyMenteesPage() {
               <p className="font-bold text-gray-400 italic">No session history found for this mentee.</p>
             </div>
           ) : (
-            sessions.map((session) => (
+            sessions.map((session) => {
+              const isUpcoming = new Date(session.startTime) > new Date();
+              
+              return (
               <article
                 key={session.id}
                 className="rounded-2xl border-[3px] border-black bg-white p-6"
@@ -196,20 +199,32 @@ export default function MyMenteesPage() {
                 <div className="mt-6 flex justify-center gap-3 w-full">
                   <button 
                     onClick={() => setSelectedSessionDetails(session)}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#5061E4] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer "
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#5061E4] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer shadow-[2px_2px_0_0_#000]"
                   >
                     <FileText size={16} />
                     Booking Details
                   </button>
+
+                  {isUpcoming && (
+                    <button 
+                      onClick={() => window.open(`/mentees/${session.mentee.id}`)}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-white px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:bg-gray-50 cursor-pointer shadow-[2px_2px_0_0_#000]"
+                    >
+                      <User size={16} />
+                      View Profile
+                    </button>
+                  )}
+
                   {session.isFeedbackSubmitted ? (
-                    <button className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#F59E0B] px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 cursor-pointer">
+                    <button className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#F59E0B] px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 cursor-pointer shadow-[2px_2px_0_0_#000]">
                       <MessageSquare size={16} />
                       View Feedback
                     </button>
                   ) : null}
                 </div>
               </article>
-            ))
+            );
+            })
           )}
         </div>
       </div>
