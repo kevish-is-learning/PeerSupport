@@ -10,7 +10,7 @@ const getStatusCode = (error) => {
 class MentorBookingController {
   async getDashboardStats(req, res) {
     try {
-      const stats = await mentorBookingService.getDashboardStats(req.user.id);
+      const stats = await mentorBookingService.getDashboardStats(req.user.mentorProfileId);
       return res.status(200).json(new ApiResponse(200, 'Dashboard stats fetched', { stats }));
     } catch (error) {
       return res.status(getStatusCode(error)).json({ success: false, message: error.message });
@@ -19,7 +19,7 @@ class MentorBookingController {
 
   async listMentees(req, res) {
     try {
-      const mentees = await mentorBookingService.listMentees(req.user.id);
+      const mentees = await mentorBookingService.listMentees(req.user.mentorProfileId);
       return res.status(200).json(new ApiResponse(200, 'Mentees fetched', { mentees }));
     } catch (error) {
       return res.status(getStatusCode(error)).json({ success: false, message: error.message });
@@ -29,7 +29,7 @@ class MentorBookingController {
   async listBookingsForMentee(req, res) {
     try {
       const bookings = await mentorBookingService.listBookingsForMentee(
-        req.user.id,
+        req.user.mentorProfileId,
         req.params.menteeId
       );
       return res.status(200).json(new ApiResponse(200, 'Bookings fetched', { bookings }));
@@ -40,7 +40,7 @@ class MentorBookingController {
 
   async getEarnings(req, res) {
     try {
-      const earnings = await mentorBookingService.getEarnings(req.user.id);
+      const earnings = await mentorBookingService.getEarnings(req.user.mentorProfileId);
       return res.status(200).json(new ApiResponse(200, 'Earnings fetched', { earnings }));
     } catch (error) {
       return res.status(getStatusCode(error)).json({ success: false, message: error.message });

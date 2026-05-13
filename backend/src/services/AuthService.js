@@ -33,9 +33,9 @@ const mapUserWithOnboardingState = (user) => {
 
 class AuthService {
   // Generate JWT Token
-  generateToken(userId) {
+  generateToken(userId, mentorProfileId = null, menteeProfileId = null) {
     return jwt.sign(
-      { userId },
+      { userId, mentorProfileId, menteeProfileId },
       process.env.JWT_SECRET,
       // { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
@@ -131,8 +131,12 @@ class AuthService {
       },
     });
 
-    // Generate token
-    const token = this.generateToken(user.id);
+    // Generate token with mentorProfileId if available
+    const mentorProfileId =
+      user.role === 'MENTOR' ? (user.mentorProfile?.id || null) : null;
+    const menteeProfileId =
+      user.role === 'MENTEE' ? (user.menteeProfile?.id || null) : null;
+    const token = this.generateToken(user.id, mentorProfileId, menteeProfileId);
 
     return {
       user: mapUserWithOnboardingState(user),
@@ -179,8 +183,12 @@ class AuthService {
       throw new Error('Invalid email or password');
     }
 
-    // Generate token
-    const token = this.generateToken(user.id);
+    // Generate token with mentorProfileId if available
+    const mentorProfileId =
+      user.role === 'MENTOR' ? (user.mentorProfile?.id || null) : null;
+    const menteeProfileId =
+      user.role === 'MENTEE' ? (user.menteeProfile?.id || null) : null;
+    const token = this.generateToken(user.id, mentorProfileId, menteeProfileId);
 
     // Return user without password
     const { password: _, ...userWithoutPassword } = user;

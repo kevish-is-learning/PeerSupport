@@ -93,8 +93,10 @@ class AuthController {
         );
       }
 
-      // Generate JWT token
-      const token = authService.generateToken(req.user.id);
+      // Generate JWT token with optional mentorProfileId and menteeProfileId
+      const mentorProfileId = req.user.role === 'MENTOR' ? (req.user.mentorProfile?.id || null) : null;
+      const menteeProfileId = req.user.role === 'MENTEE' ? (req.user.menteeProfile?.id || null) : null;
+      const token = authService.generateToken(req.user.id, mentorProfileId, menteeProfileId);
 
       // Set JWT token in HTTP-only cookie
       res.cookie('token', token, {

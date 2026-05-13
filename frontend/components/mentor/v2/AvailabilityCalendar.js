@@ -434,7 +434,7 @@ export default function AvailabilityCalendar() {
                   today ? "bg-[#FFF8ED]" : ""
                 } ${
                   dragOverDate === dateStr && dragSourceDate !== dateStr
-                    ? "!bg-[#EDE9FE] ring-2 ring-inset ring-[#5061E4]"
+                    ? "bg-[#EDE9FE]! ring-2 ring-inset ring-[#5061E4]"
                     : ""
                 } ${
                   dragSourceDate === dateStr ? "opacity-50 scale-95" : ""
@@ -524,7 +524,7 @@ export default function AvailabilityCalendar() {
               {formatDisplayDate(copyModal.to)}
             </p>
             {/* Preview of what will be copied */}
-            <div className="rounded-xl border-[2px] border-gray-200 bg-[#FAFAFA] p-3 mb-5 text-left">
+            <div className="rounded-xl border-2 border-gray-200 bg-[#FAFAFA] p-3 mb-5 text-left">
               {windows.filter((w) => w.specificDate === copyModal.from).map((w, i) => (
                 <div key={i} className="flex items-center gap-2 text-xs font-bold text-gray-600 py-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#10B981]" />
@@ -580,7 +580,7 @@ export default function AvailabilityCalendar() {
               </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="flex items-center justify-center h-9 w-9 rounded-full border-[2px] border-gray-200 hover:border-black transition-all"
+                className="flex items-center justify-center h-9 w-9 rounded-full border-2 border-gray-200 hover:border-black transition-all"
               >
                 <X size={16} />
               </button>
@@ -592,7 +592,7 @@ export default function AvailabilityCalendar() {
                 {formWindows.map((fw, idx) => (
                   <div
                     key={idx}
-                    className="rounded-2xl border-[2px] border-gray-200 p-5"
+                    className="rounded-2xl border-2 border-gray-200 p-5"
                   >
                     {/* Time frame header */}
                     <div className="flex items-center justify-between mb-4">
@@ -663,7 +663,7 @@ export default function AvailabilityCalendar() {
                               key={ms.id}
                               type="button"
                               onClick={() => toggleService(idx, ms.id)}
-                              className={`flex items-center gap-1.5 rounded-full border-[2px] px-3.5 py-1.5 text-xs font-bold transition-all ${
+                              className={`flex items-center gap-1.5 rounded-full border-2 px-3.5 py-1.5 text-xs font-bold transition-all ${
                                 isSelected
                                   ? "border-[#10B981] bg-[#10B981] text-white shadow-sm"
                                   : "border-gray-200 bg-white text-gray-500 hover:border-gray-400"
@@ -699,20 +699,20 @@ export default function AvailabilityCalendar() {
               {/* Add another time frame */}
               <button
                 onClick={addTimeFrame}
-                className="mt-4 w-full flex items-center justify-center gap-2 rounded-2xl border-[2px] border-dashed border-gray-300 py-3.5 text-sm font-bold text-[#5061E4] hover:border-[#5061E4] hover:bg-[#F8F8FF] transition-all"
+                className="mt-4 w-full flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 py-3.5 text-sm font-bold text-[#5061E4] hover:border-[#5061E4] hover:bg-[#F8F8FF] transition-all"
               >
                 <Plus size={16} strokeWidth={2.5} /> Add Another Time Frame
               </button>
             </div>
 
             {/* Modal footer */}
-            <div className="flex items-center gap-3 px-7 py-5 border-t-[2px] border-gray-100">
+            <div className="flex items-center gap-3 px-7 py-5 border-t-2 border-gray-100">
               {/* Remove day button (only if existing availability) */}
               {windows.some((w) => w.specificDate === selectedDate) && (
                 <button
                   onClick={handleRemoveDay}
                   disabled={saving}
-                  className="flex items-center gap-2 rounded-xl border-[2px] border-red-200 px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-50 disabled:opacity-50 transition-all mr-auto"
+                  className="flex items-center gap-2 rounded-xl border-2 border-red-200 px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-50 disabled:opacity-50 transition-all mr-auto"
                 >
                   <Trash2 size={14} /> Remove
                 </button>

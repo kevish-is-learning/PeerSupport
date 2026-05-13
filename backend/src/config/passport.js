@@ -73,6 +73,10 @@ passport.use(
         // Check if user already exists
         let user = await prisma.user.findUnique({
           where: { googleId: profile.id },
+          include: {
+            mentorProfile: { select: { id: true } },
+            menteeProfile: { select: { id: true } },
+          },
         });
 
         if (user) {
@@ -100,6 +104,10 @@ passport.use(
             provider: 'google',
             profilePicture: profile.photos[0]?.value,
             isVerified: true, // Google accounts are verified
+          },
+          include: {
+            mentorProfile: { select: { id: true } },
+            menteeProfile: { select: { id: true } },
           },
         });
 

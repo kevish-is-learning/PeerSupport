@@ -10,7 +10,7 @@ router.use(authenticateJWT, authorizeRoles('MENTOR'));
 router.get('/dashboard', (req, res) => mentorBookingController.getDashboardStats(req, res));
 
 // GET /api/mentor-bookings/mentees    – list of distinct mentees
-router.get('/mentees', (req, res) => mentorBookingController.listMentees(req, res));
+router.get('/mentees',authenticateJWT, (req, res) => mentorBookingController.listMentees(req, res));
 
 // GET /api/mentor-bookings/mentees/:menteeId  – sessions with a specific mentee
 router.get('/mentees/:menteeId', (req, res) =>

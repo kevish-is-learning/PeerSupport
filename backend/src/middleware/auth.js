@@ -18,6 +18,8 @@ const mapRequestUser = (user) => {
     onboardingCompleted,
     mentorApprovalStatus: mentorProfile?.approvalStatus || null,
     mentorIsVerified: Boolean(mentorProfile?.isVerified),
+    mentorProfileId: mentorProfile?.id || null,
+    menteeProfileId: menteeProfile?.id || null,
   };
 };
 
@@ -95,7 +97,12 @@ const authenticateJWT = async (req, res, next) => {
         );
     }
 
-    req.user = mapRequestUser(user);
+    const mappedUser = mapRequestUser(user);
+    // Prefer decoded token IDs if available, fallback to DB
+    mappedUser.mentorProfileId = decoded.mentorProfileId || mappedUser.mentorProfileId;
+    mappedUser.menteeProfileId = decoded.menteeProfileId || mappedUser.menteeProfileId;
+    
+    req.user = mappedUser;
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
@@ -154,7 +161,10 @@ const optionalAuth = async (req, res, next) => {
       });
 
       if (user && user.isActive) {
-        req.user = mapRequestUser(user);
+        const mappedUser = mapRequestUser(user);
+        mappedUser.mentorProfileId = decoded.mentorProfileId || mappedUser.mentorProfileId;
+        mappedUser.menteeProfileId = decoded.menteeProfileId || mappedUser.menteeProfileId;
+        req.user = mappedUser;
       }
     }
 

@@ -138,7 +138,7 @@ export default function MyMenteesPage() {
               placeholder="Search mentees..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-black py-2.5 pl-10 pr-4 text-sx outline-none focus:ring-2 focus:ring-[#5061E4] focus:border-[#5061E4] transition-all"
+              className="w-full rounded-xl border border-black py-1.75 pl-10 pr-4 text-sx outline-none focus:ring-2 focus:ring-[#5061E4] focus:border-[#5061E4] transition-all"
             />
           </div>
         </div>
@@ -218,7 +218,7 @@ export default function MyMenteesPage() {
               return (
               <article
                 key={session.id}
-                className="rounded-2xl border-[3px] border-black bg-white p-6"
+                className="rounded-xl border border-black bg-white p-4"
                 style={{ boxShadow: "6px 6px 0 0 #000" }}
               >
                 <div className="flex items-start justify-between">
@@ -228,6 +228,8 @@ export default function MyMenteesPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-black">
+                        {console.log("=======", session)}
+                        {console.log("----------------------------------------------------", session.service)}
                         {session.service?.label || "Mentoring Session"}
                       </h3>
                       <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500">

@@ -73,38 +73,32 @@ const bookingInclude = {
 };
 
 class MentorBookingService {
-  async requireProfile(userId) {
-    const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
-      select: { id: true, totalEarnings: true, totalSessions: true, averageRating: true },
-    });
-    if (!profile) throw createServiceError(404, 'Mentor profile not found');
-    return profile;
-  }
-
   /**
    * Dashboard stats: total sessions, earnings, active mentees, avg rating.
    */
-  async getDashboardStats(userId) {
-    const profile = await this.requireProfile(userId);
-    const profileId = profile.id;
+  async getDashboardStats(mentorProfileId) {
+    if (!mentorProfileId) throw createServiceError(404, 'Mentor profile not found');
 
-    const [totalSessions, completedPayments, activeBookingMentees] = await Promise.all([
+    const [totalSessions, completedPayments, activeBookingMentees, profile] = await Promise.all([
       prisma.booking.count({
-        where: { mentorProfileId: profileId, status: { in: ['COMPLETED', 'CONFIRMED'] } },
+        where: { mentorProfileId, status: { in: ['COMPLETED', 'CONFIRMED'] } },
       }),
       prisma.payment.aggregate({
         where: {
           paymentStatus: 'SUCCESS',
-          booking: { mentorProfileId: profileId },
+          booking: { mentorProfileId },
         },
         _sum: { amount: true },
       }),
       prisma.booking.findMany({
-        where: { mentorProfileId: profileId, status: { not: 'CANCELLED' } },
+        where: { mentorProfileId, status: { not: 'CANCELLED' } },
         distinct: ['menteeId'],
         select: { menteeId: true },
       }),
+      prisma.mentorProfile.findUnique({
+        where: { id: mentorProfileId },
+        select: { averageRating: true },
+      })
     ]);
 
     // Month-to-date
@@ -115,7 +109,7 @@ class MentorBookingService {
     const [monthSessions, monthEarnings] = await Promise.all([
       prisma.booking.count({
         where: {
-          mentorProfileId: profileId,
+          mentorProfileId,
           status: { in: ['COMPLETED', 'CONFIRMED'] },
           startTime: { gte: monthStart },
         },
@@ -123,7 +117,7 @@ class MentorBookingService {
       prisma.payment.aggregate({
         where: {
           paymentStatus: 'SUCCESS',
-          booking: { mentorProfileId: profileId, startTime: { gte: monthStart } },
+          booking: { mentorProfileId, startTime: { gte: monthStart } },
         },
         _sum: { amount: true },
       }),
@@ -133,7 +127,7 @@ class MentorBookingService {
       totalSessions,
       totalEarnings: completedPayments._sum.amount ?? 0,
       activeMentees: activeBookingMentees.length,
-      averageRating: profile.averageRating,
+      averageRating: profile?.averageRating || 0,
       monthSessions,
       monthEarnings: monthEarnings._sum.amount ?? 0,
     };
@@ -142,11 +136,11 @@ class MentorBookingService {
   /**
    * List all unique mentees who have booked this mentor.
    */
-  async listMentees(userId) {
-    const profile = await this.requireProfile(userId);
-
+  async listMentees(mentorProfileId) {
+    if (!mentorProfileId) throw createServiceError(404, 'Mentor profile not found');
+    
     const bookings = await prisma.booking.findMany({
-      where: { mentorProfileId: profile.id, status: { not: 'CANCELLED' } },
+      where: { mentorProfileId, status: { not: 'CANCELLED' } },
       distinct: ['menteeId'],
       select: {
         menteeId: true,
@@ -167,11 +161,11 @@ class MentorBookingService {
   /**
    * List bookings for a specific mentee under this mentor, ordered newest first.
    */
-  async listBookingsForMentee(userId, menteeId) {
-    const profile = await this.requireProfile(userId);
+  async listBookingsForMentee(mentorProfileId, menteeId) {
+    if (!mentorProfileId) throw createServiceError(404, 'Mentor profile not found');
 
     const bookings = await prisma.booking.findMany({
-      where: { mentorProfileId: profile.id, menteeId },
+      where: { mentorProfileId, menteeId },
       include: bookingInclude,
       orderBy: { startTime: 'desc' },
     });
@@ -182,13 +176,12 @@ class MentorBookingService {
   /**
    * Earnings/payment overview for the payments page.
    */
-  async getEarnings(userId) {
-    const profile = await this.requireProfile(userId);
-    const profileId = profile.id;
+  async getEarnings(mentorProfileId) {
+    if (!mentorProfileId) throw createServiceError(404, 'Mentor profile not found');
 
     const [allPayments, pendingBookings, completedPayments] = await Promise.all([
       prisma.payment.findMany({
-        where: { booking: { mentorProfileId: profileId } },
+        where: { booking: { mentorProfileId } },
         include: {
           booking: {
             include: {
@@ -199,10 +192,10 @@ class MentorBookingService {
         orderBy: { createdAt: 'desc' },
       }),
       prisma.booking.count({
-        where: { mentorProfileId: profileId, status: 'PENDING' },
+        where: { mentorProfileId, status: 'PENDING' },
       }),
       prisma.payment.aggregate({
-        where: { paymentStatus: 'SUCCESS', booking: { mentorProfileId: profileId } },
+        where: { paymentStatus: 'SUCCESS', booking: { mentorProfileId } },
         _sum: { amount: true },
       }),
     ]);
