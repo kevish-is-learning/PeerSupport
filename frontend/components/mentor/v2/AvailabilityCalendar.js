@@ -326,8 +326,30 @@ export default function AvailabilityCalendar() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="animate-spin text-[#5061E4]" size={32} />
+      <div
+        className="rounded-[24px] border-[3px] border-gray-200 bg-white overflow-hidden animate-pulse"
+        style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}
+      >
+        <div className="flex items-center justify-between px-8 py-6 border-b-[3px] border-gray-200">
+          <div className="h-10 w-10 rounded-xl bg-gray-200"></div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="h-7 w-48 bg-gray-200 rounded"></div>
+            <div className="h-3 w-40 bg-gray-200 rounded"></div>
+          </div>
+          <div className="h-10 w-10 rounded-xl bg-gray-200"></div>
+        </div>
+        <div className="grid grid-cols-7 border-b-[3px] border-gray-200">
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div key={i} className="h-10 border-r border-gray-200 bg-gray-50"></div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7">
+          {Array.from({ length: 35 }).map((_, i) => (
+            <div key={i} className="h-[96px] border-b border-r border-gray-200 flex flex-col p-2.5">
+              <div className="h-5 w-5 bg-gray-200 rounded-full"></div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

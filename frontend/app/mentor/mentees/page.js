@@ -61,8 +61,53 @@ export default function MyMenteesPage() {
 
   if (loading) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-[#FFF7F5]">
-        <Loader2 className="animate-spin text-[#5061E4]" size={36} />
+      <div className="flex h-full w-full">
+        {/* Left List Pane Skeleton */}
+        <div className="w-80 border-r-2 border-black flex flex-col bg-white">
+          <div className="p-5 border-b-2 border-black">
+            <div className="h-10 w-full rounded-xl bg-gray-200 animate-pulse"></div>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-5 py-4 border-b border-gray-200 animate-pulse">
+                <div className="w-12 h-12 rounded-xl bg-gray-200"></div>
+                <div className="flex-1">
+                  <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-32"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Content Pane Skeleton */}
+        <div className="flex-1 flex flex-col bg-[#FFF7F5] overflow-y-auto relative">
+          <header className="sticky top-0 bg-[#FFF7F5] z-10 px-8 py-6 border-b-2 border-black flex items-center justify-between">
+            <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
+          </header>
+          <div className="p-8 flex flex-col gap-6">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border-[3px] border-gray-200 bg-white p-6 animate-pulse" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}>
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="h-12 w-12 rounded-xl bg-gray-200"></div>
+                  <div className="flex-1">
+                    <div className="h-6 bg-gray-200 rounded w-48 mb-3"></div>
+                    <div className="flex gap-4">
+                      <div className="h-4 bg-gray-200 rounded w-24"></div>
+                      <div className="h-4 bg-gray-200 rounded w-20"></div>
+                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="h-16 w-full bg-gray-200 rounded-xl mb-6"></div>
+                <div className="flex gap-3">
+                  <div className="h-10 w-full bg-gray-200 rounded-xl"></div>
+                  <div className="h-10 w-full bg-gray-200 rounded-xl"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -138,11 +183,31 @@ export default function MyMenteesPage() {
           <h2 className="text-2xl font-extrabold tracking-tight text-black">
             {selectedMentee?.name}
           </h2>
-          {sessionsLoading && <Loader2 className="animate-spin text-[#5061E4]" size={20} />}
         </header>
 
         <div className="p-8 flex flex-col gap-6">
-          {sessions.length === 0 && !sessionsLoading ? (
+          {sessionsLoading ? (
+            Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border-[3px] border-gray-200 bg-white p-6 animate-pulse" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}>
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="h-12 w-12 rounded-xl bg-gray-200"></div>
+                  <div className="flex-1">
+                    <div className="h-6 bg-gray-200 rounded w-48 mb-3"></div>
+                    <div className="flex gap-4">
+                      <div className="h-4 bg-gray-200 rounded w-24"></div>
+                      <div className="h-4 bg-gray-200 rounded w-20"></div>
+                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="h-16 w-full bg-gray-200 rounded-xl mb-6"></div>
+                <div className="flex gap-3">
+                  <div className="h-10 w-full bg-gray-200 rounded-xl"></div>
+                  <div className="h-10 w-full bg-gray-200 rounded-xl"></div>
+                </div>
+              </div>
+            ))
+          ) : sessions.length === 0 ? (
             <div className="text-center py-12">
               <p className="font-bold text-gray-400 italic">No session history found for this mentee.</p>
             </div>

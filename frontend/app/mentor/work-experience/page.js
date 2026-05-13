@@ -64,8 +64,34 @@ export default function WorkExperiencePage() {
   const [displayY, displayC, displayR] = (currentWE || "").split("|");
 
   if (isLoading) return (
-    <div className="flex h-full w-full items-center justify-center bg-[#FFF7F5]">
-      <Loader2 className="animate-spin text-[#5061E4]" size={32}/>
+    <div className="w-full h-full bg-[#FFF7F5] p-6 lg:p-10">
+      <div className="mb-8 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-gray-200 animate-pulse border-[3px] border-gray-200"></div>
+        <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+      <div className="max-w-2xl flex flex-col gap-6">
+        <div className="rounded-2xl border-[3px] border-gray-200 bg-white p-5 animate-pulse" style={{boxShadow:"5px 5px 0 0 #E5E7EB"}}>
+          <div className="h-4 w-32 bg-gray-200 rounded mb-4"></div>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gray-200 shrink-0"></div>
+            <div className="flex flex-col gap-2">
+              <div className="h-5 w-48 bg-gray-200 rounded"></div>
+              <div className="h-4 w-32 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-2xl border-[3px] border-gray-200 bg-white overflow-hidden animate-pulse" style={{boxShadow:"6px 6px 0 0 #E5E7EB"}}>
+          <div className="bg-gray-100 px-6 py-4 h-14"></div>
+          <div className="p-6 space-y-6">
+            <div className="h-4 w-48 bg-gray-200 rounded mb-3"></div>
+            <div className="flex gap-6">
+              <div className="h-4 w-16 bg-gray-200 rounded"></div>
+              <div className="h-4 w-24 bg-gray-200 rounded"></div>
+            </div>
+            <div className="h-10 w-32 bg-gray-200 rounded mt-4"></div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 

@@ -123,9 +123,36 @@ export default function ServicesSection() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-7 w-7 animate-spin text-[#5061E4]" />
-      </div>
+      <>
+        {/* Header row skeleton */}
+        <div className="flex items-center justify-between mb-6">
+          <div />
+          <div className="h-11 w-40 rounded-xl bg-gray-200 animate-pulse border-[3px] border-gray-200"></div>
+        </div>
+        {/* Service cards grid skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-[20px] border-[2.5px] border-gray-200 bg-white p-6 flex flex-col gap-3 animate-pulse">
+              <div className="flex items-start justify-between">
+                <div className="h-6 w-48 bg-gray-200 rounded"></div>
+                <div className="h-9 w-9 bg-gray-200 rounded-lg"></div>
+              </div>
+              <div className="h-4 w-3/4 bg-gray-200 rounded mt-1"></div>
+              <div className="flex items-baseline gap-2 mt-2">
+                <div className="h-8 w-24 bg-gray-200 rounded"></div>
+              </div>
+              <div className="flex flex-col gap-2 mt-2">
+                <div className="h-10 w-full bg-gray-200 rounded-xl"></div>
+                <div className="h-10 w-full bg-gray-200 rounded-xl"></div>
+              </div>
+              <div className="flex items-center justify-between pt-2 mt-4 border-t border-gray-100">
+                <div className="h-4 w-16 bg-gray-200 rounded"></div>
+                <div className="h-7 w-12 bg-gray-200 rounded-full"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
     );
   }
 

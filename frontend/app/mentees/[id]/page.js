@@ -32,8 +32,27 @@ export default function MenteePublicProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FAF5FF]">
-        <Loader2 className="h-10 w-10 animate-spin text-[#5061E4]" />
+      <div className="min-h-screen bg-[#FAF5FF] py-12 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl animate-pulse">
+          <div className="mb-8 flex items-center gap-6 rounded-[20px] border-4 border-gray-200 bg-white p-8" style={{ boxShadow: "8px 8px 0 0 #E5E7EB" }}>
+            <div className="h-24 w-24 rounded-2xl bg-gray-200 shrink-0"></div>
+            <div className="flex-1">
+              <div className="h-8 w-48 bg-gray-200 rounded mb-2"></div>
+              <div className="h-5 w-32 bg-gray-200 rounded mb-4"></div>
+              <div className="h-4 w-40 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2 space-y-8">
+              <div className="rounded-[20px] border-4 border-gray-200 bg-white h-48" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}></div>
+              <div className="rounded-[20px] border-4 border-gray-200 bg-white h-64" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}></div>
+            </div>
+            <div className="md:col-span-1 space-y-8">
+              <div className="rounded-[20px] border-4 border-gray-200 bg-white h-40" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}></div>
+              <div className="rounded-[20px] border-4 border-gray-200 bg-white h-32" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}></div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -189,8 +189,49 @@ export default function MentorProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-[#FAF9F6]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#5061E4]" />
+      <div className="w-full h-full overflow-y-auto bg-[#FAF9F6] p-8 lg:p-12">
+        <div className="flex flex-col lg:flex-row gap-8 items-start max-w-6xl mx-auto">
+          {/* LEFT: Profile Preview Skeleton */}
+          <div className="w-full lg:w-[340px] shrink-0 animate-pulse">
+            <div className="rounded-[28px] border-[3px] border-gray-200 bg-white p-8 flex flex-col items-center text-center" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}>
+              <div className="h-40 w-40 rounded-[20px] bg-gray-200 mb-5"></div>
+              <div className="h-6 w-48 bg-gray-200 rounded mb-2"></div>
+              <div className="h-4 w-32 bg-gray-200 rounded mb-4"></div>
+              <div className="flex flex-wrap justify-center gap-2 mt-4 w-full">
+                <div className="h-6 w-16 bg-gray-200 rounded-full"></div>
+                <div className="h-6 w-20 bg-gray-200 rounded-full"></div>
+                <div className="h-6 w-24 bg-gray-200 rounded-full"></div>
+              </div>
+              <div className="h-16 w-full bg-gray-200 rounded mt-5 mb-2"></div>
+              <div className="h-4 w-32 bg-gray-200 rounded mb-6"></div>
+              <div className="h-14 w-full rounded-2xl bg-gray-200 mt-4"></div>
+            </div>
+          </div>
+          
+          {/* RIGHT: Personal Information Skeleton */}
+          <div className="flex-1 w-full min-w-0 animate-pulse">
+            <div className="rounded-[28px] border-[3px] border-gray-200 bg-white overflow-hidden" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}>
+              <div className="flex items-center justify-between px-8 py-6 border-b-[3px] border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="h-6 w-6 bg-gray-200 rounded-full"></div>
+                  <div className="h-6 w-48 bg-gray-200 rounded"></div>
+                </div>
+                <div className="h-10 w-32 bg-gray-200 rounded-xl"></div>
+              </div>
+              <div className="p-8 flex flex-col gap-7">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="h-5 w-5 bg-gray-200 rounded-full"></div>
+                    <div>
+                      <div className="h-4 w-32 bg-gray-200 rounded mb-1"></div>
+                      <div className="h-3 w-24 bg-gray-200 rounded"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

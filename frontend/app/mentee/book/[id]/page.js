@@ -28,8 +28,25 @@ export default function BookMentorPage({ params }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FFF7F5] flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#5061E4]" size={36} />
+      <div className="min-h-screen bg-[#FFF7F5]">
+        {/* Top bar skeleton */}
+        <div className="border-b-2 border-black bg-white px-6 py-4 animate-pulse">
+          <div className="mx-auto flex max-w-6xl items-center gap-4">
+            <div className="h-8 w-20 rounded-lg bg-gray-200"></div>
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-gray-200"></div>
+              <div>
+                <div className="h-4 w-32 bg-gray-200 rounded mb-1"></div>
+                <div className="h-3 w-48 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Booking content skeleton */}
+        <div className="mx-auto max-w-6xl px-6 py-8 animate-pulse flex flex-col md:flex-row gap-8">
+          <div className="flex-1 rounded-2xl border-[3px] border-gray-200 bg-white p-6 min-h-[500px]"></div>
+          <div className="w-full md:w-80 rounded-2xl border-[3px] border-gray-200 bg-white p-6 h-96"></div>
+        </div>
       </div>
     );
   }

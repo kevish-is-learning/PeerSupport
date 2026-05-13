@@ -24,13 +24,6 @@ export default function MentorDashboardPage() {
     fetchStats();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex h-full w-full items-center justify-center bg-[#FFF7F5]">
-        <Loader2 className="animate-spin text-[#5061E4]" size={36} />
-      </div>
-    );
-  }
 
   const cards = [
     {
@@ -75,25 +68,42 @@ export default function MentorDashboardPage() {
       </header>
 
       <section className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        {cards.map((stat, idx) => {
-          const Icon = stat.icon;
-          return (
+        {loading ? (
+          Array.from({ length: 4 }).map((_, idx) => (
             <article
               key={idx}
-              className="flex flex-col justify-between rounded-xl border-[3px] border-black bg-white p-5"
-              style={{ boxShadow: `6px 6px 0 0 ${stat.shadowColor}` }}
+              className="flex flex-col justify-between rounded-xl border-[3px] border-gray-200 bg-white p-5 animate-pulse"
+              style={{ boxShadow: `6px 6px 0 0 #E5E7EB` }}
             >
-              <div className="mb-4">
-                <Icon size={24} className={stat.iconColor} strokeWidth={2.5} />
-              </div>
+              <div className="mb-4 h-6 w-6 rounded bg-gray-200" />
               <div>
-                <p className="text-3xl font-extrabold tracking-tight text-black">{stat.value}</p>
-                <p className="mt-1 text-sm font-bold text-gray-500">{stat.label}</p>
-                <p className="mt-1 text-xs font-semibold text-gray-400">{stat.subtitle}</p>
+                <div className="mb-2 h-8 w-24 rounded bg-gray-200" />
+                <div className="mt-1 mb-1 h-4 w-32 rounded bg-gray-200" />
+                <div className="mt-1 h-3 w-20 rounded bg-gray-200" />
               </div>
             </article>
-          );
-        })}
+          ))
+        ) : (
+          cards.map((stat, idx) => {
+            const Icon = stat.icon;
+            return (
+              <article
+                key={idx}
+                className="flex flex-col justify-between rounded-xl border-[3px] border-black bg-white p-5 hover:-translate-y-1 transition-transform"
+                style={{ boxShadow: `6px 6px 0 0 ${stat.shadowColor}` }}
+              >
+                <div className="mb-4">
+                  <Icon size={24} className={stat.iconColor} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <p className="text-3xl font-extrabold tracking-tight text-black">{stat.value}</p>
+                  <p className="mt-1 text-sm font-bold text-gray-500">{stat.label}</p>
+                  <p className="mt-1 text-xs font-semibold text-gray-400">{stat.subtitle}</p>
+                </div>
+              </article>
+            );
+          })
+        )}
       </section>
     </div>
   );
