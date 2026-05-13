@@ -43,49 +43,8 @@ const authenticateJWT = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        role: true,
-        provider: true,
-        profilePicture: true,
-        isVerified: true,
-        isActive: true,
-        createdAt: true,
-        mentorProfile: {
-          select: {
-            id: true,
-            approvalStatus: true,
-            isVerified: true,
-          },
-        },
-        menteeProfile: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    });
-
-    if (!user) {
-      return res
-        .status(401)
-        .json(
-          new ApiError(
-            401,
-            "User not found",
-            "Please log in to access this resource",
-          ),
-        );
-    }
-
     // Check if user is active
-    if (!user.isActive) {
+    if (decoded.isActive === false) {
       return res
         .status(403)
         .json(
@@ -97,12 +56,7 @@ const authenticateJWT = async (req, res, next) => {
         );
     }
 
-    const mappedUser = mapRequestUser(user);
-    // Prefer decoded token IDs if available, fallback to DB
-    mappedUser.mentorProfileId = decoded.mentorProfileId || mappedUser.mentorProfileId;
-    mappedUser.menteeProfileId = decoded.menteeProfileId || mappedUser.menteeProfileId;
-    
-    req.user = mappedUser;
+    req.user = decoded;
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
@@ -133,38 +87,9 @@ const optionalAuth = async (req, res, next) => {
 
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await prisma.user.findUnique({
-        where: { id: decoded.userId },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          role: true,
-          role: true,
-          provider: true,
-          profilePicture: true,
-          isVerified: true,
-          isActive: true,
-          mentorProfile: {
-            select: {
-              id: true,
-              approvalStatus: true,
-              isVerified: true,
-            },
-          },
-          menteeProfile: {
-            select: {
-              id: true,
-            },
-          },
-        },
-      });
-
-      if (user && user.isActive) {
-        const mappedUser = mapRequestUser(user);
-        mappedUser.mentorProfileId = decoded.mentorProfileId || mappedUser.mentorProfileId;
-        mappedUser.menteeProfileId = decoded.menteeProfileId || mappedUser.menteeProfileId;
-        req.user = mappedUser;
+      
+      if (decoded.isActive !== false) {
+        req.user = decoded;
       }
     }
 

@@ -228,30 +228,26 @@ export default function MyMenteesPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-black">
-                        {console.log("=======", session)}
-                        {console.log("----------------------------------------------------", session.service)}
-                        {session.service?.label || "Mentoring Session"}
+                        {session?.serviceName || "No service name available"}
                       </h3>
                       <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500">
                         <span className="flex items-center gap-1.5">
                           <Calendar size={14} /> {format(new Date(session.startTime), "dd MMM yyyy")}
                         </span>
                         <span className="flex items-center gap-1.5">
-                          <Clock size={14} /> {session.service?.durationMinutes || 0} mins
-                        </span>
-                        <span className="flex items-center gap-1.5 rounded bg-[#5061E4] px-1.5 py-0.5 text-xs text-white uppercase font-bold">
-                          {session.sessionType?.replace("_", " ")}
+                          <Clock size={14} /> {session.durationMinutes || 0} mins
                         </span>
                       </div>
                     </div>
                   </div>
                   <div>
-                    <span className={`rounded-md px-3 py-1 text-xs font-bold text-white tracking-wider uppercase ${
-                      session.bookingStatus === 'COMPLETED' ? 'bg-[#22C55E]' : 
-                      session.bookingStatus === 'PENDING' ? 'bg-[#F59E0B]' : 
-                      session.bookingStatus === 'CONFIRMED' ? 'bg-[#5061E4]' : 'bg-gray-400'
+                    <span className={`rounded-md px-3 py-1 text-xs font-bold tracking-wider uppercase ${
+                      session.status === 'COMPLETED' ? 'bg-[#22C55E] text-white' : 
+                      session.status === 'PENDING' ? 'bg-[#F59E0B] text-white' : 
+                      session.status === 'CONFIRMED' && new Date(session.startTime) > Date.now()  ? 'bg-[#FFB705] text-black' : 
+                      session.status === 'CONFIRMED' && new Date(session.startTime) < Date.now()  ? 'bg-[#5061E4] text-white' : ''
                     }`}>
-                      {session.bookingStatus}
+                      {session.status}
                     </span>
                   </div>
                 </div>

@@ -8,7 +8,7 @@ const selectRoleSchema = z.object({
   role: z.enum(['MENTEE', 'MENTOR']),
 });
 
-const mapUserWithOnboardingState = (user) => {
+export const mapUserWithOnboardingState = (user) => {
   const hasMenteeProfile = Boolean(user.menteeProfile);
   const hasMentorProfile = Boolean(user.mentorProfile);
 
@@ -24,18 +24,21 @@ const mapUserWithOnboardingState = (user) => {
     provider: user.provider,
     role: user.role,
     isVerified: user.isVerified,
+    isActive: user.isActive !== false,
     createdAt: user.createdAt,
     onboardingCompleted,
     mentorApprovalStatus: user.mentorProfile?.approvalStatus || null,
     mentorIsVerified: Boolean(user.mentorProfile?.isVerified),
+    mentorProfileId: user.mentorProfile?.id || null,
+    menteeProfileId: user.menteeProfile?.id || null,
   };
 };
 
 class AuthService {
   // Generate JWT Token
-  generateToken(userId, mentorProfileId = null, menteeProfileId = null) {
+  generateToken(mappedUser) {
     return jwt.sign(
-      { userId, mentorProfileId, menteeProfileId },
+      mappedUser,
       process.env.JWT_SECRET,
       // { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
@@ -131,15 +134,11 @@ class AuthService {
       },
     });
 
-    // Generate token with mentorProfileId if available
-    const mentorProfileId =
-      user.role === 'MENTOR' ? (user.mentorProfile?.id || null) : null;
-    const menteeProfileId =
-      user.role === 'MENTEE' ? (user.menteeProfile?.id || null) : null;
-    const token = this.generateToken(user.id, mentorProfileId, menteeProfileId);
+    const mappedUser = mapUserWithOnboardingState(user);
+    const token = this.generateToken(mappedUser);
 
     return {
-      user: mapUserWithOnboardingState(user),
+      user: mappedUser,
       token,
     };
   }
@@ -183,18 +182,13 @@ class AuthService {
       throw new Error('Invalid email or password');
     }
 
-    // Generate token with mentorProfileId if available
-    const mentorProfileId =
-      user.role === 'MENTOR' ? (user.mentorProfile?.id || null) : null;
-    const menteeProfileId =
-      user.role === 'MENTEE' ? (user.menteeProfile?.id || null) : null;
-    const token = this.generateToken(user.id, mentorProfileId, menteeProfileId);
-
     // Return user without password
     const { password: _, ...userWithoutPassword } = user;
+    const mappedUser = mapUserWithOnboardingState(userWithoutPassword);
+    const token = this.generateToken(mappedUser);
 
     return {
-      user: mapUserWithOnboardingState(userWithoutPassword),
+      user: mappedUser,
       token,
     };
   }
@@ -223,7 +217,13 @@ class AuthService {
       },
     });
 
-    return mapUserWithOnboardingState(updatedUser);
+    const mappedUser = mapUserWithOnboardingState(updatedUser);
+    const token = this.generateToken(mappedUser);
+
+    return {
+      user: mappedUser,
+      token,
+    };
   }
 
   // Change password (for local users only)

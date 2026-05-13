@@ -1,4 +1,4 @@
-import authService from "../services/AuthService.js";
+import authService, { mapUserWithOnboardingState } from "../services/AuthService.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 class AuthController {
@@ -68,11 +68,18 @@ class AuthController {
     try {
       const { role } = req.body;
 
-      const user = await authService.selectRole(req.user.id, { role });
+      const result = await authService.selectRole(req.user.id, { role });
+
+      res.cookie('token', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
 
       return res
         .status(200)
-        .json(new ApiResponse(200, "Role selected successfully", { user }));
+        .json(new ApiResponse(200, "Role selected successfully", { user: result.user }));
     } catch (error) {
       const statusCode = error?.name === "ZodError" ? 400 : 500;
       return res.status(statusCode).json({
@@ -93,10 +100,9 @@ class AuthController {
         );
       }
 
-      // Generate JWT token with optional mentorProfileId and menteeProfileId
-      const mentorProfileId = req.user.role === 'MENTOR' ? (req.user.mentorProfile?.id || null) : null;
-      const menteeProfileId = req.user.role === 'MENTEE' ? (req.user.menteeProfile?.id || null) : null;
-      const token = authService.generateToken(req.user.id, mentorProfileId, menteeProfileId);
+      // Generate JWT token with full stateless profile
+      const mappedUser = mapUserWithOnboardingState(req.user);
+      const token = authService.generateToken(mappedUser);
 
       // Set JWT token in HTTP-only cookie
       res.cookie('token', token, {
@@ -168,9 +174,23 @@ class AuthController {
       const updatedUser = await prisma.user.update({
         where: { id: req.user.id },
         data: { name: name?.trim() || req.user.name },
-        select: { id:true, name:true, email:true, role:true },
+        include: {
+          mentorProfile: { select: { id: true, approvalStatus: true, isVerified: true } },
+          menteeProfile: { select: { id: true } }
+        }
       });
-      return res.status(200).json(new ApiResponse(200, "Profile updated", { user: updatedUser }));
+      
+      const mappedUser = mapUserWithOnboardingState(updatedUser);
+      const token = authService.generateToken(mappedUser);
+
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      return res.status(200).json(new ApiResponse(200, "Profile updated", { user: mappedUser }));
     } catch (error) {
       return res.status(500).json({ success:false, message: error.message || "Update failed" });
     }

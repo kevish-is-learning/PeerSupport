@@ -1,4 +1,4 @@
-import { prisma } from '../config/database.js';
+import { prisma } from "../config/database.js";
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -50,7 +50,10 @@ const mapBooking = (b) => ({
   // Normalize fields for SessionDetailsModal
   mentorName: b.mentorProfile?.user?.name || "Mentor",
   mentorPicture: b.mentorProfile?.user?.profilePicture,
-  serviceName: b.mentorService?.label || b.mentorService?.serviceName || "Mentoring Session",
+  serviceName:
+    b.mentorService?.label ||
+    b.mentorService?.serviceName ||
+    "Mentoring Session",
   price: b.payment?.amount || b.mentorService?.price || 0,
   durationMinutes: b.mentorService?.durationMinutes || 60,
 });
@@ -60,7 +63,13 @@ const bookingInclude = {
     select: { id: true, name: true, email: true, profilePicture: true },
   },
   payment: {
-    select: { id: true, amount: true, paymentStatus: true, paidAt: true, currency: true },
+    select: {
+      id: true,
+      amount: true,
+      paymentStatus: true,
+      paidAt: true,
+      currency: true,
+    },
   },
   mentorService: true,
   mentorProfile: {
@@ -77,29 +86,34 @@ class MentorBookingService {
    * Dashboard stats: total sessions, earnings, active mentees, avg rating.
    */
   async getDashboardStats(mentorProfileId) {
-    if (!mentorProfileId) throw createServiceError(404, 'Mentor profile not found');
+    if (!mentorProfileId)
+      throw createServiceError(404, "Mentor profile not found");
 
-    const [totalSessions, completedPayments, activeBookingMentees, profile] = await Promise.all([
-      prisma.booking.count({
-        where: { mentorProfileId, status: { in: ['COMPLETED', 'CONFIRMED'] } },
-      }),
-      prisma.payment.aggregate({
-        where: {
-          paymentStatus: 'SUCCESS',
-          booking: { mentorProfileId },
-        },
-        _sum: { amount: true },
-      }),
-      prisma.booking.findMany({
-        where: { mentorProfileId, status: { not: 'CANCELLED' } },
-        distinct: ['menteeId'],
-        select: { menteeId: true },
-      }),
-      prisma.mentorProfile.findUnique({
-        where: { id: mentorProfileId },
-        select: { averageRating: true },
-      })
-    ]);
+    const [totalSessions, completedPayments, activeBookingMentees, profile] =
+      await Promise.all([
+        prisma.booking.count({
+          where: {
+            mentorProfileId,
+            status: { in: ["COMPLETED", "CONFIRMED"] },
+          },
+        }),
+        prisma.payment.aggregate({
+          where: {
+            paymentStatus: "SUCCESS",
+            booking: { mentorProfileId },
+          },
+          _sum: { amount: true },
+        }),
+        prisma.booking.findMany({
+          where: { mentorProfileId, status: { not: "CANCELLED" } },
+          distinct: ["menteeId"],
+          select: { menteeId: true },
+        }),
+        prisma.mentorProfile.findUnique({
+          where: { id: mentorProfileId },
+          select: { averageRating: true },
+        }),
+      ]);
 
     // Month-to-date
     const monthStart = new Date();
@@ -110,13 +124,13 @@ class MentorBookingService {
       prisma.booking.count({
         where: {
           mentorProfileId,
-          status: { in: ['COMPLETED', 'CONFIRMED'] },
+          status: { in: ["COMPLETED", "CONFIRMED"] },
           startTime: { gte: monthStart },
         },
       }),
       prisma.payment.aggregate({
         where: {
-          paymentStatus: 'SUCCESS',
+          paymentStatus: "SUCCESS",
           booking: { mentorProfileId, startTime: { gte: monthStart } },
         },
         _sum: { amount: true },
@@ -137,11 +151,12 @@ class MentorBookingService {
    * List all unique mentees who have booked this mentor.
    */
   async listMentees(mentorProfileId) {
-    if (!mentorProfileId) throw createServiceError(404, 'Mentor profile not found');
+    if (!mentorProfileId)
+      throw createServiceError(404, "Mentor profile not found");
     
     const bookings = await prisma.booking.findMany({
-      where: { mentorProfileId, status: { not: 'CANCELLED' } },
-      distinct: ['menteeId'],
+      where: { mentorProfileId, status: { not: "CANCELLED" } },
+      distinct: ["menteeId"],
       select: {
         menteeId: true,
         mentee: {
@@ -162,43 +177,70 @@ class MentorBookingService {
    * List bookings for a specific mentee under this mentor, ordered newest first.
    */
   async listBookingsForMentee(mentorProfileId, menteeId) {
-    if (!mentorProfileId) throw createServiceError(404, 'Mentor profile not found');
+    if (!mentorProfileId)
+      throw createServiceError(404, "Mentor profile not found");
 
     const bookings = await prisma.booking.findMany({
-      where: { mentorProfileId, menteeId },
-      include: bookingInclude,
-      orderBy: { startTime: 'desc' },
+      where: { mentorProfileId, menteeId, status: { not: "CANCELLED" } },
+      select: {
+        id: true,
+        status: true,
+        startTime: true,
+        endTime: true,
+        mentorServiceId: true,
+        menteeId: true,
+        purposeOfCall: true,
+      },
+      orderBy: { startTime: "desc" },
     });
 
-    return bookings.map(mapBooking);
+    // we need to get the service name, duration from the mentorServiceId
+    const mentorServices = await prisma.mentorService.findMany({
+      where: { id: { in: bookings.map((b) => b.mentorServiceId) } },
+      select: { id: true, title: true, durationMinutes: true },
+    });
+
+    const mentorServicesMap = new Map(mentorServices.map((s) => [s.id, s]));
+
+    return bookings.map((b) => {
+      const mentorService = mentorServicesMap.get(b.mentorServiceId);
+      return {
+        ...b,
+        serviceName: mentorService?.title,
+        durationMinutes: mentorService?.durationMinutes,
+      };
+    });
   }
 
   /**
    * Earnings/payment overview for the payments page.
    */
   async getEarnings(mentorProfileId) {
-    if (!mentorProfileId) throw createServiceError(404, 'Mentor profile not found');
+    if (!mentorProfileId)
+      throw createServiceError(404, "Mentor profile not found");
 
-    const [allPayments, pendingBookings, completedPayments] = await Promise.all([
-      prisma.payment.findMany({
-        where: { booking: { mentorProfileId } },
-        include: {
-          booking: {
-            include: {
-              mentee: { select: { name: true, email: true } },
-                          },
+    const [allPayments, pendingBookings, completedPayments] = await Promise.all(
+      [
+        prisma.payment.findMany({
+          where: { booking: { mentorProfileId } },
+          include: {
+            booking: {
+              include: {
+                mentee: { select: { name: true, email: true } },
+              },
+            },
           },
-        },
-        orderBy: { createdAt: 'desc' },
-      }),
-      prisma.booking.count({
-        where: { mentorProfileId, status: 'PENDING' },
-      }),
-      prisma.payment.aggregate({
-        where: { paymentStatus: 'SUCCESS', booking: { mentorProfileId } },
-        _sum: { amount: true },
-      }),
-    ]);
+          orderBy: { createdAt: "desc" },
+        }),
+        prisma.booking.count({
+          where: { mentorProfileId, status: "PENDING" },
+        }),
+        prisma.payment.aggregate({
+          where: { paymentStatus: "SUCCESS", booking: { mentorProfileId } },
+          _sum: { amount: true },
+        }),
+      ],
+    );
 
     const totalEarnings = completedPayments._sum.amount ?? 0;
     const PLATFORM_FEE = 0.15;
@@ -206,8 +248,8 @@ class MentorBookingService {
     const transactions = allPayments.map((p) => ({
       id: p.id,
       transactionRef: p.id.substring(0, 13).toUpperCase(),
-      mentee: p.booking.mentee?.name ?? 'Unknown',
-      service: p.booking.mentorService?.service?.name || 'Session',
+      mentee: p.booking.mentee?.name ?? "Unknown",
+      service: p.booking.mentorService?.service?.name || "Session",
       date: p.createdAt,
       amount: p.amount,
       currency: p.currency,
@@ -218,9 +260,11 @@ class MentorBookingService {
       totalEarnings,
       availableForPayout: +(totalEarnings * (1 - PLATFORM_FEE)).toFixed(2),
       pendingAmount: allPayments
-        .filter((p) => p.paymentStatus === 'PENDING')
+        .filter((p) => p.paymentStatus === "PENDING")
         .reduce((sum, p) => sum + p.amount, 0),
-      completedTransactions: allPayments.filter((p) => p.paymentStatus === 'SUCCESS').length,
+      completedTransactions: allPayments.filter(
+        (p) => p.paymentStatus === "SUCCESS",
+      ).length,
       transactions,
     };
   }
