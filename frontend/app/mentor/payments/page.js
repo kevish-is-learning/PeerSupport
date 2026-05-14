@@ -41,7 +41,7 @@ export default function MentorPaymentsPage() {
     {
       label: "Available for Payout",
       value: `₹${data?.availableForPayout?.toLocaleString() || 0}`,
-      subtitle: "After 15% platform fee",
+      subtitle: "After 10% platform fee",
       icon: Wallet,
       shadowColor: "#F59E0B",
       iconColor: "text-[#F59E0B]",

@@ -5,7 +5,7 @@ import { Search, Video, FileText, User, Calendar, Clock, MessageSquare, Loader2,
 import { mentorBookingApi, resolveUploadUrl } from "../../../lib/api";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import SessionDetailsModal from "../../../components/mentee/v2/SessionDetailsModal";
+import MentorBookingDetailsModal from "../../../components/mentor/MentorBookingDetailsModal";
 
 export default function MyMenteesPage() {
   const [mentees, setMentees] = useState([]);
@@ -262,24 +262,22 @@ export default function MyMenteesPage() {
                 <div className="mt-6 flex justify-center gap-3 w-full">
                   <button 
                     onClick={() => setSelectedSessionDetails(session)}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#5061E4] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer shadow-[2px_2px_0_0_#000]"
+                    className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#5061E4] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer"
                   >
                     <FileText size={16} />
                     Booking Details
                   </button>
 
-                  {isUpcoming && (
                     <button 
-                      onClick={() => window.open(`/mentees/${session.mentee.id}`)}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-white px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:bg-gray-50 cursor-pointer shadow-[2px_2px_0_0_#000]"
+                      onClick={() => window.open(`/mentees/${session?.menteeId}`)}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-white px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:bg-gray-50 cursor-pointer"
                     >
                       <User size={16} />
                       View Profile
                     </button>
-                  )}
 
                   {session.isFeedbackSubmitted ? (
-                    <button className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#F59E0B] px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 cursor-pointer shadow-[2px_2px_0_0_#000]">
+                    <button className="w-full flex items-center justify-center gap-2 rounded-xl border border-black bg-[#F59E0B] px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:opacity-90 cursor-pointer">
                       <MessageSquare size={16} />
                       View Feedback
                     </button>
@@ -293,7 +291,11 @@ export default function MyMenteesPage() {
       </div>
 
       {selectedSessionDetails && (
-        <SessionDetailsModal session={selectedSessionDetails} onClose={() => setSelectedSessionDetails(null)} />
+        <MentorBookingDetailsModal 
+          session={selectedSessionDetails} 
+          mentee={selectedMentee}
+          onClose={() => setSelectedSessionDetails(null)} 
+        />
       )}
     </div>
   );

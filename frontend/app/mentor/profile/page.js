@@ -243,7 +243,7 @@ export default function MentorProfilePage() {
         {/* ── LEFT: Profile Preview Card ── */}
         <div className="w-full lg:w-[340px] shrink-0">
           <div
-            className="rounded-[28px] border-[3px] border-black bg-white p-8 flex flex-col items-center text-center"
+            className="rounded-[28px] border-[3px] border-black bg-white p-4 flex flex-col items-center text-center"
             style={{ boxShadow: "6px 6px 0 0 #5061E4" }}
           >
             {/* Photo */}

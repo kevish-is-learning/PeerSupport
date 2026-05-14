@@ -104,16 +104,20 @@ const mapProfile = (profile) => ({
 });
 
 class MentorProfileService {
-  async getByUserId(userId) {
+  async getById(mentorProfileId) {
+    if (!mentorProfileId) {
+      throw createServiceError(404, 'Mentor profile not found');
+    }
+
     const profile = await prisma.mentorProfile.findUnique({
-      where: { userId },
+      where: { id: mentorProfileId },
       include: profileInclude,
     });
 
     if (!profile) {
       throw createServiceError(404, 'Mentor onboarding profile not found');
     }
-
+    
     return mapProfile(profile);
   }
 

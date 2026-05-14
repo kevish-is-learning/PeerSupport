@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, CheckCircle, Calendar, Clock, Mail, Phone, Video
 import { publicMentorApi, bookingApi, paymentApi, resolveUploadUrl } from "../../../../../lib/api";
 import useAuthStore from "../../../../../store/useAuthStore";
 
-const PLATFORM_FEE_PCT = 5;
+const PLATFORM_FEE_PCT = 10;
 const GST_PCT = 18;
 
 function formatTime(t) {
@@ -303,7 +303,6 @@ export default function BookSessionPage() {
                   <h4 className="font-bold text-gray-900">Price Breakdown</h4>
                   <div className="flex justify-between"><span className="text-gray-600">{serviceLabel} ({duration >= 60 ? `${duration/60} hour` : `${duration} min`})</span><span className="font-bold">₹{Math.round(price)}</span></div>
                   <div className="flex justify-between"><span className="text-gray-600">Platform Fee ({PLATFORM_FEE_PCT}%)</span><span className="font-bold">₹{Math.round(pfAmt)}</span></div>
-                  <div className="flex justify-between"><span className="text-gray-600">GST ({GST_PCT}%)</span><span className="font-bold">₹{Math.round(gstAmt)}</span></div>
                   <div className="border-t border-gray-200 pt-2 flex justify-between"><span className="font-bold text-gray-900">Total Amount</span><span className="font-black text-[#22C55E]">₹{Math.round(totalAmount)}</span></div>
                 </div>
                 {/* Confirmation */}

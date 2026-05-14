@@ -190,6 +190,7 @@ class MentorBookingService {
         mentorServiceId: true,
         menteeId: true,
         purposeOfCall: true,
+        feedback: true,
       },
       orderBy: { startTime: "desc" },
     });
@@ -227,6 +228,7 @@ class MentorBookingService {
             booking: {
               include: {
                 mentee: { select: { name: true, email: true } },
+                mentorService: { select: { title: true } },
               },
             },
           },
@@ -243,18 +245,19 @@ class MentorBookingService {
     );
 
     const totalEarnings = completedPayments._sum.amount ?? 0;
-    const PLATFORM_FEE = 0.15;
+    const PLATFORM_FEE = 0.10;
 
-    const transactions = allPayments.map((p) => ({
+    const transactions = allPayments.map((p) => {
+      return {
       id: p.id,
       transactionRef: p.id.substring(0, 13).toUpperCase(),
-      mentee: p.booking.mentee?.name ?? "Unknown",
-      service: p.booking.mentorService?.service?.name || "Session",
+      mentee: p.booking.mentee?.name ?? "mentee not found",
+      service: p.booking.mentorService?.title || "Session",
       date: p.createdAt,
       amount: p.amount,
       currency: p.currency,
       status: p.paymentStatus,
-    }));
+    }});
 
     return {
       totalEarnings,

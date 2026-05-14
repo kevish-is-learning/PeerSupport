@@ -16,7 +16,7 @@ const getStatusCode = (error) => {
 class MentorProfileController {
   async getMyProfile(req, res) {
     try {
-      const profile = await mentorProfileService.getByUserId(req.user.id);
+      const profile = await mentorProfileService.getById(req.user.mentorProfileId);
       return res.status(200).json(new ApiResponse(200, 'Mentor profile fetched successfully', { profile }));
     } catch (error) {
       const statusCode = getStatusCode(error);
