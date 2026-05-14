@@ -31,7 +31,7 @@ export default function MentorAvailabilityV2Page() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 rounded-xl border-[3px] px-5 py-2.5 text-sm font-black transition-all ${
+              className={`flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-black transition-all ${
                 isActive
                   ? "border-black bg-[#10B981] text-white shadow-[3px_3px_0_0_#000]"
                   : "border-black bg-white text-black hover:bg-gray-50"

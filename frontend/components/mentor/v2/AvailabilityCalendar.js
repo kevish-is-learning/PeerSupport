@@ -330,7 +330,7 @@ export default function AvailabilityCalendar() {
         className="rounded-[24px] border-[3px] border-gray-200 bg-white overflow-hidden animate-pulse"
         style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}
       >
-        <div className="flex items-center justify-between px-8 py-6 border-b-[3px] border-gray-200">
+        <div className="flex items-center justify-between px-8 py-6 border-b-2 border-gray-200">
           <div className="h-10 w-10 rounded-xl bg-gray-200"></div>
           <div className="flex flex-col items-center gap-2">
             <div className="h-7 w-48 bg-gray-200 rounded"></div>

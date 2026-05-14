@@ -11,6 +11,7 @@ import {
   Phone,
   GraduationCap,
   Briefcase,
+  Award,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -193,7 +194,7 @@ export default function MentorProfilePage() {
         <div className="flex flex-col lg:flex-row gap-8 items-start max-w-6xl mx-auto">
           {/* LEFT: Profile Preview Skeleton */}
           <div className="w-full lg:w-[340px] shrink-0 animate-pulse">
-            <div className="rounded-[28px] border-[3px] border-gray-200 bg-white p-8 flex flex-col items-center text-center" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}>
+            <div className="rounded-[28px] border-2 border-gray-200 bg-white p-8 flex flex-col items-center text-center" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}>
               <div className="h-40 w-40 rounded-[20px] bg-gray-200 mb-5"></div>
               <div className="h-6 w-48 bg-gray-200 rounded mb-2"></div>
               <div className="h-4 w-32 bg-gray-200 rounded mb-4"></div>
@@ -210,7 +211,7 @@ export default function MentorProfilePage() {
           
           {/* RIGHT: Personal Information Skeleton */}
           <div className="flex-1 w-full min-w-0 animate-pulse">
-            <div className="rounded-[28px] border-[3px] border-gray-200 bg-white overflow-hidden" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}>
+            <div className="rounded-[28px] border-2 border-gray-200 bg-white overflow-hidden" style={{ boxShadow: "6px 6px 0 0 #E5E7EB" }}>
               <div className="flex items-center justify-between px-8 py-6 border-b-[3px] border-gray-200">
                 <div className="flex items-center gap-3">
                   <div className="h-6 w-6 bg-gray-200 rounded-full"></div>
@@ -243,12 +244,12 @@ export default function MentorProfilePage() {
         {/* ── LEFT: Profile Preview Card ── */}
         <div className="w-full lg:w-[340px] shrink-0">
           <div
-            className="rounded-[28px] border-[3px] border-black bg-white p-4 flex flex-col items-center text-center"
+            className="rounded-[28px] border-2 border-black bg-white p-4 flex flex-col items-center text-center"
             style={{ boxShadow: "6px 6px 0 0 #5061E4" }}
           >
             {/* Photo */}
             <div className="relative mb-5">
-              <div className="h-40 w-40 overflow-hidden rounded-[20px] border-[3px] border-black bg-gray-100">
+              <div className="h-40 w-40 overflow-hidden rounded-[20px] border-2 border-black bg-gray-100">
                 <img
                   src={
                     profile?.profilePhotoUrl
@@ -260,7 +261,7 @@ export default function MentorProfilePage() {
                 />
               </div>
               <label
-                className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-[3px] border-black bg-[#5061E4] text-white hover:bg-[#4050d0] transition-all shadow-[2px_2px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${saving ? "opacity-50 pointer-events-none" : ""}`}
+                className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-[#5061E4] text-white hover:bg-[#4050d0] transition-all shadow-[2px_2px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${saving ? "opacity-50 pointer-events-none" : ""}`}
               >
                 <Camera size={16} />
                 <input
@@ -286,10 +287,10 @@ export default function MentorProfilePage() {
             {/* Expertise chips */}
             {(profile?.expertiseTags || []).length > 0 && (
               <div className="flex flex-wrap justify-center gap-2 mt-4">
-                {(profile.expertiseTags || []).slice(0, 3).map((t) => (
+                {(profile.expertiseTags || []).slice(0, 2).map((t) => (
                   <span
                     key={t}
-                    className="rounded-full border-2 border-black px-4 py-1 text-[11px] font-bold text-black"
+                    className="rounded-full border border-black px-4 py-1 text-[11px] font-bold text-black"
                   >
                     {t}
                   </span>
@@ -308,7 +309,7 @@ export default function MentorProfilePage() {
             )}
 
             {/* Preview button */}
-            <button className="mt-4 w-full rounded-2xl border-[3px] border-black bg-[#5061E4] py-4 text-base font-black text-white shadow-[4px_4px_0_0_#000] hover:opacity-90 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
+            <button className="mt-4 w-full rounded-2xl border-2 border-black bg-[#5061E4] py-4 text-base font-black text-white shadow-[2px_2px_0_0_#000] hover:opacity-90 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
               Preview Full Profile
             </button>
           </div>
@@ -317,11 +318,11 @@ export default function MentorProfilePage() {
         {/* ── RIGHT: Personal Information Card ── */}
         <div className="flex-1 w-full min-w-0">
           <div
-            className="rounded-[28px] border-[3px] border-black bg-white overflow-hidden"
+            className="rounded-[28px] border-2 border-black bg-white overflow-hidden"
             style={{ boxShadow: "6px 6px 0 0 #F59E0B" }}
           >
             {/* Card Header */}
-            <div className="flex items-center justify-between px-8 py-6 border-b-[3px] border-black">
+            <div className="flex items-center justify-between px-8 py-6 border-b-2 border-black">
               <div className="flex items-center gap-3">
                 <User size={22} strokeWidth={2.5} />
                 <h2 className="text-xl font-black text-black">Personal Information</h2>
@@ -331,14 +332,14 @@ export default function MentorProfilePage() {
                   <button
                     onClick={handleCancel}
                     disabled={saving}
-                    className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-white px-4 py-2 text-sm font-black hover:bg-gray-50 disabled:opacity-50 transition-all"
+                    className="flex items-center gap-2 rounded-xl border-2 border-black bg-white px-4 py-2 text-sm font-black hover:bg-gray-50 disabled:opacity-50 transition-all"
                   >
                     <X size={14} /> Cancel
                   </button>
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-[#F59E0B] px-5 py-2 text-sm font-black hover:opacity-90 disabled:opacity-50 shadow-[2px_2px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+                    className="flex items-center gap-2 rounded-xl border-2 border-black bg-[#F59E0B] px-5 py-2 text-sm font-black hover:opacity-90 disabled:opacity-50 shadow-[2px_2px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
                   >
                     {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                     Save Changes
@@ -347,7 +348,7 @@ export default function MentorProfilePage() {
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-[#5061E4] px-5 py-2.5 text-sm font-black text-white hover:opacity-90 shadow-[2px_2px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+                  className="flex items-center gap-2 rounded-xl border-2 border-black bg-[#5061E4] px-5 py-2.5 text-sm font-black text-white hover:opacity-90 shadow-[2px_2px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
                 >
                   Edit Profile <Edit2 size={15} />
                 </button>
@@ -365,7 +366,7 @@ export default function MentorProfilePage() {
                     <input
                       value={form.fullName}
                       onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))}
-                      className="rounded-xl border-[3px] border-black px-4 py-3 text-base font-bold focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
+                      className="rounded-xl border border-black px-4 py-3 text-base focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
                     />
                   </div>
                   {/* Phone */}
@@ -374,7 +375,7 @@ export default function MentorProfilePage() {
                     <input
                       value={form.contactNumber}
                       onChange={(e) => setForm((f) => ({ ...f, contactNumber: e.target.value }))}
-                      className="rounded-xl border-[3px] border-black px-4 py-3 text-base font-bold focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
+                      className="rounded-xl border border-black px-4 py-3 text-base focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
                     />
                   </div>
                   {/* B-School */}
@@ -383,7 +384,7 @@ export default function MentorProfilePage() {
                     <select
                       value={form.bSchool}
                       onChange={(e) => setForm((f) => ({ ...f, bSchool: e.target.value }))}
-                      className="rounded-xl border-[3px] border-black px-4 py-3 text-base font-bold bg-white focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
+                      className="rounded-xl border border-black px-4 py-3 text-base focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
                     >
                       <option value="">Select B-School</option>
                       {IIM_SCHOOLS.map((s) => (
@@ -400,7 +401,7 @@ export default function MentorProfilePage() {
                       max="2040"
                       value={form.bSchoolYear}
                       onChange={(e) => setForm((f) => ({ ...f, bSchoolYear: e.target.value }))}
-                      className="rounded-xl border-[3px] border-black px-4 py-3 text-base font-bold focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
+                      className="rounded-xl border border-black px-4 py-3 text-base focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
                     />
                   </div>
                   {/* Work Experience */}
@@ -413,19 +414,19 @@ export default function MentorProfilePage() {
                         placeholder="Years"
                         value={form.workExpYears}
                         onChange={(e) => setForm((f) => ({ ...f, workExpYears: e.target.value }))}
-                        className="rounded-xl border-[3px] border-black px-4 py-3 text-base font-bold focus:outline-none"
+                        className="rounded-xl border border-black px-4 py-3 text-base focus:outline-none"
                       />
                       <input
                         placeholder="Company"
                         value={form.workExpCompany}
                         onChange={(e) => setForm((f) => ({ ...f, workExpCompany: e.target.value }))}
-                        className="rounded-xl border-[3px] border-black px-4 py-3 text-base font-bold focus:outline-none"
+                        className="rounded-xl border border-black px-4 py-3 text-base focus:outline-none"
                       />
                       <input
                         placeholder="Role"
                         value={form.workExpRole}
                         onChange={(e) => setForm((f) => ({ ...f, workExpRole: e.target.value }))}
-                        className="rounded-xl border-[3px] border-black px-4 py-3 text-base font-bold focus:outline-none"
+                        className="rounded-xl border border-black px-4 py-3 text-base focus:outline-none"
                       />
                     </div>
                   </div>
@@ -436,7 +437,7 @@ export default function MentorProfilePage() {
                       rows={4}
                       value={form.bio}
                       onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
-                      className="rounded-xl border-[3px] border-black px-4 py-3 text-base font-bold resize-none focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
+                      className="rounded-xl border border-black px-4 py-3 text-base focus:outline-none focus:ring-4 focus:ring-[#5061E4]/20"
                     />
                   </div>
                   {/* Expertise */}
@@ -457,7 +458,7 @@ export default function MentorProfilePage() {
                                   : [...f.expertiseTagsArr, opt],
                               }))
                             }
-                            className={`px-3 py-1.5 rounded-full border-[3px] text-xs font-black transition-all ${
+                            className={`px-3 py-1.5 rounded-full border border-black text-xs font-black transition-all ${
                               sel
                                 ? "bg-[#5061E4] text-white border-black shadow-[2px_2px_0_0_#000]"
                                 : "bg-white text-gray-500 border-gray-200 hover:border-black"
@@ -522,8 +523,29 @@ export default function MentorProfilePage() {
                       </div>
                     </div>
                   )}
+                  {/* Expertise */}
+                  {profile?.expertiseTags && profile.expertiseTags.length > 0 && (
+                    <div className="flex items-start gap-4">
+                      <div className="shrink-0 mt-0.5">
+                        <Award size={20} className="text-gray-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-black mb-1">Expertise Areas</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {profile.expertiseTags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-3 py-1.5 rounded-full border border-gray-200 bg-white text-xs font-black text-gray-600"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   {/* Empty state */}
-                  {!user?.email && !profile?.contactNumber && !schoolName && !workExpDisplay && !profile?.bio && (
+                  {!user?.email && !profile?.contactNumber && !schoolName && !workExpDisplay && !profile?.bio && (!profile?.expertiseTags || profile.expertiseTags.length === 0) && (
                     <div className="text-center py-10 text-gray-400">
                       <User size={40} className="mx-auto mb-3 opacity-30" />
                       <p className="font-bold">No information added yet.</p>
