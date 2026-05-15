@@ -407,8 +407,40 @@ export default function ExploreMentorsPage() {
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-72 animate-pulse rounded-2xl border-2 border-gray-200 bg-gray-50"
-                />
+                  className="animate-pulse flex flex-col rounded-2xl border-2 border-gray-200 bg-white"
+                  style={{ boxShadow: "4px 4px 0px 0px #E5E7EB" }}
+                >
+                  {/* Header row */}
+                  <div className="flex items-start justify-between gap-3 p-5 pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 shrink-0 rounded-full bg-gray-200" />
+                      <div>
+                        <div className="h-4 w-28 rounded bg-gray-200 mb-1.5" />
+                        <div className="h-3 w-16 rounded bg-gray-200 mb-1" />
+                        <div className="h-3 w-24 rounded bg-gray-200" />
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="h-6 w-14 rounded bg-gray-200 mb-1" />
+                      <div className="h-2 w-16 rounded bg-gray-200" />
+                    </div>
+                  </div>
+                  {/* Tags */}
+                  <div className="flex gap-1.5 px-5">
+                    <div className="h-6 w-16 rounded-lg bg-gray-200" />
+                    <div className="h-6 w-20 rounded-lg bg-gray-200" />
+                    <div className="h-6 w-14 rounded-lg bg-gray-200" />
+                  </div>
+                  {/* Stats */}
+                  <div className="mt-3 flex gap-4 px-5">
+                    <div className="h-3 w-20 rounded bg-gray-200" />
+                    <div className="h-3 w-16 rounded bg-gray-200" />
+                  </div>
+                  {/* CTA */}
+                  <div className="mt-4 px-5 pb-5">
+                    <div className="h-11 w-full rounded-xl bg-gray-200" />
+                  </div>
+                </div>
               ))}
             </div>
           )}

@@ -126,8 +126,82 @@ export default function MenteeDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="font-bold text-gray-500">Loading your dashboard...</p>
+      <div className="mx-auto w-full max-w-6xl pb-10">
+        {/* Header skeleton */}
+        <div className="mb-8 animate-pulse">
+          <div className="h-8 w-56 rounded-lg bg-gray-200 mb-2" />
+          <div className="h-4 w-44 rounded bg-gray-200" />
+        </div>
+
+        {/* Stat cards skeleton */}
+        <div className="mb-8 grid gap-6 sm:grid-cols-3">
+          {["#8B5CF6", "#0EA5E9", "#F59E0B"].map((color, i) => (
+            <div
+              key={i}
+              className="animate-pulse rounded-2xl border-2 border-gray-200 bg-white p-6"
+              style={{ boxShadow: `6px 6px 0px 0px #E5E7EB` }}
+            >
+              <div className="mb-3 h-6 w-6 rounded bg-gray-200" />
+              <div className="h-8 w-20 rounded bg-gray-200 mb-2" />
+              <div className="h-3 w-28 rounded bg-gray-200" />
+            </div>
+          ))}
+        </div>
+
+        {/* Main content skeleton */}
+        <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+          {/* Upcoming sessions skeleton */}
+          <div
+            className="animate-pulse rounded-2xl border-2 border-gray-200 bg-white"
+            style={{ boxShadow: "6px 6px 0px 0px #E5E7EB" }}
+          >
+            <div className="flex items-center gap-3 border-b-2 border-gray-200 px-5 py-4 rounded-t-[14px]">
+              <div className="h-5 w-5 rounded bg-gray-200" />
+              <div className="h-5 w-40 rounded bg-gray-200" />
+            </div>
+            <div className="p-6 space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between rounded-xl border border-gray-100 p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="h-16 w-16 rounded-xl bg-gray-200" />
+                    <div>
+                      <div className="h-4 w-32 rounded bg-gray-200 mb-2" />
+                      <div className="h-3 w-24 rounded bg-gray-200 mb-2" />
+                      <div className="h-3 w-40 rounded bg-gray-200" />
+                    </div>
+                  </div>
+                  <div className="h-9 w-16 rounded-xl bg-gray-200" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Recommended mentors skeleton */}
+          <div
+            className="animate-pulse rounded-2xl border-2 border-gray-200 bg-white"
+            style={{ boxShadow: "6px 6px 0px 0px #E5E7EB" }}
+          >
+            <div className="flex items-center gap-3 border-b-2 border-gray-200 px-5 py-4 rounded-t-[14px]">
+              <div className="h-5 w-5 rounded bg-gray-200" />
+              <div className="h-5 w-32 rounded bg-gray-200" />
+            </div>
+            <div className="p-4 space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="rounded-xl border border-gray-100 p-4">
+                  <div className="flex gap-3 mb-3">
+                    <div className="h-12 w-12 rounded-xl bg-gray-200 shrink-0" />
+                    <div>
+                      <div className="h-4 w-24 rounded bg-gray-200 mb-1" />
+                      <div className="h-3 w-20 rounded bg-gray-200" />
+                    </div>
+                  </div>
+                  <div className="h-3 w-full rounded bg-gray-200 mb-3" />
+                  <div className="h-8 w-full rounded-lg bg-gray-200" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

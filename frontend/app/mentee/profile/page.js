@@ -82,8 +82,77 @@ export default function MenteeProfileSettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="font-bold text-gray-500">Loading profile settings...</p>
+      <div className="mx-auto w-full max-w-5xl pb-10">
+        {/* Header skeleton */}
+        <div className="mb-8 animate-pulse">
+          <div className="h-8 w-48 rounded-lg bg-gray-200 mb-2" />
+          <div className="h-4 w-56 rounded bg-gray-200" />
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[300px_1fr]">
+          {/* Left column */}
+          <div className="space-y-6 animate-pulse">
+            {/* Profile Picture Card skeleton */}
+            <div
+              className="rounded-2xl border-2 border-gray-200 bg-white p-6"
+              style={{ boxShadow: "6px 6px 0px 0px #E5E7EB" }}
+            >
+              <div className="h-5 w-32 rounded bg-gray-200 mb-4" />
+              <div className="flex flex-col items-center">
+                <div className="relative mb-4 h-32 w-32">
+                  <div className="h-full w-full rounded-2xl bg-gray-200" />
+                  <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-xl bg-gray-300" />
+                </div>
+                <div className="h-3 w-48 rounded bg-gray-200" />
+              </div>
+            </div>
+
+            {/* Resume Card skeleton */}
+            <div
+              className="rounded-2xl border-2 border-gray-200 bg-white p-6"
+              style={{ boxShadow: "6px 6px 0px 0px #E5E7EB" }}
+            >
+              <div className="h-5 w-20 rounded bg-gray-200 mb-4" />
+              <div className="rounded-xl border border-gray-100 p-4">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-gray-200 shrink-0" />
+                  <div className="flex-1">
+                    <div className="h-4 w-32 rounded bg-gray-200 mb-1" />
+                    <div className="h-3 w-24 rounded bg-gray-200" />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <div className="h-9 flex-1 rounded-lg bg-gray-200" />
+                  <div className="h-9 flex-1 rounded-lg bg-gray-200" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right column — Personal Information Form skeleton */}
+          <div
+            className="animate-pulse rounded-2xl border-2 border-gray-200 bg-white overflow-hidden"
+            style={{ boxShadow: "8px 8px 0px 0px #E5E7EB" }}
+          >
+            <div className="flex items-center gap-3 border-b-2 border-gray-200 px-6 py-5 rounded-t-[14px]">
+              <div className="h-6 w-6 rounded-full bg-gray-200" />
+              <div className="h-6 w-44 rounded bg-gray-200" />
+            </div>
+            <div className="p-6 sm:p-8 space-y-6">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i}>
+                  <div className="h-4 w-28 rounded bg-gray-200 mb-2" />
+                  <div className="h-11 w-full rounded-xl bg-gray-100" />
+                </div>
+              ))}
+              {/* Button row */}
+              <div className="flex justify-end gap-4 border-t-2 border-gray-100 pt-6">
+                <div className="h-10 w-24 rounded-xl bg-gray-200" />
+                <div className="h-10 w-32 rounded-xl bg-gray-200" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
