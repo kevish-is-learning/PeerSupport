@@ -271,6 +271,99 @@ class MentorBookingService {
       transactions,
     };
   }
+
+  /**
+   * Sessions page: all sessions for the mentor within a given month,
+   * plus upcoming sessions (from today onward, regardless of month).
+   * Used to power the calendar + sidebar + day-detail panels.
+   */
+  async getSessions(mentorProfileId, { month, year } = {}) {
+    if (!mentorProfileId)
+      throw createServiceError(404, "Mentor profile not found");
+
+    const now = new Date();
+    const targetMonth = month ? parseInt(month, 10) - 1 : now.getMonth();
+    const targetYear = year ? parseInt(year, 10) : now.getFullYear();
+
+    // Date range for the calendar month
+    const monthStart = new Date(targetYear, targetMonth, 1);
+    const monthEnd = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59, 999);
+
+    const sessionInclude = {
+      mentee: {
+        select: { id: true, name: true, email: true, profilePicture: true },
+      },
+      mentorService: {
+        select: { id: true, title: true, description: true, price: true, durationMinutes: true },
+      },
+      payment: {
+        select: { id: true, amount: true, paymentStatus: true, paidAt: true, currency: true },
+      },
+    };
+
+    // 1. All sessions in the target calendar month
+    const calendarSessions = await prisma.booking.findMany({
+      where: {
+        mentorProfileId,
+        status: { not: "CANCELLED" },
+        startTime: { gte: monthStart, lte: monthEnd },
+      },
+      include: sessionInclude,
+      orderBy: { startTime: "asc" },
+    });
+
+    // 2. Upcoming sessions (from now onward, any month) — limited to next 10
+    const upcomingSessions = await prisma.booking.findMany({
+      where: {
+        mentorProfileId,
+        status: { in: ["CONFIRMED", "PENDING"] },
+        startTime: { gte: now },
+      },
+      include: sessionInclude,
+      orderBy: { startTime: "asc" },
+      take: 10,
+    });
+
+    const mapSession = (b) => ({
+      id: b.id,
+      status: b.status,
+      startTime: b.startTime,
+      endTime: b.endTime,
+      meetingLink: b.meetingLink,
+      purposeOfCall: b.purposeOfCall,
+      notes: b.notes,
+      discussionTopic: b.discussionTopic,
+      specificQuestions: b.specificQuestions,
+      mentee: b.mentee
+        ? {
+            id: b.mentee.id,
+            name: b.mentee.name,
+            email: b.mentee.email,
+            profilePicture: b.mentee.profilePicture,
+          }
+        : null,
+      serviceName: b.mentorService?.title || "Mentoring Session",
+      durationMinutes: b.mentorService?.durationMinutes || 60,
+      price: b.payment?.amount || b.mentorService?.price || 0,
+      menteeEmail: b.menteeEmail || b.mentee?.email,
+      menteePhone: b.menteePhone,
+    });
+
+    // Build a set of dates (YYYY-MM-DD) that have sessions for the calendar dots
+    const datesWithSessions = [
+      ...new Set(
+        calendarSessions.map((b) => b.startTime.toISOString().split("T")[0])
+      ),
+    ];
+
+    return {
+      calendarSessions: calendarSessions.map(mapSession),
+      upcomingSessions: upcomingSessions.map(mapSession),
+      datesWithSessions,
+      month: targetMonth + 1,
+      year: targetYear,
+    };
+  }
 }
 
 export default new MentorBookingService();

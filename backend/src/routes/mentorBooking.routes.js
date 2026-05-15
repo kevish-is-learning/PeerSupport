@@ -17,6 +17,9 @@ router.get('/mentees/:menteeId', (req, res) =>
   mentorBookingController.listBookingsForMentee(req, res)
 );
 
+// GET /api/mentor-bookings/sessions  – calendar + upcoming sessions data
+router.get('/sessions', (req, res) => mentorBookingController.getSessions(req, res));
+
 // GET /api/mentor-bookings/earnings   – earnings + transaction history
 router.get('/earnings', (req, res) => mentorBookingController.getEarnings(req, res));
 

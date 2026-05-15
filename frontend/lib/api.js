@@ -262,6 +262,13 @@ export const mentorBookingApi = {
   getEarnings() {
     return apiRequest('/mentor-bookings/earnings');
   },
+  getSessions({ month, year } = {}) {
+    const params = new URLSearchParams();
+    if (month) params.set('month', month);
+    if (year) params.set('year', year);
+    const qs = params.toString();
+    return apiRequest(`/mentor-bookings/sessions${qs ? `?${qs}` : ''}`);
+  },
 };
 
 // ─── V2 API — New Booking & Availability System ─────────────────────────────

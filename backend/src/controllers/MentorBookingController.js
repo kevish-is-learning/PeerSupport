@@ -46,6 +46,19 @@ class MentorBookingController {
       return res.status(getStatusCode(error)).json({ success: false, message: error.message });
     }
   }
+
+  async getSessions(req, res) {
+    try {
+      const { month, year } = req.query;
+      const data = await mentorBookingService.getSessions(
+        req.user.mentorProfileId,
+        { month, year }
+      );
+      return res.status(200).json(new ApiResponse(200, 'Sessions fetched', data));
+    } catch (error) {
+      return res.status(getStatusCode(error)).json({ success: false, message: error.message });
+    }
+  }
 }
 
 export default new MentorBookingController();
