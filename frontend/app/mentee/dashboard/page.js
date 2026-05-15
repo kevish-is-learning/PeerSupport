@@ -126,7 +126,7 @@ export default function MenteeDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto w-full max-w-6xl pb-10">
+      <div className="mx-auto w-full max-w-6xl m-10">
         {/* Header skeleton */}
         <div className="mb-8 animate-pulse">
           <div className="h-8 w-56 rounded-lg bg-gray-200 mb-2" />
@@ -217,7 +217,7 @@ export default function MenteeDashboardPage() {
   const { stats, upcomingSessions, recommendedMentors } = dashboardData;
 
   return (
-    <div className="mx-auto w-full max-w-6xl pb-10">
+    <div className="mx-auto w-full max-w-6xl p-10">
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900">Welcome Back!</h1>
         <p className="mt-1 text-sm font-medium text-gray-500">Continue your learning journey</p>
@@ -240,7 +240,7 @@ export default function MenteeDashboardPage() {
           icon={Clock}
           value={`${stats.hoursLearned}h`}
           label="Hours Learned"
-          shadowColor="#F59E0B"
+          shadowColor="#FF5833"
         />
       </div>
 

@@ -5,15 +5,17 @@ class MenteeDashboardController {
   async getDashboardData(req, res) {
     try {
       const menteeId = req.user.id;
-      
-      const stats = await menteeDashboardService.getDashboardStats(menteeId);
-      const upcomingSessions = await menteeDashboardService.getUpcomingSessions(menteeId);
-      const recommendedMentors = await menteeDashboardService.getRecommendedMentors();
+
+      // Run both in parallel — getSessions already bundles stats + upcoming
+      const [sessionsData, recommendedMentors] = await Promise.all([
+        menteeDashboardService.getSessions(menteeId),
+        menteeDashboardService.getRecommendedMentors(),
+      ]);
 
       return res.status(200).json(
         new ApiResponse(200, 'Dashboard data fetched successfully', {
-          stats,
-          upcomingSessions,
+          stats: sessionsData.stats,
+          upcomingSessions: sessionsData.upcomingSessions,
           recommendedMentors,
         })
       );

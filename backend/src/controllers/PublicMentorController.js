@@ -157,7 +157,7 @@ class PublicMentorController {
         ];
       }
 
-      // Specialization / search filter
+      // Search filter
       if (search) {
         const searchConditions = [
           { user: { name: { contains: search, mode: 'insensitive' } } },
@@ -167,7 +167,6 @@ class PublicMentorController {
           { expertiseTags: { has: search } },
         ];
         if (where.OR) {
-          // Combine with existing OR (college filter)
           where.AND = [{ OR: where.OR }, { OR: searchConditions }];
           delete where.OR;
         } else {
@@ -179,15 +178,20 @@ class PublicMentorController {
         where.expertiseTags = { has: specialization };
       }
 
-      // Rating filter
       if (minRating && Number(minRating) > 0) {
         where.averageRating = { gte: Number(minRating) };
       }
 
-      // Sort
+      // If filtering by maxPrice, push it into the where clause
+      // so mentors without affordable services are excluded at the DB level
+      if (maxPrice) {
+        where.mentorServices = {
+          some: { isActive: true, price: { lte: Number(maxPrice) } },
+        };
+      }
+
       let orderBy = { averageRating: 'desc' };
       if (sort === 'sessions') orderBy = { totalSessions: 'desc' };
-      if (sort === 'price_asc') orderBy = { mentorServices: { _count: 'asc' } };
 
       const skip = (Number(page) - 1) * Number(limit);
 
@@ -197,63 +201,49 @@ class PublicMentorController {
           orderBy,
           skip,
           take: Number(limit),
-          include: {
+          select: {
+            id: true,
+            bio: true,
+            expertiseTags: true,
+            pgCollegeProfile: true,
+            ugCollegeProfile: true,
+            workExperience: true,
+            averageRating: true,
+            totalSessions: true,
             user: {
               select: { name: true, profilePicture: true },
             },
             mentorServices: {
               where: { isActive: true },
-                            orderBy: { price: 'asc' },
+              orderBy: { price: 'asc' },
               take: 1,
-            },
-            availabilityWindows: {
-              orderBy: { specificDate: 'asc' },
-              take: 1,
-              select: { specificDate: true },
-            },
-            _count: {
-              select: { reviews: true },
+              select: { price: true },
             },
           },
         }),
         prisma.mentorProfile.count({ where }),
       ]);
 
-      const mappedMentors = mentors.map((m) => {
-        const cheapestService = m.mentorServices[0];
-        const nextAvailable = m.availabilityWindows[0];
-
-        return {
-          id: m.id,
-          name: m.user.name,
-          profilePicture: m.user.profilePicture,
-          pgCollege: m.pgCollegeProfile,
-          ugCollege: m.ugCollegeProfile,
-          expertiseTags: m.expertiseTags,
-          bio: m.bio,
-          rating: m.averageRating,
-          totalSessions: m.totalSessions,
-          startingPrice: cheapestService?.price ?? null,
-          nextAvailableDate: nextAvailable?.specificDate
-            ? new Date(nextAvailable.specificDate).toISOString().split('T')[0]
-            : null,
-          workExperience: m.workExperience,
-          totalReviews: m._count?.reviews || 0,
-        };
-      });
-
-      // Apply price filter after fetching (since price is on services)
-      let filtered = mappedMentors;
-      if (maxPrice) {
-        filtered = filtered.filter(
-          (m) => m.startingPrice !== null && m.startingPrice <= Number(maxPrice)
-        );
-      }
+      const mapped = mentors.map((m) => ({
+        id: m.id,
+        name: m.user.name,
+        profilePicture: m.user.profilePicture,
+        pgCollege: m.pgCollegeProfile,
+        ugCollege: m.ugCollegeProfile,
+        expertiseTags: m.expertiseTags,
+        bio: m.bio,
+        rating: m.averageRating,
+        totalSessions: m.totalSessions,
+        startingPrice: m.mentorServices[0]?.price ?? null,
+        nextAvailableDate: null,
+        workExperience: m.workExperience,
+        totalReviews: 0,
+      }));
 
       return res.status(200).json(
         new ApiResponse(200, 'Mentors fetched successfully', {
-          mentors: filtered,
-          total: filtered.length,
+          mentors: mapped,
+          total,
           page: Number(page),
           limit: Number(limit),
         })

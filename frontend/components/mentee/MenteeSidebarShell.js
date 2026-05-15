@@ -156,7 +156,7 @@ export default function MenteeSidebarShell({ children }) {
         />
       )}
 
-      <section className="flex-1 flex flex-col h-screen md:py-10 py-4 overflow-y-scroll relative">
+      <section className="flex-1 flex flex-col h-screen overflow-y-scroll relative">
         {children}
       </section>
     </main>

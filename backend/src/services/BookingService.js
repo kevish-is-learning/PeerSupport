@@ -325,31 +325,100 @@ class BookingService {
 
   /**
    * GET — Get mentee's sessions (upcoming + past).
+   * Two parallel DB queries with DB-side filtering & sorting.
+   * Uses select (not include) to pull only what the frontend needs.
    */
   async getMenteeSessions(menteeId) {
-    const bookings = await prisma.booking.findMany({
-      where: { menteeId },
-      include: bookingInclude,
-      orderBy: { startTime: 'asc' },
-    });
-
     const now = new Date();
-    const upcoming = [];
-    const past = [];
 
-    bookings.forEach((b) => {
-      const mapped = mapBooking(b);
-      if (new Date(b.startTime) > now && b.status !== 'CANCELLED') {
-        upcoming.push(mapped);
-      } else {
-        past.push(mapped);
-      }
+    const sessionSelect = {
+      id: true,
+      status: true,
+      startTime: true,
+      endTime: true,
+      meetingLink: true,
+      purposeOfCall: true,
+      notes: true,
+      menteePhone: true,
+      menteeEmail: true,
+      discussionTopic: true,
+      specificQuestions: true,
+      cancelledReason: true,
+      createdAt: true,
+      mentorService: {
+        select: { id: true, title: true, durationMinutes: true, price: true },
+      },
+      mentorProfile: {
+        select: {
+          id: true,
+          user: { select: { name: true, profilePicture: true } },
+        },
+      },
+      payment: {
+        select: { id: true, amount: true, paymentStatus: true, paidAt: true, currency: true },
+      },
+      review: {
+        select: { id: true, rating: true, review: true, createdAt: true },
+      },
+      feedback: {
+        select: { id: true, strengths: true, weaknesses: true, recommendations: true, createdAt: true },
+      },
+    };
+
+    const [upcomingRaw, pastRaw] = await Promise.all([
+      // Upcoming: confirmed + future, ascending
+      prisma.booking.findMany({
+        where: {
+          menteeId,
+          status: { in: ['CONFIRMED', 'PENDING'] },
+          startTime: { gt: now },
+        },
+        select: sessionSelect,
+        orderBy: { startTime: 'asc' },
+      }),
+      // Past: completed/cancelled or past confirmed, descending
+      prisma.booking.findMany({
+        where: {
+          menteeId,
+          OR: [
+            { status: { in: ['COMPLETED', 'CANCELLED'] } },
+            { status: 'CONFIRMED', startTime: { lte: now } },
+          ],
+        },
+        select: sessionSelect,
+        orderBy: { startTime: 'desc' },
+      }),
+    ]);
+
+    const mapSession = (b) => ({
+      id: b.id,
+      status: b.status,
+      mentorName: b.mentorProfile?.user?.name || 'Mentor',
+      mentorPicture: b.mentorProfile?.user?.profilePicture || null,
+      mentorProfileId: b.mentorProfile?.id || null,
+      serviceType: b.mentorService?.title || 'Session',
+      durationMinutes: b.mentorService?.durationMinutes || 60,
+      price: b.mentorService?.price || 0,
+      startTime: b.startTime,
+      endTime: b.endTime,
+      meetingLink: b.meetingLink,
+      purposeOfCall: b.purposeOfCall,
+      notes: b.notes,
+      menteePhone: b.menteePhone,
+      menteeEmail: b.menteeEmail,
+      discussionTopic: b.discussionTopic,
+      specificQuestions: b.specificQuestions,
+      cancelledReason: b.cancelledReason,
+      payment: b.payment || null,
+      review: b.review || null,
+      feedback: b.feedback || null,
+      createdAt: b.createdAt,
     });
 
-    // Sort past by descending
-    past.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
-
-    return { upcoming, past };
+    return {
+      upcoming: upcomingRaw.map(mapSession),
+      past: pastRaw.map(mapSession),
+    };
   }
 
   /**
