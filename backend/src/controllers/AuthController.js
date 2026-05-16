@@ -3,11 +3,37 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 class AuthController {
   // Get currently authenticated user
-  getMe(req, res) {
+  async getMe(req, res) {
     try {
+      const { prisma } = await import('../config/database.js');
+      const authServiceModule = await import('../services/AuthService.js');
+      
+      const updatedUser = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        include: {
+          mentorProfile: { select: { id: true, approvalStatus: true, isVerified: true } },
+          menteeProfile: { select: { id: true } }
+        }
+      });
+
+      if (!updatedUser) {
+        return res.status(404).json(new ApiError(404, "User not found"));
+      }
+
+      const mappedUser = authServiceModule.mapUserWithOnboardingState(updatedUser);
+      
+      // Refresh the token in case their approval status or other state changed
+      const token = authServiceModule.default.generateToken(mappedUser);
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
       return res
         .status(200)
-        .json(new ApiResponse(200, "Current user fetched", { user: req.user }));
+        .json(new ApiResponse(200, "Current user fetched", { user: mappedUser }));
     } catch (error) {
       return res
         .status(500)

@@ -121,6 +121,23 @@ class MentorProfileService {
     return mapProfile(profile);
   }
 
+  async getByUserId(userId) {
+    if (!userId) {
+      throw createServiceError(400, 'User ID is required');
+    }
+
+    const profile = await prisma.mentorProfile.findUnique({
+      where: { userId },
+      include: profileInclude,
+    });
+
+    if (!profile) {
+      throw createServiceError(404, 'Mentor profile not found');
+    }
+    
+    return mapProfile(profile);
+  }
+
   async create(userId, payload) {
     const parsedData = createMentorProfileSchema.parse(payload);
     
