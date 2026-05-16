@@ -344,6 +344,19 @@ export const v2Api = {
   },
 };
 
+// ─── Meeting APIs (Agora Video) ──────────────────────────────────────────────
+
+export const meetingApi = {
+  /** Get Agora RTC token for a booking session */
+  getToken(bookingId) {
+    return apiRequest(`/meetings/${bookingId}/token`);
+  },
+  /** Mark a session as completed */
+  complete(bookingId) {
+    return apiRequest(`/meetings/${bookingId}/complete`, { method: "PATCH" });
+  },
+};
+
 export function resolveUploadUrl(filePath) {
   if (!filePath) {
     return "";

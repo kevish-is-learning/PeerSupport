@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { BookOpen, Calendar, Clock, Star, Video, ExternalLink } from "lucide-react";
 import { menteeDashboardApi, resolveUploadUrl } from "../../../lib/api";
+import { canJoinSession, joinDisabledReason } from "../../../lib/sessionUtils";
 import Link from "next/link";
 import { format } from "date-fns";
 
@@ -18,7 +20,9 @@ const StatCard = ({ icon: Icon, value, label, shadowColor }) => (
   </article>
 );
 
-const UpcomingSessionCard = ({ session }) => (
+function UpcomingSessionCard({ session }) {
+  const router = useRouter();
+  return (
   <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4">
     <div className="flex items-center gap-4">
       <div className="h-16 w-16 overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
@@ -48,16 +52,22 @@ const UpcomingSessionCard = ({ session }) => (
       </div>
     </div>
     <button
-      className="rounded-xl border-2 border-[#1E1E1E] bg-[#8B5CF6] px-6 py-2 text-sm font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-[0px_0px_0px_0px_#1E1E1E]"
+      disabled={!canJoinSession(session.startTime, session.endTime)}
+      className={`rounded-xl border-2 border-[#1E1E1E] px-6 py-2 text-sm font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-all ${
+        canJoinSession(session.startTime, session.endTime)
+          ? "bg-[#8B5CF6] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-[0px_0px_0px_0px_#1E1E1E]"
+          : "bg-gray-400 opacity-60 cursor-not-allowed"
+      }`}
       onClick={() => {
-         if (session.meetingLink) window.open(session.meetingLink, "_blank");
-         else alert("Meeting link will be available soon.");
+         if (canJoinSession(session.startTime, session.endTime) && session.meetingLink) router.push(`/meeting/${session.bookingId || session.id}`);
       }}
+      title={!canJoinSession(session.startTime, session.endTime) ? joinDisabledReason(session.startTime) : ""}
     >
-      Join
+      {canJoinSession(session.startTime, session.endTime) ? "Join" : joinDisabledReason(session.startTime)}
     </button>
   </div>
-);
+  );
+}
 
 const RecommendedMentorCard = ({ mentor }) => (
   <div className="flex flex-col rounded-xl border border-gray-200 bg-white p-4">

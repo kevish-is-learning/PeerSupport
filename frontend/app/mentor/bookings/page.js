@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   ChevronLeft,
   ChevronRight,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { format, isSameDay } from "date-fns";
 import { mentorBookingApi, resolveUploadUrl } from "../../../lib/api";
+import { canJoinSession, joinDisabledReason } from "../../../lib/sessionUtils";
 import { toast } from "sonner";
 import MentorBookingDetailsModal from "../../../components/mentor/MentorBookingDetailsModal";
 
@@ -125,6 +127,7 @@ function SidebarSkeleton() {
 /* ── Upcoming Session Card (Sidebar) ─────────────────────────────── */
 
 function UpcomingSessionCard({ session, onViewDetails }) {
+  const router = useRouter();
   const startDate = new Date(session.startTime);
   const endDate = new Date(session.endTime);
 
@@ -162,13 +165,19 @@ function UpcomingSessionCard({ session, onViewDetails }) {
       </div>
       <div className="flex gap-2">
         <button
+          disabled={!canJoinSession(session.startTime, session.endTime)}
           onClick={() => {
-            if (session.meetingLink) window.open(session.meetingLink, "_blank");
+            if (session.meetingLink) router.push(`/meeting/${session.id}`);
             else toast.info("Meeting link will be available soon.");
           }}
-          className="flex-1 rounded-lg border-2 border-black bg-[#5061E4] px-3 py-2 text-xs font-bold text-white shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] active:translate-y-0 active:shadow-none cursor-pointer"
+          className={`flex-1 rounded-lg border-2 border-black px-3 py-2 text-xs font-bold text-white shadow-[2px_2px_0_0_#000] transition-all ${
+            canJoinSession(session.startTime, session.endTime)
+              ? "bg-[#5061E4] hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] active:translate-y-0 active:shadow-none cursor-pointer"
+              : "bg-gray-400 opacity-60 cursor-not-allowed"
+          }`}
+          title={!canJoinSession(session.startTime, session.endTime) ? joinDisabledReason(session.startTime) : ""}
         >
-          Join
+          {canJoinSession(session.startTime, session.endTime) ? "Join" : joinDisabledReason(session.startTime)}
         </button>
         <button
           onClick={() => onViewDetails(session)}
@@ -184,6 +193,7 @@ function UpcomingSessionCard({ session, onViewDetails }) {
 /* ── Day Session Card (Bottom Panel) ─────────────────────────────── */
 
 function DaySessionCard({ session }) {
+  const router = useRouter();
   const startDate = new Date(session.startTime);
   const endDate = new Date(session.endTime);
 
@@ -222,14 +232,20 @@ function DaySessionCard({ session }) {
       </div>
       <div className="sm:ml-auto shrink-0">
         <button
+          disabled={!canJoinSession(session.startTime, session.endTime)}
           onClick={() => {
-            if (session.meetingLink) window.open(session.meetingLink, "_blank");
+            if (session.meetingLink) router.push(`/meeting/${session.id}`);
             else toast.info("Meeting link will be available soon.");
           }}
-          className="flex items-center gap-2 rounded-xl border-2 border-black bg-[#F97316] px-5 py-2.5 text-sm font-bold text-white shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000] active:translate-y-0 active:shadow-none cursor-pointer"
+          className={`flex items-center gap-2 rounded-xl border-2 border-black px-5 py-2.5 text-sm font-bold text-white shadow-[3px_3px_0_0_#000] transition-all ${
+            canJoinSession(session.startTime, session.endTime)
+              ? "bg-[#F97316] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000] active:translate-y-0 active:shadow-none cursor-pointer"
+              : "bg-gray-400 opacity-60 cursor-not-allowed"
+          }`}
+          title={!canJoinSession(session.startTime, session.endTime) ? joinDisabledReason(session.startTime) : ""}
         >
           <LinkIcon size={15} />
-          Join Meeting
+          {canJoinSession(session.startTime, session.endTime) ? "Join Meeting" : joinDisabledReason(session.startTime)}
         </button>
       </div>
     </div>
@@ -299,7 +315,7 @@ export default function MentorSessionsPage() {
     }
     // Also count from calendarSessions for accurate counts
     for (const s of calendarSessions) {
-      const d = new Date(s.startTime).toISOString().split("T")[0];
+      const d = formatLocalDate(new Date(s.startTime));
       map[d] = (map[d] || 0);
     }
     return map;

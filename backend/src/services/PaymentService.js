@@ -97,7 +97,10 @@ class PaymentService {
       }),
       prisma.booking.update({
         where: { id: payment.booking.id },
-        data: { status: 'CONFIRMED' },
+        data: {
+          status: 'CONFIRMED',
+          meetingLink: `/meeting/${payment.booking.id}`,
+        },
       }),
     ]);
 

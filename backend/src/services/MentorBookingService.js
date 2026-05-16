@@ -317,7 +317,7 @@ class MentorBookingService {
       where: {
         mentorProfileId,
         status: { in: ["CONFIRMED", "PENDING"] },
-        startTime: { gte: now },
+        endTime: { gte: now },
       },
       include: sessionInclude,
       orderBy: { startTime: "asc" },

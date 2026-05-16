@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -19,6 +20,7 @@ import {
   FileText,
 } from "lucide-react";
 import { menteeBookingApi, resolveUploadUrl } from "../../../lib/api";
+import { canJoinSession, joinDisabledReason } from "../../../lib/sessionUtils";
 import { format } from "date-fns";
 
 /* ─── Status Badge ──────────────────────────────────────────── */
@@ -126,6 +128,7 @@ function FeedbackModal({ session, onClose }) {
 
 /* ─── Session Card ──────────────────────────────────────────── */
 function SessionCard({ session, isUpcoming, onFeedbackClick }) {
+  const router = useRouter();
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -180,16 +183,19 @@ function SessionCard({ session, isUpcoming, onFeedbackClick }) {
                 {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
               </button>
               <button
-                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black px-4 py-2 text-xs font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-none ${
-                  session.meetingLink ? "bg-[#8B5CF6]" : "bg-gray-400 cursor-not-allowed"
+                disabled={!canJoinSession(session.startTime, session.endTime)}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black px-4 py-2 text-xs font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-all ${
+                  canJoinSession(session.startTime, session.endTime)
+                    ? "bg-[#8B5CF6] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-none"
+                    : "bg-gray-400 opacity-60 cursor-not-allowed"
                 }`}
                 onClick={() => {
-                  if (session.meetingLink) window.open(session.meetingLink, "_blank");
-                  else alert("Meeting link will be available soon.");
+                  if (canJoinSession(session.startTime, session.endTime) && session.meetingLink) router.push(`/meeting/${session.id}`);
                 }}
+                title={!canJoinSession(session.startTime, session.endTime) ? joinDisabledReason(session.startTime) : ""}
               >
                 <Video className="h-3.5 w-3.5" />
-                Join Session
+                {canJoinSession(session.startTime, session.endTime) ? "Join Session" : joinDisabledReason(session.startTime)}
               </button>
             </>
           ) : (

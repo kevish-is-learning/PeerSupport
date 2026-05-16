@@ -44,9 +44,9 @@ class MenteeBookingController {
           price: b.payment?.amount || b.mentorService?.price || 0,
         };
 
-        if (new Date(b.startTime) > now && b.status !== 'CANCELLED') {
+        if (new Date(b.endTime) > now && b.status !== 'CANCELLED' && b.status !== 'COMPLETED') {
           upcoming.push(sessionData);
-        } else if (new Date(b.startTime) <= now) {
+        } else if (new Date(b.endTime) <= now || b.status === 'COMPLETED') {
           past.push({
             ...sessionData,
             rating: b.mentorProfile.averageRating,

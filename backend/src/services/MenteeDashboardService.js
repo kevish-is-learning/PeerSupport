@@ -26,14 +26,14 @@ class MenteeDashboardService {
           select: { mentorService: { select: { durationMinutes: true } } },
         }),
 
-        // 3. Upcoming sessions count
+        // 3. Upcoming/Active sessions count
         prisma.booking.count({
-          where: { menteeId, status: 'CONFIRMED', startTime: { gt: now } },
+          where: { menteeId, status: 'CONFIRMED', endTime: { gt: now } },
         }),
 
-        // 4. Top 3 upcoming sessions — only the fields the frontend needs
+        // 4. Top 3 upcoming/active sessions — only the fields the frontend needs
         prisma.booking.findMany({
-          where: { menteeId, status: 'CONFIRMED', startTime: { gt: now } },
+          where: { menteeId, status: 'CONFIRMED', endTime: { gt: now } },
           orderBy: { startTime: 'asc' },
           take: 3,
           select: {

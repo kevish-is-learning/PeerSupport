@@ -1,8 +1,11 @@
 import { X, Calendar as CalendarIcon, Clock, Video, Mail, Phone, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 import { resolveUploadUrl } from "../../../lib/api";
+import { canJoinSession, joinDisabledReason } from "../../../lib/sessionUtils";
 
 export default function SessionDetailsModal({ session, onClose }) {
+  const router = useRouter();
   if (!session) return null;
 
   const dateStr = format(new Date(session.startTime), "EEE, MMM d");
@@ -121,21 +124,31 @@ export default function SessionDetailsModal({ session, onClose }) {
 
           {/* Meeting Link */}
           {session.meetingLink && (
-            <a 
-              href={session.meetingLink}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-between rounded-xl border-2 border-black bg-[#22C55E] p-4 transition-transform hover:-translate-y-0.5"
-            >
-              <div className="flex items-center gap-3 text-white">
-                <Video size={20} />
-                <div>
-                  <p className="font-extrabold text-white">Meeting Link</p>
-                  <p className="text-xs font-semibold text-green-100 truncate max-w-[200px]">{session.meetingLink}</p>
+            canJoinSession(session.startTime, session.endTime) ? (
+              <button 
+                onClick={() => router.push(`/meeting/${session.id}`)}
+                className="w-full flex items-center justify-between rounded-xl border-2 border-black bg-[#22C55E] p-4 transition-transform hover:-translate-y-0.5 cursor-pointer"
+              >
+                <div className="flex items-center gap-3 text-white">
+                  <Video size={20} />
+                  <div>
+                    <p className="font-extrabold text-white">Join Meeting</p>
+                    <p className="text-xs font-semibold text-green-100">Click to open meeting room</p>
+                  </div>
+                </div>
+                <ArrowRight size={20} className="text-white" />
+              </button>
+            ) : (
+              <div className="flex items-center justify-between rounded-xl border-2 border-gray-300 bg-gray-100 p-4 opacity-60">
+                <div className="flex items-center gap-3 text-gray-500">
+                  <Video size={20} />
+                  <div>
+                    <p className="font-extrabold text-gray-500">Meeting Link</p>
+                    <p className="text-xs font-semibold text-gray-400">{joinDisabledReason(session.startTime)}</p>
+                  </div>
                 </div>
               </div>
-              <ArrowRight size={20} className="text-white" />
-            </a>
+            )
           )}
         </div>
 
