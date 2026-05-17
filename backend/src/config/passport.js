@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from '../generated/prisma/index.js';
+import emailService from '../services/EmailService.js';
 
 const prisma = new PrismaClient();
 
@@ -40,7 +41,7 @@ passport.use(
         }
 
         // Check if user registered with Google
-        if (user.provider === 'google' || !user.password) {
+        if (user.provider === 'GOOGLE' || !user.password) {
           return done(null, false, { 
             message: 'Please sign in with Google' 
           });
@@ -101,7 +102,7 @@ passport.use(
             email: profile.emails[0].value,
             name: profile.displayName,
             googleId: profile.id,
-            provider: 'google',
+            provider: 'GOOGLE',
             profilePicture: profile.photos[0]?.value,
             isVerified: true, // Google accounts are verified
           },
@@ -109,6 +110,13 @@ passport.use(
             mentorProfile: { select: { id: true } },
             menteeProfile: { select: { id: true } },
           },
+        });
+
+        // Fire-and-forget welcome email for new Google signups
+        emailService.sendWelcomeEmail({
+          name: user.name,
+          email: user.email,
+          role: user.role,
         });
 
         return done(null, user);

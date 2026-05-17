@@ -351,9 +351,9 @@ export const meetingApi = {
   getToken(bookingId) {
     return apiRequest(`/meetings/${bookingId}/token`);
   },
-  /** Mark a session as completed */
-  complete(bookingId) {
-    return apiRequest(`/meetings/${bookingId}/complete`, { method: "PATCH" });
+  /** Signal that this participant has finished the meeting */
+  finish(bookingId) {
+    return apiRequest(`/meetings/${bookingId}/finish`, { method: "PATCH" });
   },
 };
 

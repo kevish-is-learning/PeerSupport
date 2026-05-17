@@ -10,7 +10,7 @@ router.use(authenticateJWT);
 // GET /api/meetings/:bookingId/token — get Agora RTC token
 router.get('/:bookingId/token', MeetingController.getToken);
 
-// PATCH /api/meetings/:bookingId/complete — mark session as COMPLETED
-router.patch('/:bookingId/complete', MeetingController.complete);
+// PATCH /api/meetings/:bookingId/finish — signal participant finished
+router.patch('/:bookingId/finish', MeetingController.finish);
 
 export default router;

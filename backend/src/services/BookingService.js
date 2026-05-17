@@ -9,6 +9,7 @@ import {
 } from '../validators/booking.validator.js';
 import { generateSlots } from '../utils/slotGenerator.js';
 import { istToUtc, utcToIst } from '../utils/timezoneUtils.js';
+import emailService from './EmailService.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -317,8 +318,36 @@ class BookingService {
         status: 'CANCELLED',
         cancelledReason,
       },
-      include: bookingInclude,
+      include: {
+        ...bookingInclude,
+        mentorProfile: {
+          include: {
+            user: { select: { name: true, email: true, profilePicture: true } },
+          },
+        },
+        mentorService: {
+          select: { title: true, durationMinutes: true, price: true },
+        },
+      },
     });
+
+    // Fire-and-forget: send cancellation emails to both parties
+    const menteeEmail = updated.mentee?.email;
+    const mentorEmail = updated.mentorProfile?.user?.email;
+    if (menteeEmail || mentorEmail) {
+      emailService.sendBookingCancelledEmails({
+        menteeEmail,
+        menteeName: updated.mentee?.name || 'Mentee',
+        mentorEmail,
+        mentorName: updated.mentorProfile?.user?.name || 'Mentor',
+        serviceName: updated.mentorService?.title || 'Mentoring Session',
+        startTime: updated.startTime,
+        endTime: updated.endTime,
+        cancelledReason,
+        cancelledByRole: isMentee ? 'mentee' : 'mentor',
+        bookingId: updated.id,
+      });
+    }
 
     return mapBooking(updated);
   }

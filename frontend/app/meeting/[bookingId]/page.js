@@ -17,6 +17,9 @@ import {
   Loader2,
   AlertTriangle,
   ArrowLeft,
+  RotateCcw,
+  CheckCircle,
+  LogOut,
 } from "lucide-react";
 import useAgoraCall from "../../../hooks/useAgoraCall";
 import { meetingApi, resolveUploadUrl } from "../../../lib/api";
@@ -146,7 +149,9 @@ export default function MeetingPage() {
   const [sessionInfo, setSessionInfo] = useState(null);
   const [preJoinLoading, setPreJoinLoading] = useState(true);
   const [preJoinError, setPreJoinError] = useState(null);
-  const [hasLeft, setHasLeft] = useState(false);
+  // 'lobby' → 'incall' → 'left' (can rejoin) → 'finished' (done)
+  const [meetingState, setMeetingState] = useState("lobby");
+  const [finishing, setFinishing] = useState(false);
 
   const {
     join,
@@ -185,86 +190,173 @@ export default function MeetingPage() {
     try {
       const data = await join();
       if (data?.booking) setSessionInfo((prev) => ({ ...prev, ...data }));
+      setMeetingState("incall");
     } catch {
       // Error is already in agoraError
     }
   };
 
-  // Handle leaving
-  const handleLeave = async (autoEnd = false) => {
+  // Handle leaving (temporary — user can rejoin)
+  const handleLeave = async () => {
     await leaveCall();
-    
-    // If auto-ended or user left after end time, mark as completed
-    if (sessionInfo?.booking?.endTime) {
-      const isPastEnd = Date.now() >= new Date(sessionInfo.booking.endTime).getTime();
-      if (autoEnd || isPastEnd) {
-        try {
-          await meetingApi.complete(bookingId);
-        } catch (e) {
-          console.error("Failed to mark booking as completed", e);
-        }
-      }
-    }
-    
-    setHasLeft(true);
+    setMeetingState("left");
   };
 
-  // Session ended warning
+  // Handle rejoin
+  const handleRejoin = async () => {
+    setMeetingState("lobby");
+    // Re-fetch token since the old one might have been consumed
+    try {
+      const res = await meetingApi.getToken(bookingId);
+      setSessionInfo(res.data);
+      setPreJoinError(null);
+    } catch (err) {
+      setPreJoinError(err.message || "Cannot rejoin this meeting");
+    }
+  };
+
+  // Handle finish — signal to backend
+  const handleFinish = async () => {
+    setFinishing(true);
+    try {
+      // Leave Agora first if still connected
+      if (joined) await leaveCall();
+      // Signal finish to backend
+      const res = await meetingApi.finish(bookingId);
+      if (res.data?.completed) {
+        toast.success("Session completed!");
+      } else {
+        toast.info(res.data?.message || "Waiting for other participant to finish");
+      }
+    } catch (e) {
+      console.error("Failed to finish meeting", e);
+    } finally {
+      setFinishing(false);
+      setMeetingState("finished");
+    }
+  };
+
+  // Session ended warning + auto-finish
   useEffect(() => {
-    if (!sessionInfo?.booking?.endTime || !joined) return;
+    if (!sessionInfo?.booking?.endTime || meetingState !== "incall") return;
 
     const end = new Date(sessionInfo.booking.endTime).getTime();
     const fiveMinWarning = end - 5 * 60 * 1000;
     const autoEnd = end + 2 * 60 * 1000; // 2 min grace
 
     const now = Date.now();
-
     const timers = [];
 
     if (now < fiveMinWarning) {
       timers.push(
         setTimeout(() => {
-          toast.warning("Session ends in 5 minutes", {
-            duration: 8000,
-          });
+          toast.warning("Session ends in 5 minutes", { duration: 8000 });
         }, fiveMinWarning - now)
       );
     }
 
     if (now < autoEnd) {
       timers.push(
-        setTimeout(() => {
-          toast.error("Session has ended — disconnecting");
-          handleLeave(true);
+        setTimeout(async () => {
+          toast.error("Session has ended — finishing automatically");
+          await handleFinish();
         }, autoEnd - now)
       );
     }
 
     return () => timers.forEach(clearTimeout);
-  }, [sessionInfo, joined]);
+  }, [sessionInfo, meetingState]);
 
-  // ─── Left screen ──────────────────────────────────────────
-  if (hasLeft) {
+  // Check if session is still within join window
+  const isWithinJoinWindow = () => {
+    if (!sessionInfo?.booking?.endTime) return false;
+    const endPlus30 = new Date(sessionInfo.booking.endTime).getTime() + 30 * 60 * 1000;
+    return Date.now() < endPlus30;
+  };
+
+  // ─── Finished screen (final — cannot rejoin) ────────────────
+  if (meetingState === "finished") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F8F7F4] p-4">
         <div
           className="w-full max-w-md rounded-2xl border-3 border-black bg-white p-8 text-center"
-          style={{ boxShadow: "6px 6px 0 0 #5061E4" }}
+          style={{ boxShadow: "6px 6px 0 0 #22C55E" }}
         >
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-black bg-emerald-100">
-            <PhoneOff size={28} className="text-emerald-600" />
+            <CheckCircle size={28} className="text-emerald-600" />
           </div>
           <h2 className="text-2xl font-extrabold text-gray-900">
-            Session Ended
+            Session Complete
           </h2>
           <p className="mt-2 text-sm text-gray-500">
-            You have left the meeting room.
+            Thank you for the session! Your meeting has been recorded as completed.
           </p>
           <button
             onClick={() => router.back()}
             className="mt-6 flex items-center justify-center gap-2 w-full rounded-xl border-2 border-black bg-[#5061E4] py-3 text-sm font-bold text-white shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000]"
           >
             <ArrowLeft size={16} />
+            Back to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Left screen (can rejoin or finish) ─────────────────────
+  if (meetingState === "left") {
+    const canRejoin = isWithinJoinWindow();
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F8F7F4] p-4">
+        <div
+          className="w-full max-w-md rounded-2xl border-3 border-black bg-white p-8 text-center"
+          style={{ boxShadow: "6px 6px 0 0 #5061E4" }}
+        >
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-black bg-amber-100">
+            <PhoneOff size={28} className="text-amber-600" />
+          </div>
+          <h2 className="text-2xl font-extrabold text-gray-900">
+            You Left the Meeting
+          </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            {canRejoin
+              ? "You can rejoin the session or finish the meeting."
+              : "The session window has ended."}
+          </p>
+
+          <div className="mt-6 flex flex-col gap-3">
+            {canRejoin && (
+              <button
+                onClick={handleRejoin}
+                className="flex items-center justify-center gap-2 w-full rounded-xl border-2 border-black bg-[#5061E4] py-3 text-sm font-bold text-white shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000]"
+              >
+                <RotateCcw size={16} />
+                Rejoin Meeting
+              </button>
+            )}
+            <button
+              onClick={handleFinish}
+              disabled={finishing}
+              className="flex items-center justify-center gap-2 w-full rounded-xl border-2 border-black bg-[#22C55E] py-3 text-sm font-bold text-white shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_#000] disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {finishing ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Finishing...
+                </>
+              ) : (
+                <>
+                  <CheckCircle size={16} />
+                  Finish Meeting
+                </>
+              )}
+            </button>
+          </div>
+
+          <button
+            onClick={() => router.back()}
+            className="mt-3 w-full rounded-xl border-2 border-gray-300 bg-white py-2.5 text-sm font-bold text-gray-500 transition-all hover:bg-gray-50"
+          >
             Back to Dashboard
           </button>
         </div>
@@ -313,7 +405,7 @@ export default function MeetingPage() {
   }
 
   // ─── Pre-join lobby ───────────────────────────────────────
-  if (!joined) {
+  if (!joined && meetingState === "lobby") {
     const booking = sessionInfo?.booking;
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F8F7F4] p-4">
@@ -544,14 +636,25 @@ export default function MeetingPage() {
           {screenSharing ? <MonitorOff size={20} /> : <Monitor size={20} />}
         </button>
 
-        {/* End Call */}
+        {/* Leave Call (temporary) */}
         <button
           onClick={handleLeave}
-          className="flex h-12 w-28 items-center justify-center gap-2 rounded-xl border-2 border-black bg-red-500 text-white shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 hover:bg-red-600"
-          title="Leave meeting"
+          className="flex h-12 w-28 items-center justify-center gap-2 rounded-xl border-2 border-black bg-amber-500 text-white shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 hover:bg-amber-600"
+          title="Leave meeting (you can rejoin)"
+        >
+          <LogOut size={18} />
+          <span className="text-sm font-bold">Leave</span>
+        </button>
+
+        {/* Finish Meeting (permanent) */}
+        <button
+          onClick={handleFinish}
+          disabled={finishing}
+          className="flex h-12 w-28 items-center justify-center gap-2 rounded-xl border-2 border-black bg-red-500 text-white shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 hover:bg-red-600 disabled:opacity-60 disabled:cursor-not-allowed"
+          title="Finish and end your session"
         >
           <PhoneOff size={18} />
-          <span className="text-sm font-bold">Leave</span>
+          <span className="text-sm font-bold">Finish</span>
         </button>
       </div>
     </div>

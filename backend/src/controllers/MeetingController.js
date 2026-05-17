@@ -21,12 +21,12 @@ class MeetingController {
   }
 
   /**
-   * PATCH /api/meetings/:bookingId/complete
-   * Mark a session as COMPLETED when a participant leaves.
+   * PATCH /api/meetings/:bookingId/finish
+   * Signal that a participant has finished the meeting.
    */
-  async complete(req, res, next) {
+  async finish(req, res, next) {
     try {
-      const result = await MeetingService.completeBooking(req.user.id, req.params.bookingId);
+      const result = await MeetingService.finishMeeting(req.user.id, req.params.bookingId);
       res.json({ success: true, data: result });
     } catch (error) {
       if (error.statusCode) {

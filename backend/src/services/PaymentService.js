@@ -2,6 +2,7 @@ import { prisma } from '../config/database.js';
 import { razorpayInstance } from '../config/razorpay.js';
 import { emitSlotUpdate } from '../config/socket.js';
 import { utcToIst } from '../utils/timezoneUtils.js';
+import emailService from './EmailService.js';
 import crypto from 'crypto';
 
 const createServiceError = (statusCode, message) => {
@@ -33,7 +34,16 @@ class PaymentService {
       where: { razorpayOrderId: razorpay_order_id },
       include: {
         booking: {
-          select: { id: true, menteeId: true, status: true },
+          select: {
+            id: true,
+            menteeId: true,
+            status: true,
+            startTime: true,
+            endTime: true,
+            purposeOfCall: true,
+            mentorProfileId: true,
+            mentorServiceId: true,
+          },
         },
       },
     });
@@ -104,12 +114,78 @@ class PaymentService {
       }),
     ]);
 
+    // Fire-and-forget: send booking confirmation + payment receipt emails
+    this._sendPaymentSuccessEmails(updatedPayment, payment.booking);
+
     return {
       message: 'Payment verified successfully',
       bookingId: payment.booking.id,
       paymentId: updatedPayment.id,
       paymentStatus: 'SUCCESS',
     };
+  }
+
+  /**
+   * Fire-and-forget email notifications after a successful payment.
+   * Fetches full participant details and sends:
+   * - Booking confirmation to mentee
+   * - New booking alert to mentor
+   * - Payment receipt to mentee
+   */
+  async _sendPaymentSuccessEmails(payment, booking) {
+    try {
+      // Fetch full booking details with participants
+      const fullBooking = await prisma.booking.findUnique({
+        where: { id: booking.id },
+        include: {
+          mentee: { select: { id: true, name: true, email: true } },
+          mentorProfile: {
+            include: {
+              user: { select: { name: true, email: true } },
+            },
+          },
+          mentorService: {
+            select: { title: true, durationMinutes: true, price: true },
+          },
+        },
+      });
+
+      if (!fullBooking) return;
+
+      const menteeName = fullBooking.mentee?.name || 'Mentee';
+      const menteeEmail = fullBooking.mentee?.email;
+      const mentorName = fullBooking.mentorProfile?.user?.name || 'Mentor';
+      const mentorEmail = fullBooking.mentorProfile?.user?.email;
+      const serviceName = fullBooking.mentorService?.title || 'Mentoring Session';
+
+      const emailData = {
+        menteeName,
+        menteeEmail,
+        mentorName,
+        mentorEmail,
+        serviceName,
+        startTime: fullBooking.startTime,
+        endTime: fullBooking.endTime,
+        amount: payment.amount,
+        currency: payment.currency || 'INR',
+        purposeOfCall: fullBooking.purposeOfCall,
+        bookingId: fullBooking.id,
+        paymentId: payment.id,
+        paidAt: new Date(),
+      };
+
+      // Send all emails in parallel (fire-and-forget)
+      await Promise.allSettled([
+        // Booking confirmed → mentee
+        menteeEmail && emailService.sendBookingConfirmedToMentee(emailData),
+        // New booking alert → mentor
+        mentorEmail && emailService.sendNewBookingToMentor(emailData),
+        // Payment receipt → mentee
+        menteeEmail && emailService.sendPaymentReceipt(emailData),
+      ]);
+    } catch (err) {
+      console.error('[PaymentService] Failed to send payment success emails:', err.message);
+    }
   }
 
   /**

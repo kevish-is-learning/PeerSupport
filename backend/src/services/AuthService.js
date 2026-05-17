@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { prisma } from '../config/database.js';
+import emailService from './EmailService.js';
 import { registerSchema, loginSchema, changePasswordSchema } from '../validators/auth.validator.js';
 
 const selectRoleSchema = z.object({
@@ -100,7 +101,7 @@ class AuthService {
     });
 
     if (existingUser) {
-      if (existingUser.provider === 'google') {
+      if (existingUser.provider === 'GOOGLE') {
         throw new Error('Email already registered with Google. Please sign in with Google');
       }
       throw new Error('Email already registered');
@@ -137,6 +138,13 @@ class AuthService {
     const mappedUser = mapUserWithOnboardingState(user);
     const token = this.generateToken(mappedUser);
 
+    // Fire-and-forget welcome email
+    emailService.sendWelcomeEmail({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
+
     return {
       user: mappedUser,
       token,
@@ -172,7 +180,7 @@ class AuthService {
     }
 
     // Check if user registered with Google
-    if (user.provider === 'google' || !user.password) {
+    if (user.provider === 'GOOGLE' || !user.password) {
       throw new Error('Please sign in with Google');
     }
 
@@ -239,7 +247,7 @@ class AuthService {
       throw new Error('User not found');
     }
 
-    if (user.provider === 'google' || !user.password) {
+    if (user.provider === 'GOOGLE' || !user.password) {
       throw new Error('Cannot change password for Google accounts');
     }
 

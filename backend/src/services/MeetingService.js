@@ -8,6 +8,7 @@
 import agoraToken from 'agora-token';
 const { RtcTokenBuilder, RtcRole } = agoraToken;
 import { prisma } from '../config/database.js';
+import emailService from '../services/EmailService.js';
 import crypto from 'crypto';
 
 const AGORA_APP_ID = process.env.AGORA_APP_ID;
@@ -30,6 +31,12 @@ function userIdToUid(userId) {
 }
 
 class MeetingService {
+  constructor() {
+    // In-memory tracker: bookingId → Set<'mentor'|'mentee'>
+    // Tracks which participants have signalled "finish"
+    this._finishTracker = new Map();
+  }
+
   /**
    * Generate an Agora RTC token for a booking session.
    *
@@ -137,20 +144,28 @@ class MeetingService {
   }
 
   /**
-   * Mark a booking as COMPLETED.
+   * Signal that a participant has finished the meeting.
    *
-   * Called when a participant leaves the meeting after the session
-   * end time has passed, or when both participants have left.
-   * Only transitions CONFIRMED → COMPLETED.
+   * Uses an in-memory tracker so each participant can independently
+   * signal "I'm done". The booking transitions to COMPLETED when:
+   *   - Both mentor and mentee have finished, OR
+   *   - The caller finishes and endTime has already passed
    *
    * @param {string} userId - Authenticated user's ID
    * @param {string} bookingId
+   * @returns {{ completed: boolean, message: string }}
    */
-  async completeBooking(userId, bookingId) {
+  async finishMeeting(userId, bookingId) {
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
       include: {
-        mentorProfile: { select: { userId: true } },
+        mentorProfile: {
+          include: {
+            user: { select: { id: true, name: true, email: true } },
+          },
+        },
+        mentee: { select: { id: true, name: true, email: true } },
+        mentorService: { select: { title: true } },
       },
     });
 
@@ -160,24 +175,67 @@ class MeetingService {
 
     // Must be a participant
     const isMentee = booking.menteeId === userId;
-    const isMentor = booking.mentorProfile?.userId === userId;
+    const isMentor = booking.mentorProfile?.user?.id === userId;
     if (!isMentee && !isMentor) {
       throw createServiceError(403, 'Not a participant of this session');
     }
 
-    // Only transition from CONFIRMED
-    if (booking.status !== 'CONFIRMED') {
-      return { message: 'Booking is already ' + booking.status, bookingId };
+    // Already completed
+    if (booking.status === 'COMPLETED') {
+      return { completed: true, message: 'Session is already completed' };
     }
 
-    // Update to COMPLETED
-    await prisma.booking.update({
-      where: { id: bookingId },
-      data: { status: 'COMPLETED' },
-    });
+    // Only works on CONFIRMED bookings
+    if (booking.status !== 'CONFIRMED') {
+      return { completed: false, message: `Booking status is ${booking.status}` };
+    }
 
-    return { message: 'Session marked as completed', bookingId };
+    // Track who has finished
+    if (!this._finishTracker.has(bookingId)) {
+      this._finishTracker.set(bookingId, new Set());
+    }
+    const finished = this._finishTracker.get(bookingId);
+    const role = isMentor ? 'mentor' : 'mentee';
+    finished.add(role);
+
+    // Determine if we should mark as completed
+    const bothFinished = finished.has('mentor') && finished.has('mentee');
+    const isPastEnd = new Date() >= new Date(booking.endTime);
+
+    if (bothFinished || isPastEnd) {
+      // Mark as COMPLETED
+      await prisma.booking.update({
+        where: { id: bookingId },
+        data: { status: 'COMPLETED' },
+      });
+      // Cleanup tracker
+      this._finishTracker.delete(bookingId);
+
+      // Fire-and-forget: send session completed emails to both parties
+      const menteeEmail = booking.mentee?.email;
+      const mentorEmail = booking.mentorProfile?.user?.email;
+      if (menteeEmail || mentorEmail) {
+        emailService.sendSessionCompletedEmails({
+          menteeEmail,
+          menteeName: booking.mentee?.name || 'Mentee',
+          mentorEmail,
+          mentorName: booking.mentorProfile?.user?.name || 'Mentor',
+          serviceName: booking.mentorService?.title || 'Mentoring Session',
+          startTime: booking.startTime,
+          bookingId: booking.id,
+        });
+      }
+
+      return { completed: true, message: 'Session marked as completed' };
+    }
+
+    // Only one participant finished so far
+    return {
+      completed: false,
+      message: `You have finished. Waiting for the ${role === 'mentor' ? 'mentee' : 'mentor'} to finish.`,
+    };
   }
 }
 
 export default new MeetingService();
+

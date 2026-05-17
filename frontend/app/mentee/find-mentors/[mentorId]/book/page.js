@@ -272,7 +272,7 @@ export default function BookSessionPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-2">Phone Number *</label>
-                  <div className="flex items-center gap-3 rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3"><Phone className="h-4 w-4 text-gray-400 shrink-0" /><input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 XXXXX XXXXX" className="flex-1 bg-transparent text-sm text-gray-900 placeholder-gray-400 focus:outline-none" /></div>
+                  <div className="flex items-center gap-3 rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3"><Phone className="h-4 w-4 text-gray-400 shrink-0" /><input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={10} minLength={10} placeholder="+91 XXXXX XXXXX" className="flex-1 bg-transparent text-sm text-gray-900 placeholder-gray-400 focus:outline-none" /></div>
                   <p className="mt-1 text-xs text-gray-400">For session reminders and updates</p>
                 </div>
                 <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm space-y-2">
