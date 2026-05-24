@@ -68,9 +68,24 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
+      passReqToCallback: true,
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (req, accessToken, refreshToken, profile, done) => {
       try {
+        let mode = 'login';
+        let role = 'MENTEE';
+        
+        if (req.query.state) {
+          try {
+            const decodedState = Buffer.from(req.query.state, 'base64').toString('utf8');
+            const stateObj = JSON.parse(decodedState);
+            mode = stateObj.mode || 'login';
+            role = stateObj.role || 'MENTEE';
+          } catch (e) {
+            console.error('Failed to parse state:', e);
+          }
+        }
+
         // Check if user already exists
         let user = await prisma.user.findUnique({
           where: { googleId: profile.id },
@@ -85,6 +100,13 @@ passport.use(
           return done(null, user);
         }
 
+        // If trying to log in but account doesn't exist, block registration
+        if (mode !== 'register') {
+          return done(null, false, {
+            message: 'account_not_found',
+          });
+        }
+
         // Check if email already exists with local provider
         const emailExists = await prisma.user.findUnique({
           where: { email: profile.emails[0].value },
@@ -92,7 +114,7 @@ passport.use(
 
         if (emailExists) {
           return done(null, false, { 
-            message: 'Email already registered. Please sign in with email/password' 
+            message: 'email_exists' 
           });
         }
 
@@ -105,6 +127,7 @@ passport.use(
             provider: 'GOOGLE',
             profilePicture: profile.photos[0]?.value,
             isVerified: true, // Google accounts are verified
+            role: role, // Use the role extracted from state
           },
           include: {
             mentorProfile: { select: { id: true } },

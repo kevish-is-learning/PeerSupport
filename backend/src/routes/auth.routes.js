@@ -15,17 +15,34 @@ router.post('/select-role', authenticateJWT, authController.selectRole);
 
 router.get(
   '/google',
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-  })
+  (req, res, next) => {
+    const mode = req.query.mode || 'login';
+    const role = req.query.role || 'MENTEE';
+    const stateObj = { mode, role };
+    const state = Buffer.from(JSON.stringify(stateObj)).toString('base64');
+    passport.authenticate('google', {
+      scope: ['profile', 'email'],
+      state: state,
+    })(req, res, next);
+  }
 );
 
 router.get(
   '/google/callback',
-  passport.authenticate('google', {
-    failureRedirect: '/api/auth/google/failure',
-    session: false,
-  }),
+  (req, res, next) => {
+    passport.authenticate('google', { session: false }, (err, user, info) => {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      if (err) {
+        return res.redirect(`${frontendUrl}/auth?mode=login&error=server_error`);
+      }
+      if (!user) {
+        const errorMsg = info?.message || 'authentication_failed';
+        return res.redirect(`${frontendUrl}/auth?mode=login&error=${errorMsg}`);
+      }
+      req.user = user;
+      next();
+    })(req, res, next);
+  },
   authController.googleCallback
 );
 

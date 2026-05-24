@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import useAuthStore from "../../store/useAuthStore";
 import { authApi } from "../../lib/api";
 import { Eye, EyeOff } from "lucide-react";
@@ -44,6 +45,28 @@ export default function AuthPanel({ initialMode = "login", initialRole = "MENTEE
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      if (errorParam === "account_not_found") {
+        toast.error("Account does not exist. Please sign up first.");
+      } else if (errorParam === "email_exists") {
+        toast.error("Email already registered with another provider.");
+      } else if (errorParam === "authentication_failed") {
+        toast.error("Authentication failed. Please try again.");
+      } else {
+        toast.error("An error occurred during authentication.");
+      }
+
+      // Clean up search params to avoid showing the toast again on page reload
+      const params = new URLSearchParams(window.location.search);
+      params.delete("error");
+      const newRelativePathQuery = window.location.pathname + (params.toString() ? `?${params.toString()}` : "");
+      window.history.replaceState(null, "", newRelativePathQuery);
+    }
+  }, [searchParams]);
 
   const {
     user,
@@ -256,11 +279,11 @@ export default function AuthPanel({ initialMode = "login", initialRole = "MENTEE
 
         <div className="mt-8">
           <a
-            href={authApi.googleAuthUrl()}
+            href={authApi.googleAuthUrl(mode, form.role)}
             className="w-full max-w-[240px] bg-black text-white font-semibold py-3.5 px-4 rounded-3xl flex items-center justify-center gap-3 hover:bg-zinc-800 transition-colors"
           >
             <GoogleIcon />
-            Log In with Google
+            {isLogin ? "Log In with Google" : "Sign Up with Google"}
           </a>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import AuthPanel from "../../components/auth/AuthPanel";
 import Image from "next/image";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Auth | Peer Support",
@@ -46,7 +47,9 @@ export default function AuthPage({ searchParams }) {
       {/* Right side form */}
       <div className="w-full lg:w-1/2 bg-[#fdfaf7] flex text-left p-8 sm:p-12 lg:p-20 relative overflow-y-auto items-center justify-center">
         <div className="w-full max-w-[420px] mx-auto">
-          <AuthPanel initialMode={mode} initialRole={initialRole} redirectTo="/onboarding" guestOnly />
+          <Suspense fallback={<div>Loading...</div>}>
+            <AuthPanel initialMode={mode} initialRole={initialRole} redirectTo="/onboarding" guestOnly />
+          </Suspense>
         </div>
       </div>
     </main>

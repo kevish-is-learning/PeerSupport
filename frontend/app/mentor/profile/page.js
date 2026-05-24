@@ -250,15 +250,17 @@ export default function MentorProfilePage() {
             {/* Photo */}
             <div className="relative mb-5">
               <div className="h-40 w-40 overflow-hidden rounded-[20px] border-2 border-black bg-gray-100">
-                <img
-                  src={
-                    profile?.profilePhotoUrl
-                      ? resolveUploadUrl(profile.profilePhotoUrl)
-                      : "https://i.pravatar.cc/150?img=11"
-                  }
-                  alt="Profile"
-                  className="h-full w-full object-cover"
-                />
+                {(profile?.profilePhotoUrl || user?.profilePicture) ? (
+                  <img
+                    src={resolveUploadUrl(profile?.profilePhotoUrl)}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center">
+                    <User size={48} className="text-gray-400" />
+                  </div>
+                )}
               </div>
               <label
                 className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-[#5061E4] text-white hover:bg-[#4050d0] transition-all shadow-[2px_2px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${saving ? "opacity-50 pointer-events-none" : ""}`}
