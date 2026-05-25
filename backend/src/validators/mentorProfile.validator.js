@@ -76,6 +76,7 @@ const optionalUrlSchema = z
     return value.startsWith("/uploads/") || /^https?:\/\//i.test(value);
   }, "Must be a valid URL or uploaded file path");
 
+
 /**
  * Profile schema — services / pricing / availability are handled by their own
  * dedicated endpoints now, so they are NOT part of this schema.

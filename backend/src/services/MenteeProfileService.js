@@ -1,6 +1,5 @@
 import { prisma } from '../config/database.js';
-import fs from 'fs/promises';
-import path from 'path';
+import { destroyAsset } from '../config/cloudinary.js';
 import {
   createMenteeProfileSchema,
   updateMenteeProfileSchema,
@@ -12,17 +11,9 @@ const createServiceError = (statusCode, message) => {
   return error;
 };
 
-const removeUploadedFile = async (publicFilePath) => {
-  if (!publicFilePath || !publicFilePath.startsWith('/uploads/')) {
-    return;
-  }
-
-  const absolutePath = path.resolve(process.cwd(), publicFilePath.replace(/^\/+/, ''));
-  try {
-    await fs.unlink(absolutePath);
-  } catch (_error) {
-    // Ignore stale file deletion errors.
-  }
+const removeUploadedAsset = async (url) => {
+  if (!url) return;
+  await destroyAsset(url);
 };
 
 const mapProfile = (profile) => ({
@@ -140,7 +131,7 @@ class MenteeProfileService {
     }
 
     if (profileData.resumeUrl && existingProfile.resumeUrl && profileData.resumeUrl !== existingProfile.resumeUrl) {
-      await removeUploadedFile(existingProfile.resumeUrl);
+      await removeUploadedAsset(existingProfile.resumeUrl);
     }
 
     return mapProfile(updatedProfile);
@@ -159,7 +150,7 @@ class MenteeProfileService {
       throw createServiceError(404, 'Mentee onboarding profile not found');
     }
 
-    await removeUploadedFile(existingProfile.resumeUrl);
+    await removeUploadedAsset(existingProfile.resumeUrl);
 
     await prisma.menteeProfile.delete({ where: { userId } });
 

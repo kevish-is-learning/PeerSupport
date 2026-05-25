@@ -1,6 +1,5 @@
 import { prisma } from '../config/database.js';
-import fs from 'fs/promises';
-import path from 'path';
+import { destroyAsset } from '../config/cloudinary.js';
 import {
   createMentorProfileSchema,
   updateMentorProfileSchema,
@@ -13,17 +12,9 @@ const createServiceError = (statusCode, message) => {
   return error;
 };
 
-const removeUploadedFile = async (publicFilePath) => {
-  if (!publicFilePath) {
-    return;
-  }
-
-  const absolutePath = path.resolve(process.cwd(), publicFilePath.replace(/^\/+/, ''));
-  try {
-    await fs.unlink(absolutePath);
-  } catch (_error) {
-    // Ignore deletion failures for stale files.
-  }
+const removeUploadedAsset = async (url) => {
+  if (!url) return;
+  await destroyAsset(url);
 };
 
 const profileInclude = {
@@ -218,7 +209,7 @@ class MentorProfileService {
     }
 
     if (profilePhotoUrl && existingProfile.user?.profilePicture && profilePhotoUrl !== existingProfile.user.profilePicture) {
-      await removeUploadedFile(existingProfile.user.profilePicture);
+      await removeUploadedAsset(existingProfile.user.profilePicture);
     }
 
     if (
@@ -226,7 +217,7 @@ class MentorProfileService {
       existingProfile.collegeDocumentUrl &&
       restData.collegeDocumentUrl !== existingProfile.collegeDocumentUrl
     ) {
-      await removeUploadedFile(existingProfile.collegeDocumentUrl);
+      await removeUploadedAsset(existingProfile.collegeDocumentUrl);
     }
 
     return mapProfile(updatedProfile);
@@ -246,8 +237,8 @@ class MentorProfileService {
       throw createServiceError(404, 'Mentor onboarding profile not found');
     }
 
-    await removeUploadedFile(existingProfile.user?.profilePicture);
-    await removeUploadedFile(existingProfile.collegeDocumentUrl);
+    await removeUploadedAsset(existingProfile.user?.profilePicture);
+    await removeUploadedAsset(existingProfile.collegeDocumentUrl);
 
     await prisma.mentorProfile.delete({ where: { userId } });
 

@@ -1,54 +1,23 @@
-import fs from 'fs';
-import path from 'path';
 import multer from 'multer';
+import cloudinary, { getFolder } from '../config/cloudinary.js';
+import { prisma } from '../config/database.js';
 
-const uploadsRoot = path.resolve(process.cwd(), 'uploads');
+// ─── Multer: memory storage (files stay as buffers, never touch disk) ────────
 
-const ensureDir = (dirPath) => {
-  fs.mkdirSync(dirPath, { recursive: true });
-};
-
-const normalizePublicPath = (absoluteFilePath) => {
-  const relativePath = path.relative(uploadsRoot, absoluteFilePath);
-  return `/uploads/${relativePath.split(path.sep).join('/')}`;
-};
-
-const storage = multer.diskStorage({
-  destination: (_req, file, callback) => {
-    let folderName = 'mentor-documents';
-
-    if (file.fieldname === 'profilePhoto') {
-      folderName = 'mentor-avatars';
-    }
-
-    if (file.fieldname === 'resume') {
-      folderName = 'mentee-resumes';
-    }
-
-    const destinationDir = path.join(uploadsRoot, folderName);
-    ensureDir(destinationDir);
-    callback(null, destinationDir);
-  },
-  filename: (_req, file, callback) => {
-    const ext = path.extname(file.originalname || '').toLowerCase() || '.jpg';
-    const uniquePart = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    callback(null, `${file.fieldname}-${uniquePart}${ext}`);
-  },
-});
+const memoryStorage = multer.memoryStorage();
 
 const createUploader = (allowedMimeTypes, errorMessage) =>
   multer({
-    storage,
+    storage: memoryStorage,
     fileFilter: (_req, file, callback) => {
       if (!allowedMimeTypes.has(file.mimetype)) {
         callback(new Error(errorMessage));
         return;
       }
-
       callback(null, true);
     },
     limits: {
-      fileSize: 10 * 1024 * 1024,
+      fileSize: 10 * 1024 * 1024, // 10 MB
     },
   });
 
@@ -73,8 +42,50 @@ const mentorUploadFieldsHandler = mentorUpload.fields([
 
 const menteeUploadFieldsHandler = menteeUpload.fields([{ name: 'resume', maxCount: 1 }]);
 
+// ─── Cloudinary streaming helper ─────────────────────────────────────────────
+
+/**
+ * Upload a multer file buffer to Cloudinary.
+ *
+ * @param {Buffer} buffer        – file contents
+ * @param {object} options       – Cloudinary upload options (folder, public_id, resource_type …)
+ * @returns {Promise<string>}    – the secure_url of the uploaded asset
+ */
+const uploadToCloudinary = (buffer, options) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(options, (error, result) => {
+      if (error) return reject(error);
+      resolve(result.secure_url);
+    });
+    stream.end(buffer);
+  });
+
+// ─── Username resolver ───────────────────────────────────────────────────────
+
+/**
+ * Try to resolve the user's profile username for folder naming.
+ * Falls back to a deterministic `<role>_<userId-prefix>` pattern if no profile exists yet.
+ */
+const resolveUsername = async (userId, role) => {
+  if (role === 'MENTOR') {
+    const profile = await prisma.mentorProfile.findUnique({
+      where: { userId },
+      select: { username: true },
+    });
+    return profile?.username || `mentor_${userId.substring(0, 8)}`;
+  }
+
+  const profile = await prisma.menteeProfile.findUnique({
+    where: { userId },
+    select: { username: true },
+  });
+  return profile?.username || `mentee_${userId.substring(0, 8)}`;
+};
+
+// ─── Middleware: Mentor profile uploads ──────────────────────────────────────
+
 const mentorProfileUpload = (req, res, next) => {
-  mentorUploadFieldsHandler(req, res, (error) => {
+  mentorUploadFieldsHandler(req, res, async (error) => {
     if (error) {
       return res.status(400).json({
         success: false,
@@ -85,17 +96,53 @@ const mentorProfileUpload = (req, res, next) => {
     const profilePhoto = req.files?.profilePhoto?.[0];
     const collegeDocument = req.files?.collegeDocument?.[0];
 
-    req.uploadedFiles = {
-      profilePhotoUrl: profilePhoto ? normalizePublicPath(profilePhoto.path) : undefined,
-      collegeDocumentUrl: collegeDocument ? normalizePublicPath(collegeDocument.path) : undefined,
-    };
+    // Nothing to upload → carry on
+    if (!profilePhoto && !collegeDocument) {
+      req.uploadedFiles = {};
+      return next();
+    }
 
-    next();
+    try {
+      const username = await resolveUsername(req.user.id, 'MENTOR');
+
+      const uploads = {};
+
+      if (profilePhoto) {
+        const uniqueId = `${username}_${Date.now()}`;
+        uploads.profilePhotoUrl = await uploadToCloudinary(profilePhoto.buffer, {
+          folder: getFolder(username, 'avatar'),
+          public_id: uniqueId,
+          resource_type: 'image',
+          overwrite: true,
+        });
+      }
+
+      if (collegeDocument) {
+        const uniqueId = `${username}_doc_${Date.now()}`;
+        uploads.collegeDocumentUrl = await uploadToCloudinary(collegeDocument.buffer, {
+          folder: getFolder(username, 'pdfs'),
+          public_id: uniqueId,
+          resource_type: 'image',
+          overwrite: true,
+        });
+      }
+
+      req.uploadedFiles = uploads;
+      next();
+    } catch (uploadError) {
+      console.error('[Cloudinary] Upload failed:', uploadError);
+      return res.status(500).json({
+        success: false,
+        message: 'Cloud upload failed. Please try again.',
+      });
+    }
   });
 };
 
+// ─── Middleware: Mentee profile uploads ──────────────────────────────────────
+
 const menteeProfileUpload = (req, res, next) => {
-  menteeUploadFieldsHandler(req, res, (error) => {
+  menteeUploadFieldsHandler(req, res, async (error) => {
     if (error) {
       return res.status(400).json({
         success: false,
@@ -105,11 +152,31 @@ const menteeProfileUpload = (req, res, next) => {
 
     const resume = req.files?.resume?.[0];
 
-    req.uploadedFiles = {
-      resumeUrl: resume ? normalizePublicPath(resume.path) : undefined,
-    };
+    if (!resume) {
+      req.uploadedFiles = {};
+      return next();
+    }
 
-    next();
+    try {
+      const username = await resolveUsername(req.user.id, 'MENTEE');
+
+      const uniqueId = `${username}_resume_${Date.now()}`;
+      const resumeUrl = await uploadToCloudinary(resume.buffer, {
+        folder: getFolder(username, 'pdfs'),
+        public_id: uniqueId,
+        resource_type: 'raw',
+        overwrite: true,
+      });
+
+      req.uploadedFiles = { resumeUrl };
+      next();
+    } catch (uploadError) {
+      console.error('[Cloudinary] Upload failed:', uploadError);
+      return res.status(500).json({
+        success: false,
+        message: 'Cloud upload failed. Please try again.',
+      });
+    }
   });
 };
 
