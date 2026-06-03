@@ -29,6 +29,8 @@ class MenteeBookingController {
       bookings.forEach((b) => {
         const sessionData = {
           id: b.id,
+          mentorProfileId: b.mentorProfileId,
+          mentorServiceId: b.mentorServiceId,
           mentorName: b.mentorProfile.user.name,
           mentorPicture: b.mentorProfile.user.profilePicture,
           serviceName: b.mentorService?.label || b.mentorService?.serviceName || 'Session',
@@ -44,7 +46,7 @@ class MenteeBookingController {
           price: b.payment?.amount || b.mentorService?.price || 0,
         };
 
-        if (new Date(b.endTime) > now && b.status !== 'CANCELLED' && b.status !== 'COMPLETED') {
+        if (new Date(b.endTime) > now && b.status !== 'CANCELLED_BY_MENTOR' && b.status !== 'CANCELLED_BY_MENTEE' && b.status !== 'COMPLETED') {
           upcoming.push(sessionData);
         } else if (new Date(b.endTime) <= now || b.status === 'COMPLETED') {
           past.push({

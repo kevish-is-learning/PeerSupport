@@ -1,4 +1,6 @@
 import { prisma } from "../config/database.js";
+import { ACTIVE_STATUSES, CANCELLED_STATUSES } from "../utils/bookingStateMachine.js";
+import { calculateMentorEarning, calculatePlatformFee, RATES } from "../utils/financialCalculator.js";
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -105,7 +107,7 @@ class MentorBookingService {
           _sum: { amount: true },
         }),
         prisma.booking.findMany({
-          where: { mentorProfileId, status: { not: "CANCELLED" } },
+          where: { mentorProfileId, status: { notIn: CANCELLED_STATUSES } },
           distinct: ["menteeId"],
           select: { menteeId: true },
         }),
@@ -155,7 +157,7 @@ class MentorBookingService {
       throw createServiceError(404, "Mentor profile not found");
     
     const bookings = await prisma.booking.findMany({
-      where: { mentorProfileId, status: { not: "CANCELLED" } },
+      where: { mentorProfileId, status: { notIn: CANCELLED_STATUSES } },
       distinct: ["menteeId"],
       select: {
         menteeId: true,
@@ -181,7 +183,7 @@ class MentorBookingService {
       throw createServiceError(404, "Mentor profile not found");
 
     const bookings = await prisma.booking.findMany({
-      where: { mentorProfileId, menteeId, status: { not: "CANCELLED" } },
+      where: { mentorProfileId, menteeId, status: { notIn: CANCELLED_STATUSES } },
       select: {
         id: true,
         status: true,
@@ -235,7 +237,7 @@ class MentorBookingService {
           orderBy: { createdAt: "desc" },
         }),
         prisma.booking.count({
-          where: { mentorProfileId, status: "PENDING" },
+          where: { mentorProfileId, status: "PAYMENT_PENDING" },
         }),
         prisma.payment.aggregate({
           where: { paymentStatus: "SUCCESS", booking: { mentorProfileId } },
@@ -245,29 +247,38 @@ class MentorBookingService {
     );
 
     const totalEarnings = completedPayments._sum.amount ?? 0;
-    const PLATFORM_FEE = 0.10;
 
     const transactions = allPayments.map((p) => {
+      const gross = p.amount;
+      const platformFee = p.platformFee || calculatePlatformFee(gross);
+      const mentorNet = p.mentorAmount || calculateMentorEarning(gross);
       return {
-      id: p.id,
-      transactionRef: p.id.substring(0, 13).toUpperCase(),
-      mentee: p.booking.mentee?.name ?? "mentee not found",
-      service: p.booking.mentorService?.title || "Session",
-      date: p.createdAt,
-      amount: p.amount,
-      currency: p.currency,
-      status: p.paymentStatus,
-    }});
+        id: p.id,
+        transactionRef: p.id.substring(0, 13).toUpperCase(),
+        mentee: p.booking.mentee?.name ?? "mentee not found",
+        service: p.booking.mentorService?.title || "Session",
+        date: p.createdAt,
+        grossAmount: gross,
+        platformFee,
+        amount: mentorNet,
+        currency: p.currency,
+        status: p.paymentStatus,
+      };
+    });
+
+    // Mentor sees net amounts (after 13% platform fee deduction)
+    const totalNetEarnings = +(totalEarnings * RATES.MENTOR_EARNING_RATE).toFixed(2);
 
     return {
-      totalEarnings,
-      availableForPayout: +(totalEarnings * (1 - PLATFORM_FEE)).toFixed(2),
+      totalEarnings: totalNetEarnings,
+      availableForPayout: totalNetEarnings,
       pendingAmount: allPayments
         .filter((p) => p.paymentStatus === "PENDING")
-        .reduce((sum, p) => sum + p.amount, 0),
+        .reduce((sum, p) => sum + calculateMentorEarning(p.amount), 0),
       completedTransactions: allPayments.filter(
         (p) => p.paymentStatus === "SUCCESS",
       ).length,
+      platformFeeRate: RATES.PLATFORM_FEE_RATE,
       transactions,
     };
   }
@@ -305,7 +316,7 @@ class MentorBookingService {
     const calendarSessions = await prisma.booking.findMany({
       where: {
         mentorProfileId,
-        status: { not: "CANCELLED" },
+        status: { notIn: CANCELLED_STATUSES },
         startTime: { gte: monthStart, lte: monthEnd },
       },
       include: sessionInclude,
@@ -316,7 +327,7 @@ class MentorBookingService {
     const upcomingSessions = await prisma.booking.findMany({
       where: {
         mentorProfileId,
-        status: { in: ["CONFIRMED", "PENDING"] },
+        status: { in: ["CONFIRMED", "PAYMENT_PENDING"] },
         endTime: { gte: now },
       },
       include: sessionInclude,
@@ -326,6 +337,8 @@ class MentorBookingService {
 
     const mapSession = (b) => ({
       id: b.id,
+      mentorProfileId: b.mentorProfileId,
+      mentorServiceId: b.mentorServiceId,
       status: b.status,
       startTime: b.startTime,
       endTime: b.endTime,

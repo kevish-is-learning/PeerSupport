@@ -24,7 +24,7 @@ import { prisma } from '../config/database.js';
 export async function checkConflictWithLock(tx, mentorProfileId, startTime, endTime, excludeBookingId = null) {
   // Raw SQL for SELECT FOR UPDATE — Prisma doesn't support this natively.
   // Overlap logic: booking.startTime < proposedEnd AND booking.endTime > proposedStart
-  // Only PENDING and CONFIRMED bookings block.
+  // Only PAYMENT_PENDING, CONFIRMED, IN_PROGRESS, and RESCHEDULE_REQUESTED bookings block.
   const excludeClause = excludeBookingId
     ? `AND b.id != '${excludeBookingId}'`
     : '';
@@ -33,7 +33,7 @@ export async function checkConflictWithLock(tx, mentorProfileId, startTime, endT
     SELECT b.id, b."startTime", b."endTime", b.status, b."mentorServiceId"
     FROM "Booking" b
     WHERE b."mentorProfileId" = $1
-      AND b.status IN ('PENDING', 'CONFIRMED')
+      AND b.status IN ('PAYMENT_PENDING', 'CONFIRMED', 'IN_PROGRESS', 'RESCHEDULE_REQUESTED')
       AND b."startTime" < $2
       AND b."endTime" > $3
       ${excludeClause}
@@ -49,7 +49,7 @@ export async function checkConflictWithLock(tx, mentorProfileId, startTime, endT
  * Wraps the entire operation in a serializable transaction:
  * 1. SELECT FOR UPDATE on overlapping bookings
  * 2. If conflicts exist → throw 409
- * 3. If clear → INSERT booking with PENDING status
+ * 3. If clear → INSERT booking with PAYMENT_PENDING status
  *
  * @param {Object} params
  * @param {string} params.menteeId
@@ -104,7 +104,7 @@ export async function createBookingWithGuard(params) {
         mentorServiceId,
         startTime,
         endTime,
-        status: 'PENDING',
+        status: 'PAYMENT_PENDING',
         purposeOfCall,
         notes,
         menteePhone,
@@ -139,7 +139,7 @@ export async function rescheduleBookingWithGuard(bookingId, newStartTime, newEnd
       throw err;
     }
 
-    if (!['PENDING', 'CONFIRMED'].includes(existing.status)) {
+    if (!['PAYMENT_PENDING', 'CONFIRMED'].includes(existing.status)) {
       const err = new Error(`Cannot reschedule a booking with status: ${existing.status}`);
       err.statusCode = 400;
       throw err;

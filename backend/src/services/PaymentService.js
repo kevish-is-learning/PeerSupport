@@ -3,6 +3,7 @@ import { razorpayInstance } from '../config/razorpay.js';
 import { emitSlotUpdate } from '../config/socket.js';
 import { utcToIst } from '../utils/timezoneUtils.js';
 import emailService from './EmailService.js';
+import { calculatePlatformFee, calculateMentorEarning } from '../utils/financialCalculator.js';
 import crypto from 'crypto';
 
 const createServiceError = (statusCode, message) => {
@@ -75,7 +76,7 @@ class PaymentService {
         }),
         prisma.booking.update({
           where: { id: payment.booking.id },
-          data: { status: 'CANCELLED' },
+          data: { status: 'CANCELLED_BY_MENTEE' },
           select: {
             mentorProfileId: true,
             mentorServiceId: true,
@@ -95,6 +96,10 @@ class PaymentService {
     }
 
     // 3. Update payment and booking in a transaction
+    const amount = payment.amount;
+    const platformFee = calculatePlatformFee(amount);
+    const mentorAmount = calculateMentorEarning(amount);
+
     const [updatedPayment] = await prisma.$transaction([
       prisma.payment.update({
         where: { id: payment.id },
@@ -102,6 +107,8 @@ class PaymentService {
           razorpayPaymentId: razorpay_payment_id,
           razorpaySignature: razorpay_signature,
           paymentStatus: 'SUCCESS',
+          platformFee,
+          mentorAmount,
           paidAt: new Date(),
         },
       }),
@@ -113,6 +120,9 @@ class PaymentService {
         },
       }),
     ]);
+
+    // Credit mentor wallet (pending balance — released after session completion)
+    await this._creditMentorWallet(payment.booking.mentorProfileId, mentorAmount, payment.booking.id);
 
     // Fire-and-forget: send booking confirmation + payment receipt emails
     this._sendPaymentSuccessEmails(updatedPayment, payment.booking);
@@ -220,7 +230,7 @@ class PaymentService {
     }
 
     // If booking is already cancelled, just acknowledge
-    if (payment.booking.status === 'CANCELLED') {
+    if (payment.booking.status === 'CANCELLED_BY_MENTOR' || payment.booking.status === 'CANCELLED_BY_MENTEE') {
       return { message: 'Booking already released', bookingId };
     }
 
@@ -232,7 +242,7 @@ class PaymentService {
       }),
       prisma.booking.update({
         where: { id: payment.booking.id },
-        data: { status: 'CANCELLED' },
+        data: { status: 'CANCELLED_BY_MENTEE' },
         select: {
           mentorProfileId: true,
           mentorServiceId: true,
@@ -250,6 +260,45 @@ class PaymentService {
     });
 
     return { message: 'Payment failure recorded — slot released', bookingId };
+  }
+  /**
+   * Credit mentor wallet with pending earnings after successful payment.
+   * Creates wallet if it doesn't exist.
+   */
+  async _creditMentorWallet(mentorProfileId, mentorAmount, bookingId) {
+    try {
+      // Upsert wallet
+      let wallet = await prisma.mentorWallet.findUnique({
+        where: { mentorProfileId },
+      });
+
+      if (!wallet) {
+        wallet = await prisma.mentorWallet.create({
+          data: { mentorProfileId, pendingBalance: 0, availableBalance: 0, withdrawnBalance: 0 },
+        });
+      }
+
+      // Credit pending balance + create ledger entry
+      await prisma.$transaction([
+        prisma.mentorWallet.update({
+          where: { id: wallet.id },
+          data: { pendingBalance: { increment: mentorAmount } },
+        }),
+        prisma.walletTransaction.create({
+          data: {
+            walletId: wallet.id,
+            bookingId,
+            type: 'EARNING',
+            amount: mentorAmount,
+            description: `Session earning (net after 13% platform fee)`,
+            balanceBefore: wallet.pendingBalance,
+            balanceAfter: wallet.pendingBalance + mentorAmount,
+          },
+        }),
+      ]);
+    } catch (err) {
+      console.error('[PaymentService] Failed to credit mentor wallet:', err.message);
+    }
   }
 }
 

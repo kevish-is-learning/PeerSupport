@@ -12,6 +12,7 @@ import passport from './config/passport.js';
 import { connectDatabase } from './config/database.js';
 import { initSocket } from './config/socket.js';
 import routes from "./routes/index.routes.js";
+import cronScheduler from './jobs/cronScheduler.js';
 
 export const app = express();
 const httpServer = createServer(app);
@@ -93,6 +94,9 @@ const startServer = async () => {
       console.log(`📍 API available at http://localhost:${PORT}`);
       console.log(`🔌 Socket.io ready`);
       console.log(`🔐 Environment: ${process.env.NODE_ENV || 'development'}`);
+
+      // Start cron jobs
+      cronScheduler.start();
 
     });
   } catch (error) {

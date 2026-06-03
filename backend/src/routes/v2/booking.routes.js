@@ -41,11 +41,10 @@ router.get(
   bookingController.getBooking
 );
 
-// Cancel booking (mentor only per spec)
+// Cancel booking (mentor or mentee)
 router.patch(
   '/bookings/:id/cancel',
   authenticateJWT,
-  authorizeRoles('MENTOR'),
   bookingController.cancelBooking
 );
 

@@ -334,13 +334,22 @@ export const v2Api = {
   getBooking(bookingId) {
     return apiRequest(`/v2/bookings/${bookingId}`);
   },
-  /** Cancel a booking (mentor only) */
+  /** Cancel a booking (mentor or mentee) */
   cancelBooking(bookingId, data = {}) {
     return apiRequest(`/v2/bookings/${bookingId}/cancel`, { method: 'PATCH', body: data });
   },
   /** Reschedule a booking */
   rescheduleBooking(bookingId, data) {
     return apiRequest(`/v2/bookings/${bookingId}/reschedule`, { method: 'PATCH', body: data });
+  },
+};
+
+// ─── Cancellation APIs ────────────────────────────────────────────────────────
+
+export const cancellationApi = {
+  /** Cancel a booking with refund processing */
+  cancel(bookingId, data = {}) {
+    return apiRequest(`/cancellations/${bookingId}`, { method: 'POST', body: data });
   },
 };
 
@@ -354,6 +363,56 @@ export const meetingApi = {
   /** Signal that this participant has finished the meeting */
   finish(bookingId) {
     return apiRequest(`/meetings/${bookingId}/finish`, { method: "PATCH" });
+  },
+};
+
+// ─── Wallet APIs (Mentor) ────────────────────────────────────────────────────
+
+export const walletApi = {
+  /** Get wallet summary (pending, available, withdrawn balances) */
+  getWallet() {
+    return apiRequest('/wallet');
+  },
+  /** Get transaction history (paginated, filterable by type) */
+  getTransactions({ page = 1, limit = 20, type } = {}) {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('limit', limit);
+    if (type) params.set('type', type);
+    return apiRequest(`/wallet/transactions?${params.toString()}`);
+  },
+};
+
+// ─── Payout APIs ─────────────────────────────────────────────────────────────
+
+export const payoutApi = {
+  /** Mentor: request a payout from available balance */
+  request(data) {
+    return apiRequest('/payouts', { method: 'POST', body: data });
+  },
+  /** Mentor: get my payout history */
+  getMyPayouts({ page = 1, limit = 20 } = {}) {
+    return apiRequest(`/payouts/my?page=${page}&limit=${limit}`);
+  },
+  /** Admin: list all payouts (filterable by status) */
+  getAll({ status, page = 1, limit = 20 } = {}) {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('limit', limit);
+    if (status) params.set('status', status);
+    return apiRequest(`/payouts/admin?${params.toString()}`);
+  },
+  /** Admin: approve a payout */
+  approve(payoutId) {
+    return apiRequest(`/payouts/${payoutId}/approve`, { method: 'PATCH' });
+  },
+  /** Admin: complete a payout */
+  complete(payoutId, data = {}) {
+    return apiRequest(`/payouts/${payoutId}/complete`, { method: 'PATCH', body: data });
+  },
+  /** Admin: fail/reject a payout */
+  fail(payoutId, data = {}) {
+    return apiRequest(`/payouts/${payoutId}/fail`, { method: 'PATCH', body: data });
   },
 };
 
@@ -371,3 +430,6 @@ export function resolveUploadUrl(filePath) {
 }
 
 export { API_BASE_URL };
+
+// Alias for components that import v2BookingApi
+export { v2Api as v2BookingApi };

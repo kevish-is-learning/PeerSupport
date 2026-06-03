@@ -93,7 +93,7 @@ class SlotQueryService {
     const existingBookings = await prisma.booking.findMany({
       where: {
         mentorProfileId: validMentorId,
-        status: { in: ['PENDING', 'CONFIRMED'] },
+        status: { in: ['PAYMENT_PENDING', 'CONFIRMED', 'IN_PROGRESS', 'RESCHEDULE_REQUESTED'] },
         startTime: { lt: dateEnd },
         endTime: { gt: dateStart },
       },

@@ -19,6 +19,9 @@ import { generateSlots } from '../../utils/slotGenerator.js';
 import { dateTimeToTimeString } from '../../utils/timeUtils.js';
 import { istTimeAndDateToUtc, istToUtc, utcToIst, utcToIstDateString } from '../../utils/timezoneUtils.js';
 import { emitSlotUpdate } from '../../config/socket.js';
+import { ACTIVE_STATUSES } from '../../utils/bookingStateMachine.js';
+import { calculatePlatformFee, calculateMentorEarning } from '../../utils/financialCalculator.js';
+import cancellationService from '../CancellationService.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -160,14 +163,19 @@ class BookingServiceV2 {
     });
 
     // Create payment record
-    const payment = await prisma.payment.create({
-      data: {
-        bookingId: booking.id,
-        amount: mentorService.price,
-        currency: 'INR',
-        paymentStatus: 'PENDING',
-      },
-    });
+      const platformFee = calculatePlatformFee(mentorService.price);
+      const mentorAmount = calculateMentorEarning(mentorService.price);
+
+      const payment = await prisma.payment.create({
+        data: {
+          bookingId: booking.id,
+          amount: mentorService.price,
+          platformFee,
+          mentorAmount,
+          currency: 'INR',
+          paymentStatus: 'PENDING',
+        },
+      });
 
     // Fetch the mentee for Razorpay prefill
     const mentee = await prisma.user.findUnique({
@@ -205,7 +213,7 @@ class BookingServiceV2 {
         }),
         prisma.booking.update({
           where: { id: booking.id },
-          data: { status: 'CANCELLED' },
+          data: { status: 'CANCELLED_BY_MENTEE' },
         }),
       ]);
 
@@ -252,58 +260,21 @@ class BookingServiceV2 {
 
   /**
    * PATCH /bookings/:id/cancel
-   * Mentor only (per spec). Sets status to CANCELLED.
+   * Both mentor and mentee can cancel — delegates to CancellationService.
    */
   async cancelBooking(userId, bookingId, payload = {}) {
     const { id: validId } = bookingIdParamSchema.parse({ id: bookingId });
     const { cancelledReason } = cancelBookingSchema.parse(payload);
 
-    const booking = await prisma.booking.findUnique({
-      where: { id: validId },
-      select: {
-        id: true,
-        menteeId: true,
-        mentorProfileId: true,
-        status: true,
-        mentorProfile: { select: { userId: true } },
-      },
+    return cancellationService.cancelBooking(userId, validId, {
+      reason: cancelledReason,
     });
-
-    if (!booking) throw createServiceError(404, 'Booking not found');
-
-    // Only the mentor can cancel (per spec)
-    const isMentor = booking.mentorProfile.userId === userId;
-    if (!isMentor) {
-      throw createServiceError(403, 'Only the mentor can cancel a booking');
-    }
-
-    if (!['PENDING', 'CONFIRMED'].includes(booking.status)) {
-      throw createServiceError(400, `Cannot cancel a booking with status: ${booking.status}`);
-    }
-
-    const updated = await prisma.booking.update({
-      where: { id: validId },
-      data: {
-        status: 'CANCELLED',
-        cancelledReason: cancelledReason || null,
-      },
-      include: bookingInclude,
-    });
-
-    // Emit real-time slot update (released)
-    emitSlotUpdate(updated.mentorProfileId, {
-      startTime: utcToIst(updated.startTime),
-      endTime: utcToIst(updated.endTime),
-      serviceId: updated.mentorServiceId,
-      action: 'released',
-    });
-
-    return mapBooking(updated);
   }
 
   /**
    * PATCH /bookings/:id/reschedule
-   * Validates new slot using the same FOR UPDATE lock, swap atomically.
+   * Creates a child booking instead of mutating the original.
+   * Original booking is marked RESCHEDULE_ACCEPTED.
    */
   async rescheduleBooking(userId, bookingId, payload) {
     const { id: validId } = bookingIdParamSchema.parse({ id: bookingId });
@@ -329,8 +300,10 @@ class BookingServiceV2 {
             serviceId: true,
             durationMinutes: true,
             bufferMinutes: true,
+            price: true,
           },
         },
+        payment: true,
       },
     });
 
@@ -340,6 +313,11 @@ class BookingServiceV2 {
     const isMentor = existing.mentorProfile.userId === userId;
     if (!isMentee && !isMentor) {
       throw createServiceError(403, 'Not authorized to reschedule this booking');
+    }
+
+    // Only CONFIRMED and PAYMENT_PENDING can be rescheduled
+    if (!['PAYMENT_PENDING', 'CONFIRMED'].includes(existing.status)) {
+      throw createServiceError(400, `Cannot reschedule a booking with status: ${existing.status}`);
     }
 
     if (!existing.mentorService) {
@@ -362,34 +340,71 @@ class BookingServiceV2 {
       endTimeUtc: newEndUtc,
     });
 
-    // Reschedule with conflict guard
-    const updated = await rescheduleBookingWithGuard(validId, newStartUtc, newEndUtc);
+    // Create child booking + mark original as rescheduled (atomic)
+    const childBooking = await prisma.$transaction(async (tx) => {
+      // 1. Mark original as RESCHEDULE_ACCEPTED
+      await tx.booking.update({
+        where: { id: validId },
+        data: { status: 'RESCHEDULE_ACCEPTED' },
+      });
 
-    // Fetch full booking
-    const fullBooking = await prisma.booking.findUnique({
-      where: { id: updated.id },
-      include: bookingInclude,
+      // 2. Create child booking with new times, linked to parent
+      const child = await tx.booking.create({
+        data: {
+          menteeId: existing.menteeId,
+          mentorProfileId: existing.mentorProfileId,
+          mentorServiceId: existing.mentorServiceId,
+          startTime: newStartUtc,
+          endTime: newEndUtc,
+          status: existing.status, // Keep same status (CONFIRMED or PAYMENT_PENDING)
+          meetingLink: `/meeting/${existing.id}`, // Will be updated
+          purposeOfCall: existing.purposeOfCall,
+          notes: existing.notes,
+          menteePhone: existing.menteePhone,
+          menteeEmail: existing.menteeEmail,
+          discussionTopic: existing.discussionTopic,
+          specificQuestions: existing.specificQuestions,
+          parentBookingId: validId,
+        },
+      });
+
+      // 3. Transfer payment reference to child if it exists
+      if (existing.payment) {
+        await tx.payment.update({
+          where: { id: existing.payment.id },
+          data: { bookingId: child.id },
+        });
+      }
+
+      // 4. Update child meeting link
+      await tx.booking.update({
+        where: { id: child.id },
+        data: { meetingLink: `/meeting/${child.id}` },
+      });
+
+      return child;
     });
 
-    const changed =
-      existing.startTime.getTime() !== newStartUtc.getTime() ||
-      existing.endTime.getTime() !== newEndUtc.getTime();
+    // Emit slot updates
+    emitSlotUpdate(existing.mentorProfileId, {
+      startTime: utcToIst(existing.startTime),
+      endTime: utcToIst(existing.endTime),
+      serviceId: existing.mentorServiceId,
+      action: 'released',
+    });
 
-    if (changed) {
-      emitSlotUpdate(existing.mentorProfileId, {
-        startTime: utcToIst(existing.startTime),
-        endTime: utcToIst(existing.endTime),
-        serviceId: existing.mentorServiceId,
-        action: 'released',
-      });
+    emitSlotUpdate(existing.mentorProfileId, {
+      startTime: utcToIst(newStartUtc),
+      endTime: utcToIst(newEndUtc),
+      serviceId: existing.mentorServiceId,
+      action: 'taken',
+    });
 
-      emitSlotUpdate(existing.mentorProfileId, {
-        startTime: utcToIst(newStartUtc),
-        endTime: utcToIst(newEndUtc),
-        serviceId: existing.mentorServiceId,
-        action: 'taken',
-      });
-    }
+    // Fetch full child booking
+    const fullBooking = await prisma.booking.findUnique({
+      where: { id: childBooking.id },
+      include: bookingInclude,
+    });
 
     return mapBooking(fullBooking);
   }

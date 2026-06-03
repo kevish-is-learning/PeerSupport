@@ -58,12 +58,22 @@ function generateCalendarDays(year, month) {
 
 const STATUS_STYLES = {
   CONFIRMED: { label: "scheduled", bg: "bg-[#F59E0B]", text: "text-white" },
-  PENDING: { label: "pending", bg: "bg-[#E5E7EB]", text: "text-gray-600" },
+  PAYMENT_PENDING: { label: "payment pending", bg: "bg-[#E5E7EB]", text: "text-gray-600" },
+  IN_PROGRESS: { label: "in progress", bg: "bg-[#3B82F6]", text: "text-white" },
   COMPLETED: { label: "completed", bg: "bg-[#10B981]", text: "text-white" },
+  RESCHEDULE_REQUESTED: { label: "reschedule requested", bg: "bg-[#8B5CF6]", text: "text-white" },
+  RESCHEDULE_ACCEPTED: { label: "rescheduled", bg: "bg-[#6366F1]", text: "text-white" },
+  RESCHEDULE_REJECTED: { label: "reschedule rejected", bg: "bg-[#F97316]", text: "text-white" },
+  CANCELLED_BY_MENTOR: { label: "cancelled (mentor)", bg: "bg-[#EF4444]", text: "text-white" },
+  CANCELLED_BY_MENTEE: { label: "cancelled (mentee)", bg: "bg-[#EF4444]", text: "text-white" },
+  NO_SHOW_MENTOR: { label: "no-show (mentor)", bg: "bg-[#DC2626]", text: "text-white" },
+  NO_SHOW_MENTEE: { label: "no-show (mentee)", bg: "bg-[#DC2626]", text: "text-white" },
+  REFUND_INITIATED: { label: "refund processing", bg: "bg-[#F59E0B]", text: "text-white" },
+  REFUND_COMPLETED: { label: "refunded", bg: "bg-[#6B7280]", text: "text-white" },
 };
 
 function getStatusBadge(status) {
-  const style = STATUS_STYLES[status] || STATUS_STYLES.PENDING;
+  const style = STATUS_STYLES[status] || STATUS_STYLES.PAYMENT_PENDING;
   return (
     <span className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-[11px] font-bold ${style.bg} ${style.text}`}>
       {style.label}
@@ -560,6 +570,7 @@ export default function MentorSessionsPage() {
           session={detailsSession}
           mentee={detailsSession.mentee}
           onClose={() => setDetailsSession(null)}
+          onSessionUpdated={() => fetchSessions(calMonth, calYear)}
         />
       )}
 

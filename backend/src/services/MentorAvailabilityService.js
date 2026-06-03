@@ -140,7 +140,7 @@ class MentorAvailabilityService {
     const activeBookings = await prisma.booking.findMany({
       where: {
         mentorProfileId: profile.id,
-        status: { in: ['PENDING', 'CONFIRMED'] },
+        status: { in: ['PAYMENT_PENDING', 'CONFIRMED', 'IN_PROGRESS', 'RESCHEDULE_REQUESTED'] },
       },
       select: { id: true, startTime: true },
     });

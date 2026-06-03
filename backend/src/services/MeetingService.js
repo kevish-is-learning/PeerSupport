@@ -9,6 +9,7 @@ import agoraToken from 'agora-token';
 const { RtcTokenBuilder, RtcRole } = agoraToken;
 import { prisma } from '../config/database.js';
 import emailService from '../services/EmailService.js';
+import attendanceService from '../services/AttendanceService.js';
 import crypto from 'crypto';
 
 const AGORA_APP_ID = process.env.AGORA_APP_ID;
@@ -119,6 +120,21 @@ class MeetingService {
       privilegeExpireTime
     );
 
+    // Record attendance (fire-and-forget)
+    const attendanceRole = isMentor ? 'MENTOR' : 'MENTEE';
+    attendanceService.recordJoin(bookingId, userId, attendanceRole).then(async () => {
+      // Check if both participants have joined → transition to IN_PROGRESS
+      if (booking.status === 'CONFIRMED') {
+        const bothJoined = await attendanceService.bothAttended(bookingId);
+        if (bothJoined) {
+          await prisma.booking.update({
+            where: { id: bookingId },
+            data: { status: 'IN_PROGRESS' },
+          }).catch(() => {});
+        }
+      }
+    }).catch(() => {});
+
     return {
       appId: AGORA_APP_ID,
       channel,
@@ -208,6 +224,8 @@ class MeetingService {
         where: { id: bookingId },
         data: { status: 'COMPLETED' },
       });
+      // Record leave for this participant
+      await attendanceService.recordLeave(bookingId, userId);
       // Cleanup tracker
       this._finishTracker.delete(bookingId);
 

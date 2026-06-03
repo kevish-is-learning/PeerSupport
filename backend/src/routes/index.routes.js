@@ -14,6 +14,9 @@ import publicMenteeRoutes from './publicMentee.routes.js';
 import bookingRoutes from './booking.routes.js';
 import paymentRoutes from './payment.routes.js';
 import meetingRoutes from './meeting.routes.js';
+import walletRoutes from './wallet.routes.js';
+import payoutRoutes from './payout.routes.js';
+import cancellationRoutes from './cancellation.routes.js';
 
 // V2 routes — new booking & availability system
 import v2MentorRoutes from './v2/mentor.routes.js';
@@ -52,6 +55,9 @@ router.use('/admin', adminMentorRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/payments', paymentRoutes);
 router.use('/meetings', meetingRoutes);
+router.use('/wallet', walletRoutes);
+router.use('/payouts', payoutRoutes);
+router.use('/cancellations', cancellationRoutes);
 
 // ─── V2 Routes ─────────────────────────────────────────────────────────────
 router.use('/v2', v2MentorRoutes);

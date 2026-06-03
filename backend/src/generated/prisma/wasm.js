@@ -230,6 +230,8 @@ exports.Prisma.BookingScalarFieldEnum = {
   discussionTopic: 'discussionTopic',
   specificQuestions: 'specificQuestions',
   cancelledReason: 'cancelledReason',
+  cancelledBy: 'cancelledBy',
+  parentBookingId: 'parentBookingId',
   rescheduledFromId: 'rescheduledFromId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -242,11 +244,14 @@ exports.Prisma.PaymentScalarFieldEnum = {
   razorpayPaymentId: 'razorpayPaymentId',
   razorpaySignature: 'razorpaySignature',
   amount: 'amount',
+  platformFee: 'platformFee',
+  mentorAmount: 'mentorAmount',
   currency: 'currency',
   paymentStatus: 'paymentStatus',
   paidAt: 'paidAt',
   refundedAmount: 'refundedAmount',
   refundReason: 'refundReason',
+  razorpayRefundId: 'razorpayRefundId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -279,13 +284,71 @@ exports.Prisma.ReviewScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SessionAttendanceScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  mentorJoinedAt: 'mentorJoinedAt',
+  mentorLeftAt: 'mentorLeftAt',
+  menteeJoinedAt: 'menteeJoinedAt',
+  menteeLeftAt: 'menteeLeftAt',
+  mentorDurationSecs: 'mentorDurationSecs',
+  menteeDurationSecs: 'menteeDurationSecs',
+  mentorReconnects: 'mentorReconnects',
+  menteeReconnects: 'menteeReconnects',
+  mentorPresent: 'mentorPresent',
+  menteePresent: 'menteePresent',
+  minimumDurationMet: 'minimumDurationMet',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MentorWalletScalarFieldEnum = {
+  id: 'id',
+  mentorProfileId: 'mentorProfileId',
+  pendingBalance: 'pendingBalance',
+  availableBalance: 'availableBalance',
+  withdrawnBalance: 'withdrawnBalance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WalletTransactionScalarFieldEnum = {
+  id: 'id',
+  walletId: 'walletId',
+  bookingId: 'bookingId',
+  type: 'type',
+  amount: 'amount',
+  description: 'description',
+  balanceBefore: 'balanceBefore',
+  balanceAfter: 'balanceAfter',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MentorCancellationStatScalarFieldEnum = {
+  id: 'id',
+  mentorProfileId: 'mentorProfileId',
+  year: 'year',
+  cancellationCount: 'cancellationCount',
+  lastCancelledAt: 'lastCancelledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PayoutScalarFieldEnum = {
   id: 'id',
   mentorProfileId: 'mentorProfileId',
   amount: 'amount',
-  transactionId: 'transactionId',
+  platformFee: 'platformFee',
+  netAmount: 'netAmount',
+  status: 'status',
+  payoutMethod: 'payoutMethod',
+  transactionRef: 'transactionRef',
+  requestedAt: 'requestedAt',
+  approvedAt: 'approvedAt',
   processedAt: 'processedAt',
-  createdAt: 'createdAt'
+  failedReason: 'failedReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -346,17 +409,42 @@ exports.DayOfWeek = exports.$Enums.DayOfWeek = {
 };
 
 exports.BookingStatus = exports.$Enums.BookingStatus = {
-  PENDING: 'PENDING',
+  PAYMENT_PENDING: 'PAYMENT_PENDING',
   CONFIRMED: 'CONFIRMED',
-  CANCELLED: 'CANCELLED',
-  COMPLETED: 'COMPLETED'
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  RESCHEDULE_REQUESTED: 'RESCHEDULE_REQUESTED',
+  RESCHEDULE_ACCEPTED: 'RESCHEDULE_ACCEPTED',
+  RESCHEDULE_REJECTED: 'RESCHEDULE_REJECTED',
+  CANCELLED_BY_MENTOR: 'CANCELLED_BY_MENTOR',
+  CANCELLED_BY_MENTEE: 'CANCELLED_BY_MENTEE',
+  NO_SHOW_MENTOR: 'NO_SHOW_MENTOR',
+  NO_SHOW_MENTEE: 'NO_SHOW_MENTEE',
+  REFUND_INITIATED: 'REFUND_INITIATED',
+  REFUND_COMPLETED: 'REFUND_COMPLETED'
 };
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   PENDING: 'PENDING',
   SUCCESS: 'SUCCESS',
   FAILED: 'FAILED',
-  REFUNDED: 'REFUNDED'
+  REFUNDED: 'REFUNDED',
+  PARTIALLY_REFUNDED: 'PARTIALLY_REFUNDED'
+};
+
+exports.WalletTransactionType = exports.$Enums.WalletTransactionType = {
+  EARNING: 'EARNING',
+  REFUND_DEBIT: 'REFUND_DEBIT',
+  PENALTY: 'PENALTY',
+  PAYOUT: 'PAYOUT'
+};
+
+exports.PayoutStatus = exports.$Enums.PayoutStatus = {
+  REQUESTED: 'REQUESTED',
+  APPROVED: 'APPROVED',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
 };
 
 exports.Prisma.ModelName = {
@@ -371,6 +459,10 @@ exports.Prisma.ModelName = {
   Invoice: 'Invoice',
   SessionFeedback: 'SessionFeedback',
   Review: 'Review',
+  SessionAttendance: 'SessionAttendance',
+  MentorWallet: 'MentorWallet',
+  WalletTransaction: 'WalletTransaction',
+  MentorCancellationStat: 'MentorCancellationStat',
   Payout: 'Payout'
 };
 

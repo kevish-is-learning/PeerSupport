@@ -1,8 +1,36 @@
+import { useState } from "react";
 import { X, Calendar as CalendarIcon, Clock, Mail, Phone } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
+import { v2BookingApi } from "../../lib/api";
+import RescheduleModal from "../shared/RescheduleModal";
 
-export default function MentorBookingDetailsModal({ session, mentee, onClose }) {
+export default function MentorBookingDetailsModal({ session, mentee, onClose, onSessionUpdated }) {
   if (!session) return null;
+
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelling, setCancelling] = useState(false);
+  const [showReschedule, setShowReschedule] = useState(false);
+
+  const canCancel = ["PAYMENT_PENDING", "CONFIRMED"].includes(session.status);
+  const canReschedule = ["PAYMENT_PENDING", "CONFIRMED"].includes(session.status);
+
+  const handleCancel = async () => {
+    try {
+      setCancelling(true);
+      await v2BookingApi.cancelBooking(session.id, {
+        cancelledReason: cancelReason || undefined,
+      });
+      toast.success("Session cancelled successfully. Mentee will be refunded.");
+      onSessionUpdated?.();
+      onClose();
+    } catch (err) {
+      toast.error(err.message || "Failed to cancel session");
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   const dateStr = format(new Date(session.startTime), "yyyy-MM-dd");
   const timeStr = format(new Date(session.startTime), "h:mm a");
@@ -86,8 +114,71 @@ export default function MentorBookingDetailsModal({ session, mentee, onClose }) 
             </div>
           )}
 
+          {/* Cancel Confirmation */}
+          {showCancelConfirm && (
+            <div className="rounded-xl border-2 border-red-200 bg-red-50 p-5 space-y-3 mt-4 animate-in fade-in zoom-in-95 duration-200">
+              <p className="text-sm font-bold text-red-700">Are you sure you want to cancel this session?</p>
+              <p className="text-xs text-red-600">The mentee will receive a full 100% refund. This action cannot be undone.</p>
+              <textarea
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="Reason for cancellation (optional)"
+                className="w-full rounded-lg border border-red-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-red-300 resize-none"
+                rows={2}
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCancel}
+                  disabled={cancelling}
+                  className="flex-1 rounded-xl bg-red-500 py-2.5 text-sm font-bold text-white hover:bg-red-600 disabled:opacity-50 transition-colors"
+                >
+                  {cancelling ? "Cancelling..." : "Yes, Cancel Session"}
+                </button>
+                <button
+                  onClick={() => setShowCancelConfirm(false)}
+                  className="flex-1 rounded-xl border border-gray-300 bg-white py-2.5 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  No, Keep It
+                </button>
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* Footer Actions */}
+        {canCancel && !showCancelConfirm && (
+          <div className="flex gap-3 border-t-2 border-black bg-gray-50 p-6">
+            {canReschedule && (
+              <button
+                onClick={() => setShowReschedule(true)}
+                className="flex-1 rounded-xl border-2 border-black bg-white py-3 text-sm font-extrabold text-gray-700 hover:bg-gray-100 transition-transform hover:-translate-y-0.5 cursor-pointer"
+                style={{ boxShadow: "2px 2px 0 0 #000" }}
+              >
+                Reschedule Session
+              </button>
+            )}
+            <button
+              onClick={() => setShowCancelConfirm(true)}
+              className="flex-1 rounded-xl border-2 border-black bg-[#EF4444] py-3 text-sm font-extrabold text-white hover:bg-red-600 transition-transform hover:-translate-y-0.5 cursor-pointer"
+              style={{ boxShadow: "2px 2px 0 0 #000" }}
+            >
+              Cancel Session
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Reschedule Modal */}
+      {showReschedule && (
+        <RescheduleModal
+          session={session}
+          onClose={() => setShowReschedule(false)}
+          onSuccess={() => {
+            onSessionUpdated?.();
+            onClose();
+          }}
+        />
+      )}
     </div>
   );
 }

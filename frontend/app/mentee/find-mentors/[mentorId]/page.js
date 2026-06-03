@@ -226,7 +226,7 @@ export default function MentorProfilePage() {
           </div>
 
           {/* ── Reviews & Ratings ── */}
-          <div className="rounded-2xl border-2 border-black bg-white p-5 shadow-[5px_5px_0px_0px_#FDBA74]">
+          <div className="rounded-2xl border-2 border-black bg-white p-5 shadow-[5px_5px_0px_0px_#FDBA74] max-h-max">
             <h2 className="mb-3 flex items-center gap-2 text-lg font-black text-gray-900">
               <Star className="h-5 w-5 fill-[#F59E0B] text-[#F59E0B]" /> Reviews & Ratings
             </h2>

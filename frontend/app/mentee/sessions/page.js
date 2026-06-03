@@ -22,17 +22,28 @@ import {
 import { menteeBookingApi, resolveUploadUrl } from "../../../lib/api";
 import { canJoinSession, joinDisabledReason } from "../../../lib/sessionUtils";
 import { format } from "date-fns";
-
+import { toast } from "sonner";
+import { v2BookingApi } from "../../../lib/api";
+import RescheduleModal from "../../../components/shared/RescheduleModal";
 /* ─── Status Badge ──────────────────────────────────────────── */
 const statusConfig = {
   CONFIRMED: { label: "Confirmed", icon: CheckCircle, bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
-  PENDING: { label: "Pending", icon: Clock, bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
+  PAYMENT_PENDING: { label: "Payment Pending", icon: Clock, bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
+  IN_PROGRESS: { label: "In Progress", icon: Video, bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
   COMPLETED: { label: "Completed", icon: CheckCircle, bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
-  CANCELLED: { label: "Cancelled", icon: XCircle, bg: "bg-red-50", text: "text-red-700", border: "border-red-200" },
+  RESCHEDULE_REQUESTED: { label: "Reschedule Requested", icon: Clock, bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
+  RESCHEDULE_ACCEPTED: { label: "Rescheduled", icon: CheckCircle, bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200" },
+  RESCHEDULE_REJECTED: { label: "Reschedule Rejected", icon: XCircle, bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200" },
+  CANCELLED_BY_MENTOR: { label: "Cancelled by Mentor", icon: XCircle, bg: "bg-red-50", text: "text-red-700", border: "border-red-200" },
+  CANCELLED_BY_MENTEE: { label: "Cancelled", icon: XCircle, bg: "bg-red-50", text: "text-red-700", border: "border-red-200" },
+  NO_SHOW_MENTOR: { label: "Mentor No-Show", icon: AlertTriangle, bg: "bg-red-50", text: "text-red-700", border: "border-red-200" },
+  NO_SHOW_MENTEE: { label: "No-Show", icon: AlertTriangle, bg: "bg-red-50", text: "text-red-700", border: "border-red-200" },
+  REFUND_INITIATED: { label: "Refund Processing", icon: Clock, bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
+  REFUND_COMPLETED: { label: "Refunded", icon: CheckCircle, bg: "bg-gray-50", text: "text-gray-700", border: "border-gray-200" },
 };
 
 function StatusBadge({ status }) {
-  const cfg = statusConfig[status] || statusConfig.PENDING;
+  const cfg = statusConfig[status] || statusConfig.PAYMENT_PENDING;
   const Icon = cfg.icon;
   return (
     <span className={`inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-bold ${cfg.bg} ${cfg.text} ${cfg.border}`}>
@@ -127,9 +138,35 @@ function FeedbackModal({ session, onClose }) {
 }
 
 /* ─── Session Card ──────────────────────────────────────────── */
-function SessionCard({ session, isUpcoming, onFeedbackClick }) {
+function SessionCard({ session, isUpcoming, onFeedbackClick, onSessionUpdated }) {
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelling, setCancelling] = useState(false);
+  const [showReschedule, setShowReschedule] = useState(false);
+
+  const canCancel = ['PAYMENT_PENDING', 'CONFIRMED'].includes(session.status);
+  const canReschedule = ['PAYMENT_PENDING', 'CONFIRMED'].includes(session.status);
+
+  const handleCancel = async () => {
+    try {
+      setCancelling(true);
+      const res = await v2BookingApi.cancelBooking(session.id, {
+        cancelledReason: cancelReason || undefined,
+      });
+      toast.success("Session cancelled successfully");
+      if (res.data?.refund?.eligible) {
+        toast.info(`Refund of ₹${res.data.refund.amount} (${res.data.refund.percentage}%) will be processed`);
+      }
+      setShowCancelConfirm(false);
+      onSessionUpdated?.();
+    } catch (err) {
+      toast.error(err.message || "Failed to cancel session");
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white overflow-hidden transition-all">
@@ -261,14 +298,6 @@ function SessionCard({ session, isUpcoming, onFeedbackClick }) {
                 </div>
               </div>
             )}
-            {isUpcoming && session.meetingLink && (
-              <div className="sm:col-span-2">
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Meeting Link</p>
-                <a href={session.meetingLink} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm font-bold text-[#8B5CF6] hover:underline bg-white rounded-lg border border-gray-100 px-3 py-2">
-                  <Video className="h-4 w-4" /> {session.meetingLink}
-                </a>
-              </div>
-            )}
             {session.cancelledReason && (
               <div className="sm:col-span-2">
                 <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
@@ -302,8 +331,68 @@ function SessionCard({ session, isUpcoming, onFeedbackClick }) {
                 </div>
               </div>
             )}
+            
+            {/* Cancel & Reschedule Footer */}
+            {isUpcoming && canCancel && (
+              <div className="sm:col-span-2 mt-2 border-t border-gray-100 pt-4">
+                {showCancelConfirm ? (
+                  <div className="rounded-xl border border-red-200 bg-red-50 p-4 space-y-3 animate-in fade-in zoom-in-95 duration-200">
+                    <p className="text-sm font-bold text-red-700">Are you sure you want to cancel this session?</p>
+                    <p className="text-xs text-red-600">Refund policy: 100% if &gt;24h before, 50% if 12-24h, no refund if &lt;12h</p>
+                    <textarea
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                      placeholder="Reason for cancellation (optional)"
+                      className="w-full rounded-lg border border-red-200 bg-white p-2 text-sm outline-none focus:ring-2 focus:ring-red-300 resize-none"
+                      rows={2}
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleCancel}
+                        disabled={cancelling}
+                        className="flex-1 rounded-lg bg-red-500 py-2 text-sm font-bold text-white hover:bg-red-600 disabled:opacity-50"
+                      >
+                        {cancelling ? "Cancelling..." : "Yes, Cancel"}
+                      </button>
+                      <button
+                        onClick={() => setShowCancelConfirm(false)}
+                        className="flex-1 rounded-lg border border-gray-300 bg-white py-2 text-sm font-bold text-gray-700 hover:bg-gray-50"
+                      >
+                        No, Keep It
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex gap-3">
+                    {canReschedule && (
+                      <button
+                        onClick={() => setShowReschedule(true)}
+                        className="flex-1 rounded-xl border border-gray-300 bg-white py-2.5 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+                      >
+                        Reschedule
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setShowCancelConfirm(true)}
+                      className="flex-1 rounded-xl border border-red-200 bg-red-50 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition-colors shadow-sm"
+                    >
+                      Cancel Session
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
+      )}
+
+      {/* Reschedule Modal */}
+      {showReschedule && (
+        <RescheduleModal
+          session={session}
+          onClose={() => setShowReschedule(false)}
+          onSuccess={onSessionUpdated}
+        />
       )}
     </div>
   );
@@ -329,18 +418,19 @@ export default function MenteeSessionsPage() {
   const [error, setError] = useState(null);
   const [feedbackSession, setFeedbackSession] = useState(null);
 
+  const fetchSessions = async (hideLoading = false) => {
+    try {
+      if (!hideLoading) setIsLoading(true);
+      const res = await menteeBookingApi.getMySessions();
+      setSessionsData(res.data);
+    } catch (err) {
+      if (!hideLoading) setError(err?.message || "Failed to load sessions");
+    } finally {
+      if (!hideLoading) setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchSessions = async () => {
-      try {
-        setIsLoading(true);
-        const res = await menteeBookingApi.getMySessions();
-        setSessionsData(res.data);
-      } catch (err) {
-        setError(err?.message || "Failed to load sessions");
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchSessions();
   }, []);
 
@@ -419,7 +509,13 @@ export default function MenteeSessionsPage() {
             {upcoming.length > 0 ? (
               <div className="space-y-3">
                 {upcoming.map((s) => (
-                  <SessionCard key={s.id} session={s} isUpcoming={true} onFeedbackClick={setFeedbackSession} />
+                  <SessionCard 
+                    key={s.id} 
+                    session={s} 
+                    isUpcoming={true} 
+                    onFeedbackClick={setFeedbackSession}
+                    onSessionUpdated={() => fetchSessions(true)}
+                  />
                 ))}
               </div>
             ) : (
@@ -443,7 +539,13 @@ export default function MenteeSessionsPage() {
             {past.length > 0 ? (
               <div className="space-y-3">
                 {past.map((s) => (
-                  <SessionCard key={s.id} session={s} isUpcoming={false} onFeedbackClick={setFeedbackSession} />
+                  <SessionCard 
+                    key={s.id} 
+                    session={s} 
+                    isUpcoming={false} 
+                    onFeedbackClick={setFeedbackSession}
+                    onSessionUpdated={() => fetchSessions(true)}
+                  />
                 ))}
               </div>
             ) : (

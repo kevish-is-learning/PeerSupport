@@ -41,10 +41,19 @@ enum DayOfWeek {
 }
 
 enum BookingStatus {
-  PENDING
+  PAYMENT_PENDING
   CONFIRMED
-  CANCELLED
+  IN_PROGRESS
   COMPLETED
+  RESCHEDULE_REQUESTED
+  RESCHEDULE_ACCEPTED
+  RESCHEDULE_REJECTED
+  CANCELLED_BY_MENTOR
+  CANCELLED_BY_MENTEE
+  NO_SHOW_MENTOR
+  NO_SHOW_MENTEE
+  REFUND_INITIATED
+  REFUND_COMPLETED
 }
 
 enum PaymentStatus {
@@ -52,6 +61,22 @@ enum PaymentStatus {
   SUCCESS
   FAILED
   REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum WalletTransactionType {
+  EARNING
+  REFUND_DEBIT
+  PENALTY
+  PAYOUT
+}
+
+enum PayoutStatus {
+  REQUESTED
+  APPROVED
+  PROCESSING
+  COMPLETED
+  FAILED
 }
 
 // ============================================================
@@ -184,10 +209,12 @@ model MentorProfile {
 
   mentorServices      MentorService[]
   availabilityWindows AvailabilityWindow[]
-  mentorBookings      Booking[]            @relation("MentorBookings")
+  mentorBookings      Booking[]               @relation("MentorBookings")
   reviews             Review[]
   feedbacks           SessionFeedback[]
   payouts             Payout[]
+  wallet              MentorWallet?
+  cancellationStat    MentorCancellationStat?
 
   @@index([approvalStatus])
   @@index([averageRating])
@@ -301,7 +328,7 @@ model Booking {
   startTime DateTime
   endTime   DateTime
 
-  status BookingStatus @default(PENDING)
+  status BookingStatus @default(PAYMENT_PENDING)
 
   /// Razorpay payment ID (nullable — set on payment confirmation)
   paymentId String?
@@ -324,6 +351,12 @@ model Booking {
 
   cancelledReason String?
 
+  /// Who cancelled this booking (userId)
+  cancelledBy String?
+
+  /// Parent booking ID for reschedule chain
+  parentBookingId String?
+
   rescheduledFromId String?
 
   createdAt DateTime @default(now())
@@ -337,9 +370,16 @@ model Booking {
   review   Review?
   feedback SessionFeedback?
 
+  /// Self-referential relation for reschedule chain
+  parentBooking       Booking?  @relation("RescheduledBookings", fields: [parentBookingId], references: [id])
+  rescheduledBookings Booking[] @relation("RescheduledBookings")
+
+  attendance SessionAttendance?
+
   @@index([menteeId])
   @@index([mentorProfileId])
   @@index([status])
+  @@index([parentBookingId])
   // Composite index for conflict-check queries
   @@index([mentorProfileId, startTime, endTime])
 }
@@ -359,6 +399,12 @@ model Payment {
 
   amount Float
 
+  /// Platform fee deducted (13%)
+  platformFee Float @default(0)
+
+  /// Mentor's net earning (87%)
+  mentorAmount Float @default(0)
+
   currency String @default("INR")
 
   paymentStatus PaymentStatus @default(PENDING)
@@ -368,6 +414,9 @@ model Payment {
   refundedAmount Float?
 
   refundReason String?
+
+  /// Razorpay refund ID
+  razorpayRefundId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -448,6 +497,119 @@ model Review {
 }
 
 // ============================================================
+// SESSION ATTENDANCE
+// ============================================================
+
+model SessionAttendance {
+  id String @id @default(uuid())
+
+  bookingId String @unique
+
+  mentorJoinedAt DateTime?
+  mentorLeftAt   DateTime?
+  menteeJoinedAt DateTime?
+  menteeLeftAt   DateTime?
+
+  /// Duration in seconds each participant was present
+  mentorDurationSecs Int @default(0)
+  menteeDurationSecs Int @default(0)
+
+  /// Number of reconnections
+  mentorReconnects Int @default(0)
+  menteeReconnects Int @default(0)
+
+  /// Whether each participant was present for meaningful duration
+  mentorPresent Boolean @default(false)
+  menteePresent Boolean @default(false)
+
+  /// Whether the session met minimum 15-minute requirement
+  minimumDurationMet Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// MENTOR WALLET
+// ============================================================
+
+model MentorWallet {
+  id String @id @default(uuid())
+
+  mentorProfileId String @unique
+
+  /// Earnings from completed sessions not yet released
+  pendingBalance Float @default(0)
+
+  /// Earnings available for payout
+  availableBalance Float @default(0)
+
+  /// Total amount already withdrawn
+  withdrawnBalance Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentorProfile MentorProfile       @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  transactions  WalletTransaction[]
+}
+
+// ============================================================
+// WALLET TRANSACTIONS (immutable ledger)
+// ============================================================
+
+model WalletTransaction {
+  id String @id @default(uuid())
+
+  walletId  String
+  bookingId String?
+
+  type WalletTransactionType
+
+  amount Float
+
+  description String?
+
+  /// Balance snapshots for audit trail
+  balanceBefore Float
+  balanceAfter  Float
+
+  createdAt DateTime @default(now())
+
+  wallet MentorWallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId])
+  @@index([bookingId])
+  @@index([type])
+}
+
+// ============================================================
+// MENTOR CANCELLATION STATS
+// ============================================================
+
+model MentorCancellationStat {
+  id String @id @default(uuid())
+
+  mentorProfileId String @unique
+
+  /// Calendar year for counting
+  year Int
+
+  /// Number of cancellations in this year
+  cancellationCount Int @default(0)
+
+  /// Timestamp of last cancellation
+  lastCancelledAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
 // PAYOUTS
 // ============================================================
 
@@ -456,13 +618,35 @@ model Payout {
 
   mentorProfileId String
 
+  /// Gross amount requested
   amount Float
 
-  transactionId String?
+  /// Platform fee at time of payout
+  platformFee Float @default(0)
 
+  /// Net amount after platform fee
+  netAmount Float
+
+  status PayoutStatus @default(REQUESTED)
+
+  /// How the payout was processed (e.g., "bank_transfer", "upi")
+  payoutMethod String?
+
+  /// External reference (bank transaction ID, UTR, etc.)
+  transactionRef String?
+
+  requestedAt DateTime  @default(now())
+  approvedAt  DateTime?
   processedAt DateTime?
 
+  /// Reason if payout failed
+  failedReason String?
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+
+  @@index([mentorProfileId])
+  @@index([status])
 }

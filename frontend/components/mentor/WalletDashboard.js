@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { walletApi, payoutApi } from "../../lib/api";
 import {
-  IndianRupee,
   Wallet,
   Clock,
   CheckCircle,
@@ -10,14 +10,10 @@ import {
   Banknote,
   ArrowUpRight,
   ArrowDownLeft,
-  Search,
-  Info,
+  Filter,
   Loader2,
   AlertCircle,
 } from "lucide-react";
-import { mentorBookingApi, walletApi, payoutApi } from "../../../lib/api";
-import { toast } from "sonner";
-import { format } from "date-fns";
 
 const TX_TYPE_META = {
   EARNING: {
@@ -58,95 +54,73 @@ const PAYOUT_STATUS_META = {
   FAILED: { label: "Failed", bg: "bg-[#EF4444]" },
 };
 
-const PAYMENT_STATUS_META = {
-  SUCCESS: { label: "Completed", bg: "bg-[#22C55E]" },
-  PENDING: { label: "Pending", bg: "bg-[#F59E0B]" },
-  FAILED: { label: "Failed", bg: "bg-gray-400" },
-};
-
-export default function MentorPaymentsPage() {
-  // Shared state
-  const [loading, setLoading] = useState(true);
-
-  // Earnings data (from mentorBookingApi)
-  const [earningsData, setEarningsData] = useState(null);
-  const [earningsSearchQuery, setEarningsSearchQuery] = useState("");
-  const [earningsStatusFilter, setEarningsStatusFilter] = useState("All");
-
-  // Wallet data (from walletApi + payoutApi)
+export default function WalletDashboard() {
   const [wallet, setWallet] = useState(null);
-  const [walletTransactions, setWalletTransactions] = useState([]);
-  const [payoutRequests, setPayoutRequests] = useState([]);
-  const [walletTxFilter, setWalletTxFilter] = useState("");
-
-  // Payout request form
+  const [transactions, setTransactions] = useState([]);
+  const [payouts, setPayouts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [payoutAmount, setPayoutAmount] = useState("");
   const [requestingPayout, setRequestingPayout] = useState(false);
-  const [payoutError, setPayoutError] = useState("");
-  const [payoutSuccess, setPayoutSuccess] = useState("");
+  const [activeTab, setActiveTab] = useState("overview");
+  const [txFilter, setTxFilter] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  // Active tab
-  const [activeTab, setActiveTab] = useState("earnings");
-
-  const fetchAllData = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [earningsRes, walletRes, txRes, payoutRes] = await Promise.all([
-        mentorBookingApi.getEarnings(),
+      const [walletRes, txRes, payoutRes] = await Promise.all([
         walletApi.getWallet(),
-        walletApi.getTransactions({ limit: 50, type: walletTxFilter || undefined }),
+        walletApi.getTransactions({ limit: 50, type: txFilter || undefined }),
         payoutApi.getMyPayouts({ limit: 20 }),
       ]);
-      setEarningsData(earningsRes.data?.earnings);
       setWallet(walletRes.data);
-      setWalletTransactions(txRes.data?.transactions || []);
-      setPayoutRequests(payoutRes.data?.payouts || []);
+      setTransactions(txRes.data?.transactions || []);
+      setPayouts(payoutRes.data?.payouts || []);
     } catch (err) {
-      console.error("Failed to fetch data:", err);
-      toast.error("Failed to load financial data");
+      console.error("Failed to fetch wallet data:", err);
     } finally {
       setLoading(false);
     }
-  }, [walletTxFilter]);
+  }, [txFilter]);
 
   useEffect(() => {
-    fetchAllData();
-  }, [fetchAllData]);
+    fetchData();
+  }, [fetchData]);
 
   const handleRequestPayout = async () => {
     const amount = parseFloat(payoutAmount);
     if (!amount || amount <= 0) {
-      setPayoutError("Enter a valid amount");
+      setError("Enter a valid amount");
       return;
     }
     if (amount > (wallet?.availableBalance || 0)) {
-      setPayoutError("Amount exceeds available balance");
+      setError("Amount exceeds available balance");
       return;
     }
 
     try {
       setRequestingPayout(true);
-      setPayoutError("");
+      setError("");
       await payoutApi.request({ amount });
-      setPayoutSuccess("Payout request submitted! Admin will review it.");
+      setSuccess("Payout request submitted! Admin will review it.");
       setPayoutAmount("");
-      await fetchAllData();
+      await fetchData();
     } catch (err) {
-      setPayoutError(err.message || "Failed to request payout");
+      setError(err.message || "Failed to request payout");
     } finally {
       setRequestingPayout(false);
     }
   };
 
-  // Stats cards — unified from both data sources
   const statsCards = [
     {
-      label: "Total Earnings",
-      value: `₹${(earningsData?.totalEarnings || 0).toLocaleString("en-IN")}`,
-      subtitle: "After platform fee",
-      icon: IndianRupee,
-      shadowColor: "#5061E4",
-      iconColor: "text-[#5061E4]",
+      label: "Pending Balance",
+      value: `₹${(wallet?.pendingBalance || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
+      subtitle: "Released 48h after session",
+      icon: Clock,
+      shadowColor: "#F97316",
+      iconColor: "text-[#F97316]",
     },
     {
       label: "Available Balance",
@@ -157,45 +131,30 @@ export default function MentorPaymentsPage() {
       iconColor: "text-[#22C55E]",
     },
     {
-      label: "Pending Balance",
-      value: `₹${(wallet?.pendingBalance || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
-      subtitle: "Released 48h after session",
-      icon: Clock,
-      shadowColor: "#F97316",
-      iconColor: "text-[#F97316]",
-    },
-    {
       label: "Total Withdrawn",
       value: `₹${(wallet?.withdrawnBalance || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
-      subtitle: `${earningsData?.completedTransactions || 0} completed sessions`,
+      subtitle: "Total paid out",
       icon: Banknote,
+      shadowColor: "#5061E4",
+      iconColor: "text-[#5061E4]",
+    },
+    {
+      label: "Total Earned",
+      value: `₹${(wallet?.totalEarned || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
+      subtitle: "Lifetime earnings",
+      icon: TrendingUp,
       shadowColor: "#8B5CF6",
       iconColor: "text-[#8B5CF6]",
     },
   ];
 
-  const earningsFilterTabs = ["All", "SUCCESS", "PENDING", "FAILED"];
-  const walletTxTypeFilters = ["", "EARNING", "PENALTY", "REFUND_DEBIT", "PAYOUT"];
-
-  // Filtered earnings transactions
-  const filteredEarnings = (earningsData?.transactions || []).filter((txn) => {
-    const matchesSearch =
-      txn.mentee.toLowerCase().includes(earningsSearchQuery.toLowerCase()) ||
-      txn.service.toLowerCase().includes(earningsSearchQuery.toLowerCase()) ||
-      txn.transactionRef.toLowerCase().includes(earningsSearchQuery.toLowerCase());
-    const matchesTab = earningsStatusFilter === "All" || txn.status === earningsStatusFilter;
-    return matchesSearch && matchesTab;
-  });
+  const tabFilters = ["overview", "payouts"];
+  const txTypeFilters = ["", "EARNING", "PENALTY", "REFUND_DEBIT", "PAYOUT"];
 
   // Loading skeleton
   if (loading) {
     return (
-      <div className="w-full h-full overflow-y-auto p-8 lg:p-12 flex flex-col gap-8 bg-[#FFF7F5]">
-        <header>
-          <div className="h-9 w-48 bg-gray-200 rounded animate-pulse" />
-          <div className="mt-2 h-4 w-72 bg-gray-200 rounded animate-pulse" />
-        </header>
-
+      <div className="flex flex-col gap-8">
         {/* Skeleton Stats */}
         <section className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, idx) => (
@@ -235,7 +194,10 @@ export default function MentorPaymentsPage() {
           <div className="p-6 border-b-[3px] border-gray-200">
             <div className="h-6 bg-gray-200 rounded w-48 mb-6" />
             <div className="flex flex-col xl:flex-row gap-4 justify-between">
-              <div className="h-10 w-full xl:max-w-xl bg-gray-200 rounded-[0.55rem]" />
+              <div className="flex gap-2">
+                <div className="h-10 w-24 bg-gray-200 rounded-[0.55rem]" />
+                <div className="h-10 w-24 bg-gray-200 rounded-[0.55rem]" />
+              </div>
               <div className="flex gap-2">
                 <div className="h-10 w-20 bg-gray-200 rounded-[0.55rem]" />
                 <div className="h-10 w-24 bg-gray-200 rounded-[0.55rem]" />
@@ -245,7 +207,7 @@ export default function MentorPaymentsPage() {
           </div>
           <div className="p-6 flex flex-col gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-24 w-full bg-gray-200 rounded-[0.85rem]" />
+              <div key={i} className="h-20 w-full bg-gray-200 rounded-[0.85rem]" />
             ))}
           </div>
         </section>
@@ -254,14 +216,7 @@ export default function MentorPaymentsPage() {
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto p-8 lg:p-12 flex flex-col gap-8 bg-[#FFF7F5]">
-      <header>
-        <h1 className="text-3xl font-extrabold tracking-tight text-[#111]">Payouts</h1>
-        <p className="mt-1 text-gray-500 font-medium">
-          Track your earnings, wallet balance, and transaction history
-        </p>
-      </header>
-
+    <div className="flex flex-col gap-8">
       {/* Balance Cards */}
       <section className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {statsCards.map((stat, idx) => {
@@ -279,7 +234,9 @@ export default function MentorPaymentsPage() {
                 <p className="text-[1.35rem] font-extrabold tracking-tight text-black">
                   {stat.value}
                 </p>
-                <p className="mt-1 text-[0.7rem] font-bold text-gray-500">{stat.label}</p>
+                <p className="mt-1 text-[0.7rem] font-bold text-gray-500">
+                  {stat.label}
+                </p>
                 {stat.subtitle && (
                   <p className="mt-1 text-[0.55rem] font-bold text-gray-400">
                     {stat.subtitle}
@@ -298,7 +255,7 @@ export default function MentorPaymentsPage() {
       >
         <h2 className="text-xl font-bold text-black">Request Payout</h2>
         <p className="mt-2 text-[0.8rem] text-gray-500 font-medium">
-          Withdraw your available balance to your registered bank account. Earnings are after platform fee deduction.
+          Withdraw your available balance. Earnings are after 13% platform fee deduction.
         </p>
 
         <div className="mt-6 flex flex-wrap gap-4 items-start">
@@ -311,8 +268,8 @@ export default function MentorPaymentsPage() {
               value={payoutAmount}
               onChange={(e) => {
                 setPayoutAmount(e.target.value);
-                setPayoutError("");
-                setPayoutSuccess("");
+                setError("");
+                setSuccess("");
               }}
               placeholder="Enter amount"
               min="1"
@@ -338,86 +295,65 @@ export default function MentorPaymentsPage() {
               "Request Payout"
             )}
           </button>
-          <button className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-white px-6 py-3 text-sm font-bold text-black hover:bg-gray-50 cursor-pointer transition-colors">
-            <Info size={16} />
-            View Terms & Fees
-          </button>
         </div>
 
-        {payoutError && (
+        {error && (
           <div className="mt-4 flex items-center gap-2 rounded-[0.55rem] border-[3px] border-[#EF4444] bg-[#FEE2E2] px-4 py-2.5">
             <AlertCircle size={16} className="text-[#EF4444] shrink-0" />
-            <p className="text-[0.75rem] font-bold text-[#991B1B]">{payoutError}</p>
+            <p className="text-[0.75rem] font-bold text-[#991B1B]">{error}</p>
           </div>
         )}
-        {payoutSuccess && (
+        {success && (
           <div className="mt-4 flex items-center gap-2 rounded-[0.55rem] border-[3px] border-[#22C55E] bg-[#DCFCE7] px-4 py-2.5">
             <CheckCircle size={16} className="text-[#22C55E] shrink-0" />
-            <p className="text-[0.75rem] font-bold text-[#166534]">{payoutSuccess}</p>
+            <p className="text-[0.75rem] font-bold text-[#166534]">{success}</p>
           </div>
         )}
       </section>
 
-      {/* Transaction History — Tabbed */}
+      {/* Transactions / Payout History */}
       <section
         className="rounded-[0.85rem] border-[3px] border-black bg-[#FCEBE7] flex flex-col"
         style={{ boxShadow: "6px 6px 0 0 #5061E4" }}
       >
-        {/* Section Header with Tabs & Filters */}
+        {/* Section Header with Tabs and Filters */}
         <div className="p-6 border-b-[3px] border-black">
           <div className="flex flex-col xl:flex-row gap-4 justify-between">
             {/* Tab Switcher */}
             <div className="flex gap-2">
-              {[
-                { key: "earnings", label: "Earnings" },
-                { key: "wallet", label: "Wallet Transactions" },
-                { key: "payouts", label: "Payout History" },
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`rounded-[0.55rem] border-[3px] border-black px-5 py-2 text-xs font-bold transition-colors cursor-pointer ${
-                    activeTab === tab.key
-                      ? "bg-[#5061E4] text-white"
-                      : "bg-white text-black hover:bg-gray-50"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+              <button
+                onClick={() => setActiveTab("overview")}
+                className={`rounded-[0.55rem] border-[3px] border-black px-5 py-2 text-xs font-bold transition-colors cursor-pointer ${
+                  activeTab === "overview"
+                    ? "bg-[#5061E4] text-white"
+                    : "bg-white text-black hover:bg-gray-50"
+                }`}
+              >
+                Transactions
+              </button>
+              <button
+                onClick={() => setActiveTab("payouts")}
+                className={`rounded-[0.55rem] border-[3px] border-black px-5 py-2 text-xs font-bold transition-colors cursor-pointer ${
+                  activeTab === "payouts"
+                    ? "bg-[#5061E4] text-white"
+                    : "bg-white text-black hover:bg-gray-50"
+                }`}
+              >
+                Payout History
+              </button>
             </div>
 
-            {/* Filters — contextual per tab */}
-            {activeTab === "earnings" && (
+            {/* Type Filters (only for transactions tab) */}
+            {activeTab === "overview" && (
               <div className="flex flex-wrap gap-2">
-                {earningsFilterTabs.map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setEarningsStatusFilter(tab)}
-                    className={`rounded-[0.55rem] border-[3px] border-black px-4 py-2 text-xs font-bold transition-colors cursor-pointer ${
-                      earningsStatusFilter === tab
-                        ? "bg-[#5061E4] text-white"
-                        : "bg-white text-black hover:bg-gray-50"
-                    }`}
-                  >
-                    {tab === "SUCCESS"
-                      ? "Completed"
-                      : tab.charAt(0) + tab.slice(1).toLowerCase()}
-                  </button>
-                ))}
-              </div>
-            )}
-            {activeTab === "wallet" && (
-              <div className="flex flex-wrap gap-2">
-                {walletTxTypeFilters.map((type) => {
-                  const label =
-                    type === "" ? "All" : TX_TYPE_META[type]?.label || type;
+                {txTypeFilters.map((type) => {
+                  const label = type === "" ? "All" : TX_TYPE_META[type]?.label || type;
                   return (
                     <button
                       key={type}
-                      onClick={() => setWalletTxFilter(type)}
+                      onClick={() => setTxFilter(type)}
                       className={`rounded-[0.55rem] border-[3px] border-black px-4 py-2 text-xs font-bold transition-colors cursor-pointer ${
-                        walletTxFilter === type
+                        txFilter === type
                           ? "bg-[#5061E4] text-white"
                           : "bg-white text-black hover:bg-gray-50"
                       }`}
@@ -429,99 +365,19 @@ export default function MentorPaymentsPage() {
               </div>
             )}
           </div>
-
-          {/* Search Bar — only for earnings tab */}
-          {activeTab === "earnings" && (
-            <div className="relative w-full xl:max-w-xl mt-4">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                size={18}
-              />
-              <input
-                type="text"
-                placeholder="Search by mentee, session, or transaction ID..."
-                value={earningsSearchQuery}
-                onChange={(e) => setEarningsSearchQuery(e.target.value)}
-                className="w-full rounded-[0.55rem] border-[3px] border-black py-2 pl-10 pr-4 text-xs font-semibold outline-none focus:ring-2 focus:ring-[#5061E4] focus:border-[#5061E4] transition-all bg-white"
-              />
-            </div>
-          )}
         </div>
 
         {/* Content */}
         <div className="p-6 flex flex-col gap-4 bg-white rounded-b-xl border-t-0">
-
-          {/* ─── Earnings Tab ─── */}
-          {activeTab === "earnings" && (
+          {/* Transactions Tab */}
+          {activeTab === "overview" && (
             <>
-              {filteredEarnings.length === 0 ? (
+              {transactions.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="font-bold text-gray-400 italic">
-                    No transactions found.
-                  </p>
+                  <p className="font-bold text-gray-400 italic">No transactions found.</p>
                 </div>
               ) : (
-                filteredEarnings.map((txn) => {
-                  const statusMeta =
-                    PAYMENT_STATUS_META[txn.status] || PAYMENT_STATUS_META.PENDING;
-                  return (
-                    <article
-                      key={txn.id}
-                      className="flex flex-col sm:flex-row sm:justify-between rounded-[0.85rem] border-[3px] border-black p-5 gap-4"
-                    >
-                      <div className="flex gap-4 relative">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[0.55rem] border-2 border-black bg-[#FEF3C7] text-[#F59E0B]">
-                          <ArrowDownLeft size={20} strokeWidth={2.5} />
-                        </div>
-                        <div className="flex flex-col justify-center">
-                          <h3 className="font-bold text-black text-sm">
-                            {txn.mentee}
-                          </h3>
-                          <p className="text-[0.65rem] font-semibold text-gray-500 mt-1">
-                            {txn.service}
-                          </p>
-                          <p className="text-[0.65rem] font-semibold text-gray-400 mt-0.5">
-                            {format(new Date(txn.date), "dd MMM yyyy, hh:mm a")}
-                          </p>
-                          <p className="text-[0.55rem] font-bold text-gray-400 mt-4">
-                            Transaction Ref:{" "}
-                            <span className="font-extrabold">
-                              {txn.transactionRef}
-                            </span>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col sm:items-end gap-2 justify-start pt-1">
-                        <p className="text-xl font-extrabold text-[#F59E0B] tracking-tight">
-                          ₹{txn.amount.toLocaleString()}
-                        </p>
-                        <div
-                          className={`flex items-center gap-1.5 rounded-full px-2 py-0.5 mt-1 w-max ${statusMeta.bg}`}
-                        >
-                          <CheckCircle size={10} className="text-black" />
-                          <span className="text-[0.6rem] font-bold text-black uppercase tracking-widest">
-                            {statusMeta.label}
-                          </span>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })
-              )}
-            </>
-          )}
-
-          {/* ─── Wallet Transactions Tab ─── */}
-          {activeTab === "wallet" && (
-            <>
-              {walletTransactions.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="font-bold text-gray-400 italic">
-                    No wallet transactions found.
-                  </p>
-                </div>
-              ) : (
-                walletTransactions.map((tx) => {
+                transactions.map((tx) => {
                   const typeMeta = TX_TYPE_META[tx.type] || TX_TYPE_META.EARNING;
                   const Icon = typeMeta.icon;
                   return (
@@ -574,17 +430,15 @@ export default function MentorPaymentsPage() {
             </>
           )}
 
-          {/* ─── Payout History Tab ─── */}
+          {/* Payouts Tab */}
           {activeTab === "payouts" && (
             <>
-              {payoutRequests.length === 0 ? (
+              {payouts.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="font-bold text-gray-400 italic">
-                    No payout requests yet.
-                  </p>
+                  <p className="font-bold text-gray-400 italic">No payout requests yet.</p>
                 </div>
               ) : (
-                payoutRequests.map((p) => {
+                payouts.map((p) => {
                   const statusMeta =
                     PAYOUT_STATUS_META[p.status] || PAYOUT_STATUS_META.REQUESTED;
                   return (
@@ -597,15 +451,11 @@ export default function MentorPaymentsPage() {
                           <Banknote size={20} strokeWidth={2.5} />
                         </div>
                         <div className="flex flex-col justify-center">
-                          <h3 className="font-bold text-black text-sm">
-                            Payout Request
-                          </h3>
+                          <h3 className="font-bold text-black text-sm">Payout Request</h3>
                           {p.transactionRef && (
                             <p className="text-[0.55rem] font-bold text-gray-400 mt-1">
                               Ref:{" "}
-                              <span className="font-extrabold">
-                                {p.transactionRef}
-                              </span>
+                              <span className="font-extrabold">{p.transactionRef}</span>
                             </p>
                           )}
                           <p className="text-[0.65rem] font-semibold text-gray-400 mt-1">
@@ -619,10 +469,7 @@ export default function MentorPaymentsPage() {
                       </div>
                       <div className="flex flex-col sm:items-end gap-2 justify-start pt-1">
                         <p className="text-xl font-extrabold text-[#5061E4] tracking-tight">
-                          ₹
-                          {p.netAmount.toLocaleString("en-IN", {
-                            minimumFractionDigits: 2,
-                          })}
+                          ₹{p.netAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                         </p>
                         <div
                           className={`flex items-center gap-1.5 rounded-full px-2 py-0.5 w-max ${statusMeta.bg}`}

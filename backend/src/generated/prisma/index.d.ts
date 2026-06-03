@@ -72,6 +72,26 @@ export type SessionFeedback = $Result.DefaultSelection<Prisma.$SessionFeedbackPa
  */
 export type Review = $Result.DefaultSelection<Prisma.$ReviewPayload>
 /**
+ * Model SessionAttendance
+ * 
+ */
+export type SessionAttendance = $Result.DefaultSelection<Prisma.$SessionAttendancePayload>
+/**
+ * Model MentorWallet
+ * 
+ */
+export type MentorWallet = $Result.DefaultSelection<Prisma.$MentorWalletPayload>
+/**
+ * Model WalletTransaction
+ * 
+ */
+export type WalletTransaction = $Result.DefaultSelection<Prisma.$WalletTransactionPayload>
+/**
+ * Model MentorCancellationStat
+ * 
+ */
+export type MentorCancellationStat = $Result.DefaultSelection<Prisma.$MentorCancellationStatPayload>
+/**
  * Model Payout
  * 
  */
@@ -122,10 +142,19 @@ export type DayOfWeek = (typeof DayOfWeek)[keyof typeof DayOfWeek]
 
 
 export const BookingStatus: {
-  PENDING: 'PENDING',
+  PAYMENT_PENDING: 'PAYMENT_PENDING',
   CONFIRMED: 'CONFIRMED',
-  CANCELLED: 'CANCELLED',
-  COMPLETED: 'COMPLETED'
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  RESCHEDULE_REQUESTED: 'RESCHEDULE_REQUESTED',
+  RESCHEDULE_ACCEPTED: 'RESCHEDULE_ACCEPTED',
+  RESCHEDULE_REJECTED: 'RESCHEDULE_REJECTED',
+  CANCELLED_BY_MENTOR: 'CANCELLED_BY_MENTOR',
+  CANCELLED_BY_MENTEE: 'CANCELLED_BY_MENTEE',
+  NO_SHOW_MENTOR: 'NO_SHOW_MENTOR',
+  NO_SHOW_MENTEE: 'NO_SHOW_MENTEE',
+  REFUND_INITIATED: 'REFUND_INITIATED',
+  REFUND_COMPLETED: 'REFUND_COMPLETED'
 };
 
 export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]
@@ -135,10 +164,32 @@ export const PaymentStatus: {
   PENDING: 'PENDING',
   SUCCESS: 'SUCCESS',
   FAILED: 'FAILED',
-  REFUNDED: 'REFUNDED'
+  REFUNDED: 'REFUNDED',
+  PARTIALLY_REFUNDED: 'PARTIALLY_REFUNDED'
 };
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const WalletTransactionType: {
+  EARNING: 'EARNING',
+  REFUND_DEBIT: 'REFUND_DEBIT',
+  PENALTY: 'PENALTY',
+  PAYOUT: 'PAYOUT'
+};
+
+export type WalletTransactionType = (typeof WalletTransactionType)[keyof typeof WalletTransactionType]
+
+
+export const PayoutStatus: {
+  REQUESTED: 'REQUESTED',
+  APPROVED: 'APPROVED',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
+export type PayoutStatus = (typeof PayoutStatus)[keyof typeof PayoutStatus]
 
 }
 
@@ -165,6 +216,14 @@ export const BookingStatus: typeof $Enums.BookingStatus
 export type PaymentStatus = $Enums.PaymentStatus
 
 export const PaymentStatus: typeof $Enums.PaymentStatus
+
+export type WalletTransactionType = $Enums.WalletTransactionType
+
+export const WalletTransactionType: typeof $Enums.WalletTransactionType
+
+export type PayoutStatus = $Enums.PayoutStatus
+
+export const PayoutStatus: typeof $Enums.PayoutStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -398,6 +457,46 @@ export class PrismaClient<
     * ```
     */
   get review(): Prisma.ReviewDelegate<ExtArgs>;
+
+  /**
+   * `prisma.sessionAttendance`: Exposes CRUD operations for the **SessionAttendance** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SessionAttendances
+    * const sessionAttendances = await prisma.sessionAttendance.findMany()
+    * ```
+    */
+  get sessionAttendance(): Prisma.SessionAttendanceDelegate<ExtArgs>;
+
+  /**
+   * `prisma.mentorWallet`: Exposes CRUD operations for the **MentorWallet** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MentorWallets
+    * const mentorWallets = await prisma.mentorWallet.findMany()
+    * ```
+    */
+  get mentorWallet(): Prisma.MentorWalletDelegate<ExtArgs>;
+
+  /**
+   * `prisma.walletTransaction`: Exposes CRUD operations for the **WalletTransaction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WalletTransactions
+    * const walletTransactions = await prisma.walletTransaction.findMany()
+    * ```
+    */
+  get walletTransaction(): Prisma.WalletTransactionDelegate<ExtArgs>;
+
+  /**
+   * `prisma.mentorCancellationStat`: Exposes CRUD operations for the **MentorCancellationStat** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MentorCancellationStats
+    * const mentorCancellationStats = await prisma.mentorCancellationStat.findMany()
+    * ```
+    */
+  get mentorCancellationStat(): Prisma.MentorCancellationStatDelegate<ExtArgs>;
 
   /**
    * `prisma.payout`: Exposes CRUD operations for the **Payout** model.
@@ -860,6 +959,10 @@ export namespace Prisma {
     Invoice: 'Invoice',
     SessionFeedback: 'SessionFeedback',
     Review: 'Review',
+    SessionAttendance: 'SessionAttendance',
+    MentorWallet: 'MentorWallet',
+    WalletTransaction: 'WalletTransaction',
+    MentorCancellationStat: 'MentorCancellationStat',
     Payout: 'Payout'
   };
 
@@ -876,7 +979,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "menteeProfile" | "mentorProfile" | "mentorService" | "availabilityWindow" | "availabilityWindowService" | "booking" | "payment" | "invoice" | "sessionFeedback" | "review" | "payout"
+      modelProps: "user" | "menteeProfile" | "mentorProfile" | "mentorService" | "availabilityWindow" | "availabilityWindowService" | "booking" | "payment" | "invoice" | "sessionFeedback" | "review" | "sessionAttendance" | "mentorWallet" | "walletTransaction" | "mentorCancellationStat" | "payout"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1650,6 +1753,286 @@ export namespace Prisma {
           }
         }
       }
+      SessionAttendance: {
+        payload: Prisma.$SessionAttendancePayload<ExtArgs>
+        fields: Prisma.SessionAttendanceFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SessionAttendanceFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SessionAttendanceFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload>
+          }
+          findFirst: {
+            args: Prisma.SessionAttendanceFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SessionAttendanceFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload>
+          }
+          findMany: {
+            args: Prisma.SessionAttendanceFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload>[]
+          }
+          create: {
+            args: Prisma.SessionAttendanceCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload>
+          }
+          createMany: {
+            args: Prisma.SessionAttendanceCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SessionAttendanceCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload>[]
+          }
+          delete: {
+            args: Prisma.SessionAttendanceDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload>
+          }
+          update: {
+            args: Prisma.SessionAttendanceUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload>
+          }
+          deleteMany: {
+            args: Prisma.SessionAttendanceDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SessionAttendanceUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.SessionAttendanceUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionAttendancePayload>
+          }
+          aggregate: {
+            args: Prisma.SessionAttendanceAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSessionAttendance>
+          }
+          groupBy: {
+            args: Prisma.SessionAttendanceGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SessionAttendanceGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SessionAttendanceCountArgs<ExtArgs>
+            result: $Utils.Optional<SessionAttendanceCountAggregateOutputType> | number
+          }
+        }
+      }
+      MentorWallet: {
+        payload: Prisma.$MentorWalletPayload<ExtArgs>
+        fields: Prisma.MentorWalletFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MentorWalletFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MentorWalletFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload>
+          }
+          findFirst: {
+            args: Prisma.MentorWalletFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MentorWalletFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload>
+          }
+          findMany: {
+            args: Prisma.MentorWalletFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload>[]
+          }
+          create: {
+            args: Prisma.MentorWalletCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload>
+          }
+          createMany: {
+            args: Prisma.MentorWalletCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MentorWalletCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload>[]
+          }
+          delete: {
+            args: Prisma.MentorWalletDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload>
+          }
+          update: {
+            args: Prisma.MentorWalletUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload>
+          }
+          deleteMany: {
+            args: Prisma.MentorWalletDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MentorWalletUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MentorWalletUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorWalletPayload>
+          }
+          aggregate: {
+            args: Prisma.MentorWalletAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMentorWallet>
+          }
+          groupBy: {
+            args: Prisma.MentorWalletGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MentorWalletGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MentorWalletCountArgs<ExtArgs>
+            result: $Utils.Optional<MentorWalletCountAggregateOutputType> | number
+          }
+        }
+      }
+      WalletTransaction: {
+        payload: Prisma.$WalletTransactionPayload<ExtArgs>
+        fields: Prisma.WalletTransactionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WalletTransactionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WalletTransactionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload>
+          }
+          findFirst: {
+            args: Prisma.WalletTransactionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WalletTransactionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload>
+          }
+          findMany: {
+            args: Prisma.WalletTransactionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload>[]
+          }
+          create: {
+            args: Prisma.WalletTransactionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload>
+          }
+          createMany: {
+            args: Prisma.WalletTransactionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WalletTransactionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload>[]
+          }
+          delete: {
+            args: Prisma.WalletTransactionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload>
+          }
+          update: {
+            args: Prisma.WalletTransactionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload>
+          }
+          deleteMany: {
+            args: Prisma.WalletTransactionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WalletTransactionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.WalletTransactionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WalletTransactionPayload>
+          }
+          aggregate: {
+            args: Prisma.WalletTransactionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWalletTransaction>
+          }
+          groupBy: {
+            args: Prisma.WalletTransactionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WalletTransactionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WalletTransactionCountArgs<ExtArgs>
+            result: $Utils.Optional<WalletTransactionCountAggregateOutputType> | number
+          }
+        }
+      }
+      MentorCancellationStat: {
+        payload: Prisma.$MentorCancellationStatPayload<ExtArgs>
+        fields: Prisma.MentorCancellationStatFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MentorCancellationStatFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MentorCancellationStatFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload>
+          }
+          findFirst: {
+            args: Prisma.MentorCancellationStatFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MentorCancellationStatFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload>
+          }
+          findMany: {
+            args: Prisma.MentorCancellationStatFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload>[]
+          }
+          create: {
+            args: Prisma.MentorCancellationStatCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload>
+          }
+          createMany: {
+            args: Prisma.MentorCancellationStatCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MentorCancellationStatCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload>[]
+          }
+          delete: {
+            args: Prisma.MentorCancellationStatDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload>
+          }
+          update: {
+            args: Prisma.MentorCancellationStatUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload>
+          }
+          deleteMany: {
+            args: Prisma.MentorCancellationStatDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MentorCancellationStatUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MentorCancellationStatUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorCancellationStatPayload>
+          }
+          aggregate: {
+            args: Prisma.MentorCancellationStatAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMentorCancellationStat>
+          }
+          groupBy: {
+            args: Prisma.MentorCancellationStatGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MentorCancellationStatGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MentorCancellationStatCountArgs<ExtArgs>
+            result: $Utils.Optional<MentorCancellationStatCountAggregateOutputType> | number
+          }
+        }
+      }
       Payout: {
         payload: Prisma.$PayoutPayload<ExtArgs>
         fields: Prisma.PayoutFieldRefs
@@ -2060,6 +2443,68 @@ export namespace Prisma {
    */
   export type AvailabilityWindowCountOutputTypeCountWindowServicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AvailabilityWindowServiceWhereInput
+  }
+
+
+  /**
+   * Count Type BookingCountOutputType
+   */
+
+  export type BookingCountOutputType = {
+    rescheduledBookings: number
+  }
+
+  export type BookingCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    rescheduledBookings?: boolean | BookingCountOutputTypeCountRescheduledBookingsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * BookingCountOutputType without action
+   */
+  export type BookingCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BookingCountOutputType
+     */
+    select?: BookingCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * BookingCountOutputType without action
+   */
+  export type BookingCountOutputTypeCountRescheduledBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BookingWhereInput
+  }
+
+
+  /**
+   * Count Type MentorWalletCountOutputType
+   */
+
+  export type MentorWalletCountOutputType = {
+    transactions: number
+  }
+
+  export type MentorWalletCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactions?: boolean | MentorWalletCountOutputTypeCountTransactionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * MentorWalletCountOutputType without action
+   */
+  export type MentorWalletCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWalletCountOutputType
+     */
+    select?: MentorWalletCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * MentorWalletCountOutputType without action
+   */
+  export type MentorWalletCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WalletTransactionWhereInput
   }
 
 
@@ -4601,6 +5046,8 @@ export namespace Prisma {
     reviews?: boolean | MentorProfile$reviewsArgs<ExtArgs>
     feedbacks?: boolean | MentorProfile$feedbacksArgs<ExtArgs>
     payouts?: boolean | MentorProfile$payoutsArgs<ExtArgs>
+    wallet?: boolean | MentorProfile$walletArgs<ExtArgs>
+    cancellationStat?: boolean | MentorProfile$cancellationStatArgs<ExtArgs>
     _count?: boolean | MentorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["mentorProfile"]>
 
@@ -4659,6 +5106,8 @@ export namespace Prisma {
     reviews?: boolean | MentorProfile$reviewsArgs<ExtArgs>
     feedbacks?: boolean | MentorProfile$feedbacksArgs<ExtArgs>
     payouts?: boolean | MentorProfile$payoutsArgs<ExtArgs>
+    wallet?: boolean | MentorProfile$walletArgs<ExtArgs>
+    cancellationStat?: boolean | MentorProfile$cancellationStatArgs<ExtArgs>
     _count?: boolean | MentorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MentorProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4675,6 +5124,8 @@ export namespace Prisma {
       reviews: Prisma.$ReviewPayload<ExtArgs>[]
       feedbacks: Prisma.$SessionFeedbackPayload<ExtArgs>[]
       payouts: Prisma.$PayoutPayload<ExtArgs>[]
+      wallet: Prisma.$MentorWalletPayload<ExtArgs> | null
+      cancellationStat: Prisma.$MentorCancellationStatPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5068,6 +5519,8 @@ export namespace Prisma {
     reviews<T extends MentorProfile$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany"> | Null>
     feedbacks<T extends MentorProfile$feedbacksArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$feedbacksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionFeedbackPayload<ExtArgs>, T, "findMany"> | Null>
     payouts<T extends MentorProfile$payoutsArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$payoutsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PayoutPayload<ExtArgs>, T, "findMany"> | Null>
+    wallet<T extends MentorProfile$walletArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$walletArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    cancellationStat<T extends MentorProfile$cancellationStatArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$cancellationStatArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5552,6 +6005,36 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PayoutScalarFieldEnum | PayoutScalarFieldEnum[]
+  }
+
+  /**
+   * MentorProfile.wallet
+   */
+  export type MentorProfile$walletArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    where?: MentorWalletWhereInput
+  }
+
+  /**
+   * MentorProfile.cancellationStat
+   */
+  export type MentorProfile$cancellationStatArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    where?: MentorCancellationStatWhereInput
   }
 
   /**
@@ -8645,6 +9128,8 @@ export namespace Prisma {
     discussionTopic: string | null
     specificQuestions: string | null
     cancelledReason: string | null
+    cancelledBy: string | null
+    parentBookingId: string | null
     rescheduledFromId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8667,6 +9152,8 @@ export namespace Prisma {
     discussionTopic: string | null
     specificQuestions: string | null
     cancelledReason: string | null
+    cancelledBy: string | null
+    parentBookingId: string | null
     rescheduledFromId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8689,6 +9176,8 @@ export namespace Prisma {
     discussionTopic: number
     specificQuestions: number
     cancelledReason: number
+    cancelledBy: number
+    parentBookingId: number
     rescheduledFromId: number
     createdAt: number
     updatedAt: number
@@ -8713,6 +9202,8 @@ export namespace Prisma {
     discussionTopic?: true
     specificQuestions?: true
     cancelledReason?: true
+    cancelledBy?: true
+    parentBookingId?: true
     rescheduledFromId?: true
     createdAt?: true
     updatedAt?: true
@@ -8735,6 +9226,8 @@ export namespace Prisma {
     discussionTopic?: true
     specificQuestions?: true
     cancelledReason?: true
+    cancelledBy?: true
+    parentBookingId?: true
     rescheduledFromId?: true
     createdAt?: true
     updatedAt?: true
@@ -8757,6 +9250,8 @@ export namespace Prisma {
     discussionTopic?: true
     specificQuestions?: true
     cancelledReason?: true
+    cancelledBy?: true
+    parentBookingId?: true
     rescheduledFromId?: true
     createdAt?: true
     updatedAt?: true
@@ -8852,6 +9347,8 @@ export namespace Prisma {
     discussionTopic: string | null
     specificQuestions: string | null
     cancelledReason: string | null
+    cancelledBy: string | null
+    parentBookingId: string | null
     rescheduledFromId: string | null
     createdAt: Date
     updatedAt: Date
@@ -8891,6 +9388,8 @@ export namespace Prisma {
     discussionTopic?: boolean
     specificQuestions?: boolean
     cancelledReason?: boolean
+    cancelledBy?: boolean
+    parentBookingId?: boolean
     rescheduledFromId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8900,6 +9399,10 @@ export namespace Prisma {
     payment?: boolean | Booking$paymentArgs<ExtArgs>
     review?: boolean | Booking$reviewArgs<ExtArgs>
     feedback?: boolean | Booking$feedbackArgs<ExtArgs>
+    parentBooking?: boolean | Booking$parentBookingArgs<ExtArgs>
+    rescheduledBookings?: boolean | Booking$rescheduledBookingsArgs<ExtArgs>
+    attendance?: boolean | Booking$attendanceArgs<ExtArgs>
+    _count?: boolean | BookingCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
   export type BookingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8919,12 +9422,15 @@ export namespace Prisma {
     discussionTopic?: boolean
     specificQuestions?: boolean
     cancelledReason?: boolean
+    cancelledBy?: boolean
+    parentBookingId?: boolean
     rescheduledFromId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     mentee?: boolean | UserDefaultArgs<ExtArgs>
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
     mentorService?: boolean | MentorServiceDefaultArgs<ExtArgs>
+    parentBooking?: boolean | Booking$parentBookingArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
   export type BookingSelectScalar = {
@@ -8944,6 +9450,8 @@ export namespace Prisma {
     discussionTopic?: boolean
     specificQuestions?: boolean
     cancelledReason?: boolean
+    cancelledBy?: boolean
+    parentBookingId?: boolean
     rescheduledFromId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8956,11 +9464,16 @@ export namespace Prisma {
     payment?: boolean | Booking$paymentArgs<ExtArgs>
     review?: boolean | Booking$reviewArgs<ExtArgs>
     feedback?: boolean | Booking$feedbackArgs<ExtArgs>
+    parentBooking?: boolean | Booking$parentBookingArgs<ExtArgs>
+    rescheduledBookings?: boolean | Booking$rescheduledBookingsArgs<ExtArgs>
+    attendance?: boolean | Booking$attendanceArgs<ExtArgs>
+    _count?: boolean | BookingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BookingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     mentee?: boolean | UserDefaultArgs<ExtArgs>
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
     mentorService?: boolean | MentorServiceDefaultArgs<ExtArgs>
+    parentBooking?: boolean | Booking$parentBookingArgs<ExtArgs>
   }
 
   export type $BookingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8972,6 +9485,12 @@ export namespace Prisma {
       payment: Prisma.$PaymentPayload<ExtArgs> | null
       review: Prisma.$ReviewPayload<ExtArgs> | null
       feedback: Prisma.$SessionFeedbackPayload<ExtArgs> | null
+      /**
+       * Self-referential relation for reschedule chain
+       */
+      parentBooking: Prisma.$BookingPayload<ExtArgs> | null
+      rescheduledBookings: Prisma.$BookingPayload<ExtArgs>[]
+      attendance: Prisma.$SessionAttendancePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9005,6 +9524,14 @@ export namespace Prisma {
        */
       specificQuestions: string | null
       cancelledReason: string | null
+      /**
+       * Who cancelled this booking (userId)
+       */
+      cancelledBy: string | null
+      /**
+       * Parent booking ID for reschedule chain
+       */
+      parentBookingId: string | null
       rescheduledFromId: string | null
       createdAt: Date
       updatedAt: Date
@@ -9378,6 +9905,9 @@ export namespace Prisma {
     payment<T extends Booking$paymentArgs<ExtArgs> = {}>(args?: Subset<T, Booking$paymentArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     review<T extends Booking$reviewArgs<ExtArgs> = {}>(args?: Subset<T, Booking$reviewArgs<ExtArgs>>): Prisma__ReviewClient<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     feedback<T extends Booking$feedbackArgs<ExtArgs> = {}>(args?: Subset<T, Booking$feedbackArgs<ExtArgs>>): Prisma__SessionFeedbackClient<$Result.GetResult<Prisma.$SessionFeedbackPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    parentBooking<T extends Booking$parentBookingArgs<ExtArgs> = {}>(args?: Subset<T, Booking$parentBookingArgs<ExtArgs>>): Prisma__BookingClient<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    rescheduledBookings<T extends Booking$rescheduledBookingsArgs<ExtArgs> = {}>(args?: Subset<T, Booking$rescheduledBookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany"> | Null>
+    attendance<T extends Booking$attendanceArgs<ExtArgs> = {}>(args?: Subset<T, Booking$attendanceArgs<ExtArgs>>): Prisma__SessionAttendanceClient<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9423,6 +9953,8 @@ export namespace Prisma {
     readonly discussionTopic: FieldRef<"Booking", 'String'>
     readonly specificQuestions: FieldRef<"Booking", 'String'>
     readonly cancelledReason: FieldRef<"Booking", 'String'>
+    readonly cancelledBy: FieldRef<"Booking", 'String'>
+    readonly parentBookingId: FieldRef<"Booking", 'String'>
     readonly rescheduledFromId: FieldRef<"Booking", 'String'>
     readonly createdAt: FieldRef<"Booking", 'DateTime'>
     readonly updatedAt: FieldRef<"Booking", 'DateTime'>
@@ -9789,6 +10321,56 @@ export namespace Prisma {
   }
 
   /**
+   * Booking.parentBooking
+   */
+  export type Booking$parentBookingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Booking
+     */
+    select?: BookingSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookingInclude<ExtArgs> | null
+    where?: BookingWhereInput
+  }
+
+  /**
+   * Booking.rescheduledBookings
+   */
+  export type Booking$rescheduledBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Booking
+     */
+    select?: BookingSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookingInclude<ExtArgs> | null
+    where?: BookingWhereInput
+    orderBy?: BookingOrderByWithRelationInput | BookingOrderByWithRelationInput[]
+    cursor?: BookingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BookingScalarFieldEnum | BookingScalarFieldEnum[]
+  }
+
+  /**
+   * Booking.attendance
+   */
+  export type Booking$attendanceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    where?: SessionAttendanceWhereInput
+  }
+
+  /**
    * Booking without action
    */
   export type BookingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9817,11 +10399,15 @@ export namespace Prisma {
 
   export type PaymentAvgAggregateOutputType = {
     amount: number | null
+    platformFee: number | null
+    mentorAmount: number | null
     refundedAmount: number | null
   }
 
   export type PaymentSumAggregateOutputType = {
     amount: number | null
+    platformFee: number | null
+    mentorAmount: number | null
     refundedAmount: number | null
   }
 
@@ -9832,11 +10418,14 @@ export namespace Prisma {
     razorpayPaymentId: string | null
     razorpaySignature: string | null
     amount: number | null
+    platformFee: number | null
+    mentorAmount: number | null
     currency: string | null
     paymentStatus: $Enums.PaymentStatus | null
     paidAt: Date | null
     refundedAmount: number | null
     refundReason: string | null
+    razorpayRefundId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -9848,11 +10437,14 @@ export namespace Prisma {
     razorpayPaymentId: string | null
     razorpaySignature: string | null
     amount: number | null
+    platformFee: number | null
+    mentorAmount: number | null
     currency: string | null
     paymentStatus: $Enums.PaymentStatus | null
     paidAt: Date | null
     refundedAmount: number | null
     refundReason: string | null
+    razorpayRefundId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -9864,11 +10456,14 @@ export namespace Prisma {
     razorpayPaymentId: number
     razorpaySignature: number
     amount: number
+    platformFee: number
+    mentorAmount: number
     currency: number
     paymentStatus: number
     paidAt: number
     refundedAmount: number
     refundReason: number
+    razorpayRefundId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -9877,11 +10472,15 @@ export namespace Prisma {
 
   export type PaymentAvgAggregateInputType = {
     amount?: true
+    platformFee?: true
+    mentorAmount?: true
     refundedAmount?: true
   }
 
   export type PaymentSumAggregateInputType = {
     amount?: true
+    platformFee?: true
+    mentorAmount?: true
     refundedAmount?: true
   }
 
@@ -9892,11 +10491,14 @@ export namespace Prisma {
     razorpayPaymentId?: true
     razorpaySignature?: true
     amount?: true
+    platformFee?: true
+    mentorAmount?: true
     currency?: true
     paymentStatus?: true
     paidAt?: true
     refundedAmount?: true
     refundReason?: true
+    razorpayRefundId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -9908,11 +10510,14 @@ export namespace Prisma {
     razorpayPaymentId?: true
     razorpaySignature?: true
     amount?: true
+    platformFee?: true
+    mentorAmount?: true
     currency?: true
     paymentStatus?: true
     paidAt?: true
     refundedAmount?: true
     refundReason?: true
+    razorpayRefundId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -9924,11 +10529,14 @@ export namespace Prisma {
     razorpayPaymentId?: true
     razorpaySignature?: true
     amount?: true
+    platformFee?: true
+    mentorAmount?: true
     currency?: true
     paymentStatus?: true
     paidAt?: true
     refundedAmount?: true
     refundReason?: true
+    razorpayRefundId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -10027,11 +10635,14 @@ export namespace Prisma {
     razorpayPaymentId: string | null
     razorpaySignature: string | null
     amount: number
+    platformFee: number
+    mentorAmount: number
     currency: string
     paymentStatus: $Enums.PaymentStatus
     paidAt: Date | null
     refundedAmount: number | null
     refundReason: string | null
+    razorpayRefundId: string | null
     createdAt: Date
     updatedAt: Date
     _count: PaymentCountAggregateOutputType | null
@@ -10062,11 +10673,14 @@ export namespace Prisma {
     razorpayPaymentId?: boolean
     razorpaySignature?: boolean
     amount?: boolean
+    platformFee?: boolean
+    mentorAmount?: boolean
     currency?: boolean
     paymentStatus?: boolean
     paidAt?: boolean
     refundedAmount?: boolean
     refundReason?: boolean
+    razorpayRefundId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     booking?: boolean | BookingDefaultArgs<ExtArgs>
@@ -10080,11 +10694,14 @@ export namespace Prisma {
     razorpayPaymentId?: boolean
     razorpaySignature?: boolean
     amount?: boolean
+    platformFee?: boolean
+    mentorAmount?: boolean
     currency?: boolean
     paymentStatus?: boolean
     paidAt?: boolean
     refundedAmount?: boolean
     refundReason?: boolean
+    razorpayRefundId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     booking?: boolean | BookingDefaultArgs<ExtArgs>
@@ -10097,11 +10714,14 @@ export namespace Prisma {
     razorpayPaymentId?: boolean
     razorpaySignature?: boolean
     amount?: boolean
+    platformFee?: boolean
+    mentorAmount?: boolean
     currency?: boolean
     paymentStatus?: boolean
     paidAt?: boolean
     refundedAmount?: boolean
     refundReason?: boolean
+    razorpayRefundId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
@@ -10127,11 +10747,23 @@ export namespace Prisma {
       razorpayPaymentId: string | null
       razorpaySignature: string | null
       amount: number
+      /**
+       * Platform fee deducted (13%)
+       */
+      platformFee: number
+      /**
+       * Mentor's net earning (87%)
+       */
+      mentorAmount: number
       currency: string
       paymentStatus: $Enums.PaymentStatus
       paidAt: Date | null
       refundedAmount: number | null
       refundReason: string | null
+      /**
+       * Razorpay refund ID
+       */
+      razorpayRefundId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["payment"]>
@@ -10535,11 +11167,14 @@ export namespace Prisma {
     readonly razorpayPaymentId: FieldRef<"Payment", 'String'>
     readonly razorpaySignature: FieldRef<"Payment", 'String'>
     readonly amount: FieldRef<"Payment", 'Float'>
+    readonly platformFee: FieldRef<"Payment", 'Float'>
+    readonly mentorAmount: FieldRef<"Payment", 'Float'>
     readonly currency: FieldRef<"Payment", 'String'>
     readonly paymentStatus: FieldRef<"Payment", 'PaymentStatus'>
     readonly paidAt: FieldRef<"Payment", 'DateTime'>
     readonly refundedAmount: FieldRef<"Payment", 'Float'>
     readonly refundReason: FieldRef<"Payment", 'String'>
+    readonly razorpayRefundId: FieldRef<"Payment", 'String'>
     readonly createdAt: FieldRef<"Payment", 'DateTime'>
     readonly updatedAt: FieldRef<"Payment", 'DateTime'>
   }
@@ -13789,6 +14424,4181 @@ export namespace Prisma {
 
 
   /**
+   * Model SessionAttendance
+   */
+
+  export type AggregateSessionAttendance = {
+    _count: SessionAttendanceCountAggregateOutputType | null
+    _avg: SessionAttendanceAvgAggregateOutputType | null
+    _sum: SessionAttendanceSumAggregateOutputType | null
+    _min: SessionAttendanceMinAggregateOutputType | null
+    _max: SessionAttendanceMaxAggregateOutputType | null
+  }
+
+  export type SessionAttendanceAvgAggregateOutputType = {
+    mentorDurationSecs: number | null
+    menteeDurationSecs: number | null
+    mentorReconnects: number | null
+    menteeReconnects: number | null
+  }
+
+  export type SessionAttendanceSumAggregateOutputType = {
+    mentorDurationSecs: number | null
+    menteeDurationSecs: number | null
+    mentorReconnects: number | null
+    menteeReconnects: number | null
+  }
+
+  export type SessionAttendanceMinAggregateOutputType = {
+    id: string | null
+    bookingId: string | null
+    mentorJoinedAt: Date | null
+    mentorLeftAt: Date | null
+    menteeJoinedAt: Date | null
+    menteeLeftAt: Date | null
+    mentorDurationSecs: number | null
+    menteeDurationSecs: number | null
+    mentorReconnects: number | null
+    menteeReconnects: number | null
+    mentorPresent: boolean | null
+    menteePresent: boolean | null
+    minimumDurationMet: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SessionAttendanceMaxAggregateOutputType = {
+    id: string | null
+    bookingId: string | null
+    mentorJoinedAt: Date | null
+    mentorLeftAt: Date | null
+    menteeJoinedAt: Date | null
+    menteeLeftAt: Date | null
+    mentorDurationSecs: number | null
+    menteeDurationSecs: number | null
+    mentorReconnects: number | null
+    menteeReconnects: number | null
+    mentorPresent: boolean | null
+    menteePresent: boolean | null
+    minimumDurationMet: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SessionAttendanceCountAggregateOutputType = {
+    id: number
+    bookingId: number
+    mentorJoinedAt: number
+    mentorLeftAt: number
+    menteeJoinedAt: number
+    menteeLeftAt: number
+    mentorDurationSecs: number
+    menteeDurationSecs: number
+    mentorReconnects: number
+    menteeReconnects: number
+    mentorPresent: number
+    menteePresent: number
+    minimumDurationMet: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SessionAttendanceAvgAggregateInputType = {
+    mentorDurationSecs?: true
+    menteeDurationSecs?: true
+    mentorReconnects?: true
+    menteeReconnects?: true
+  }
+
+  export type SessionAttendanceSumAggregateInputType = {
+    mentorDurationSecs?: true
+    menteeDurationSecs?: true
+    mentorReconnects?: true
+    menteeReconnects?: true
+  }
+
+  export type SessionAttendanceMinAggregateInputType = {
+    id?: true
+    bookingId?: true
+    mentorJoinedAt?: true
+    mentorLeftAt?: true
+    menteeJoinedAt?: true
+    menteeLeftAt?: true
+    mentorDurationSecs?: true
+    menteeDurationSecs?: true
+    mentorReconnects?: true
+    menteeReconnects?: true
+    mentorPresent?: true
+    menteePresent?: true
+    minimumDurationMet?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SessionAttendanceMaxAggregateInputType = {
+    id?: true
+    bookingId?: true
+    mentorJoinedAt?: true
+    mentorLeftAt?: true
+    menteeJoinedAt?: true
+    menteeLeftAt?: true
+    mentorDurationSecs?: true
+    menteeDurationSecs?: true
+    mentorReconnects?: true
+    menteeReconnects?: true
+    mentorPresent?: true
+    menteePresent?: true
+    minimumDurationMet?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SessionAttendanceCountAggregateInputType = {
+    id?: true
+    bookingId?: true
+    mentorJoinedAt?: true
+    mentorLeftAt?: true
+    menteeJoinedAt?: true
+    menteeLeftAt?: true
+    mentorDurationSecs?: true
+    menteeDurationSecs?: true
+    mentorReconnects?: true
+    menteeReconnects?: true
+    mentorPresent?: true
+    menteePresent?: true
+    minimumDurationMet?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SessionAttendanceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SessionAttendance to aggregate.
+     */
+    where?: SessionAttendanceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SessionAttendances to fetch.
+     */
+    orderBy?: SessionAttendanceOrderByWithRelationInput | SessionAttendanceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SessionAttendanceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SessionAttendances from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SessionAttendances.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SessionAttendances
+    **/
+    _count?: true | SessionAttendanceCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SessionAttendanceAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SessionAttendanceSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SessionAttendanceMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SessionAttendanceMaxAggregateInputType
+  }
+
+  export type GetSessionAttendanceAggregateType<T extends SessionAttendanceAggregateArgs> = {
+        [P in keyof T & keyof AggregateSessionAttendance]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSessionAttendance[P]>
+      : GetScalarType<T[P], AggregateSessionAttendance[P]>
+  }
+
+
+
+
+  export type SessionAttendanceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SessionAttendanceWhereInput
+    orderBy?: SessionAttendanceOrderByWithAggregationInput | SessionAttendanceOrderByWithAggregationInput[]
+    by: SessionAttendanceScalarFieldEnum[] | SessionAttendanceScalarFieldEnum
+    having?: SessionAttendanceScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SessionAttendanceCountAggregateInputType | true
+    _avg?: SessionAttendanceAvgAggregateInputType
+    _sum?: SessionAttendanceSumAggregateInputType
+    _min?: SessionAttendanceMinAggregateInputType
+    _max?: SessionAttendanceMaxAggregateInputType
+  }
+
+  export type SessionAttendanceGroupByOutputType = {
+    id: string
+    bookingId: string
+    mentorJoinedAt: Date | null
+    mentorLeftAt: Date | null
+    menteeJoinedAt: Date | null
+    menteeLeftAt: Date | null
+    mentorDurationSecs: number
+    menteeDurationSecs: number
+    mentorReconnects: number
+    menteeReconnects: number
+    mentorPresent: boolean
+    menteePresent: boolean
+    minimumDurationMet: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: SessionAttendanceCountAggregateOutputType | null
+    _avg: SessionAttendanceAvgAggregateOutputType | null
+    _sum: SessionAttendanceSumAggregateOutputType | null
+    _min: SessionAttendanceMinAggregateOutputType | null
+    _max: SessionAttendanceMaxAggregateOutputType | null
+  }
+
+  type GetSessionAttendanceGroupByPayload<T extends SessionAttendanceGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SessionAttendanceGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SessionAttendanceGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SessionAttendanceGroupByOutputType[P]>
+            : GetScalarType<T[P], SessionAttendanceGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SessionAttendanceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingId?: boolean
+    mentorJoinedAt?: boolean
+    mentorLeftAt?: boolean
+    menteeJoinedAt?: boolean
+    menteeLeftAt?: boolean
+    mentorDurationSecs?: boolean
+    menteeDurationSecs?: boolean
+    mentorReconnects?: boolean
+    menteeReconnects?: boolean
+    mentorPresent?: boolean
+    menteePresent?: boolean
+    minimumDurationMet?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sessionAttendance"]>
+
+  export type SessionAttendanceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    bookingId?: boolean
+    mentorJoinedAt?: boolean
+    mentorLeftAt?: boolean
+    menteeJoinedAt?: boolean
+    menteeLeftAt?: boolean
+    mentorDurationSecs?: boolean
+    menteeDurationSecs?: boolean
+    mentorReconnects?: boolean
+    menteeReconnects?: boolean
+    mentorPresent?: boolean
+    menteePresent?: boolean
+    minimumDurationMet?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sessionAttendance"]>
+
+  export type SessionAttendanceSelectScalar = {
+    id?: boolean
+    bookingId?: boolean
+    mentorJoinedAt?: boolean
+    mentorLeftAt?: boolean
+    menteeJoinedAt?: boolean
+    menteeLeftAt?: boolean
+    mentorDurationSecs?: boolean
+    menteeDurationSecs?: boolean
+    mentorReconnects?: boolean
+    menteeReconnects?: boolean
+    mentorPresent?: boolean
+    menteePresent?: boolean
+    minimumDurationMet?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SessionAttendanceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
+  }
+  export type SessionAttendanceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
+  }
+
+  export type $SessionAttendancePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SessionAttendance"
+    objects: {
+      booking: Prisma.$BookingPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      bookingId: string
+      mentorJoinedAt: Date | null
+      mentorLeftAt: Date | null
+      menteeJoinedAt: Date | null
+      menteeLeftAt: Date | null
+      /**
+       * Duration in seconds each participant was present
+       */
+      mentorDurationSecs: number
+      menteeDurationSecs: number
+      /**
+       * Number of reconnections
+       */
+      mentorReconnects: number
+      menteeReconnects: number
+      /**
+       * Whether each participant was present for meaningful duration
+       */
+      mentorPresent: boolean
+      menteePresent: boolean
+      /**
+       * Whether the session met minimum 15-minute requirement
+       */
+      minimumDurationMet: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["sessionAttendance"]>
+    composites: {}
+  }
+
+  type SessionAttendanceGetPayload<S extends boolean | null | undefined | SessionAttendanceDefaultArgs> = $Result.GetResult<Prisma.$SessionAttendancePayload, S>
+
+  type SessionAttendanceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<SessionAttendanceFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: SessionAttendanceCountAggregateInputType | true
+    }
+
+  export interface SessionAttendanceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SessionAttendance'], meta: { name: 'SessionAttendance' } }
+    /**
+     * Find zero or one SessionAttendance that matches the filter.
+     * @param {SessionAttendanceFindUniqueArgs} args - Arguments to find a SessionAttendance
+     * @example
+     * // Get one SessionAttendance
+     * const sessionAttendance = await prisma.sessionAttendance.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SessionAttendanceFindUniqueArgs>(args: SelectSubset<T, SessionAttendanceFindUniqueArgs<ExtArgs>>): Prisma__SessionAttendanceClient<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one SessionAttendance that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {SessionAttendanceFindUniqueOrThrowArgs} args - Arguments to find a SessionAttendance
+     * @example
+     * // Get one SessionAttendance
+     * const sessionAttendance = await prisma.sessionAttendance.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SessionAttendanceFindUniqueOrThrowArgs>(args: SelectSubset<T, SessionAttendanceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SessionAttendanceClient<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first SessionAttendance that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionAttendanceFindFirstArgs} args - Arguments to find a SessionAttendance
+     * @example
+     * // Get one SessionAttendance
+     * const sessionAttendance = await prisma.sessionAttendance.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SessionAttendanceFindFirstArgs>(args?: SelectSubset<T, SessionAttendanceFindFirstArgs<ExtArgs>>): Prisma__SessionAttendanceClient<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first SessionAttendance that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionAttendanceFindFirstOrThrowArgs} args - Arguments to find a SessionAttendance
+     * @example
+     * // Get one SessionAttendance
+     * const sessionAttendance = await prisma.sessionAttendance.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SessionAttendanceFindFirstOrThrowArgs>(args?: SelectSubset<T, SessionAttendanceFindFirstOrThrowArgs<ExtArgs>>): Prisma__SessionAttendanceClient<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more SessionAttendances that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionAttendanceFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SessionAttendances
+     * const sessionAttendances = await prisma.sessionAttendance.findMany()
+     * 
+     * // Get first 10 SessionAttendances
+     * const sessionAttendances = await prisma.sessionAttendance.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sessionAttendanceWithIdOnly = await prisma.sessionAttendance.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SessionAttendanceFindManyArgs>(args?: SelectSubset<T, SessionAttendanceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a SessionAttendance.
+     * @param {SessionAttendanceCreateArgs} args - Arguments to create a SessionAttendance.
+     * @example
+     * // Create one SessionAttendance
+     * const SessionAttendance = await prisma.sessionAttendance.create({
+     *   data: {
+     *     // ... data to create a SessionAttendance
+     *   }
+     * })
+     * 
+     */
+    create<T extends SessionAttendanceCreateArgs>(args: SelectSubset<T, SessionAttendanceCreateArgs<ExtArgs>>): Prisma__SessionAttendanceClient<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many SessionAttendances.
+     * @param {SessionAttendanceCreateManyArgs} args - Arguments to create many SessionAttendances.
+     * @example
+     * // Create many SessionAttendances
+     * const sessionAttendance = await prisma.sessionAttendance.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SessionAttendanceCreateManyArgs>(args?: SelectSubset<T, SessionAttendanceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SessionAttendances and returns the data saved in the database.
+     * @param {SessionAttendanceCreateManyAndReturnArgs} args - Arguments to create many SessionAttendances.
+     * @example
+     * // Create many SessionAttendances
+     * const sessionAttendance = await prisma.sessionAttendance.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SessionAttendances and only return the `id`
+     * const sessionAttendanceWithIdOnly = await prisma.sessionAttendance.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SessionAttendanceCreateManyAndReturnArgs>(args?: SelectSubset<T, SessionAttendanceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a SessionAttendance.
+     * @param {SessionAttendanceDeleteArgs} args - Arguments to delete one SessionAttendance.
+     * @example
+     * // Delete one SessionAttendance
+     * const SessionAttendance = await prisma.sessionAttendance.delete({
+     *   where: {
+     *     // ... filter to delete one SessionAttendance
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SessionAttendanceDeleteArgs>(args: SelectSubset<T, SessionAttendanceDeleteArgs<ExtArgs>>): Prisma__SessionAttendanceClient<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one SessionAttendance.
+     * @param {SessionAttendanceUpdateArgs} args - Arguments to update one SessionAttendance.
+     * @example
+     * // Update one SessionAttendance
+     * const sessionAttendance = await prisma.sessionAttendance.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SessionAttendanceUpdateArgs>(args: SelectSubset<T, SessionAttendanceUpdateArgs<ExtArgs>>): Prisma__SessionAttendanceClient<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more SessionAttendances.
+     * @param {SessionAttendanceDeleteManyArgs} args - Arguments to filter SessionAttendances to delete.
+     * @example
+     * // Delete a few SessionAttendances
+     * const { count } = await prisma.sessionAttendance.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SessionAttendanceDeleteManyArgs>(args?: SelectSubset<T, SessionAttendanceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SessionAttendances.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionAttendanceUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SessionAttendances
+     * const sessionAttendance = await prisma.sessionAttendance.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SessionAttendanceUpdateManyArgs>(args: SelectSubset<T, SessionAttendanceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one SessionAttendance.
+     * @param {SessionAttendanceUpsertArgs} args - Arguments to update or create a SessionAttendance.
+     * @example
+     * // Update or create a SessionAttendance
+     * const sessionAttendance = await prisma.sessionAttendance.upsert({
+     *   create: {
+     *     // ... data to create a SessionAttendance
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SessionAttendance we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SessionAttendanceUpsertArgs>(args: SelectSubset<T, SessionAttendanceUpsertArgs<ExtArgs>>): Prisma__SessionAttendanceClient<$Result.GetResult<Prisma.$SessionAttendancePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of SessionAttendances.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionAttendanceCountArgs} args - Arguments to filter SessionAttendances to count.
+     * @example
+     * // Count the number of SessionAttendances
+     * const count = await prisma.sessionAttendance.count({
+     *   where: {
+     *     // ... the filter for the SessionAttendances we want to count
+     *   }
+     * })
+    **/
+    count<T extends SessionAttendanceCountArgs>(
+      args?: Subset<T, SessionAttendanceCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SessionAttendanceCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SessionAttendance.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionAttendanceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SessionAttendanceAggregateArgs>(args: Subset<T, SessionAttendanceAggregateArgs>): Prisma.PrismaPromise<GetSessionAttendanceAggregateType<T>>
+
+    /**
+     * Group by SessionAttendance.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionAttendanceGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SessionAttendanceGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SessionAttendanceGroupByArgs['orderBy'] }
+        : { orderBy?: SessionAttendanceGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SessionAttendanceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSessionAttendanceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SessionAttendance model
+   */
+  readonly fields: SessionAttendanceFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SessionAttendance.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SessionAttendanceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    booking<T extends BookingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookingDefaultArgs<ExtArgs>>): Prisma__BookingClient<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SessionAttendance model
+   */ 
+  interface SessionAttendanceFieldRefs {
+    readonly id: FieldRef<"SessionAttendance", 'String'>
+    readonly bookingId: FieldRef<"SessionAttendance", 'String'>
+    readonly mentorJoinedAt: FieldRef<"SessionAttendance", 'DateTime'>
+    readonly mentorLeftAt: FieldRef<"SessionAttendance", 'DateTime'>
+    readonly menteeJoinedAt: FieldRef<"SessionAttendance", 'DateTime'>
+    readonly menteeLeftAt: FieldRef<"SessionAttendance", 'DateTime'>
+    readonly mentorDurationSecs: FieldRef<"SessionAttendance", 'Int'>
+    readonly menteeDurationSecs: FieldRef<"SessionAttendance", 'Int'>
+    readonly mentorReconnects: FieldRef<"SessionAttendance", 'Int'>
+    readonly menteeReconnects: FieldRef<"SessionAttendance", 'Int'>
+    readonly mentorPresent: FieldRef<"SessionAttendance", 'Boolean'>
+    readonly menteePresent: FieldRef<"SessionAttendance", 'Boolean'>
+    readonly minimumDurationMet: FieldRef<"SessionAttendance", 'Boolean'>
+    readonly createdAt: FieldRef<"SessionAttendance", 'DateTime'>
+    readonly updatedAt: FieldRef<"SessionAttendance", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SessionAttendance findUnique
+   */
+  export type SessionAttendanceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    /**
+     * Filter, which SessionAttendance to fetch.
+     */
+    where: SessionAttendanceWhereUniqueInput
+  }
+
+  /**
+   * SessionAttendance findUniqueOrThrow
+   */
+  export type SessionAttendanceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    /**
+     * Filter, which SessionAttendance to fetch.
+     */
+    where: SessionAttendanceWhereUniqueInput
+  }
+
+  /**
+   * SessionAttendance findFirst
+   */
+  export type SessionAttendanceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    /**
+     * Filter, which SessionAttendance to fetch.
+     */
+    where?: SessionAttendanceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SessionAttendances to fetch.
+     */
+    orderBy?: SessionAttendanceOrderByWithRelationInput | SessionAttendanceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SessionAttendances.
+     */
+    cursor?: SessionAttendanceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SessionAttendances from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SessionAttendances.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SessionAttendances.
+     */
+    distinct?: SessionAttendanceScalarFieldEnum | SessionAttendanceScalarFieldEnum[]
+  }
+
+  /**
+   * SessionAttendance findFirstOrThrow
+   */
+  export type SessionAttendanceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    /**
+     * Filter, which SessionAttendance to fetch.
+     */
+    where?: SessionAttendanceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SessionAttendances to fetch.
+     */
+    orderBy?: SessionAttendanceOrderByWithRelationInput | SessionAttendanceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SessionAttendances.
+     */
+    cursor?: SessionAttendanceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SessionAttendances from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SessionAttendances.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SessionAttendances.
+     */
+    distinct?: SessionAttendanceScalarFieldEnum | SessionAttendanceScalarFieldEnum[]
+  }
+
+  /**
+   * SessionAttendance findMany
+   */
+  export type SessionAttendanceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    /**
+     * Filter, which SessionAttendances to fetch.
+     */
+    where?: SessionAttendanceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SessionAttendances to fetch.
+     */
+    orderBy?: SessionAttendanceOrderByWithRelationInput | SessionAttendanceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SessionAttendances.
+     */
+    cursor?: SessionAttendanceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SessionAttendances from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SessionAttendances.
+     */
+    skip?: number
+    distinct?: SessionAttendanceScalarFieldEnum | SessionAttendanceScalarFieldEnum[]
+  }
+
+  /**
+   * SessionAttendance create
+   */
+  export type SessionAttendanceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SessionAttendance.
+     */
+    data: XOR<SessionAttendanceCreateInput, SessionAttendanceUncheckedCreateInput>
+  }
+
+  /**
+   * SessionAttendance createMany
+   */
+  export type SessionAttendanceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SessionAttendances.
+     */
+    data: SessionAttendanceCreateManyInput | SessionAttendanceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SessionAttendance createManyAndReturn
+   */
+  export type SessionAttendanceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many SessionAttendances.
+     */
+    data: SessionAttendanceCreateManyInput | SessionAttendanceCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SessionAttendance update
+   */
+  export type SessionAttendanceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SessionAttendance.
+     */
+    data: XOR<SessionAttendanceUpdateInput, SessionAttendanceUncheckedUpdateInput>
+    /**
+     * Choose, which SessionAttendance to update.
+     */
+    where: SessionAttendanceWhereUniqueInput
+  }
+
+  /**
+   * SessionAttendance updateMany
+   */
+  export type SessionAttendanceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SessionAttendances.
+     */
+    data: XOR<SessionAttendanceUpdateManyMutationInput, SessionAttendanceUncheckedUpdateManyInput>
+    /**
+     * Filter which SessionAttendances to update
+     */
+    where?: SessionAttendanceWhereInput
+  }
+
+  /**
+   * SessionAttendance upsert
+   */
+  export type SessionAttendanceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SessionAttendance to update in case it exists.
+     */
+    where: SessionAttendanceWhereUniqueInput
+    /**
+     * In case the SessionAttendance found by the `where` argument doesn't exist, create a new SessionAttendance with this data.
+     */
+    create: XOR<SessionAttendanceCreateInput, SessionAttendanceUncheckedCreateInput>
+    /**
+     * In case the SessionAttendance was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SessionAttendanceUpdateInput, SessionAttendanceUncheckedUpdateInput>
+  }
+
+  /**
+   * SessionAttendance delete
+   */
+  export type SessionAttendanceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+    /**
+     * Filter which SessionAttendance to delete.
+     */
+    where: SessionAttendanceWhereUniqueInput
+  }
+
+  /**
+   * SessionAttendance deleteMany
+   */
+  export type SessionAttendanceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SessionAttendances to delete
+     */
+    where?: SessionAttendanceWhereInput
+  }
+
+  /**
+   * SessionAttendance without action
+   */
+  export type SessionAttendanceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SessionAttendance
+     */
+    select?: SessionAttendanceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionAttendanceInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MentorWallet
+   */
+
+  export type AggregateMentorWallet = {
+    _count: MentorWalletCountAggregateOutputType | null
+    _avg: MentorWalletAvgAggregateOutputType | null
+    _sum: MentorWalletSumAggregateOutputType | null
+    _min: MentorWalletMinAggregateOutputType | null
+    _max: MentorWalletMaxAggregateOutputType | null
+  }
+
+  export type MentorWalletAvgAggregateOutputType = {
+    pendingBalance: number | null
+    availableBalance: number | null
+    withdrawnBalance: number | null
+  }
+
+  export type MentorWalletSumAggregateOutputType = {
+    pendingBalance: number | null
+    availableBalance: number | null
+    withdrawnBalance: number | null
+  }
+
+  export type MentorWalletMinAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    pendingBalance: number | null
+    availableBalance: number | null
+    withdrawnBalance: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorWalletMaxAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    pendingBalance: number | null
+    availableBalance: number | null
+    withdrawnBalance: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorWalletCountAggregateOutputType = {
+    id: number
+    mentorProfileId: number
+    pendingBalance: number
+    availableBalance: number
+    withdrawnBalance: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MentorWalletAvgAggregateInputType = {
+    pendingBalance?: true
+    availableBalance?: true
+    withdrawnBalance?: true
+  }
+
+  export type MentorWalletSumAggregateInputType = {
+    pendingBalance?: true
+    availableBalance?: true
+    withdrawnBalance?: true
+  }
+
+  export type MentorWalletMinAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    pendingBalance?: true
+    availableBalance?: true
+    withdrawnBalance?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorWalletMaxAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    pendingBalance?: true
+    availableBalance?: true
+    withdrawnBalance?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorWalletCountAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    pendingBalance?: true
+    availableBalance?: true
+    withdrawnBalance?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MentorWalletAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorWallet to aggregate.
+     */
+    where?: MentorWalletWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorWallets to fetch.
+     */
+    orderBy?: MentorWalletOrderByWithRelationInput | MentorWalletOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MentorWalletWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorWallets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorWallets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MentorWallets
+    **/
+    _count?: true | MentorWalletCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MentorWalletAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MentorWalletSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MentorWalletMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MentorWalletMaxAggregateInputType
+  }
+
+  export type GetMentorWalletAggregateType<T extends MentorWalletAggregateArgs> = {
+        [P in keyof T & keyof AggregateMentorWallet]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMentorWallet[P]>
+      : GetScalarType<T[P], AggregateMentorWallet[P]>
+  }
+
+
+
+
+  export type MentorWalletGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorWalletWhereInput
+    orderBy?: MentorWalletOrderByWithAggregationInput | MentorWalletOrderByWithAggregationInput[]
+    by: MentorWalletScalarFieldEnum[] | MentorWalletScalarFieldEnum
+    having?: MentorWalletScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MentorWalletCountAggregateInputType | true
+    _avg?: MentorWalletAvgAggregateInputType
+    _sum?: MentorWalletSumAggregateInputType
+    _min?: MentorWalletMinAggregateInputType
+    _max?: MentorWalletMaxAggregateInputType
+  }
+
+  export type MentorWalletGroupByOutputType = {
+    id: string
+    mentorProfileId: string
+    pendingBalance: number
+    availableBalance: number
+    withdrawnBalance: number
+    createdAt: Date
+    updatedAt: Date
+    _count: MentorWalletCountAggregateOutputType | null
+    _avg: MentorWalletAvgAggregateOutputType | null
+    _sum: MentorWalletSumAggregateOutputType | null
+    _min: MentorWalletMinAggregateOutputType | null
+    _max: MentorWalletMaxAggregateOutputType | null
+  }
+
+  type GetMentorWalletGroupByPayload<T extends MentorWalletGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MentorWalletGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MentorWalletGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MentorWalletGroupByOutputType[P]>
+            : GetScalarType<T[P], MentorWalletGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MentorWalletSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    pendingBalance?: boolean
+    availableBalance?: boolean
+    withdrawnBalance?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+    transactions?: boolean | MentorWallet$transactionsArgs<ExtArgs>
+    _count?: boolean | MentorWalletCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorWallet"]>
+
+  export type MentorWalletSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    pendingBalance?: boolean
+    availableBalance?: boolean
+    withdrawnBalance?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorWallet"]>
+
+  export type MentorWalletSelectScalar = {
+    id?: boolean
+    mentorProfileId?: boolean
+    pendingBalance?: boolean
+    availableBalance?: boolean
+    withdrawnBalance?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MentorWalletInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+    transactions?: boolean | MentorWallet$transactionsArgs<ExtArgs>
+    _count?: boolean | MentorWalletCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type MentorWalletIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $MentorWalletPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MentorWallet"
+    objects: {
+      mentorProfile: Prisma.$MentorProfilePayload<ExtArgs>
+      transactions: Prisma.$WalletTransactionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      mentorProfileId: string
+      /**
+       * Earnings from completed sessions not yet released
+       */
+      pendingBalance: number
+      /**
+       * Earnings available for payout
+       */
+      availableBalance: number
+      /**
+       * Total amount already withdrawn
+       */
+      withdrawnBalance: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["mentorWallet"]>
+    composites: {}
+  }
+
+  type MentorWalletGetPayload<S extends boolean | null | undefined | MentorWalletDefaultArgs> = $Result.GetResult<Prisma.$MentorWalletPayload, S>
+
+  type MentorWalletCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<MentorWalletFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: MentorWalletCountAggregateInputType | true
+    }
+
+  export interface MentorWalletDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MentorWallet'], meta: { name: 'MentorWallet' } }
+    /**
+     * Find zero or one MentorWallet that matches the filter.
+     * @param {MentorWalletFindUniqueArgs} args - Arguments to find a MentorWallet
+     * @example
+     * // Get one MentorWallet
+     * const mentorWallet = await prisma.mentorWallet.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MentorWalletFindUniqueArgs>(args: SelectSubset<T, MentorWalletFindUniqueArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one MentorWallet that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {MentorWalletFindUniqueOrThrowArgs} args - Arguments to find a MentorWallet
+     * @example
+     * // Get one MentorWallet
+     * const mentorWallet = await prisma.mentorWallet.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MentorWalletFindUniqueOrThrowArgs>(args: SelectSubset<T, MentorWalletFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first MentorWallet that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorWalletFindFirstArgs} args - Arguments to find a MentorWallet
+     * @example
+     * // Get one MentorWallet
+     * const mentorWallet = await prisma.mentorWallet.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MentorWalletFindFirstArgs>(args?: SelectSubset<T, MentorWalletFindFirstArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first MentorWallet that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorWalletFindFirstOrThrowArgs} args - Arguments to find a MentorWallet
+     * @example
+     * // Get one MentorWallet
+     * const mentorWallet = await prisma.mentorWallet.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MentorWalletFindFirstOrThrowArgs>(args?: SelectSubset<T, MentorWalletFindFirstOrThrowArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more MentorWallets that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorWalletFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MentorWallets
+     * const mentorWallets = await prisma.mentorWallet.findMany()
+     * 
+     * // Get first 10 MentorWallets
+     * const mentorWallets = await prisma.mentorWallet.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mentorWalletWithIdOnly = await prisma.mentorWallet.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MentorWalletFindManyArgs>(args?: SelectSubset<T, MentorWalletFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a MentorWallet.
+     * @param {MentorWalletCreateArgs} args - Arguments to create a MentorWallet.
+     * @example
+     * // Create one MentorWallet
+     * const MentorWallet = await prisma.mentorWallet.create({
+     *   data: {
+     *     // ... data to create a MentorWallet
+     *   }
+     * })
+     * 
+     */
+    create<T extends MentorWalletCreateArgs>(args: SelectSubset<T, MentorWalletCreateArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many MentorWallets.
+     * @param {MentorWalletCreateManyArgs} args - Arguments to create many MentorWallets.
+     * @example
+     * // Create many MentorWallets
+     * const mentorWallet = await prisma.mentorWallet.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MentorWalletCreateManyArgs>(args?: SelectSubset<T, MentorWalletCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MentorWallets and returns the data saved in the database.
+     * @param {MentorWalletCreateManyAndReturnArgs} args - Arguments to create many MentorWallets.
+     * @example
+     * // Create many MentorWallets
+     * const mentorWallet = await prisma.mentorWallet.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MentorWallets and only return the `id`
+     * const mentorWalletWithIdOnly = await prisma.mentorWallet.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MentorWalletCreateManyAndReturnArgs>(args?: SelectSubset<T, MentorWalletCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a MentorWallet.
+     * @param {MentorWalletDeleteArgs} args - Arguments to delete one MentorWallet.
+     * @example
+     * // Delete one MentorWallet
+     * const MentorWallet = await prisma.mentorWallet.delete({
+     *   where: {
+     *     // ... filter to delete one MentorWallet
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MentorWalletDeleteArgs>(args: SelectSubset<T, MentorWalletDeleteArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one MentorWallet.
+     * @param {MentorWalletUpdateArgs} args - Arguments to update one MentorWallet.
+     * @example
+     * // Update one MentorWallet
+     * const mentorWallet = await prisma.mentorWallet.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MentorWalletUpdateArgs>(args: SelectSubset<T, MentorWalletUpdateArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more MentorWallets.
+     * @param {MentorWalletDeleteManyArgs} args - Arguments to filter MentorWallets to delete.
+     * @example
+     * // Delete a few MentorWallets
+     * const { count } = await prisma.mentorWallet.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MentorWalletDeleteManyArgs>(args?: SelectSubset<T, MentorWalletDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MentorWallets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorWalletUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MentorWallets
+     * const mentorWallet = await prisma.mentorWallet.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MentorWalletUpdateManyArgs>(args: SelectSubset<T, MentorWalletUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MentorWallet.
+     * @param {MentorWalletUpsertArgs} args - Arguments to update or create a MentorWallet.
+     * @example
+     * // Update or create a MentorWallet
+     * const mentorWallet = await prisma.mentorWallet.upsert({
+     *   create: {
+     *     // ... data to create a MentorWallet
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MentorWallet we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MentorWalletUpsertArgs>(args: SelectSubset<T, MentorWalletUpsertArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of MentorWallets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorWalletCountArgs} args - Arguments to filter MentorWallets to count.
+     * @example
+     * // Count the number of MentorWallets
+     * const count = await prisma.mentorWallet.count({
+     *   where: {
+     *     // ... the filter for the MentorWallets we want to count
+     *   }
+     * })
+    **/
+    count<T extends MentorWalletCountArgs>(
+      args?: Subset<T, MentorWalletCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MentorWalletCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MentorWallet.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorWalletAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MentorWalletAggregateArgs>(args: Subset<T, MentorWalletAggregateArgs>): Prisma.PrismaPromise<GetMentorWalletAggregateType<T>>
+
+    /**
+     * Group by MentorWallet.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorWalletGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MentorWalletGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MentorWalletGroupByArgs['orderBy'] }
+        : { orderBy?: MentorWalletGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MentorWalletGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMentorWalletGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MentorWallet model
+   */
+  readonly fields: MentorWalletFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MentorWallet.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MentorWalletClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    mentorProfile<T extends MentorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfileDefaultArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    transactions<T extends MentorWallet$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, MentorWallet$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MentorWallet model
+   */ 
+  interface MentorWalletFieldRefs {
+    readonly id: FieldRef<"MentorWallet", 'String'>
+    readonly mentorProfileId: FieldRef<"MentorWallet", 'String'>
+    readonly pendingBalance: FieldRef<"MentorWallet", 'Float'>
+    readonly availableBalance: FieldRef<"MentorWallet", 'Float'>
+    readonly withdrawnBalance: FieldRef<"MentorWallet", 'Float'>
+    readonly createdAt: FieldRef<"MentorWallet", 'DateTime'>
+    readonly updatedAt: FieldRef<"MentorWallet", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MentorWallet findUnique
+   */
+  export type MentorWalletFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorWallet to fetch.
+     */
+    where: MentorWalletWhereUniqueInput
+  }
+
+  /**
+   * MentorWallet findUniqueOrThrow
+   */
+  export type MentorWalletFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorWallet to fetch.
+     */
+    where: MentorWalletWhereUniqueInput
+  }
+
+  /**
+   * MentorWallet findFirst
+   */
+  export type MentorWalletFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorWallet to fetch.
+     */
+    where?: MentorWalletWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorWallets to fetch.
+     */
+    orderBy?: MentorWalletOrderByWithRelationInput | MentorWalletOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorWallets.
+     */
+    cursor?: MentorWalletWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorWallets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorWallets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorWallets.
+     */
+    distinct?: MentorWalletScalarFieldEnum | MentorWalletScalarFieldEnum[]
+  }
+
+  /**
+   * MentorWallet findFirstOrThrow
+   */
+  export type MentorWalletFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorWallet to fetch.
+     */
+    where?: MentorWalletWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorWallets to fetch.
+     */
+    orderBy?: MentorWalletOrderByWithRelationInput | MentorWalletOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorWallets.
+     */
+    cursor?: MentorWalletWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorWallets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorWallets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorWallets.
+     */
+    distinct?: MentorWalletScalarFieldEnum | MentorWalletScalarFieldEnum[]
+  }
+
+  /**
+   * MentorWallet findMany
+   */
+  export type MentorWalletFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorWallets to fetch.
+     */
+    where?: MentorWalletWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorWallets to fetch.
+     */
+    orderBy?: MentorWalletOrderByWithRelationInput | MentorWalletOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MentorWallets.
+     */
+    cursor?: MentorWalletWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorWallets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorWallets.
+     */
+    skip?: number
+    distinct?: MentorWalletScalarFieldEnum | MentorWalletScalarFieldEnum[]
+  }
+
+  /**
+   * MentorWallet create
+   */
+  export type MentorWalletCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MentorWallet.
+     */
+    data: XOR<MentorWalletCreateInput, MentorWalletUncheckedCreateInput>
+  }
+
+  /**
+   * MentorWallet createMany
+   */
+  export type MentorWalletCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MentorWallets.
+     */
+    data: MentorWalletCreateManyInput | MentorWalletCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MentorWallet createManyAndReturn
+   */
+  export type MentorWalletCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many MentorWallets.
+     */
+    data: MentorWalletCreateManyInput | MentorWalletCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MentorWallet update
+   */
+  export type MentorWalletUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MentorWallet.
+     */
+    data: XOR<MentorWalletUpdateInput, MentorWalletUncheckedUpdateInput>
+    /**
+     * Choose, which MentorWallet to update.
+     */
+    where: MentorWalletWhereUniqueInput
+  }
+
+  /**
+   * MentorWallet updateMany
+   */
+  export type MentorWalletUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MentorWallets.
+     */
+    data: XOR<MentorWalletUpdateManyMutationInput, MentorWalletUncheckedUpdateManyInput>
+    /**
+     * Filter which MentorWallets to update
+     */
+    where?: MentorWalletWhereInput
+  }
+
+  /**
+   * MentorWallet upsert
+   */
+  export type MentorWalletUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MentorWallet to update in case it exists.
+     */
+    where: MentorWalletWhereUniqueInput
+    /**
+     * In case the MentorWallet found by the `where` argument doesn't exist, create a new MentorWallet with this data.
+     */
+    create: XOR<MentorWalletCreateInput, MentorWalletUncheckedCreateInput>
+    /**
+     * In case the MentorWallet was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MentorWalletUpdateInput, MentorWalletUncheckedUpdateInput>
+  }
+
+  /**
+   * MentorWallet delete
+   */
+  export type MentorWalletDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+    /**
+     * Filter which MentorWallet to delete.
+     */
+    where: MentorWalletWhereUniqueInput
+  }
+
+  /**
+   * MentorWallet deleteMany
+   */
+  export type MentorWalletDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorWallets to delete
+     */
+    where?: MentorWalletWhereInput
+  }
+
+  /**
+   * MentorWallet.transactions
+   */
+  export type MentorWallet$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    where?: WalletTransactionWhereInput
+    orderBy?: WalletTransactionOrderByWithRelationInput | WalletTransactionOrderByWithRelationInput[]
+    cursor?: WalletTransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WalletTransactionScalarFieldEnum | WalletTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * MentorWallet without action
+   */
+  export type MentorWalletDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorWallet
+     */
+    select?: MentorWalletSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorWalletInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model WalletTransaction
+   */
+
+  export type AggregateWalletTransaction = {
+    _count: WalletTransactionCountAggregateOutputType | null
+    _avg: WalletTransactionAvgAggregateOutputType | null
+    _sum: WalletTransactionSumAggregateOutputType | null
+    _min: WalletTransactionMinAggregateOutputType | null
+    _max: WalletTransactionMaxAggregateOutputType | null
+  }
+
+  export type WalletTransactionAvgAggregateOutputType = {
+    amount: number | null
+    balanceBefore: number | null
+    balanceAfter: number | null
+  }
+
+  export type WalletTransactionSumAggregateOutputType = {
+    amount: number | null
+    balanceBefore: number | null
+    balanceAfter: number | null
+  }
+
+  export type WalletTransactionMinAggregateOutputType = {
+    id: string | null
+    walletId: string | null
+    bookingId: string | null
+    type: $Enums.WalletTransactionType | null
+    amount: number | null
+    description: string | null
+    balanceBefore: number | null
+    balanceAfter: number | null
+    createdAt: Date | null
+  }
+
+  export type WalletTransactionMaxAggregateOutputType = {
+    id: string | null
+    walletId: string | null
+    bookingId: string | null
+    type: $Enums.WalletTransactionType | null
+    amount: number | null
+    description: string | null
+    balanceBefore: number | null
+    balanceAfter: number | null
+    createdAt: Date | null
+  }
+
+  export type WalletTransactionCountAggregateOutputType = {
+    id: number
+    walletId: number
+    bookingId: number
+    type: number
+    amount: number
+    description: number
+    balanceBefore: number
+    balanceAfter: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type WalletTransactionAvgAggregateInputType = {
+    amount?: true
+    balanceBefore?: true
+    balanceAfter?: true
+  }
+
+  export type WalletTransactionSumAggregateInputType = {
+    amount?: true
+    balanceBefore?: true
+    balanceAfter?: true
+  }
+
+  export type WalletTransactionMinAggregateInputType = {
+    id?: true
+    walletId?: true
+    bookingId?: true
+    type?: true
+    amount?: true
+    description?: true
+    balanceBefore?: true
+    balanceAfter?: true
+    createdAt?: true
+  }
+
+  export type WalletTransactionMaxAggregateInputType = {
+    id?: true
+    walletId?: true
+    bookingId?: true
+    type?: true
+    amount?: true
+    description?: true
+    balanceBefore?: true
+    balanceAfter?: true
+    createdAt?: true
+  }
+
+  export type WalletTransactionCountAggregateInputType = {
+    id?: true
+    walletId?: true
+    bookingId?: true
+    type?: true
+    amount?: true
+    description?: true
+    balanceBefore?: true
+    balanceAfter?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type WalletTransactionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WalletTransaction to aggregate.
+     */
+    where?: WalletTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WalletTransactions to fetch.
+     */
+    orderBy?: WalletTransactionOrderByWithRelationInput | WalletTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WalletTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WalletTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WalletTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WalletTransactions
+    **/
+    _count?: true | WalletTransactionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: WalletTransactionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: WalletTransactionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WalletTransactionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WalletTransactionMaxAggregateInputType
+  }
+
+  export type GetWalletTransactionAggregateType<T extends WalletTransactionAggregateArgs> = {
+        [P in keyof T & keyof AggregateWalletTransaction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWalletTransaction[P]>
+      : GetScalarType<T[P], AggregateWalletTransaction[P]>
+  }
+
+
+
+
+  export type WalletTransactionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WalletTransactionWhereInput
+    orderBy?: WalletTransactionOrderByWithAggregationInput | WalletTransactionOrderByWithAggregationInput[]
+    by: WalletTransactionScalarFieldEnum[] | WalletTransactionScalarFieldEnum
+    having?: WalletTransactionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WalletTransactionCountAggregateInputType | true
+    _avg?: WalletTransactionAvgAggregateInputType
+    _sum?: WalletTransactionSumAggregateInputType
+    _min?: WalletTransactionMinAggregateInputType
+    _max?: WalletTransactionMaxAggregateInputType
+  }
+
+  export type WalletTransactionGroupByOutputType = {
+    id: string
+    walletId: string
+    bookingId: string | null
+    type: $Enums.WalletTransactionType
+    amount: number
+    description: string | null
+    balanceBefore: number
+    balanceAfter: number
+    createdAt: Date
+    _count: WalletTransactionCountAggregateOutputType | null
+    _avg: WalletTransactionAvgAggregateOutputType | null
+    _sum: WalletTransactionSumAggregateOutputType | null
+    _min: WalletTransactionMinAggregateOutputType | null
+    _max: WalletTransactionMaxAggregateOutputType | null
+  }
+
+  type GetWalletTransactionGroupByPayload<T extends WalletTransactionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WalletTransactionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WalletTransactionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WalletTransactionGroupByOutputType[P]>
+            : GetScalarType<T[P], WalletTransactionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WalletTransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    walletId?: boolean
+    bookingId?: boolean
+    type?: boolean
+    amount?: boolean
+    description?: boolean
+    balanceBefore?: boolean
+    balanceAfter?: boolean
+    createdAt?: boolean
+    wallet?: boolean | MentorWalletDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["walletTransaction"]>
+
+  export type WalletTransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    walletId?: boolean
+    bookingId?: boolean
+    type?: boolean
+    amount?: boolean
+    description?: boolean
+    balanceBefore?: boolean
+    balanceAfter?: boolean
+    createdAt?: boolean
+    wallet?: boolean | MentorWalletDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["walletTransaction"]>
+
+  export type WalletTransactionSelectScalar = {
+    id?: boolean
+    walletId?: boolean
+    bookingId?: boolean
+    type?: boolean
+    amount?: boolean
+    description?: boolean
+    balanceBefore?: boolean
+    balanceAfter?: boolean
+    createdAt?: boolean
+  }
+
+  export type WalletTransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    wallet?: boolean | MentorWalletDefaultArgs<ExtArgs>
+  }
+  export type WalletTransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    wallet?: boolean | MentorWalletDefaultArgs<ExtArgs>
+  }
+
+  export type $WalletTransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WalletTransaction"
+    objects: {
+      wallet: Prisma.$MentorWalletPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      walletId: string
+      bookingId: string | null
+      type: $Enums.WalletTransactionType
+      amount: number
+      description: string | null
+      /**
+       * Balance snapshots for audit trail
+       */
+      balanceBefore: number
+      balanceAfter: number
+      createdAt: Date
+    }, ExtArgs["result"]["walletTransaction"]>
+    composites: {}
+  }
+
+  type WalletTransactionGetPayload<S extends boolean | null | undefined | WalletTransactionDefaultArgs> = $Result.GetResult<Prisma.$WalletTransactionPayload, S>
+
+  type WalletTransactionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<WalletTransactionFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: WalletTransactionCountAggregateInputType | true
+    }
+
+  export interface WalletTransactionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WalletTransaction'], meta: { name: 'WalletTransaction' } }
+    /**
+     * Find zero or one WalletTransaction that matches the filter.
+     * @param {WalletTransactionFindUniqueArgs} args - Arguments to find a WalletTransaction
+     * @example
+     * // Get one WalletTransaction
+     * const walletTransaction = await prisma.walletTransaction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WalletTransactionFindUniqueArgs>(args: SelectSubset<T, WalletTransactionFindUniqueArgs<ExtArgs>>): Prisma__WalletTransactionClient<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one WalletTransaction that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {WalletTransactionFindUniqueOrThrowArgs} args - Arguments to find a WalletTransaction
+     * @example
+     * // Get one WalletTransaction
+     * const walletTransaction = await prisma.walletTransaction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WalletTransactionFindUniqueOrThrowArgs>(args: SelectSubset<T, WalletTransactionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WalletTransactionClient<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first WalletTransaction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WalletTransactionFindFirstArgs} args - Arguments to find a WalletTransaction
+     * @example
+     * // Get one WalletTransaction
+     * const walletTransaction = await prisma.walletTransaction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WalletTransactionFindFirstArgs>(args?: SelectSubset<T, WalletTransactionFindFirstArgs<ExtArgs>>): Prisma__WalletTransactionClient<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first WalletTransaction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WalletTransactionFindFirstOrThrowArgs} args - Arguments to find a WalletTransaction
+     * @example
+     * // Get one WalletTransaction
+     * const walletTransaction = await prisma.walletTransaction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WalletTransactionFindFirstOrThrowArgs>(args?: SelectSubset<T, WalletTransactionFindFirstOrThrowArgs<ExtArgs>>): Prisma__WalletTransactionClient<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more WalletTransactions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WalletTransactionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WalletTransactions
+     * const walletTransactions = await prisma.walletTransaction.findMany()
+     * 
+     * // Get first 10 WalletTransactions
+     * const walletTransactions = await prisma.walletTransaction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const walletTransactionWithIdOnly = await prisma.walletTransaction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WalletTransactionFindManyArgs>(args?: SelectSubset<T, WalletTransactionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a WalletTransaction.
+     * @param {WalletTransactionCreateArgs} args - Arguments to create a WalletTransaction.
+     * @example
+     * // Create one WalletTransaction
+     * const WalletTransaction = await prisma.walletTransaction.create({
+     *   data: {
+     *     // ... data to create a WalletTransaction
+     *   }
+     * })
+     * 
+     */
+    create<T extends WalletTransactionCreateArgs>(args: SelectSubset<T, WalletTransactionCreateArgs<ExtArgs>>): Prisma__WalletTransactionClient<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many WalletTransactions.
+     * @param {WalletTransactionCreateManyArgs} args - Arguments to create many WalletTransactions.
+     * @example
+     * // Create many WalletTransactions
+     * const walletTransaction = await prisma.walletTransaction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WalletTransactionCreateManyArgs>(args?: SelectSubset<T, WalletTransactionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WalletTransactions and returns the data saved in the database.
+     * @param {WalletTransactionCreateManyAndReturnArgs} args - Arguments to create many WalletTransactions.
+     * @example
+     * // Create many WalletTransactions
+     * const walletTransaction = await prisma.walletTransaction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WalletTransactions and only return the `id`
+     * const walletTransactionWithIdOnly = await prisma.walletTransaction.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WalletTransactionCreateManyAndReturnArgs>(args?: SelectSubset<T, WalletTransactionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a WalletTransaction.
+     * @param {WalletTransactionDeleteArgs} args - Arguments to delete one WalletTransaction.
+     * @example
+     * // Delete one WalletTransaction
+     * const WalletTransaction = await prisma.walletTransaction.delete({
+     *   where: {
+     *     // ... filter to delete one WalletTransaction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WalletTransactionDeleteArgs>(args: SelectSubset<T, WalletTransactionDeleteArgs<ExtArgs>>): Prisma__WalletTransactionClient<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one WalletTransaction.
+     * @param {WalletTransactionUpdateArgs} args - Arguments to update one WalletTransaction.
+     * @example
+     * // Update one WalletTransaction
+     * const walletTransaction = await prisma.walletTransaction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WalletTransactionUpdateArgs>(args: SelectSubset<T, WalletTransactionUpdateArgs<ExtArgs>>): Prisma__WalletTransactionClient<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more WalletTransactions.
+     * @param {WalletTransactionDeleteManyArgs} args - Arguments to filter WalletTransactions to delete.
+     * @example
+     * // Delete a few WalletTransactions
+     * const { count } = await prisma.walletTransaction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WalletTransactionDeleteManyArgs>(args?: SelectSubset<T, WalletTransactionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WalletTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WalletTransactionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WalletTransactions
+     * const walletTransaction = await prisma.walletTransaction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WalletTransactionUpdateManyArgs>(args: SelectSubset<T, WalletTransactionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one WalletTransaction.
+     * @param {WalletTransactionUpsertArgs} args - Arguments to update or create a WalletTransaction.
+     * @example
+     * // Update or create a WalletTransaction
+     * const walletTransaction = await prisma.walletTransaction.upsert({
+     *   create: {
+     *     // ... data to create a WalletTransaction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WalletTransaction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WalletTransactionUpsertArgs>(args: SelectSubset<T, WalletTransactionUpsertArgs<ExtArgs>>): Prisma__WalletTransactionClient<$Result.GetResult<Prisma.$WalletTransactionPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of WalletTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WalletTransactionCountArgs} args - Arguments to filter WalletTransactions to count.
+     * @example
+     * // Count the number of WalletTransactions
+     * const count = await prisma.walletTransaction.count({
+     *   where: {
+     *     // ... the filter for the WalletTransactions we want to count
+     *   }
+     * })
+    **/
+    count<T extends WalletTransactionCountArgs>(
+      args?: Subset<T, WalletTransactionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WalletTransactionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WalletTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WalletTransactionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WalletTransactionAggregateArgs>(args: Subset<T, WalletTransactionAggregateArgs>): Prisma.PrismaPromise<GetWalletTransactionAggregateType<T>>
+
+    /**
+     * Group by WalletTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WalletTransactionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WalletTransactionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WalletTransactionGroupByArgs['orderBy'] }
+        : { orderBy?: WalletTransactionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WalletTransactionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWalletTransactionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WalletTransaction model
+   */
+  readonly fields: WalletTransactionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WalletTransaction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WalletTransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    wallet<T extends MentorWalletDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MentorWalletDefaultArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WalletTransaction model
+   */ 
+  interface WalletTransactionFieldRefs {
+    readonly id: FieldRef<"WalletTransaction", 'String'>
+    readonly walletId: FieldRef<"WalletTransaction", 'String'>
+    readonly bookingId: FieldRef<"WalletTransaction", 'String'>
+    readonly type: FieldRef<"WalletTransaction", 'WalletTransactionType'>
+    readonly amount: FieldRef<"WalletTransaction", 'Float'>
+    readonly description: FieldRef<"WalletTransaction", 'String'>
+    readonly balanceBefore: FieldRef<"WalletTransaction", 'Float'>
+    readonly balanceAfter: FieldRef<"WalletTransaction", 'Float'>
+    readonly createdAt: FieldRef<"WalletTransaction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WalletTransaction findUnique
+   */
+  export type WalletTransactionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which WalletTransaction to fetch.
+     */
+    where: WalletTransactionWhereUniqueInput
+  }
+
+  /**
+   * WalletTransaction findUniqueOrThrow
+   */
+  export type WalletTransactionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which WalletTransaction to fetch.
+     */
+    where: WalletTransactionWhereUniqueInput
+  }
+
+  /**
+   * WalletTransaction findFirst
+   */
+  export type WalletTransactionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which WalletTransaction to fetch.
+     */
+    where?: WalletTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WalletTransactions to fetch.
+     */
+    orderBy?: WalletTransactionOrderByWithRelationInput | WalletTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WalletTransactions.
+     */
+    cursor?: WalletTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WalletTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WalletTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WalletTransactions.
+     */
+    distinct?: WalletTransactionScalarFieldEnum | WalletTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * WalletTransaction findFirstOrThrow
+   */
+  export type WalletTransactionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which WalletTransaction to fetch.
+     */
+    where?: WalletTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WalletTransactions to fetch.
+     */
+    orderBy?: WalletTransactionOrderByWithRelationInput | WalletTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WalletTransactions.
+     */
+    cursor?: WalletTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WalletTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WalletTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WalletTransactions.
+     */
+    distinct?: WalletTransactionScalarFieldEnum | WalletTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * WalletTransaction findMany
+   */
+  export type WalletTransactionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which WalletTransactions to fetch.
+     */
+    where?: WalletTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WalletTransactions to fetch.
+     */
+    orderBy?: WalletTransactionOrderByWithRelationInput | WalletTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WalletTransactions.
+     */
+    cursor?: WalletTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WalletTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WalletTransactions.
+     */
+    skip?: number
+    distinct?: WalletTransactionScalarFieldEnum | WalletTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * WalletTransaction create
+   */
+  export type WalletTransactionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a WalletTransaction.
+     */
+    data: XOR<WalletTransactionCreateInput, WalletTransactionUncheckedCreateInput>
+  }
+
+  /**
+   * WalletTransaction createMany
+   */
+  export type WalletTransactionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WalletTransactions.
+     */
+    data: WalletTransactionCreateManyInput | WalletTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WalletTransaction createManyAndReturn
+   */
+  export type WalletTransactionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many WalletTransactions.
+     */
+    data: WalletTransactionCreateManyInput | WalletTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WalletTransaction update
+   */
+  export type WalletTransactionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a WalletTransaction.
+     */
+    data: XOR<WalletTransactionUpdateInput, WalletTransactionUncheckedUpdateInput>
+    /**
+     * Choose, which WalletTransaction to update.
+     */
+    where: WalletTransactionWhereUniqueInput
+  }
+
+  /**
+   * WalletTransaction updateMany
+   */
+  export type WalletTransactionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WalletTransactions.
+     */
+    data: XOR<WalletTransactionUpdateManyMutationInput, WalletTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which WalletTransactions to update
+     */
+    where?: WalletTransactionWhereInput
+  }
+
+  /**
+   * WalletTransaction upsert
+   */
+  export type WalletTransactionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the WalletTransaction to update in case it exists.
+     */
+    where: WalletTransactionWhereUniqueInput
+    /**
+     * In case the WalletTransaction found by the `where` argument doesn't exist, create a new WalletTransaction with this data.
+     */
+    create: XOR<WalletTransactionCreateInput, WalletTransactionUncheckedCreateInput>
+    /**
+     * In case the WalletTransaction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WalletTransactionUpdateInput, WalletTransactionUncheckedUpdateInput>
+  }
+
+  /**
+   * WalletTransaction delete
+   */
+  export type WalletTransactionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+    /**
+     * Filter which WalletTransaction to delete.
+     */
+    where: WalletTransactionWhereUniqueInput
+  }
+
+  /**
+   * WalletTransaction deleteMany
+   */
+  export type WalletTransactionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WalletTransactions to delete
+     */
+    where?: WalletTransactionWhereInput
+  }
+
+  /**
+   * WalletTransaction without action
+   */
+  export type WalletTransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WalletTransaction
+     */
+    select?: WalletTransactionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WalletTransactionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MentorCancellationStat
+   */
+
+  export type AggregateMentorCancellationStat = {
+    _count: MentorCancellationStatCountAggregateOutputType | null
+    _avg: MentorCancellationStatAvgAggregateOutputType | null
+    _sum: MentorCancellationStatSumAggregateOutputType | null
+    _min: MentorCancellationStatMinAggregateOutputType | null
+    _max: MentorCancellationStatMaxAggregateOutputType | null
+  }
+
+  export type MentorCancellationStatAvgAggregateOutputType = {
+    year: number | null
+    cancellationCount: number | null
+  }
+
+  export type MentorCancellationStatSumAggregateOutputType = {
+    year: number | null
+    cancellationCount: number | null
+  }
+
+  export type MentorCancellationStatMinAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    year: number | null
+    cancellationCount: number | null
+    lastCancelledAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorCancellationStatMaxAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    year: number | null
+    cancellationCount: number | null
+    lastCancelledAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorCancellationStatCountAggregateOutputType = {
+    id: number
+    mentorProfileId: number
+    year: number
+    cancellationCount: number
+    lastCancelledAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MentorCancellationStatAvgAggregateInputType = {
+    year?: true
+    cancellationCount?: true
+  }
+
+  export type MentorCancellationStatSumAggregateInputType = {
+    year?: true
+    cancellationCount?: true
+  }
+
+  export type MentorCancellationStatMinAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    year?: true
+    cancellationCount?: true
+    lastCancelledAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorCancellationStatMaxAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    year?: true
+    cancellationCount?: true
+    lastCancelledAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorCancellationStatCountAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    year?: true
+    cancellationCount?: true
+    lastCancelledAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MentorCancellationStatAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorCancellationStat to aggregate.
+     */
+    where?: MentorCancellationStatWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorCancellationStats to fetch.
+     */
+    orderBy?: MentorCancellationStatOrderByWithRelationInput | MentorCancellationStatOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MentorCancellationStatWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorCancellationStats from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorCancellationStats.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MentorCancellationStats
+    **/
+    _count?: true | MentorCancellationStatCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MentorCancellationStatAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MentorCancellationStatSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MentorCancellationStatMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MentorCancellationStatMaxAggregateInputType
+  }
+
+  export type GetMentorCancellationStatAggregateType<T extends MentorCancellationStatAggregateArgs> = {
+        [P in keyof T & keyof AggregateMentorCancellationStat]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMentorCancellationStat[P]>
+      : GetScalarType<T[P], AggregateMentorCancellationStat[P]>
+  }
+
+
+
+
+  export type MentorCancellationStatGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorCancellationStatWhereInput
+    orderBy?: MentorCancellationStatOrderByWithAggregationInput | MentorCancellationStatOrderByWithAggregationInput[]
+    by: MentorCancellationStatScalarFieldEnum[] | MentorCancellationStatScalarFieldEnum
+    having?: MentorCancellationStatScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MentorCancellationStatCountAggregateInputType | true
+    _avg?: MentorCancellationStatAvgAggregateInputType
+    _sum?: MentorCancellationStatSumAggregateInputType
+    _min?: MentorCancellationStatMinAggregateInputType
+    _max?: MentorCancellationStatMaxAggregateInputType
+  }
+
+  export type MentorCancellationStatGroupByOutputType = {
+    id: string
+    mentorProfileId: string
+    year: number
+    cancellationCount: number
+    lastCancelledAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: MentorCancellationStatCountAggregateOutputType | null
+    _avg: MentorCancellationStatAvgAggregateOutputType | null
+    _sum: MentorCancellationStatSumAggregateOutputType | null
+    _min: MentorCancellationStatMinAggregateOutputType | null
+    _max: MentorCancellationStatMaxAggregateOutputType | null
+  }
+
+  type GetMentorCancellationStatGroupByPayload<T extends MentorCancellationStatGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MentorCancellationStatGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MentorCancellationStatGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MentorCancellationStatGroupByOutputType[P]>
+            : GetScalarType<T[P], MentorCancellationStatGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MentorCancellationStatSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    year?: boolean
+    cancellationCount?: boolean
+    lastCancelledAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorCancellationStat"]>
+
+  export type MentorCancellationStatSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    year?: boolean
+    cancellationCount?: boolean
+    lastCancelledAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorCancellationStat"]>
+
+  export type MentorCancellationStatSelectScalar = {
+    id?: boolean
+    mentorProfileId?: boolean
+    year?: boolean
+    cancellationCount?: boolean
+    lastCancelledAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MentorCancellationStatInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }
+  export type MentorCancellationStatIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $MentorCancellationStatPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MentorCancellationStat"
+    objects: {
+      mentorProfile: Prisma.$MentorProfilePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      mentorProfileId: string
+      /**
+       * Calendar year for counting
+       */
+      year: number
+      /**
+       * Number of cancellations in this year
+       */
+      cancellationCount: number
+      /**
+       * Timestamp of last cancellation
+       */
+      lastCancelledAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["mentorCancellationStat"]>
+    composites: {}
+  }
+
+  type MentorCancellationStatGetPayload<S extends boolean | null | undefined | MentorCancellationStatDefaultArgs> = $Result.GetResult<Prisma.$MentorCancellationStatPayload, S>
+
+  type MentorCancellationStatCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<MentorCancellationStatFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: MentorCancellationStatCountAggregateInputType | true
+    }
+
+  export interface MentorCancellationStatDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MentorCancellationStat'], meta: { name: 'MentorCancellationStat' } }
+    /**
+     * Find zero or one MentorCancellationStat that matches the filter.
+     * @param {MentorCancellationStatFindUniqueArgs} args - Arguments to find a MentorCancellationStat
+     * @example
+     * // Get one MentorCancellationStat
+     * const mentorCancellationStat = await prisma.mentorCancellationStat.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MentorCancellationStatFindUniqueArgs>(args: SelectSubset<T, MentorCancellationStatFindUniqueArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one MentorCancellationStat that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {MentorCancellationStatFindUniqueOrThrowArgs} args - Arguments to find a MentorCancellationStat
+     * @example
+     * // Get one MentorCancellationStat
+     * const mentorCancellationStat = await prisma.mentorCancellationStat.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MentorCancellationStatFindUniqueOrThrowArgs>(args: SelectSubset<T, MentorCancellationStatFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first MentorCancellationStat that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorCancellationStatFindFirstArgs} args - Arguments to find a MentorCancellationStat
+     * @example
+     * // Get one MentorCancellationStat
+     * const mentorCancellationStat = await prisma.mentorCancellationStat.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MentorCancellationStatFindFirstArgs>(args?: SelectSubset<T, MentorCancellationStatFindFirstArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first MentorCancellationStat that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorCancellationStatFindFirstOrThrowArgs} args - Arguments to find a MentorCancellationStat
+     * @example
+     * // Get one MentorCancellationStat
+     * const mentorCancellationStat = await prisma.mentorCancellationStat.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MentorCancellationStatFindFirstOrThrowArgs>(args?: SelectSubset<T, MentorCancellationStatFindFirstOrThrowArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more MentorCancellationStats that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorCancellationStatFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MentorCancellationStats
+     * const mentorCancellationStats = await prisma.mentorCancellationStat.findMany()
+     * 
+     * // Get first 10 MentorCancellationStats
+     * const mentorCancellationStats = await prisma.mentorCancellationStat.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mentorCancellationStatWithIdOnly = await prisma.mentorCancellationStat.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MentorCancellationStatFindManyArgs>(args?: SelectSubset<T, MentorCancellationStatFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a MentorCancellationStat.
+     * @param {MentorCancellationStatCreateArgs} args - Arguments to create a MentorCancellationStat.
+     * @example
+     * // Create one MentorCancellationStat
+     * const MentorCancellationStat = await prisma.mentorCancellationStat.create({
+     *   data: {
+     *     // ... data to create a MentorCancellationStat
+     *   }
+     * })
+     * 
+     */
+    create<T extends MentorCancellationStatCreateArgs>(args: SelectSubset<T, MentorCancellationStatCreateArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many MentorCancellationStats.
+     * @param {MentorCancellationStatCreateManyArgs} args - Arguments to create many MentorCancellationStats.
+     * @example
+     * // Create many MentorCancellationStats
+     * const mentorCancellationStat = await prisma.mentorCancellationStat.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MentorCancellationStatCreateManyArgs>(args?: SelectSubset<T, MentorCancellationStatCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MentorCancellationStats and returns the data saved in the database.
+     * @param {MentorCancellationStatCreateManyAndReturnArgs} args - Arguments to create many MentorCancellationStats.
+     * @example
+     * // Create many MentorCancellationStats
+     * const mentorCancellationStat = await prisma.mentorCancellationStat.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MentorCancellationStats and only return the `id`
+     * const mentorCancellationStatWithIdOnly = await prisma.mentorCancellationStat.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MentorCancellationStatCreateManyAndReturnArgs>(args?: SelectSubset<T, MentorCancellationStatCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a MentorCancellationStat.
+     * @param {MentorCancellationStatDeleteArgs} args - Arguments to delete one MentorCancellationStat.
+     * @example
+     * // Delete one MentorCancellationStat
+     * const MentorCancellationStat = await prisma.mentorCancellationStat.delete({
+     *   where: {
+     *     // ... filter to delete one MentorCancellationStat
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MentorCancellationStatDeleteArgs>(args: SelectSubset<T, MentorCancellationStatDeleteArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one MentorCancellationStat.
+     * @param {MentorCancellationStatUpdateArgs} args - Arguments to update one MentorCancellationStat.
+     * @example
+     * // Update one MentorCancellationStat
+     * const mentorCancellationStat = await prisma.mentorCancellationStat.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MentorCancellationStatUpdateArgs>(args: SelectSubset<T, MentorCancellationStatUpdateArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more MentorCancellationStats.
+     * @param {MentorCancellationStatDeleteManyArgs} args - Arguments to filter MentorCancellationStats to delete.
+     * @example
+     * // Delete a few MentorCancellationStats
+     * const { count } = await prisma.mentorCancellationStat.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MentorCancellationStatDeleteManyArgs>(args?: SelectSubset<T, MentorCancellationStatDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MentorCancellationStats.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorCancellationStatUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MentorCancellationStats
+     * const mentorCancellationStat = await prisma.mentorCancellationStat.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MentorCancellationStatUpdateManyArgs>(args: SelectSubset<T, MentorCancellationStatUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MentorCancellationStat.
+     * @param {MentorCancellationStatUpsertArgs} args - Arguments to update or create a MentorCancellationStat.
+     * @example
+     * // Update or create a MentorCancellationStat
+     * const mentorCancellationStat = await prisma.mentorCancellationStat.upsert({
+     *   create: {
+     *     // ... data to create a MentorCancellationStat
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MentorCancellationStat we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MentorCancellationStatUpsertArgs>(args: SelectSubset<T, MentorCancellationStatUpsertArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of MentorCancellationStats.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorCancellationStatCountArgs} args - Arguments to filter MentorCancellationStats to count.
+     * @example
+     * // Count the number of MentorCancellationStats
+     * const count = await prisma.mentorCancellationStat.count({
+     *   where: {
+     *     // ... the filter for the MentorCancellationStats we want to count
+     *   }
+     * })
+    **/
+    count<T extends MentorCancellationStatCountArgs>(
+      args?: Subset<T, MentorCancellationStatCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MentorCancellationStatCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MentorCancellationStat.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorCancellationStatAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MentorCancellationStatAggregateArgs>(args: Subset<T, MentorCancellationStatAggregateArgs>): Prisma.PrismaPromise<GetMentorCancellationStatAggregateType<T>>
+
+    /**
+     * Group by MentorCancellationStat.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorCancellationStatGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MentorCancellationStatGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MentorCancellationStatGroupByArgs['orderBy'] }
+        : { orderBy?: MentorCancellationStatGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MentorCancellationStatGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMentorCancellationStatGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MentorCancellationStat model
+   */
+  readonly fields: MentorCancellationStatFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MentorCancellationStat.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MentorCancellationStatClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    mentorProfile<T extends MentorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfileDefaultArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MentorCancellationStat model
+   */ 
+  interface MentorCancellationStatFieldRefs {
+    readonly id: FieldRef<"MentorCancellationStat", 'String'>
+    readonly mentorProfileId: FieldRef<"MentorCancellationStat", 'String'>
+    readonly year: FieldRef<"MentorCancellationStat", 'Int'>
+    readonly cancellationCount: FieldRef<"MentorCancellationStat", 'Int'>
+    readonly lastCancelledAt: FieldRef<"MentorCancellationStat", 'DateTime'>
+    readonly createdAt: FieldRef<"MentorCancellationStat", 'DateTime'>
+    readonly updatedAt: FieldRef<"MentorCancellationStat", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MentorCancellationStat findUnique
+   */
+  export type MentorCancellationStatFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorCancellationStat to fetch.
+     */
+    where: MentorCancellationStatWhereUniqueInput
+  }
+
+  /**
+   * MentorCancellationStat findUniqueOrThrow
+   */
+  export type MentorCancellationStatFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorCancellationStat to fetch.
+     */
+    where: MentorCancellationStatWhereUniqueInput
+  }
+
+  /**
+   * MentorCancellationStat findFirst
+   */
+  export type MentorCancellationStatFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorCancellationStat to fetch.
+     */
+    where?: MentorCancellationStatWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorCancellationStats to fetch.
+     */
+    orderBy?: MentorCancellationStatOrderByWithRelationInput | MentorCancellationStatOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorCancellationStats.
+     */
+    cursor?: MentorCancellationStatWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorCancellationStats from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorCancellationStats.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorCancellationStats.
+     */
+    distinct?: MentorCancellationStatScalarFieldEnum | MentorCancellationStatScalarFieldEnum[]
+  }
+
+  /**
+   * MentorCancellationStat findFirstOrThrow
+   */
+  export type MentorCancellationStatFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorCancellationStat to fetch.
+     */
+    where?: MentorCancellationStatWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorCancellationStats to fetch.
+     */
+    orderBy?: MentorCancellationStatOrderByWithRelationInput | MentorCancellationStatOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorCancellationStats.
+     */
+    cursor?: MentorCancellationStatWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorCancellationStats from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorCancellationStats.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorCancellationStats.
+     */
+    distinct?: MentorCancellationStatScalarFieldEnum | MentorCancellationStatScalarFieldEnum[]
+  }
+
+  /**
+   * MentorCancellationStat findMany
+   */
+  export type MentorCancellationStatFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorCancellationStats to fetch.
+     */
+    where?: MentorCancellationStatWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorCancellationStats to fetch.
+     */
+    orderBy?: MentorCancellationStatOrderByWithRelationInput | MentorCancellationStatOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MentorCancellationStats.
+     */
+    cursor?: MentorCancellationStatWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorCancellationStats from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorCancellationStats.
+     */
+    skip?: number
+    distinct?: MentorCancellationStatScalarFieldEnum | MentorCancellationStatScalarFieldEnum[]
+  }
+
+  /**
+   * MentorCancellationStat create
+   */
+  export type MentorCancellationStatCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MentorCancellationStat.
+     */
+    data: XOR<MentorCancellationStatCreateInput, MentorCancellationStatUncheckedCreateInput>
+  }
+
+  /**
+   * MentorCancellationStat createMany
+   */
+  export type MentorCancellationStatCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MentorCancellationStats.
+     */
+    data: MentorCancellationStatCreateManyInput | MentorCancellationStatCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MentorCancellationStat createManyAndReturn
+   */
+  export type MentorCancellationStatCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many MentorCancellationStats.
+     */
+    data: MentorCancellationStatCreateManyInput | MentorCancellationStatCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MentorCancellationStat update
+   */
+  export type MentorCancellationStatUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MentorCancellationStat.
+     */
+    data: XOR<MentorCancellationStatUpdateInput, MentorCancellationStatUncheckedUpdateInput>
+    /**
+     * Choose, which MentorCancellationStat to update.
+     */
+    where: MentorCancellationStatWhereUniqueInput
+  }
+
+  /**
+   * MentorCancellationStat updateMany
+   */
+  export type MentorCancellationStatUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MentorCancellationStats.
+     */
+    data: XOR<MentorCancellationStatUpdateManyMutationInput, MentorCancellationStatUncheckedUpdateManyInput>
+    /**
+     * Filter which MentorCancellationStats to update
+     */
+    where?: MentorCancellationStatWhereInput
+  }
+
+  /**
+   * MentorCancellationStat upsert
+   */
+  export type MentorCancellationStatUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MentorCancellationStat to update in case it exists.
+     */
+    where: MentorCancellationStatWhereUniqueInput
+    /**
+     * In case the MentorCancellationStat found by the `where` argument doesn't exist, create a new MentorCancellationStat with this data.
+     */
+    create: XOR<MentorCancellationStatCreateInput, MentorCancellationStatUncheckedCreateInput>
+    /**
+     * In case the MentorCancellationStat was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MentorCancellationStatUpdateInput, MentorCancellationStatUncheckedUpdateInput>
+  }
+
+  /**
+   * MentorCancellationStat delete
+   */
+  export type MentorCancellationStatDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+    /**
+     * Filter which MentorCancellationStat to delete.
+     */
+    where: MentorCancellationStatWhereUniqueInput
+  }
+
+  /**
+   * MentorCancellationStat deleteMany
+   */
+  export type MentorCancellationStatDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorCancellationStats to delete
+     */
+    where?: MentorCancellationStatWhereInput
+  }
+
+  /**
+   * MentorCancellationStat without action
+   */
+  export type MentorCancellationStatDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorCancellationStat
+     */
+    select?: MentorCancellationStatSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorCancellationStatInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Payout
    */
 
@@ -13802,74 +18612,130 @@ export namespace Prisma {
 
   export type PayoutAvgAggregateOutputType = {
     amount: number | null
+    platformFee: number | null
+    netAmount: number | null
   }
 
   export type PayoutSumAggregateOutputType = {
     amount: number | null
+    platformFee: number | null
+    netAmount: number | null
   }
 
   export type PayoutMinAggregateOutputType = {
     id: string | null
     mentorProfileId: string | null
     amount: number | null
-    transactionId: string | null
+    platformFee: number | null
+    netAmount: number | null
+    status: $Enums.PayoutStatus | null
+    payoutMethod: string | null
+    transactionRef: string | null
+    requestedAt: Date | null
+    approvedAt: Date | null
     processedAt: Date | null
+    failedReason: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type PayoutMaxAggregateOutputType = {
     id: string | null
     mentorProfileId: string | null
     amount: number | null
-    transactionId: string | null
+    platformFee: number | null
+    netAmount: number | null
+    status: $Enums.PayoutStatus | null
+    payoutMethod: string | null
+    transactionRef: string | null
+    requestedAt: Date | null
+    approvedAt: Date | null
     processedAt: Date | null
+    failedReason: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type PayoutCountAggregateOutputType = {
     id: number
     mentorProfileId: number
     amount: number
-    transactionId: number
+    platformFee: number
+    netAmount: number
+    status: number
+    payoutMethod: number
+    transactionRef: number
+    requestedAt: number
+    approvedAt: number
     processedAt: number
+    failedReason: number
     createdAt: number
+    updatedAt: number
     _all: number
   }
 
 
   export type PayoutAvgAggregateInputType = {
     amount?: true
+    platformFee?: true
+    netAmount?: true
   }
 
   export type PayoutSumAggregateInputType = {
     amount?: true
+    platformFee?: true
+    netAmount?: true
   }
 
   export type PayoutMinAggregateInputType = {
     id?: true
     mentorProfileId?: true
     amount?: true
-    transactionId?: true
+    platformFee?: true
+    netAmount?: true
+    status?: true
+    payoutMethod?: true
+    transactionRef?: true
+    requestedAt?: true
+    approvedAt?: true
     processedAt?: true
+    failedReason?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type PayoutMaxAggregateInputType = {
     id?: true
     mentorProfileId?: true
     amount?: true
-    transactionId?: true
+    platformFee?: true
+    netAmount?: true
+    status?: true
+    payoutMethod?: true
+    transactionRef?: true
+    requestedAt?: true
+    approvedAt?: true
     processedAt?: true
+    failedReason?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type PayoutCountAggregateInputType = {
     id?: true
     mentorProfileId?: true
     amount?: true
-    transactionId?: true
+    platformFee?: true
+    netAmount?: true
+    status?: true
+    payoutMethod?: true
+    transactionRef?: true
+    requestedAt?: true
+    approvedAt?: true
     processedAt?: true
+    failedReason?: true
     createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -13963,9 +18829,17 @@ export namespace Prisma {
     id: string
     mentorProfileId: string
     amount: number
-    transactionId: string | null
+    platformFee: number
+    netAmount: number
+    status: $Enums.PayoutStatus
+    payoutMethod: string | null
+    transactionRef: string | null
+    requestedAt: Date
+    approvedAt: Date | null
     processedAt: Date | null
+    failedReason: string | null
     createdAt: Date
+    updatedAt: Date
     _count: PayoutCountAggregateOutputType | null
     _avg: PayoutAvgAggregateOutputType | null
     _sum: PayoutSumAggregateOutputType | null
@@ -13991,9 +18865,17 @@ export namespace Prisma {
     id?: boolean
     mentorProfileId?: boolean
     amount?: boolean
-    transactionId?: boolean
+    platformFee?: boolean
+    netAmount?: boolean
+    status?: boolean
+    payoutMethod?: boolean
+    transactionRef?: boolean
+    requestedAt?: boolean
+    approvedAt?: boolean
     processedAt?: boolean
+    failedReason?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payout"]>
 
@@ -14001,9 +18883,17 @@ export namespace Prisma {
     id?: boolean
     mentorProfileId?: boolean
     amount?: boolean
-    transactionId?: boolean
+    platformFee?: boolean
+    netAmount?: boolean
+    status?: boolean
+    payoutMethod?: boolean
+    transactionRef?: boolean
+    requestedAt?: boolean
+    approvedAt?: boolean
     processedAt?: boolean
+    failedReason?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payout"]>
 
@@ -14011,9 +18901,17 @@ export namespace Prisma {
     id?: boolean
     mentorProfileId?: boolean
     amount?: boolean
-    transactionId?: boolean
+    platformFee?: boolean
+    netAmount?: boolean
+    status?: boolean
+    payoutMethod?: boolean
+    transactionRef?: boolean
+    requestedAt?: boolean
+    approvedAt?: boolean
     processedAt?: boolean
+    failedReason?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }
 
   export type PayoutInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14031,10 +18929,36 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       mentorProfileId: string
+      /**
+       * Gross amount requested
+       */
       amount: number
-      transactionId: string | null
+      /**
+       * Platform fee at time of payout
+       */
+      platformFee: number
+      /**
+       * Net amount after platform fee
+       */
+      netAmount: number
+      status: $Enums.PayoutStatus
+      /**
+       * How the payout was processed (e.g., "bank_transfer", "upi")
+       */
+      payoutMethod: string | null
+      /**
+       * External reference (bank transaction ID, UTR, etc.)
+       */
+      transactionRef: string | null
+      requestedAt: Date
+      approvedAt: Date | null
       processedAt: Date | null
+      /**
+       * Reason if payout failed
+       */
+      failedReason: string | null
       createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["payout"]>
     composites: {}
   }
@@ -14432,9 +19356,17 @@ export namespace Prisma {
     readonly id: FieldRef<"Payout", 'String'>
     readonly mentorProfileId: FieldRef<"Payout", 'String'>
     readonly amount: FieldRef<"Payout", 'Float'>
-    readonly transactionId: FieldRef<"Payout", 'String'>
+    readonly platformFee: FieldRef<"Payout", 'Float'>
+    readonly netAmount: FieldRef<"Payout", 'Float'>
+    readonly status: FieldRef<"Payout", 'PayoutStatus'>
+    readonly payoutMethod: FieldRef<"Payout", 'String'>
+    readonly transactionRef: FieldRef<"Payout", 'String'>
+    readonly requestedAt: FieldRef<"Payout", 'DateTime'>
+    readonly approvedAt: FieldRef<"Payout", 'DateTime'>
     readonly processedAt: FieldRef<"Payout", 'DateTime'>
+    readonly failedReason: FieldRef<"Payout", 'String'>
     readonly createdAt: FieldRef<"Payout", 'DateTime'>
+    readonly updatedAt: FieldRef<"Payout", 'DateTime'>
   }
     
 
@@ -14907,6 +19839,8 @@ export namespace Prisma {
     discussionTopic: 'discussionTopic',
     specificQuestions: 'specificQuestions',
     cancelledReason: 'cancelledReason',
+    cancelledBy: 'cancelledBy',
+    parentBookingId: 'parentBookingId',
     rescheduledFromId: 'rescheduledFromId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -14922,11 +19856,14 @@ export namespace Prisma {
     razorpayPaymentId: 'razorpayPaymentId',
     razorpaySignature: 'razorpaySignature',
     amount: 'amount',
+    platformFee: 'platformFee',
+    mentorAmount: 'mentorAmount',
     currency: 'currency',
     paymentStatus: 'paymentStatus',
     paidAt: 'paidAt',
     refundedAmount: 'refundedAmount',
     refundReason: 'refundReason',
+    razorpayRefundId: 'razorpayRefundId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -14971,13 +19908,83 @@ export namespace Prisma {
   export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
+  export const SessionAttendanceScalarFieldEnum: {
+    id: 'id',
+    bookingId: 'bookingId',
+    mentorJoinedAt: 'mentorJoinedAt',
+    mentorLeftAt: 'mentorLeftAt',
+    menteeJoinedAt: 'menteeJoinedAt',
+    menteeLeftAt: 'menteeLeftAt',
+    mentorDurationSecs: 'mentorDurationSecs',
+    menteeDurationSecs: 'menteeDurationSecs',
+    mentorReconnects: 'mentorReconnects',
+    menteeReconnects: 'menteeReconnects',
+    mentorPresent: 'mentorPresent',
+    menteePresent: 'menteePresent',
+    minimumDurationMet: 'minimumDurationMet',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SessionAttendanceScalarFieldEnum = (typeof SessionAttendanceScalarFieldEnum)[keyof typeof SessionAttendanceScalarFieldEnum]
+
+
+  export const MentorWalletScalarFieldEnum: {
+    id: 'id',
+    mentorProfileId: 'mentorProfileId',
+    pendingBalance: 'pendingBalance',
+    availableBalance: 'availableBalance',
+    withdrawnBalance: 'withdrawnBalance',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MentorWalletScalarFieldEnum = (typeof MentorWalletScalarFieldEnum)[keyof typeof MentorWalletScalarFieldEnum]
+
+
+  export const WalletTransactionScalarFieldEnum: {
+    id: 'id',
+    walletId: 'walletId',
+    bookingId: 'bookingId',
+    type: 'type',
+    amount: 'amount',
+    description: 'description',
+    balanceBefore: 'balanceBefore',
+    balanceAfter: 'balanceAfter',
+    createdAt: 'createdAt'
+  };
+
+  export type WalletTransactionScalarFieldEnum = (typeof WalletTransactionScalarFieldEnum)[keyof typeof WalletTransactionScalarFieldEnum]
+
+
+  export const MentorCancellationStatScalarFieldEnum: {
+    id: 'id',
+    mentorProfileId: 'mentorProfileId',
+    year: 'year',
+    cancellationCount: 'cancellationCount',
+    lastCancelledAt: 'lastCancelledAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MentorCancellationStatScalarFieldEnum = (typeof MentorCancellationStatScalarFieldEnum)[keyof typeof MentorCancellationStatScalarFieldEnum]
+
+
   export const PayoutScalarFieldEnum: {
     id: 'id',
     mentorProfileId: 'mentorProfileId',
     amount: 'amount',
-    transactionId: 'transactionId',
+    platformFee: 'platformFee',
+    netAmount: 'netAmount',
+    status: 'status',
+    payoutMethod: 'payoutMethod',
+    transactionRef: 'transactionRef',
+    requestedAt: 'requestedAt',
+    approvedAt: 'approvedAt',
     processedAt: 'processedAt',
-    createdAt: 'createdAt'
+    failedReason: 'failedReason',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type PayoutScalarFieldEnum = (typeof PayoutScalarFieldEnum)[keyof typeof PayoutScalarFieldEnum]
@@ -15187,6 +20194,34 @@ export namespace Prisma {
    * Reference to a field of type 'PaymentStatus[]'
    */
   export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'WalletTransactionType'
+   */
+  export type EnumWalletTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WalletTransactionType'>
+    
+
+
+  /**
+   * Reference to a field of type 'WalletTransactionType[]'
+   */
+  export type ListEnumWalletTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WalletTransactionType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'PayoutStatus'
+   */
+  export type EnumPayoutStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PayoutStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'PayoutStatus[]'
+   */
+  export type ListEnumPayoutStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PayoutStatus[]'>
     
   /**
    * Deep Input Types
@@ -15445,6 +20480,8 @@ export namespace Prisma {
     reviews?: ReviewListRelationFilter
     feedbacks?: SessionFeedbackListRelationFilter
     payouts?: PayoutListRelationFilter
+    wallet?: XOR<MentorWalletNullableRelationFilter, MentorWalletWhereInput> | null
+    cancellationStat?: XOR<MentorCancellationStatNullableRelationFilter, MentorCancellationStatWhereInput> | null
   }
 
   export type MentorProfileOrderByWithRelationInput = {
@@ -15475,6 +20512,8 @@ export namespace Prisma {
     reviews?: ReviewOrderByRelationAggregateInput
     feedbacks?: SessionFeedbackOrderByRelationAggregateInput
     payouts?: PayoutOrderByRelationAggregateInput
+    wallet?: MentorWalletOrderByWithRelationInput
+    cancellationStat?: MentorCancellationStatOrderByWithRelationInput
   }
 
   export type MentorProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -15508,6 +20547,8 @@ export namespace Prisma {
     reviews?: ReviewListRelationFilter
     feedbacks?: SessionFeedbackListRelationFilter
     payouts?: PayoutListRelationFilter
+    wallet?: XOR<MentorWalletNullableRelationFilter, MentorWalletWhereInput> | null
+    cancellationStat?: XOR<MentorCancellationStatNullableRelationFilter, MentorCancellationStatWhereInput> | null
   }, "id" | "userId" | "username">
 
   export type MentorProfileOrderByWithAggregationInput = {
@@ -15804,6 +20845,8 @@ export namespace Prisma {
     discussionTopic?: StringNullableFilter<"Booking"> | string | null
     specificQuestions?: StringNullableFilter<"Booking"> | string | null
     cancelledReason?: StringNullableFilter<"Booking"> | string | null
+    cancelledBy?: StringNullableFilter<"Booking"> | string | null
+    parentBookingId?: StringNullableFilter<"Booking"> | string | null
     rescheduledFromId?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     updatedAt?: DateTimeFilter<"Booking"> | Date | string
@@ -15813,6 +20856,9 @@ export namespace Prisma {
     payment?: XOR<PaymentNullableRelationFilter, PaymentWhereInput> | null
     review?: XOR<ReviewNullableRelationFilter, ReviewWhereInput> | null
     feedback?: XOR<SessionFeedbackNullableRelationFilter, SessionFeedbackWhereInput> | null
+    parentBooking?: XOR<BookingNullableRelationFilter, BookingWhereInput> | null
+    rescheduledBookings?: BookingListRelationFilter
+    attendance?: XOR<SessionAttendanceNullableRelationFilter, SessionAttendanceWhereInput> | null
   }
 
   export type BookingOrderByWithRelationInput = {
@@ -15832,6 +20878,8 @@ export namespace Prisma {
     discussionTopic?: SortOrderInput | SortOrder
     specificQuestions?: SortOrderInput | SortOrder
     cancelledReason?: SortOrderInput | SortOrder
+    cancelledBy?: SortOrderInput | SortOrder
+    parentBookingId?: SortOrderInput | SortOrder
     rescheduledFromId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15841,6 +20889,9 @@ export namespace Prisma {
     payment?: PaymentOrderByWithRelationInput
     review?: ReviewOrderByWithRelationInput
     feedback?: SessionFeedbackOrderByWithRelationInput
+    parentBooking?: BookingOrderByWithRelationInput
+    rescheduledBookings?: BookingOrderByRelationAggregateInput
+    attendance?: SessionAttendanceOrderByWithRelationInput
   }
 
   export type BookingWhereUniqueInput = Prisma.AtLeast<{
@@ -15863,6 +20914,8 @@ export namespace Prisma {
     discussionTopic?: StringNullableFilter<"Booking"> | string | null
     specificQuestions?: StringNullableFilter<"Booking"> | string | null
     cancelledReason?: StringNullableFilter<"Booking"> | string | null
+    cancelledBy?: StringNullableFilter<"Booking"> | string | null
+    parentBookingId?: StringNullableFilter<"Booking"> | string | null
     rescheduledFromId?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     updatedAt?: DateTimeFilter<"Booking"> | Date | string
@@ -15872,6 +20925,9 @@ export namespace Prisma {
     payment?: XOR<PaymentNullableRelationFilter, PaymentWhereInput> | null
     review?: XOR<ReviewNullableRelationFilter, ReviewWhereInput> | null
     feedback?: XOR<SessionFeedbackNullableRelationFilter, SessionFeedbackWhereInput> | null
+    parentBooking?: XOR<BookingNullableRelationFilter, BookingWhereInput> | null
+    rescheduledBookings?: BookingListRelationFilter
+    attendance?: XOR<SessionAttendanceNullableRelationFilter, SessionAttendanceWhereInput> | null
   }, "id">
 
   export type BookingOrderByWithAggregationInput = {
@@ -15891,6 +20947,8 @@ export namespace Prisma {
     discussionTopic?: SortOrderInput | SortOrder
     specificQuestions?: SortOrderInput | SortOrder
     cancelledReason?: SortOrderInput | SortOrder
+    cancelledBy?: SortOrderInput | SortOrder
+    parentBookingId?: SortOrderInput | SortOrder
     rescheduledFromId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15919,6 +20977,8 @@ export namespace Prisma {
     discussionTopic?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     specificQuestions?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     cancelledReason?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    cancelledBy?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    parentBookingId?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     rescheduledFromId?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
@@ -15934,11 +20994,14 @@ export namespace Prisma {
     razorpayPaymentId?: StringNullableFilter<"Payment"> | string | null
     razorpaySignature?: StringNullableFilter<"Payment"> | string | null
     amount?: FloatFilter<"Payment"> | number
+    platformFee?: FloatFilter<"Payment"> | number
+    mentorAmount?: FloatFilter<"Payment"> | number
     currency?: StringFilter<"Payment"> | string
     paymentStatus?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     paidAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     refundedAmount?: FloatNullableFilter<"Payment"> | number | null
     refundReason?: StringNullableFilter<"Payment"> | string | null
+    razorpayRefundId?: StringNullableFilter<"Payment"> | string | null
     createdAt?: DateTimeFilter<"Payment"> | Date | string
     updatedAt?: DateTimeFilter<"Payment"> | Date | string
     booking?: XOR<BookingRelationFilter, BookingWhereInput>
@@ -15952,11 +21015,14 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrderInput | SortOrder
     razorpaySignature?: SortOrderInput | SortOrder
     amount?: SortOrder
+    platformFee?: SortOrder
+    mentorAmount?: SortOrder
     currency?: SortOrder
     paymentStatus?: SortOrder
     paidAt?: SortOrderInput | SortOrder
     refundedAmount?: SortOrderInput | SortOrder
     refundReason?: SortOrderInput | SortOrder
+    razorpayRefundId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     booking?: BookingOrderByWithRelationInput
@@ -15973,11 +21039,14 @@ export namespace Prisma {
     razorpayPaymentId?: StringNullableFilter<"Payment"> | string | null
     razorpaySignature?: StringNullableFilter<"Payment"> | string | null
     amount?: FloatFilter<"Payment"> | number
+    platformFee?: FloatFilter<"Payment"> | number
+    mentorAmount?: FloatFilter<"Payment"> | number
     currency?: StringFilter<"Payment"> | string
     paymentStatus?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     paidAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     refundedAmount?: FloatNullableFilter<"Payment"> | number | null
     refundReason?: StringNullableFilter<"Payment"> | string | null
+    razorpayRefundId?: StringNullableFilter<"Payment"> | string | null
     createdAt?: DateTimeFilter<"Payment"> | Date | string
     updatedAt?: DateTimeFilter<"Payment"> | Date | string
     booking?: XOR<BookingRelationFilter, BookingWhereInput>
@@ -15991,11 +21060,14 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrderInput | SortOrder
     razorpaySignature?: SortOrderInput | SortOrder
     amount?: SortOrder
+    platformFee?: SortOrder
+    mentorAmount?: SortOrder
     currency?: SortOrder
     paymentStatus?: SortOrder
     paidAt?: SortOrderInput | SortOrder
     refundedAmount?: SortOrderInput | SortOrder
     refundReason?: SortOrderInput | SortOrder
+    razorpayRefundId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: PaymentCountOrderByAggregateInput
@@ -16015,11 +21087,14 @@ export namespace Prisma {
     razorpayPaymentId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     razorpaySignature?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     amount?: FloatWithAggregatesFilter<"Payment"> | number
+    platformFee?: FloatWithAggregatesFilter<"Payment"> | number
+    mentorAmount?: FloatWithAggregatesFilter<"Payment"> | number
     currency?: StringWithAggregatesFilter<"Payment"> | string
     paymentStatus?: EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
     paidAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
     refundedAmount?: FloatNullableWithAggregatesFilter<"Payment"> | number | null
     refundReason?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    razorpayRefundId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
   }
@@ -16220,6 +21295,327 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Review"> | Date | string
   }
 
+  export type SessionAttendanceWhereInput = {
+    AND?: SessionAttendanceWhereInput | SessionAttendanceWhereInput[]
+    OR?: SessionAttendanceWhereInput[]
+    NOT?: SessionAttendanceWhereInput | SessionAttendanceWhereInput[]
+    id?: StringFilter<"SessionAttendance"> | string
+    bookingId?: StringFilter<"SessionAttendance"> | string
+    mentorJoinedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    mentorLeftAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    menteeJoinedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    menteeLeftAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    mentorDurationSecs?: IntFilter<"SessionAttendance"> | number
+    menteeDurationSecs?: IntFilter<"SessionAttendance"> | number
+    mentorReconnects?: IntFilter<"SessionAttendance"> | number
+    menteeReconnects?: IntFilter<"SessionAttendance"> | number
+    mentorPresent?: BoolFilter<"SessionAttendance"> | boolean
+    menteePresent?: BoolFilter<"SessionAttendance"> | boolean
+    minimumDurationMet?: BoolFilter<"SessionAttendance"> | boolean
+    createdAt?: DateTimeFilter<"SessionAttendance"> | Date | string
+    updatedAt?: DateTimeFilter<"SessionAttendance"> | Date | string
+    booking?: XOR<BookingRelationFilter, BookingWhereInput>
+  }
+
+  export type SessionAttendanceOrderByWithRelationInput = {
+    id?: SortOrder
+    bookingId?: SortOrder
+    mentorJoinedAt?: SortOrderInput | SortOrder
+    mentorLeftAt?: SortOrderInput | SortOrder
+    menteeJoinedAt?: SortOrderInput | SortOrder
+    menteeLeftAt?: SortOrderInput | SortOrder
+    mentorDurationSecs?: SortOrder
+    menteeDurationSecs?: SortOrder
+    mentorReconnects?: SortOrder
+    menteeReconnects?: SortOrder
+    mentorPresent?: SortOrder
+    menteePresent?: SortOrder
+    minimumDurationMet?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    booking?: BookingOrderByWithRelationInput
+  }
+
+  export type SessionAttendanceWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    bookingId?: string
+    AND?: SessionAttendanceWhereInput | SessionAttendanceWhereInput[]
+    OR?: SessionAttendanceWhereInput[]
+    NOT?: SessionAttendanceWhereInput | SessionAttendanceWhereInput[]
+    mentorJoinedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    mentorLeftAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    menteeJoinedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    menteeLeftAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    mentorDurationSecs?: IntFilter<"SessionAttendance"> | number
+    menteeDurationSecs?: IntFilter<"SessionAttendance"> | number
+    mentorReconnects?: IntFilter<"SessionAttendance"> | number
+    menteeReconnects?: IntFilter<"SessionAttendance"> | number
+    mentorPresent?: BoolFilter<"SessionAttendance"> | boolean
+    menteePresent?: BoolFilter<"SessionAttendance"> | boolean
+    minimumDurationMet?: BoolFilter<"SessionAttendance"> | boolean
+    createdAt?: DateTimeFilter<"SessionAttendance"> | Date | string
+    updatedAt?: DateTimeFilter<"SessionAttendance"> | Date | string
+    booking?: XOR<BookingRelationFilter, BookingWhereInput>
+  }, "id" | "bookingId">
+
+  export type SessionAttendanceOrderByWithAggregationInput = {
+    id?: SortOrder
+    bookingId?: SortOrder
+    mentorJoinedAt?: SortOrderInput | SortOrder
+    mentorLeftAt?: SortOrderInput | SortOrder
+    menteeJoinedAt?: SortOrderInput | SortOrder
+    menteeLeftAt?: SortOrderInput | SortOrder
+    mentorDurationSecs?: SortOrder
+    menteeDurationSecs?: SortOrder
+    mentorReconnects?: SortOrder
+    menteeReconnects?: SortOrder
+    mentorPresent?: SortOrder
+    menteePresent?: SortOrder
+    minimumDurationMet?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SessionAttendanceCountOrderByAggregateInput
+    _avg?: SessionAttendanceAvgOrderByAggregateInput
+    _max?: SessionAttendanceMaxOrderByAggregateInput
+    _min?: SessionAttendanceMinOrderByAggregateInput
+    _sum?: SessionAttendanceSumOrderByAggregateInput
+  }
+
+  export type SessionAttendanceScalarWhereWithAggregatesInput = {
+    AND?: SessionAttendanceScalarWhereWithAggregatesInput | SessionAttendanceScalarWhereWithAggregatesInput[]
+    OR?: SessionAttendanceScalarWhereWithAggregatesInput[]
+    NOT?: SessionAttendanceScalarWhereWithAggregatesInput | SessionAttendanceScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SessionAttendance"> | string
+    bookingId?: StringWithAggregatesFilter<"SessionAttendance"> | string
+    mentorJoinedAt?: DateTimeNullableWithAggregatesFilter<"SessionAttendance"> | Date | string | null
+    mentorLeftAt?: DateTimeNullableWithAggregatesFilter<"SessionAttendance"> | Date | string | null
+    menteeJoinedAt?: DateTimeNullableWithAggregatesFilter<"SessionAttendance"> | Date | string | null
+    menteeLeftAt?: DateTimeNullableWithAggregatesFilter<"SessionAttendance"> | Date | string | null
+    mentorDurationSecs?: IntWithAggregatesFilter<"SessionAttendance"> | number
+    menteeDurationSecs?: IntWithAggregatesFilter<"SessionAttendance"> | number
+    mentorReconnects?: IntWithAggregatesFilter<"SessionAttendance"> | number
+    menteeReconnects?: IntWithAggregatesFilter<"SessionAttendance"> | number
+    mentorPresent?: BoolWithAggregatesFilter<"SessionAttendance"> | boolean
+    menteePresent?: BoolWithAggregatesFilter<"SessionAttendance"> | boolean
+    minimumDurationMet?: BoolWithAggregatesFilter<"SessionAttendance"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"SessionAttendance"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SessionAttendance"> | Date | string
+  }
+
+  export type MentorWalletWhereInput = {
+    AND?: MentorWalletWhereInput | MentorWalletWhereInput[]
+    OR?: MentorWalletWhereInput[]
+    NOT?: MentorWalletWhereInput | MentorWalletWhereInput[]
+    id?: StringFilter<"MentorWallet"> | string
+    mentorProfileId?: StringFilter<"MentorWallet"> | string
+    pendingBalance?: FloatFilter<"MentorWallet"> | number
+    availableBalance?: FloatFilter<"MentorWallet"> | number
+    withdrawnBalance?: FloatFilter<"MentorWallet"> | number
+    createdAt?: DateTimeFilter<"MentorWallet"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorWallet"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+    transactions?: WalletTransactionListRelationFilter
+  }
+
+  export type MentorWalletOrderByWithRelationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    pendingBalance?: SortOrder
+    availableBalance?: SortOrder
+    withdrawnBalance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    mentorProfile?: MentorProfileOrderByWithRelationInput
+    transactions?: WalletTransactionOrderByRelationAggregateInput
+  }
+
+  export type MentorWalletWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    mentorProfileId?: string
+    AND?: MentorWalletWhereInput | MentorWalletWhereInput[]
+    OR?: MentorWalletWhereInput[]
+    NOT?: MentorWalletWhereInput | MentorWalletWhereInput[]
+    pendingBalance?: FloatFilter<"MentorWallet"> | number
+    availableBalance?: FloatFilter<"MentorWallet"> | number
+    withdrawnBalance?: FloatFilter<"MentorWallet"> | number
+    createdAt?: DateTimeFilter<"MentorWallet"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorWallet"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+    transactions?: WalletTransactionListRelationFilter
+  }, "id" | "mentorProfileId">
+
+  export type MentorWalletOrderByWithAggregationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    pendingBalance?: SortOrder
+    availableBalance?: SortOrder
+    withdrawnBalance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MentorWalletCountOrderByAggregateInput
+    _avg?: MentorWalletAvgOrderByAggregateInput
+    _max?: MentorWalletMaxOrderByAggregateInput
+    _min?: MentorWalletMinOrderByAggregateInput
+    _sum?: MentorWalletSumOrderByAggregateInput
+  }
+
+  export type MentorWalletScalarWhereWithAggregatesInput = {
+    AND?: MentorWalletScalarWhereWithAggregatesInput | MentorWalletScalarWhereWithAggregatesInput[]
+    OR?: MentorWalletScalarWhereWithAggregatesInput[]
+    NOT?: MentorWalletScalarWhereWithAggregatesInput | MentorWalletScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MentorWallet"> | string
+    mentorProfileId?: StringWithAggregatesFilter<"MentorWallet"> | string
+    pendingBalance?: FloatWithAggregatesFilter<"MentorWallet"> | number
+    availableBalance?: FloatWithAggregatesFilter<"MentorWallet"> | number
+    withdrawnBalance?: FloatWithAggregatesFilter<"MentorWallet"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"MentorWallet"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MentorWallet"> | Date | string
+  }
+
+  export type WalletTransactionWhereInput = {
+    AND?: WalletTransactionWhereInput | WalletTransactionWhereInput[]
+    OR?: WalletTransactionWhereInput[]
+    NOT?: WalletTransactionWhereInput | WalletTransactionWhereInput[]
+    id?: StringFilter<"WalletTransaction"> | string
+    walletId?: StringFilter<"WalletTransaction"> | string
+    bookingId?: StringNullableFilter<"WalletTransaction"> | string | null
+    type?: EnumWalletTransactionTypeFilter<"WalletTransaction"> | $Enums.WalletTransactionType
+    amount?: FloatFilter<"WalletTransaction"> | number
+    description?: StringNullableFilter<"WalletTransaction"> | string | null
+    balanceBefore?: FloatFilter<"WalletTransaction"> | number
+    balanceAfter?: FloatFilter<"WalletTransaction"> | number
+    createdAt?: DateTimeFilter<"WalletTransaction"> | Date | string
+    wallet?: XOR<MentorWalletRelationFilter, MentorWalletWhereInput>
+  }
+
+  export type WalletTransactionOrderByWithRelationInput = {
+    id?: SortOrder
+    walletId?: SortOrder
+    bookingId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    description?: SortOrderInput | SortOrder
+    balanceBefore?: SortOrder
+    balanceAfter?: SortOrder
+    createdAt?: SortOrder
+    wallet?: MentorWalletOrderByWithRelationInput
+  }
+
+  export type WalletTransactionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: WalletTransactionWhereInput | WalletTransactionWhereInput[]
+    OR?: WalletTransactionWhereInput[]
+    NOT?: WalletTransactionWhereInput | WalletTransactionWhereInput[]
+    walletId?: StringFilter<"WalletTransaction"> | string
+    bookingId?: StringNullableFilter<"WalletTransaction"> | string | null
+    type?: EnumWalletTransactionTypeFilter<"WalletTransaction"> | $Enums.WalletTransactionType
+    amount?: FloatFilter<"WalletTransaction"> | number
+    description?: StringNullableFilter<"WalletTransaction"> | string | null
+    balanceBefore?: FloatFilter<"WalletTransaction"> | number
+    balanceAfter?: FloatFilter<"WalletTransaction"> | number
+    createdAt?: DateTimeFilter<"WalletTransaction"> | Date | string
+    wallet?: XOR<MentorWalletRelationFilter, MentorWalletWhereInput>
+  }, "id">
+
+  export type WalletTransactionOrderByWithAggregationInput = {
+    id?: SortOrder
+    walletId?: SortOrder
+    bookingId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    description?: SortOrderInput | SortOrder
+    balanceBefore?: SortOrder
+    balanceAfter?: SortOrder
+    createdAt?: SortOrder
+    _count?: WalletTransactionCountOrderByAggregateInput
+    _avg?: WalletTransactionAvgOrderByAggregateInput
+    _max?: WalletTransactionMaxOrderByAggregateInput
+    _min?: WalletTransactionMinOrderByAggregateInput
+    _sum?: WalletTransactionSumOrderByAggregateInput
+  }
+
+  export type WalletTransactionScalarWhereWithAggregatesInput = {
+    AND?: WalletTransactionScalarWhereWithAggregatesInput | WalletTransactionScalarWhereWithAggregatesInput[]
+    OR?: WalletTransactionScalarWhereWithAggregatesInput[]
+    NOT?: WalletTransactionScalarWhereWithAggregatesInput | WalletTransactionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"WalletTransaction"> | string
+    walletId?: StringWithAggregatesFilter<"WalletTransaction"> | string
+    bookingId?: StringNullableWithAggregatesFilter<"WalletTransaction"> | string | null
+    type?: EnumWalletTransactionTypeWithAggregatesFilter<"WalletTransaction"> | $Enums.WalletTransactionType
+    amount?: FloatWithAggregatesFilter<"WalletTransaction"> | number
+    description?: StringNullableWithAggregatesFilter<"WalletTransaction"> | string | null
+    balanceBefore?: FloatWithAggregatesFilter<"WalletTransaction"> | number
+    balanceAfter?: FloatWithAggregatesFilter<"WalletTransaction"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"WalletTransaction"> | Date | string
+  }
+
+  export type MentorCancellationStatWhereInput = {
+    AND?: MentorCancellationStatWhereInput | MentorCancellationStatWhereInput[]
+    OR?: MentorCancellationStatWhereInput[]
+    NOT?: MentorCancellationStatWhereInput | MentorCancellationStatWhereInput[]
+    id?: StringFilter<"MentorCancellationStat"> | string
+    mentorProfileId?: StringFilter<"MentorCancellationStat"> | string
+    year?: IntFilter<"MentorCancellationStat"> | number
+    cancellationCount?: IntFilter<"MentorCancellationStat"> | number
+    lastCancelledAt?: DateTimeNullableFilter<"MentorCancellationStat"> | Date | string | null
+    createdAt?: DateTimeFilter<"MentorCancellationStat"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorCancellationStat"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+  }
+
+  export type MentorCancellationStatOrderByWithRelationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    year?: SortOrder
+    cancellationCount?: SortOrder
+    lastCancelledAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    mentorProfile?: MentorProfileOrderByWithRelationInput
+  }
+
+  export type MentorCancellationStatWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    mentorProfileId?: string
+    AND?: MentorCancellationStatWhereInput | MentorCancellationStatWhereInput[]
+    OR?: MentorCancellationStatWhereInput[]
+    NOT?: MentorCancellationStatWhereInput | MentorCancellationStatWhereInput[]
+    year?: IntFilter<"MentorCancellationStat"> | number
+    cancellationCount?: IntFilter<"MentorCancellationStat"> | number
+    lastCancelledAt?: DateTimeNullableFilter<"MentorCancellationStat"> | Date | string | null
+    createdAt?: DateTimeFilter<"MentorCancellationStat"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorCancellationStat"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+  }, "id" | "mentorProfileId">
+
+  export type MentorCancellationStatOrderByWithAggregationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    year?: SortOrder
+    cancellationCount?: SortOrder
+    lastCancelledAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MentorCancellationStatCountOrderByAggregateInput
+    _avg?: MentorCancellationStatAvgOrderByAggregateInput
+    _max?: MentorCancellationStatMaxOrderByAggregateInput
+    _min?: MentorCancellationStatMinOrderByAggregateInput
+    _sum?: MentorCancellationStatSumOrderByAggregateInput
+  }
+
+  export type MentorCancellationStatScalarWhereWithAggregatesInput = {
+    AND?: MentorCancellationStatScalarWhereWithAggregatesInput | MentorCancellationStatScalarWhereWithAggregatesInput[]
+    OR?: MentorCancellationStatScalarWhereWithAggregatesInput[]
+    NOT?: MentorCancellationStatScalarWhereWithAggregatesInput | MentorCancellationStatScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MentorCancellationStat"> | string
+    mentorProfileId?: StringWithAggregatesFilter<"MentorCancellationStat"> | string
+    year?: IntWithAggregatesFilter<"MentorCancellationStat"> | number
+    cancellationCount?: IntWithAggregatesFilter<"MentorCancellationStat"> | number
+    lastCancelledAt?: DateTimeNullableWithAggregatesFilter<"MentorCancellationStat"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MentorCancellationStat"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MentorCancellationStat"> | Date | string
+  }
+
   export type PayoutWhereInput = {
     AND?: PayoutWhereInput | PayoutWhereInput[]
     OR?: PayoutWhereInput[]
@@ -16227,9 +21623,17 @@ export namespace Prisma {
     id?: StringFilter<"Payout"> | string
     mentorProfileId?: StringFilter<"Payout"> | string
     amount?: FloatFilter<"Payout"> | number
-    transactionId?: StringNullableFilter<"Payout"> | string | null
+    platformFee?: FloatFilter<"Payout"> | number
+    netAmount?: FloatFilter<"Payout"> | number
+    status?: EnumPayoutStatusFilter<"Payout"> | $Enums.PayoutStatus
+    payoutMethod?: StringNullableFilter<"Payout"> | string | null
+    transactionRef?: StringNullableFilter<"Payout"> | string | null
+    requestedAt?: DateTimeFilter<"Payout"> | Date | string
+    approvedAt?: DateTimeNullableFilter<"Payout"> | Date | string | null
     processedAt?: DateTimeNullableFilter<"Payout"> | Date | string | null
+    failedReason?: StringNullableFilter<"Payout"> | string | null
     createdAt?: DateTimeFilter<"Payout"> | Date | string
+    updatedAt?: DateTimeFilter<"Payout"> | Date | string
     mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
   }
 
@@ -16237,9 +21641,17 @@ export namespace Prisma {
     id?: SortOrder
     mentorProfileId?: SortOrder
     amount?: SortOrder
-    transactionId?: SortOrderInput | SortOrder
+    platformFee?: SortOrder
+    netAmount?: SortOrder
+    status?: SortOrder
+    payoutMethod?: SortOrderInput | SortOrder
+    transactionRef?: SortOrderInput | SortOrder
+    requestedAt?: SortOrder
+    approvedAt?: SortOrderInput | SortOrder
     processedAt?: SortOrderInput | SortOrder
+    failedReason?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     mentorProfile?: MentorProfileOrderByWithRelationInput
   }
 
@@ -16250,9 +21662,17 @@ export namespace Prisma {
     NOT?: PayoutWhereInput | PayoutWhereInput[]
     mentorProfileId?: StringFilter<"Payout"> | string
     amount?: FloatFilter<"Payout"> | number
-    transactionId?: StringNullableFilter<"Payout"> | string | null
+    platformFee?: FloatFilter<"Payout"> | number
+    netAmount?: FloatFilter<"Payout"> | number
+    status?: EnumPayoutStatusFilter<"Payout"> | $Enums.PayoutStatus
+    payoutMethod?: StringNullableFilter<"Payout"> | string | null
+    transactionRef?: StringNullableFilter<"Payout"> | string | null
+    requestedAt?: DateTimeFilter<"Payout"> | Date | string
+    approvedAt?: DateTimeNullableFilter<"Payout"> | Date | string | null
     processedAt?: DateTimeNullableFilter<"Payout"> | Date | string | null
+    failedReason?: StringNullableFilter<"Payout"> | string | null
     createdAt?: DateTimeFilter<"Payout"> | Date | string
+    updatedAt?: DateTimeFilter<"Payout"> | Date | string
     mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
   }, "id">
 
@@ -16260,9 +21680,17 @@ export namespace Prisma {
     id?: SortOrder
     mentorProfileId?: SortOrder
     amount?: SortOrder
-    transactionId?: SortOrderInput | SortOrder
+    platformFee?: SortOrder
+    netAmount?: SortOrder
+    status?: SortOrder
+    payoutMethod?: SortOrderInput | SortOrder
+    transactionRef?: SortOrderInput | SortOrder
+    requestedAt?: SortOrder
+    approvedAt?: SortOrderInput | SortOrder
     processedAt?: SortOrderInput | SortOrder
+    failedReason?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: PayoutCountOrderByAggregateInput
     _avg?: PayoutAvgOrderByAggregateInput
     _max?: PayoutMaxOrderByAggregateInput
@@ -16277,9 +21705,17 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Payout"> | string
     mentorProfileId?: StringWithAggregatesFilter<"Payout"> | string
     amount?: FloatWithAggregatesFilter<"Payout"> | number
-    transactionId?: StringNullableWithAggregatesFilter<"Payout"> | string | null
+    platformFee?: FloatWithAggregatesFilter<"Payout"> | number
+    netAmount?: FloatWithAggregatesFilter<"Payout"> | number
+    status?: EnumPayoutStatusWithAggregatesFilter<"Payout"> | $Enums.PayoutStatus
+    payoutMethod?: StringNullableWithAggregatesFilter<"Payout"> | string | null
+    transactionRef?: StringNullableWithAggregatesFilter<"Payout"> | string | null
+    requestedAt?: DateTimeWithAggregatesFilter<"Payout"> | Date | string
+    approvedAt?: DateTimeNullableWithAggregatesFilter<"Payout"> | Date | string | null
     processedAt?: DateTimeNullableWithAggregatesFilter<"Payout"> | Date | string | null
+    failedReason?: StringNullableWithAggregatesFilter<"Payout"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Payout"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Payout"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -16576,6 +22012,8 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateInput = {
@@ -16605,6 +22043,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileUpdateInput = {
@@ -16634,6 +22074,8 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateInput = {
@@ -16663,6 +22105,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileCreateManyInput = {
@@ -16979,6 +22423,7 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16988,6 +22433,9 @@ export namespace Prisma {
     payment?: PaymentCreateNestedOneWithoutBookingInput
     review?: ReviewCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackCreateNestedOneWithoutBookingInput
+    parentBooking?: BookingCreateNestedOneWithoutRescheduledBookingsInput
+    rescheduledBookings?: BookingCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceCreateNestedOneWithoutBookingInput
   }
 
   export type BookingUncheckedCreateInput = {
@@ -17007,12 +22455,16 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     review?: ReviewUncheckedCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackUncheckedCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingUncheckedCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput
   }
 
   export type BookingUpdateInput = {
@@ -17029,6 +22481,7 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17038,6 +22491,9 @@ export namespace Prisma {
     payment?: PaymentUpdateOneWithoutBookingNestedInput
     review?: ReviewUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUpdateOneWithoutBookingNestedInput
+    parentBooking?: BookingUpdateOneWithoutRescheduledBookingsNestedInput
+    rescheduledBookings?: BookingUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateInput = {
@@ -17057,12 +22513,16 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     review?: ReviewUncheckedUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUncheckedUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUncheckedUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingCreateManyInput = {
@@ -17082,6 +22542,8 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17101,6 +22563,7 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17123,6 +22586,8 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17134,11 +22599,14 @@ export namespace Prisma {
     razorpayPaymentId?: string | null
     razorpaySignature?: string | null
     amount: number
+    platformFee?: number
+    mentorAmount?: number
     currency?: string
     paymentStatus?: $Enums.PaymentStatus
     paidAt?: Date | string | null
     refundedAmount?: number | null
     refundReason?: string | null
+    razorpayRefundId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     booking: BookingCreateNestedOneWithoutPaymentInput
@@ -17152,11 +22620,14 @@ export namespace Prisma {
     razorpayPaymentId?: string | null
     razorpaySignature?: string | null
     amount: number
+    platformFee?: number
+    mentorAmount?: number
     currency?: string
     paymentStatus?: $Enums.PaymentStatus
     paidAt?: Date | string | null
     refundedAmount?: number | null
     refundReason?: string | null
+    razorpayRefundId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     invoice?: InvoiceUncheckedCreateNestedOneWithoutPaymentInput
@@ -17168,11 +22639,14 @@ export namespace Prisma {
     razorpayPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     razorpaySignature?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    mentorAmount?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refundedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     refundReason?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpayRefundId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     booking?: BookingUpdateOneRequiredWithoutPaymentNestedInput
@@ -17186,11 +22660,14 @@ export namespace Prisma {
     razorpayPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     razorpaySignature?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    mentorAmount?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refundedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     refundReason?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpayRefundId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     invoice?: InvoiceUncheckedUpdateOneWithoutPaymentNestedInput
@@ -17203,11 +22680,14 @@ export namespace Prisma {
     razorpayPaymentId?: string | null
     razorpaySignature?: string | null
     amount: number
+    platformFee?: number
+    mentorAmount?: number
     currency?: string
     paymentStatus?: $Enums.PaymentStatus
     paidAt?: Date | string | null
     refundedAmount?: number | null
     refundReason?: string | null
+    razorpayRefundId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -17218,11 +22698,14 @@ export namespace Prisma {
     razorpayPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     razorpaySignature?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    mentorAmount?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refundedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     refundReason?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpayRefundId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17234,11 +22717,14 @@ export namespace Prisma {
     razorpayPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     razorpaySignature?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    mentorAmount?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refundedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     refundReason?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpayRefundId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17433,12 +22919,370 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SessionAttendanceCreateInput = {
+    id?: string
+    mentorJoinedAt?: Date | string | null
+    mentorLeftAt?: Date | string | null
+    menteeJoinedAt?: Date | string | null
+    menteeLeftAt?: Date | string | null
+    mentorDurationSecs?: number
+    menteeDurationSecs?: number
+    mentorReconnects?: number
+    menteeReconnects?: number
+    mentorPresent?: boolean
+    menteePresent?: boolean
+    minimumDurationMet?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    booking: BookingCreateNestedOneWithoutAttendanceInput
+  }
+
+  export type SessionAttendanceUncheckedCreateInput = {
+    id?: string
+    bookingId: string
+    mentorJoinedAt?: Date | string | null
+    mentorLeftAt?: Date | string | null
+    menteeJoinedAt?: Date | string | null
+    menteeLeftAt?: Date | string | null
+    mentorDurationSecs?: number
+    menteeDurationSecs?: number
+    mentorReconnects?: number
+    menteeReconnects?: number
+    mentorPresent?: boolean
+    menteePresent?: boolean
+    minimumDurationMet?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SessionAttendanceUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorDurationSecs?: IntFieldUpdateOperationsInput | number
+    menteeDurationSecs?: IntFieldUpdateOperationsInput | number
+    mentorReconnects?: IntFieldUpdateOperationsInput | number
+    menteeReconnects?: IntFieldUpdateOperationsInput | number
+    mentorPresent?: BoolFieldUpdateOperationsInput | boolean
+    menteePresent?: BoolFieldUpdateOperationsInput | boolean
+    minimumDurationMet?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    booking?: BookingUpdateOneRequiredWithoutAttendanceNestedInput
+  }
+
+  export type SessionAttendanceUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingId?: StringFieldUpdateOperationsInput | string
+    mentorJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorDurationSecs?: IntFieldUpdateOperationsInput | number
+    menteeDurationSecs?: IntFieldUpdateOperationsInput | number
+    mentorReconnects?: IntFieldUpdateOperationsInput | number
+    menteeReconnects?: IntFieldUpdateOperationsInput | number
+    mentorPresent?: BoolFieldUpdateOperationsInput | boolean
+    menteePresent?: BoolFieldUpdateOperationsInput | boolean
+    minimumDurationMet?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionAttendanceCreateManyInput = {
+    id?: string
+    bookingId: string
+    mentorJoinedAt?: Date | string | null
+    mentorLeftAt?: Date | string | null
+    menteeJoinedAt?: Date | string | null
+    menteeLeftAt?: Date | string | null
+    mentorDurationSecs?: number
+    menteeDurationSecs?: number
+    mentorReconnects?: number
+    menteeReconnects?: number
+    mentorPresent?: boolean
+    menteePresent?: boolean
+    minimumDurationMet?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SessionAttendanceUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorDurationSecs?: IntFieldUpdateOperationsInput | number
+    menteeDurationSecs?: IntFieldUpdateOperationsInput | number
+    mentorReconnects?: IntFieldUpdateOperationsInput | number
+    menteeReconnects?: IntFieldUpdateOperationsInput | number
+    mentorPresent?: BoolFieldUpdateOperationsInput | boolean
+    menteePresent?: BoolFieldUpdateOperationsInput | boolean
+    minimumDurationMet?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionAttendanceUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingId?: StringFieldUpdateOperationsInput | string
+    mentorJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorDurationSecs?: IntFieldUpdateOperationsInput | number
+    menteeDurationSecs?: IntFieldUpdateOperationsInput | number
+    mentorReconnects?: IntFieldUpdateOperationsInput | number
+    menteeReconnects?: IntFieldUpdateOperationsInput | number
+    mentorPresent?: BoolFieldUpdateOperationsInput | boolean
+    menteePresent?: BoolFieldUpdateOperationsInput | boolean
+    minimumDurationMet?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorWalletCreateInput = {
+    id?: string
+    pendingBalance?: number
+    availableBalance?: number
+    withdrawnBalance?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorProfile: MentorProfileCreateNestedOneWithoutWalletInput
+    transactions?: WalletTransactionCreateNestedManyWithoutWalletInput
+  }
+
+  export type MentorWalletUncheckedCreateInput = {
+    id?: string
+    mentorProfileId: string
+    pendingBalance?: number
+    availableBalance?: number
+    withdrawnBalance?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactions?: WalletTransactionUncheckedCreateNestedManyWithoutWalletInput
+  }
+
+  export type MentorWalletUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
+    availableBalance?: FloatFieldUpdateOperationsInput | number
+    withdrawnBalance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutWalletNestedInput
+    transactions?: WalletTransactionUpdateManyWithoutWalletNestedInput
+  }
+
+  export type MentorWalletUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
+    availableBalance?: FloatFieldUpdateOperationsInput | number
+    withdrawnBalance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: WalletTransactionUncheckedUpdateManyWithoutWalletNestedInput
+  }
+
+  export type MentorWalletCreateManyInput = {
+    id?: string
+    mentorProfileId: string
+    pendingBalance?: number
+    availableBalance?: number
+    withdrawnBalance?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorWalletUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
+    availableBalance?: FloatFieldUpdateOperationsInput | number
+    withdrawnBalance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorWalletUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
+    availableBalance?: FloatFieldUpdateOperationsInput | number
+    withdrawnBalance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WalletTransactionCreateInput = {
+    id?: string
+    bookingId?: string | null
+    type: $Enums.WalletTransactionType
+    amount: number
+    description?: string | null
+    balanceBefore: number
+    balanceAfter: number
+    createdAt?: Date | string
+    wallet: MentorWalletCreateNestedOneWithoutTransactionsInput
+  }
+
+  export type WalletTransactionUncheckedCreateInput = {
+    id?: string
+    walletId: string
+    bookingId?: string | null
+    type: $Enums.WalletTransactionType
+    amount: number
+    description?: string | null
+    balanceBefore: number
+    balanceAfter: number
+    createdAt?: Date | string
+  }
+
+  export type WalletTransactionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balanceBefore?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    wallet?: MentorWalletUpdateOneRequiredWithoutTransactionsNestedInput
+  }
+
+  export type WalletTransactionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    walletId?: StringFieldUpdateOperationsInput | string
+    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balanceBefore?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WalletTransactionCreateManyInput = {
+    id?: string
+    walletId: string
+    bookingId?: string | null
+    type: $Enums.WalletTransactionType
+    amount: number
+    description?: string | null
+    balanceBefore: number
+    balanceAfter: number
+    createdAt?: Date | string
+  }
+
+  export type WalletTransactionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balanceBefore?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WalletTransactionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    walletId?: StringFieldUpdateOperationsInput | string
+    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balanceBefore?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorCancellationStatCreateInput = {
+    id?: string
+    year: number
+    cancellationCount?: number
+    lastCancelledAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorProfile: MentorProfileCreateNestedOneWithoutCancellationStatInput
+  }
+
+  export type MentorCancellationStatUncheckedCreateInput = {
+    id?: string
+    mentorProfileId: string
+    year: number
+    cancellationCount?: number
+    lastCancelledAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorCancellationStatUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    cancellationCount?: IntFieldUpdateOperationsInput | number
+    lastCancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutCancellationStatNestedInput
+  }
+
+  export type MentorCancellationStatUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    cancellationCount?: IntFieldUpdateOperationsInput | number
+    lastCancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorCancellationStatCreateManyInput = {
+    id?: string
+    mentorProfileId: string
+    year: number
+    cancellationCount?: number
+    lastCancelledAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorCancellationStatUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    cancellationCount?: IntFieldUpdateOperationsInput | number
+    lastCancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorCancellationStatUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    cancellationCount?: IntFieldUpdateOperationsInput | number
+    lastCancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type PayoutCreateInput = {
     id?: string
     amount: number
-    transactionId?: string | null
+    platformFee?: number
+    netAmount: number
+    status?: $Enums.PayoutStatus
+    payoutMethod?: string | null
+    transactionRef?: string | null
+    requestedAt?: Date | string
+    approvedAt?: Date | string | null
     processedAt?: Date | string | null
+    failedReason?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     mentorProfile: MentorProfileCreateNestedOneWithoutPayoutsInput
   }
 
@@ -17446,17 +23290,33 @@ export namespace Prisma {
     id?: string
     mentorProfileId: string
     amount: number
-    transactionId?: string | null
+    platformFee?: number
+    netAmount: number
+    status?: $Enums.PayoutStatus
+    payoutMethod?: string | null
+    transactionRef?: string | null
+    requestedAt?: Date | string
+    approvedAt?: Date | string | null
     processedAt?: Date | string | null
+    failedReason?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type PayoutUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    netAmount?: FloatFieldUpdateOperationsInput | number
+    status?: EnumPayoutStatusFieldUpdateOperationsInput | $Enums.PayoutStatus
+    payoutMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionRef?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mentorProfile?: MentorProfileUpdateOneRequiredWithoutPayoutsNestedInput
   }
 
@@ -17464,35 +23324,67 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    netAmount?: FloatFieldUpdateOperationsInput | number
+    status?: EnumPayoutStatusFieldUpdateOperationsInput | $Enums.PayoutStatus
+    payoutMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionRef?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PayoutCreateManyInput = {
     id?: string
     mentorProfileId: string
     amount: number
-    transactionId?: string | null
+    platformFee?: number
+    netAmount: number
+    status?: $Enums.PayoutStatus
+    payoutMethod?: string | null
+    transactionRef?: string | null
+    requestedAt?: Date | string
+    approvedAt?: Date | string | null
     processedAt?: Date | string | null
+    failedReason?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type PayoutUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    netAmount?: FloatFieldUpdateOperationsInput | number
+    status?: EnumPayoutStatusFieldUpdateOperationsInput | $Enums.PayoutStatus
+    payoutMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionRef?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PayoutUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     mentorProfileId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    netAmount?: FloatFieldUpdateOperationsInput | number
+    status?: EnumPayoutStatusFieldUpdateOperationsInput | $Enums.PayoutStatus
+    payoutMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionRef?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -17990,6 +23882,16 @@ export namespace Prisma {
     none?: PayoutWhereInput
   }
 
+  export type MentorWalletNullableRelationFilter = {
+    is?: MentorWalletWhereInput | null
+    isNot?: MentorWalletWhereInput | null
+  }
+
+  export type MentorCancellationStatNullableRelationFilter = {
+    is?: MentorCancellationStatWhereInput | null
+    isNot?: MentorCancellationStatWhereInput | null
+  }
+
   export type MentorServiceOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -18304,6 +24206,16 @@ export namespace Prisma {
     isNot?: SessionFeedbackWhereInput | null
   }
 
+  export type BookingNullableRelationFilter = {
+    is?: BookingWhereInput | null
+    isNot?: BookingWhereInput | null
+  }
+
+  export type SessionAttendanceNullableRelationFilter = {
+    is?: SessionAttendanceWhereInput | null
+    isNot?: SessionAttendanceWhereInput | null
+  }
+
   export type BookingCountOrderByAggregateInput = {
     id?: SortOrder
     menteeId?: SortOrder
@@ -18321,6 +24233,8 @@ export namespace Prisma {
     discussionTopic?: SortOrder
     specificQuestions?: SortOrder
     cancelledReason?: SortOrder
+    cancelledBy?: SortOrder
+    parentBookingId?: SortOrder
     rescheduledFromId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18343,6 +24257,8 @@ export namespace Prisma {
     discussionTopic?: SortOrder
     specificQuestions?: SortOrder
     cancelledReason?: SortOrder
+    cancelledBy?: SortOrder
+    parentBookingId?: SortOrder
     rescheduledFromId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18365,6 +24281,8 @@ export namespace Prisma {
     discussionTopic?: SortOrder
     specificQuestions?: SortOrder
     cancelledReason?: SortOrder
+    cancelledBy?: SortOrder
+    parentBookingId?: SortOrder
     rescheduledFromId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18404,17 +24322,22 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrder
     razorpaySignature?: SortOrder
     amount?: SortOrder
+    platformFee?: SortOrder
+    mentorAmount?: SortOrder
     currency?: SortOrder
     paymentStatus?: SortOrder
     paidAt?: SortOrder
     refundedAmount?: SortOrder
     refundReason?: SortOrder
+    razorpayRefundId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type PaymentAvgOrderByAggregateInput = {
     amount?: SortOrder
+    platformFee?: SortOrder
+    mentorAmount?: SortOrder
     refundedAmount?: SortOrder
   }
 
@@ -18425,11 +24348,14 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrder
     razorpaySignature?: SortOrder
     amount?: SortOrder
+    platformFee?: SortOrder
+    mentorAmount?: SortOrder
     currency?: SortOrder
     paymentStatus?: SortOrder
     paidAt?: SortOrder
     refundedAmount?: SortOrder
     refundReason?: SortOrder
+    razorpayRefundId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -18441,17 +24367,22 @@ export namespace Prisma {
     razorpayPaymentId?: SortOrder
     razorpaySignature?: SortOrder
     amount?: SortOrder
+    platformFee?: SortOrder
+    mentorAmount?: SortOrder
     currency?: SortOrder
     paymentStatus?: SortOrder
     paidAt?: SortOrder
     refundedAmount?: SortOrder
     refundReason?: SortOrder
+    razorpayRefundId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type PaymentSumOrderByAggregateInput = {
     amount?: SortOrder
+    platformFee?: SortOrder
+    mentorAmount?: SortOrder
     refundedAmount?: SortOrder
   }
 
@@ -18562,39 +24493,314 @@ export namespace Prisma {
     rating?: SortOrder
   }
 
+  export type SessionAttendanceCountOrderByAggregateInput = {
+    id?: SortOrder
+    bookingId?: SortOrder
+    mentorJoinedAt?: SortOrder
+    mentorLeftAt?: SortOrder
+    menteeJoinedAt?: SortOrder
+    menteeLeftAt?: SortOrder
+    mentorDurationSecs?: SortOrder
+    menteeDurationSecs?: SortOrder
+    mentorReconnects?: SortOrder
+    menteeReconnects?: SortOrder
+    mentorPresent?: SortOrder
+    menteePresent?: SortOrder
+    minimumDurationMet?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SessionAttendanceAvgOrderByAggregateInput = {
+    mentorDurationSecs?: SortOrder
+    menteeDurationSecs?: SortOrder
+    mentorReconnects?: SortOrder
+    menteeReconnects?: SortOrder
+  }
+
+  export type SessionAttendanceMaxOrderByAggregateInput = {
+    id?: SortOrder
+    bookingId?: SortOrder
+    mentorJoinedAt?: SortOrder
+    mentorLeftAt?: SortOrder
+    menteeJoinedAt?: SortOrder
+    menteeLeftAt?: SortOrder
+    mentorDurationSecs?: SortOrder
+    menteeDurationSecs?: SortOrder
+    mentorReconnects?: SortOrder
+    menteeReconnects?: SortOrder
+    mentorPresent?: SortOrder
+    menteePresent?: SortOrder
+    minimumDurationMet?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SessionAttendanceMinOrderByAggregateInput = {
+    id?: SortOrder
+    bookingId?: SortOrder
+    mentorJoinedAt?: SortOrder
+    mentorLeftAt?: SortOrder
+    menteeJoinedAt?: SortOrder
+    menteeLeftAt?: SortOrder
+    mentorDurationSecs?: SortOrder
+    menteeDurationSecs?: SortOrder
+    mentorReconnects?: SortOrder
+    menteeReconnects?: SortOrder
+    mentorPresent?: SortOrder
+    menteePresent?: SortOrder
+    minimumDurationMet?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SessionAttendanceSumOrderByAggregateInput = {
+    mentorDurationSecs?: SortOrder
+    menteeDurationSecs?: SortOrder
+    mentorReconnects?: SortOrder
+    menteeReconnects?: SortOrder
+  }
+
+  export type WalletTransactionListRelationFilter = {
+    every?: WalletTransactionWhereInput
+    some?: WalletTransactionWhereInput
+    none?: WalletTransactionWhereInput
+  }
+
+  export type WalletTransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MentorWalletCountOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    pendingBalance?: SortOrder
+    availableBalance?: SortOrder
+    withdrawnBalance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorWalletAvgOrderByAggregateInput = {
+    pendingBalance?: SortOrder
+    availableBalance?: SortOrder
+    withdrawnBalance?: SortOrder
+  }
+
+  export type MentorWalletMaxOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    pendingBalance?: SortOrder
+    availableBalance?: SortOrder
+    withdrawnBalance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorWalletMinOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    pendingBalance?: SortOrder
+    availableBalance?: SortOrder
+    withdrawnBalance?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorWalletSumOrderByAggregateInput = {
+    pendingBalance?: SortOrder
+    availableBalance?: SortOrder
+    withdrawnBalance?: SortOrder
+  }
+
+  export type EnumWalletTransactionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.WalletTransactionType | EnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.WalletTransactionType[] | ListEnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WalletTransactionType[] | ListEnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumWalletTransactionTypeFilter<$PrismaModel> | $Enums.WalletTransactionType
+  }
+
+  export type MentorWalletRelationFilter = {
+    is?: MentorWalletWhereInput
+    isNot?: MentorWalletWhereInput
+  }
+
+  export type WalletTransactionCountOrderByAggregateInput = {
+    id?: SortOrder
+    walletId?: SortOrder
+    bookingId?: SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    description?: SortOrder
+    balanceBefore?: SortOrder
+    balanceAfter?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WalletTransactionAvgOrderByAggregateInput = {
+    amount?: SortOrder
+    balanceBefore?: SortOrder
+    balanceAfter?: SortOrder
+  }
+
+  export type WalletTransactionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    walletId?: SortOrder
+    bookingId?: SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    description?: SortOrder
+    balanceBefore?: SortOrder
+    balanceAfter?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WalletTransactionMinOrderByAggregateInput = {
+    id?: SortOrder
+    walletId?: SortOrder
+    bookingId?: SortOrder
+    type?: SortOrder
+    amount?: SortOrder
+    description?: SortOrder
+    balanceBefore?: SortOrder
+    balanceAfter?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type WalletTransactionSumOrderByAggregateInput = {
+    amount?: SortOrder
+    balanceBefore?: SortOrder
+    balanceAfter?: SortOrder
+  }
+
+  export type EnumWalletTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WalletTransactionType | EnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.WalletTransactionType[] | ListEnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WalletTransactionType[] | ListEnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumWalletTransactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.WalletTransactionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWalletTransactionTypeFilter<$PrismaModel>
+    _max?: NestedEnumWalletTransactionTypeFilter<$PrismaModel>
+  }
+
+  export type MentorCancellationStatCountOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    year?: SortOrder
+    cancellationCount?: SortOrder
+    lastCancelledAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorCancellationStatAvgOrderByAggregateInput = {
+    year?: SortOrder
+    cancellationCount?: SortOrder
+  }
+
+  export type MentorCancellationStatMaxOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    year?: SortOrder
+    cancellationCount?: SortOrder
+    lastCancelledAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorCancellationStatMinOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    year?: SortOrder
+    cancellationCount?: SortOrder
+    lastCancelledAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorCancellationStatSumOrderByAggregateInput = {
+    year?: SortOrder
+    cancellationCount?: SortOrder
+  }
+
+  export type EnumPayoutStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.PayoutStatus | EnumPayoutStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PayoutStatus[] | ListEnumPayoutStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PayoutStatus[] | ListEnumPayoutStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPayoutStatusFilter<$PrismaModel> | $Enums.PayoutStatus
+  }
+
   export type PayoutCountOrderByAggregateInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
     amount?: SortOrder
-    transactionId?: SortOrder
+    platformFee?: SortOrder
+    netAmount?: SortOrder
+    status?: SortOrder
+    payoutMethod?: SortOrder
+    transactionRef?: SortOrder
+    requestedAt?: SortOrder
+    approvedAt?: SortOrder
     processedAt?: SortOrder
+    failedReason?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type PayoutAvgOrderByAggregateInput = {
     amount?: SortOrder
+    platformFee?: SortOrder
+    netAmount?: SortOrder
   }
 
   export type PayoutMaxOrderByAggregateInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
     amount?: SortOrder
-    transactionId?: SortOrder
+    platformFee?: SortOrder
+    netAmount?: SortOrder
+    status?: SortOrder
+    payoutMethod?: SortOrder
+    transactionRef?: SortOrder
+    requestedAt?: SortOrder
+    approvedAt?: SortOrder
     processedAt?: SortOrder
+    failedReason?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type PayoutMinOrderByAggregateInput = {
     id?: SortOrder
     mentorProfileId?: SortOrder
     amount?: SortOrder
-    transactionId?: SortOrder
+    platformFee?: SortOrder
+    netAmount?: SortOrder
+    status?: SortOrder
+    payoutMethod?: SortOrder
+    transactionRef?: SortOrder
+    requestedAt?: SortOrder
+    approvedAt?: SortOrder
     processedAt?: SortOrder
+    failedReason?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type PayoutSumOrderByAggregateInput = {
     amount?: SortOrder
+    platformFee?: SortOrder
+    netAmount?: SortOrder
+  }
+
+  export type EnumPayoutStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PayoutStatus | EnumPayoutStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PayoutStatus[] | ListEnumPayoutStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PayoutStatus[] | ListEnumPayoutStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPayoutStatusWithAggregatesFilter<$PrismaModel> | $Enums.PayoutStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPayoutStatusFilter<$PrismaModel>
+    _max?: NestedEnumPayoutStatusFilter<$PrismaModel>
   }
 
   export type MenteeProfileCreateNestedOneWithoutUserInput = {
@@ -18856,6 +25062,18 @@ export namespace Prisma {
     connect?: PayoutWhereUniqueInput | PayoutWhereUniqueInput[]
   }
 
+  export type MentorWalletCreateNestedOneWithoutMentorProfileInput = {
+    create?: XOR<MentorWalletCreateWithoutMentorProfileInput, MentorWalletUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: MentorWalletCreateOrConnectWithoutMentorProfileInput
+    connect?: MentorWalletWhereUniqueInput
+  }
+
+  export type MentorCancellationStatCreateNestedOneWithoutMentorProfileInput = {
+    create?: XOR<MentorCancellationStatCreateWithoutMentorProfileInput, MentorCancellationStatUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: MentorCancellationStatCreateOrConnectWithoutMentorProfileInput
+    connect?: MentorCancellationStatWhereUniqueInput
+  }
+
   export type MentorServiceUncheckedCreateNestedManyWithoutMentorProfileInput = {
     create?: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput> | MentorServiceCreateWithoutMentorProfileInput[] | MentorServiceUncheckedCreateWithoutMentorProfileInput[]
     connectOrCreate?: MentorServiceCreateOrConnectWithoutMentorProfileInput | MentorServiceCreateOrConnectWithoutMentorProfileInput[]
@@ -18896,6 +25114,18 @@ export namespace Prisma {
     connectOrCreate?: PayoutCreateOrConnectWithoutMentorProfileInput | PayoutCreateOrConnectWithoutMentorProfileInput[]
     createMany?: PayoutCreateManyMentorProfileInputEnvelope
     connect?: PayoutWhereUniqueInput | PayoutWhereUniqueInput[]
+  }
+
+  export type MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput = {
+    create?: XOR<MentorWalletCreateWithoutMentorProfileInput, MentorWalletUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: MentorWalletCreateOrConnectWithoutMentorProfileInput
+    connect?: MentorWalletWhereUniqueInput
+  }
+
+  export type MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput = {
+    create?: XOR<MentorCancellationStatCreateWithoutMentorProfileInput, MentorCancellationStatUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: MentorCancellationStatCreateOrConnectWithoutMentorProfileInput
+    connect?: MentorCancellationStatWhereUniqueInput
   }
 
   export type MentorProfileUpdateexpertiseTagsInput = {
@@ -19015,6 +25245,26 @@ export namespace Prisma {
     deleteMany?: PayoutScalarWhereInput | PayoutScalarWhereInput[]
   }
 
+  export type MentorWalletUpdateOneWithoutMentorProfileNestedInput = {
+    create?: XOR<MentorWalletCreateWithoutMentorProfileInput, MentorWalletUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: MentorWalletCreateOrConnectWithoutMentorProfileInput
+    upsert?: MentorWalletUpsertWithoutMentorProfileInput
+    disconnect?: MentorWalletWhereInput | boolean
+    delete?: MentorWalletWhereInput | boolean
+    connect?: MentorWalletWhereUniqueInput
+    update?: XOR<XOR<MentorWalletUpdateToOneWithWhereWithoutMentorProfileInput, MentorWalletUpdateWithoutMentorProfileInput>, MentorWalletUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput = {
+    create?: XOR<MentorCancellationStatCreateWithoutMentorProfileInput, MentorCancellationStatUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: MentorCancellationStatCreateOrConnectWithoutMentorProfileInput
+    upsert?: MentorCancellationStatUpsertWithoutMentorProfileInput
+    disconnect?: MentorCancellationStatWhereInput | boolean
+    delete?: MentorCancellationStatWhereInput | boolean
+    connect?: MentorCancellationStatWhereUniqueInput
+    update?: XOR<XOR<MentorCancellationStatUpdateToOneWithWhereWithoutMentorProfileInput, MentorCancellationStatUpdateWithoutMentorProfileInput>, MentorCancellationStatUncheckedUpdateWithoutMentorProfileInput>
+  }
+
   export type MentorServiceUncheckedUpdateManyWithoutMentorProfileNestedInput = {
     create?: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput> | MentorServiceCreateWithoutMentorProfileInput[] | MentorServiceUncheckedCreateWithoutMentorProfileInput[]
     connectOrCreate?: MentorServiceCreateOrConnectWithoutMentorProfileInput | MentorServiceCreateOrConnectWithoutMentorProfileInput[]
@@ -19097,6 +25347,26 @@ export namespace Prisma {
     update?: PayoutUpdateWithWhereUniqueWithoutMentorProfileInput | PayoutUpdateWithWhereUniqueWithoutMentorProfileInput[]
     updateMany?: PayoutUpdateManyWithWhereWithoutMentorProfileInput | PayoutUpdateManyWithWhereWithoutMentorProfileInput[]
     deleteMany?: PayoutScalarWhereInput | PayoutScalarWhereInput[]
+  }
+
+  export type MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput = {
+    create?: XOR<MentorWalletCreateWithoutMentorProfileInput, MentorWalletUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: MentorWalletCreateOrConnectWithoutMentorProfileInput
+    upsert?: MentorWalletUpsertWithoutMentorProfileInput
+    disconnect?: MentorWalletWhereInput | boolean
+    delete?: MentorWalletWhereInput | boolean
+    connect?: MentorWalletWhereUniqueInput
+    update?: XOR<XOR<MentorWalletUpdateToOneWithWhereWithoutMentorProfileInput, MentorWalletUpdateWithoutMentorProfileInput>, MentorWalletUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput = {
+    create?: XOR<MentorCancellationStatCreateWithoutMentorProfileInput, MentorCancellationStatUncheckedCreateWithoutMentorProfileInput>
+    connectOrCreate?: MentorCancellationStatCreateOrConnectWithoutMentorProfileInput
+    upsert?: MentorCancellationStatUpsertWithoutMentorProfileInput
+    disconnect?: MentorCancellationStatWhereInput | boolean
+    delete?: MentorCancellationStatWhereInput | boolean
+    connect?: MentorCancellationStatWhereUniqueInput
+    update?: XOR<XOR<MentorCancellationStatUpdateToOneWithWhereWithoutMentorProfileInput, MentorCancellationStatUpdateWithoutMentorProfileInput>, MentorCancellationStatUncheckedUpdateWithoutMentorProfileInput>
   }
 
   export type MentorProfileCreateNestedOneWithoutMentorServicesInput = {
@@ -19321,6 +25591,25 @@ export namespace Prisma {
     connect?: SessionFeedbackWhereUniqueInput
   }
 
+  export type BookingCreateNestedOneWithoutRescheduledBookingsInput = {
+    create?: XOR<BookingCreateWithoutRescheduledBookingsInput, BookingUncheckedCreateWithoutRescheduledBookingsInput>
+    connectOrCreate?: BookingCreateOrConnectWithoutRescheduledBookingsInput
+    connect?: BookingWhereUniqueInput
+  }
+
+  export type BookingCreateNestedManyWithoutParentBookingInput = {
+    create?: XOR<BookingCreateWithoutParentBookingInput, BookingUncheckedCreateWithoutParentBookingInput> | BookingCreateWithoutParentBookingInput[] | BookingUncheckedCreateWithoutParentBookingInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutParentBookingInput | BookingCreateOrConnectWithoutParentBookingInput[]
+    createMany?: BookingCreateManyParentBookingInputEnvelope
+    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+  }
+
+  export type SessionAttendanceCreateNestedOneWithoutBookingInput = {
+    create?: XOR<SessionAttendanceCreateWithoutBookingInput, SessionAttendanceUncheckedCreateWithoutBookingInput>
+    connectOrCreate?: SessionAttendanceCreateOrConnectWithoutBookingInput
+    connect?: SessionAttendanceWhereUniqueInput
+  }
+
   export type PaymentUncheckedCreateNestedOneWithoutBookingInput = {
     create?: XOR<PaymentCreateWithoutBookingInput, PaymentUncheckedCreateWithoutBookingInput>
     connectOrCreate?: PaymentCreateOrConnectWithoutBookingInput
@@ -19337,6 +25626,19 @@ export namespace Prisma {
     create?: XOR<SessionFeedbackCreateWithoutBookingInput, SessionFeedbackUncheckedCreateWithoutBookingInput>
     connectOrCreate?: SessionFeedbackCreateOrConnectWithoutBookingInput
     connect?: SessionFeedbackWhereUniqueInput
+  }
+
+  export type BookingUncheckedCreateNestedManyWithoutParentBookingInput = {
+    create?: XOR<BookingCreateWithoutParentBookingInput, BookingUncheckedCreateWithoutParentBookingInput> | BookingCreateWithoutParentBookingInput[] | BookingUncheckedCreateWithoutParentBookingInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutParentBookingInput | BookingCreateOrConnectWithoutParentBookingInput[]
+    createMany?: BookingCreateManyParentBookingInputEnvelope
+    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+  }
+
+  export type SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput = {
+    create?: XOR<SessionAttendanceCreateWithoutBookingInput, SessionAttendanceUncheckedCreateWithoutBookingInput>
+    connectOrCreate?: SessionAttendanceCreateOrConnectWithoutBookingInput
+    connect?: SessionAttendanceWhereUniqueInput
   }
 
   export type EnumBookingStatusFieldUpdateOperationsInput = {
@@ -19397,6 +25699,40 @@ export namespace Prisma {
     update?: XOR<XOR<SessionFeedbackUpdateToOneWithWhereWithoutBookingInput, SessionFeedbackUpdateWithoutBookingInput>, SessionFeedbackUncheckedUpdateWithoutBookingInput>
   }
 
+  export type BookingUpdateOneWithoutRescheduledBookingsNestedInput = {
+    create?: XOR<BookingCreateWithoutRescheduledBookingsInput, BookingUncheckedCreateWithoutRescheduledBookingsInput>
+    connectOrCreate?: BookingCreateOrConnectWithoutRescheduledBookingsInput
+    upsert?: BookingUpsertWithoutRescheduledBookingsInput
+    disconnect?: BookingWhereInput | boolean
+    delete?: BookingWhereInput | boolean
+    connect?: BookingWhereUniqueInput
+    update?: XOR<XOR<BookingUpdateToOneWithWhereWithoutRescheduledBookingsInput, BookingUpdateWithoutRescheduledBookingsInput>, BookingUncheckedUpdateWithoutRescheduledBookingsInput>
+  }
+
+  export type BookingUpdateManyWithoutParentBookingNestedInput = {
+    create?: XOR<BookingCreateWithoutParentBookingInput, BookingUncheckedCreateWithoutParentBookingInput> | BookingCreateWithoutParentBookingInput[] | BookingUncheckedCreateWithoutParentBookingInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutParentBookingInput | BookingCreateOrConnectWithoutParentBookingInput[]
+    upsert?: BookingUpsertWithWhereUniqueWithoutParentBookingInput | BookingUpsertWithWhereUniqueWithoutParentBookingInput[]
+    createMany?: BookingCreateManyParentBookingInputEnvelope
+    set?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    disconnect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    delete?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    update?: BookingUpdateWithWhereUniqueWithoutParentBookingInput | BookingUpdateWithWhereUniqueWithoutParentBookingInput[]
+    updateMany?: BookingUpdateManyWithWhereWithoutParentBookingInput | BookingUpdateManyWithWhereWithoutParentBookingInput[]
+    deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
+  }
+
+  export type SessionAttendanceUpdateOneWithoutBookingNestedInput = {
+    create?: XOR<SessionAttendanceCreateWithoutBookingInput, SessionAttendanceUncheckedCreateWithoutBookingInput>
+    connectOrCreate?: SessionAttendanceCreateOrConnectWithoutBookingInput
+    upsert?: SessionAttendanceUpsertWithoutBookingInput
+    disconnect?: SessionAttendanceWhereInput | boolean
+    delete?: SessionAttendanceWhereInput | boolean
+    connect?: SessionAttendanceWhereUniqueInput
+    update?: XOR<XOR<SessionAttendanceUpdateToOneWithWhereWithoutBookingInput, SessionAttendanceUpdateWithoutBookingInput>, SessionAttendanceUncheckedUpdateWithoutBookingInput>
+  }
+
   export type PaymentUncheckedUpdateOneWithoutBookingNestedInput = {
     create?: XOR<PaymentCreateWithoutBookingInput, PaymentUncheckedCreateWithoutBookingInput>
     connectOrCreate?: PaymentCreateOrConnectWithoutBookingInput
@@ -19425,6 +25761,30 @@ export namespace Prisma {
     delete?: SessionFeedbackWhereInput | boolean
     connect?: SessionFeedbackWhereUniqueInput
     update?: XOR<XOR<SessionFeedbackUpdateToOneWithWhereWithoutBookingInput, SessionFeedbackUpdateWithoutBookingInput>, SessionFeedbackUncheckedUpdateWithoutBookingInput>
+  }
+
+  export type BookingUncheckedUpdateManyWithoutParentBookingNestedInput = {
+    create?: XOR<BookingCreateWithoutParentBookingInput, BookingUncheckedCreateWithoutParentBookingInput> | BookingCreateWithoutParentBookingInput[] | BookingUncheckedCreateWithoutParentBookingInput[]
+    connectOrCreate?: BookingCreateOrConnectWithoutParentBookingInput | BookingCreateOrConnectWithoutParentBookingInput[]
+    upsert?: BookingUpsertWithWhereUniqueWithoutParentBookingInput | BookingUpsertWithWhereUniqueWithoutParentBookingInput[]
+    createMany?: BookingCreateManyParentBookingInputEnvelope
+    set?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    disconnect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    delete?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
+    update?: BookingUpdateWithWhereUniqueWithoutParentBookingInput | BookingUpdateWithWhereUniqueWithoutParentBookingInput[]
+    updateMany?: BookingUpdateManyWithWhereWithoutParentBookingInput | BookingUpdateManyWithWhereWithoutParentBookingInput[]
+    deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
+  }
+
+  export type SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput = {
+    create?: XOR<SessionAttendanceCreateWithoutBookingInput, SessionAttendanceUncheckedCreateWithoutBookingInput>
+    connectOrCreate?: SessionAttendanceCreateOrConnectWithoutBookingInput
+    upsert?: SessionAttendanceUpsertWithoutBookingInput
+    disconnect?: SessionAttendanceWhereInput | boolean
+    delete?: SessionAttendanceWhereInput | boolean
+    connect?: SessionAttendanceWhereUniqueInput
+    update?: XOR<XOR<SessionAttendanceUpdateToOneWithWhereWithoutBookingInput, SessionAttendanceUpdateWithoutBookingInput>, SessionAttendanceUncheckedUpdateWithoutBookingInput>
   }
 
   export type BookingCreateNestedOneWithoutPaymentInput = {
@@ -19561,10 +25921,116 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReviewsGivenInput, UserUpdateWithoutReviewsGivenInput>, UserUncheckedUpdateWithoutReviewsGivenInput>
   }
 
+  export type BookingCreateNestedOneWithoutAttendanceInput = {
+    create?: XOR<BookingCreateWithoutAttendanceInput, BookingUncheckedCreateWithoutAttendanceInput>
+    connectOrCreate?: BookingCreateOrConnectWithoutAttendanceInput
+    connect?: BookingWhereUniqueInput
+  }
+
+  export type BookingUpdateOneRequiredWithoutAttendanceNestedInput = {
+    create?: XOR<BookingCreateWithoutAttendanceInput, BookingUncheckedCreateWithoutAttendanceInput>
+    connectOrCreate?: BookingCreateOrConnectWithoutAttendanceInput
+    upsert?: BookingUpsertWithoutAttendanceInput
+    connect?: BookingWhereUniqueInput
+    update?: XOR<XOR<BookingUpdateToOneWithWhereWithoutAttendanceInput, BookingUpdateWithoutAttendanceInput>, BookingUncheckedUpdateWithoutAttendanceInput>
+  }
+
+  export type MentorProfileCreateNestedOneWithoutWalletInput = {
+    create?: XOR<MentorProfileCreateWithoutWalletInput, MentorProfileUncheckedCreateWithoutWalletInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutWalletInput
+    connect?: MentorProfileWhereUniqueInput
+  }
+
+  export type WalletTransactionCreateNestedManyWithoutWalletInput = {
+    create?: XOR<WalletTransactionCreateWithoutWalletInput, WalletTransactionUncheckedCreateWithoutWalletInput> | WalletTransactionCreateWithoutWalletInput[] | WalletTransactionUncheckedCreateWithoutWalletInput[]
+    connectOrCreate?: WalletTransactionCreateOrConnectWithoutWalletInput | WalletTransactionCreateOrConnectWithoutWalletInput[]
+    createMany?: WalletTransactionCreateManyWalletInputEnvelope
+    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+  }
+
+  export type WalletTransactionUncheckedCreateNestedManyWithoutWalletInput = {
+    create?: XOR<WalletTransactionCreateWithoutWalletInput, WalletTransactionUncheckedCreateWithoutWalletInput> | WalletTransactionCreateWithoutWalletInput[] | WalletTransactionUncheckedCreateWithoutWalletInput[]
+    connectOrCreate?: WalletTransactionCreateOrConnectWithoutWalletInput | WalletTransactionCreateOrConnectWithoutWalletInput[]
+    createMany?: WalletTransactionCreateManyWalletInputEnvelope
+    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+  }
+
+  export type MentorProfileUpdateOneRequiredWithoutWalletNestedInput = {
+    create?: XOR<MentorProfileCreateWithoutWalletInput, MentorProfileUncheckedCreateWithoutWalletInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutWalletInput
+    upsert?: MentorProfileUpsertWithoutWalletInput
+    connect?: MentorProfileWhereUniqueInput
+    update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutWalletInput, MentorProfileUpdateWithoutWalletInput>, MentorProfileUncheckedUpdateWithoutWalletInput>
+  }
+
+  export type WalletTransactionUpdateManyWithoutWalletNestedInput = {
+    create?: XOR<WalletTransactionCreateWithoutWalletInput, WalletTransactionUncheckedCreateWithoutWalletInput> | WalletTransactionCreateWithoutWalletInput[] | WalletTransactionUncheckedCreateWithoutWalletInput[]
+    connectOrCreate?: WalletTransactionCreateOrConnectWithoutWalletInput | WalletTransactionCreateOrConnectWithoutWalletInput[]
+    upsert?: WalletTransactionUpsertWithWhereUniqueWithoutWalletInput | WalletTransactionUpsertWithWhereUniqueWithoutWalletInput[]
+    createMany?: WalletTransactionCreateManyWalletInputEnvelope
+    set?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    disconnect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    delete?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    update?: WalletTransactionUpdateWithWhereUniqueWithoutWalletInput | WalletTransactionUpdateWithWhereUniqueWithoutWalletInput[]
+    updateMany?: WalletTransactionUpdateManyWithWhereWithoutWalletInput | WalletTransactionUpdateManyWithWhereWithoutWalletInput[]
+    deleteMany?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
+  }
+
+  export type WalletTransactionUncheckedUpdateManyWithoutWalletNestedInput = {
+    create?: XOR<WalletTransactionCreateWithoutWalletInput, WalletTransactionUncheckedCreateWithoutWalletInput> | WalletTransactionCreateWithoutWalletInput[] | WalletTransactionUncheckedCreateWithoutWalletInput[]
+    connectOrCreate?: WalletTransactionCreateOrConnectWithoutWalletInput | WalletTransactionCreateOrConnectWithoutWalletInput[]
+    upsert?: WalletTransactionUpsertWithWhereUniqueWithoutWalletInput | WalletTransactionUpsertWithWhereUniqueWithoutWalletInput[]
+    createMany?: WalletTransactionCreateManyWalletInputEnvelope
+    set?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    disconnect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    delete?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    connect?: WalletTransactionWhereUniqueInput | WalletTransactionWhereUniqueInput[]
+    update?: WalletTransactionUpdateWithWhereUniqueWithoutWalletInput | WalletTransactionUpdateWithWhereUniqueWithoutWalletInput[]
+    updateMany?: WalletTransactionUpdateManyWithWhereWithoutWalletInput | WalletTransactionUpdateManyWithWhereWithoutWalletInput[]
+    deleteMany?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
+  }
+
+  export type MentorWalletCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<MentorWalletCreateWithoutTransactionsInput, MentorWalletUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: MentorWalletCreateOrConnectWithoutTransactionsInput
+    connect?: MentorWalletWhereUniqueInput
+  }
+
+  export type EnumWalletTransactionTypeFieldUpdateOperationsInput = {
+    set?: $Enums.WalletTransactionType
+  }
+
+  export type MentorWalletUpdateOneRequiredWithoutTransactionsNestedInput = {
+    create?: XOR<MentorWalletCreateWithoutTransactionsInput, MentorWalletUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: MentorWalletCreateOrConnectWithoutTransactionsInput
+    upsert?: MentorWalletUpsertWithoutTransactionsInput
+    connect?: MentorWalletWhereUniqueInput
+    update?: XOR<XOR<MentorWalletUpdateToOneWithWhereWithoutTransactionsInput, MentorWalletUpdateWithoutTransactionsInput>, MentorWalletUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type MentorProfileCreateNestedOneWithoutCancellationStatInput = {
+    create?: XOR<MentorProfileCreateWithoutCancellationStatInput, MentorProfileUncheckedCreateWithoutCancellationStatInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutCancellationStatInput
+    connect?: MentorProfileWhereUniqueInput
+  }
+
+  export type MentorProfileUpdateOneRequiredWithoutCancellationStatNestedInput = {
+    create?: XOR<MentorProfileCreateWithoutCancellationStatInput, MentorProfileUncheckedCreateWithoutCancellationStatInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutCancellationStatInput
+    upsert?: MentorProfileUpsertWithoutCancellationStatInput
+    connect?: MentorProfileWhereUniqueInput
+    update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutCancellationStatInput, MentorProfileUpdateWithoutCancellationStatInput>, MentorProfileUncheckedUpdateWithoutCancellationStatInput>
+  }
+
   export type MentorProfileCreateNestedOneWithoutPayoutsInput = {
     create?: XOR<MentorProfileCreateWithoutPayoutsInput, MentorProfileUncheckedCreateWithoutPayoutsInput>
     connectOrCreate?: MentorProfileCreateOrConnectWithoutPayoutsInput
     connect?: MentorProfileWhereUniqueInput
+  }
+
+  export type EnumPayoutStatusFieldUpdateOperationsInput = {
+    set?: $Enums.PayoutStatus
   }
 
   export type MentorProfileUpdateOneRequiredWithoutPayoutsNestedInput = {
@@ -19938,6 +26404,40 @@ export namespace Prisma {
     _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumWalletTransactionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.WalletTransactionType | EnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.WalletTransactionType[] | ListEnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WalletTransactionType[] | ListEnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumWalletTransactionTypeFilter<$PrismaModel> | $Enums.WalletTransactionType
+  }
+
+  export type NestedEnumWalletTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WalletTransactionType | EnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.WalletTransactionType[] | ListEnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WalletTransactionType[] | ListEnumWalletTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumWalletTransactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.WalletTransactionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWalletTransactionTypeFilter<$PrismaModel>
+    _max?: NestedEnumWalletTransactionTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumPayoutStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.PayoutStatus | EnumPayoutStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PayoutStatus[] | ListEnumPayoutStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PayoutStatus[] | ListEnumPayoutStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPayoutStatusFilter<$PrismaModel> | $Enums.PayoutStatus
+  }
+
+  export type NestedEnumPayoutStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PayoutStatus | EnumPayoutStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.PayoutStatus[] | ListEnumPayoutStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PayoutStatus[] | ListEnumPayoutStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumPayoutStatusWithAggregatesFilter<$PrismaModel> | $Enums.PayoutStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPayoutStatusFilter<$PrismaModel>
+    _max?: NestedEnumPayoutStatusFilter<$PrismaModel>
+  }
+
   export type MenteeProfileCreateWithoutUserInput = {
     id?: string
     username: string
@@ -20005,6 +26505,8 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutUserInput = {
@@ -20033,6 +26535,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutUserInput = {
@@ -20054,6 +26558,7 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20062,6 +26567,9 @@ export namespace Prisma {
     payment?: PaymentCreateNestedOneWithoutBookingInput
     review?: ReviewCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackCreateNestedOneWithoutBookingInput
+    parentBooking?: BookingCreateNestedOneWithoutRescheduledBookingsInput
+    rescheduledBookings?: BookingCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceCreateNestedOneWithoutBookingInput
   }
 
   export type BookingUncheckedCreateWithoutMenteeInput = {
@@ -20080,12 +26588,16 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     review?: ReviewUncheckedCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackUncheckedCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingUncheckedCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput
   }
 
   export type BookingCreateOrConnectWithoutMenteeInput = {
@@ -20210,6 +26722,8 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutUserInput = {
@@ -20238,6 +26752,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type BookingUpsertWithWhereUniqueWithoutMenteeInput = {
@@ -20276,6 +26792,8 @@ export namespace Prisma {
     discussionTopic?: StringNullableFilter<"Booking"> | string | null
     specificQuestions?: StringNullableFilter<"Booking"> | string | null
     cancelledReason?: StringNullableFilter<"Booking"> | string | null
+    cancelledBy?: StringNullableFilter<"Booking"> | string | null
+    parentBookingId?: StringNullableFilter<"Booking"> | string | null
     rescheduledFromId?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     updatedAt?: DateTimeFilter<"Booking"> | Date | string
@@ -20537,6 +27055,7 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20545,6 +27064,9 @@ export namespace Prisma {
     payment?: PaymentCreateNestedOneWithoutBookingInput
     review?: ReviewCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackCreateNestedOneWithoutBookingInput
+    parentBooking?: BookingCreateNestedOneWithoutRescheduledBookingsInput
+    rescheduledBookings?: BookingCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceCreateNestedOneWithoutBookingInput
   }
 
   export type BookingUncheckedCreateWithoutMentorProfileInput = {
@@ -20563,12 +27085,16 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     review?: ReviewUncheckedCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackUncheckedCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingUncheckedCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput
   }
 
   export type BookingCreateOrConnectWithoutMentorProfileInput = {
@@ -20640,17 +27166,33 @@ export namespace Prisma {
   export type PayoutCreateWithoutMentorProfileInput = {
     id?: string
     amount: number
-    transactionId?: string | null
+    platformFee?: number
+    netAmount: number
+    status?: $Enums.PayoutStatus
+    payoutMethod?: string | null
+    transactionRef?: string | null
+    requestedAt?: Date | string
+    approvedAt?: Date | string | null
     processedAt?: Date | string | null
+    failedReason?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type PayoutUncheckedCreateWithoutMentorProfileInput = {
     id?: string
     amount: number
-    transactionId?: string | null
+    platformFee?: number
+    netAmount: number
+    status?: $Enums.PayoutStatus
+    payoutMethod?: string | null
+    transactionRef?: string | null
+    requestedAt?: Date | string
+    approvedAt?: Date | string | null
     processedAt?: Date | string | null
+    failedReason?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type PayoutCreateOrConnectWithoutMentorProfileInput = {
@@ -20661,6 +27203,54 @@ export namespace Prisma {
   export type PayoutCreateManyMentorProfileInputEnvelope = {
     data: PayoutCreateManyMentorProfileInput | PayoutCreateManyMentorProfileInput[]
     skipDuplicates?: boolean
+  }
+
+  export type MentorWalletCreateWithoutMentorProfileInput = {
+    id?: string
+    pendingBalance?: number
+    availableBalance?: number
+    withdrawnBalance?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactions?: WalletTransactionCreateNestedManyWithoutWalletInput
+  }
+
+  export type MentorWalletUncheckedCreateWithoutMentorProfileInput = {
+    id?: string
+    pendingBalance?: number
+    availableBalance?: number
+    withdrawnBalance?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transactions?: WalletTransactionUncheckedCreateNestedManyWithoutWalletInput
+  }
+
+  export type MentorWalletCreateOrConnectWithoutMentorProfileInput = {
+    where: MentorWalletWhereUniqueInput
+    create: XOR<MentorWalletCreateWithoutMentorProfileInput, MentorWalletUncheckedCreateWithoutMentorProfileInput>
+  }
+
+  export type MentorCancellationStatCreateWithoutMentorProfileInput = {
+    id?: string
+    year: number
+    cancellationCount?: number
+    lastCancelledAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorCancellationStatUncheckedCreateWithoutMentorProfileInput = {
+    id?: string
+    year: number
+    cancellationCount?: number
+    lastCancelledAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorCancellationStatCreateOrConnectWithoutMentorProfileInput = {
+    where: MentorCancellationStatWhereUniqueInput
+    create: XOR<MentorCancellationStatCreateWithoutMentorProfileInput, MentorCancellationStatUncheckedCreateWithoutMentorProfileInput>
   }
 
   export type UserUpsertWithoutMentorProfileInput = {
@@ -20861,9 +27451,77 @@ export namespace Prisma {
     id?: StringFilter<"Payout"> | string
     mentorProfileId?: StringFilter<"Payout"> | string
     amount?: FloatFilter<"Payout"> | number
-    transactionId?: StringNullableFilter<"Payout"> | string | null
+    platformFee?: FloatFilter<"Payout"> | number
+    netAmount?: FloatFilter<"Payout"> | number
+    status?: EnumPayoutStatusFilter<"Payout"> | $Enums.PayoutStatus
+    payoutMethod?: StringNullableFilter<"Payout"> | string | null
+    transactionRef?: StringNullableFilter<"Payout"> | string | null
+    requestedAt?: DateTimeFilter<"Payout"> | Date | string
+    approvedAt?: DateTimeNullableFilter<"Payout"> | Date | string | null
     processedAt?: DateTimeNullableFilter<"Payout"> | Date | string | null
+    failedReason?: StringNullableFilter<"Payout"> | string | null
     createdAt?: DateTimeFilter<"Payout"> | Date | string
+    updatedAt?: DateTimeFilter<"Payout"> | Date | string
+  }
+
+  export type MentorWalletUpsertWithoutMentorProfileInput = {
+    update: XOR<MentorWalletUpdateWithoutMentorProfileInput, MentorWalletUncheckedUpdateWithoutMentorProfileInput>
+    create: XOR<MentorWalletCreateWithoutMentorProfileInput, MentorWalletUncheckedCreateWithoutMentorProfileInput>
+    where?: MentorWalletWhereInput
+  }
+
+  export type MentorWalletUpdateToOneWithWhereWithoutMentorProfileInput = {
+    where?: MentorWalletWhereInput
+    data: XOR<MentorWalletUpdateWithoutMentorProfileInput, MentorWalletUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type MentorWalletUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
+    availableBalance?: FloatFieldUpdateOperationsInput | number
+    withdrawnBalance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: WalletTransactionUpdateManyWithoutWalletNestedInput
+  }
+
+  export type MentorWalletUncheckedUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
+    availableBalance?: FloatFieldUpdateOperationsInput | number
+    withdrawnBalance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transactions?: WalletTransactionUncheckedUpdateManyWithoutWalletNestedInput
+  }
+
+  export type MentorCancellationStatUpsertWithoutMentorProfileInput = {
+    update: XOR<MentorCancellationStatUpdateWithoutMentorProfileInput, MentorCancellationStatUncheckedUpdateWithoutMentorProfileInput>
+    create: XOR<MentorCancellationStatCreateWithoutMentorProfileInput, MentorCancellationStatUncheckedCreateWithoutMentorProfileInput>
+    where?: MentorCancellationStatWhereInput
+  }
+
+  export type MentorCancellationStatUpdateToOneWithWhereWithoutMentorProfileInput = {
+    where?: MentorCancellationStatWhereInput
+    data: XOR<MentorCancellationStatUpdateWithoutMentorProfileInput, MentorCancellationStatUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type MentorCancellationStatUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    cancellationCount?: IntFieldUpdateOperationsInput | number
+    lastCancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorCancellationStatUncheckedUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    cancellationCount?: IntFieldUpdateOperationsInput | number
+    lastCancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MentorProfileCreateWithoutMentorServicesInput = {
@@ -20892,6 +27550,8 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutMentorServicesInput = {
@@ -20920,6 +27580,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutMentorServicesInput = {
@@ -20963,6 +27625,7 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20971,6 +27634,9 @@ export namespace Prisma {
     payment?: PaymentCreateNestedOneWithoutBookingInput
     review?: ReviewCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackCreateNestedOneWithoutBookingInput
+    parentBooking?: BookingCreateNestedOneWithoutRescheduledBookingsInput
+    rescheduledBookings?: BookingCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceCreateNestedOneWithoutBookingInput
   }
 
   export type BookingUncheckedCreateWithoutMentorServiceInput = {
@@ -20989,12 +27655,16 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     review?: ReviewUncheckedCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackUncheckedCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingUncheckedCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput
   }
 
   export type BookingCreateOrConnectWithoutMentorServiceInput = {
@@ -21044,6 +27714,8 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutMentorServicesInput = {
@@ -21072,6 +27744,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type AvailabilityWindowServiceUpsertWithWhereUniqueWithoutMentorServiceInput = {
@@ -21142,6 +27816,8 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutAvailabilityWindowsInput = {
@@ -21170,6 +27846,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutAvailabilityWindowsInput = {
@@ -21236,6 +27914,8 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutAvailabilityWindowsInput = {
@@ -21264,6 +27944,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type AvailabilityWindowServiceUpsertWithWhereUniqueWithoutWindowInput = {
@@ -21489,6 +28171,8 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutMentorBookingsInput = {
@@ -21517,6 +28201,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutMentorBookingsInput = {
@@ -21563,11 +28249,14 @@ export namespace Prisma {
     razorpayPaymentId?: string | null
     razorpaySignature?: string | null
     amount: number
+    platformFee?: number
+    mentorAmount?: number
     currency?: string
     paymentStatus?: $Enums.PaymentStatus
     paidAt?: Date | string | null
     refundedAmount?: number | null
     refundReason?: string | null
+    razorpayRefundId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     invoice?: InvoiceCreateNestedOneWithoutPaymentInput
@@ -21579,11 +28268,14 @@ export namespace Prisma {
     razorpayPaymentId?: string | null
     razorpaySignature?: string | null
     amount: number
+    platformFee?: number
+    mentorAmount?: number
     currency?: string
     paymentStatus?: $Enums.PaymentStatus
     paidAt?: Date | string | null
     refundedAmount?: number | null
     refundReason?: string | null
+    razorpayRefundId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     invoice?: InvoiceUncheckedCreateNestedOneWithoutPaymentInput
@@ -21638,6 +28330,172 @@ export namespace Prisma {
   export type SessionFeedbackCreateOrConnectWithoutBookingInput = {
     where: SessionFeedbackWhereUniqueInput
     create: XOR<SessionFeedbackCreateWithoutBookingInput, SessionFeedbackUncheckedCreateWithoutBookingInput>
+  }
+
+  export type BookingCreateWithoutRescheduledBookingsInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: $Enums.BookingStatus
+    paymentId?: string | null
+    meetingLink?: string | null
+    purposeOfCall?: string | null
+    notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
+    cancelledReason?: string | null
+    cancelledBy?: string | null
+    rescheduledFromId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentee: UserCreateNestedOneWithoutMenteeBookingsInput
+    mentorProfile: MentorProfileCreateNestedOneWithoutMentorBookingsInput
+    mentorService: MentorServiceCreateNestedOneWithoutBookingsInput
+    payment?: PaymentCreateNestedOneWithoutBookingInput
+    review?: ReviewCreateNestedOneWithoutBookingInput
+    feedback?: SessionFeedbackCreateNestedOneWithoutBookingInput
+    parentBooking?: BookingCreateNestedOneWithoutRescheduledBookingsInput
+    attendance?: SessionAttendanceCreateNestedOneWithoutBookingInput
+  }
+
+  export type BookingUncheckedCreateWithoutRescheduledBookingsInput = {
+    id?: string
+    menteeId: string
+    mentorProfileId: string
+    mentorServiceId: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: $Enums.BookingStatus
+    paymentId?: string | null
+    meetingLink?: string | null
+    purposeOfCall?: string | null
+    notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
+    cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
+    rescheduledFromId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
+    review?: ReviewUncheckedCreateNestedOneWithoutBookingInput
+    feedback?: SessionFeedbackUncheckedCreateNestedOneWithoutBookingInput
+    attendance?: SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput
+  }
+
+  export type BookingCreateOrConnectWithoutRescheduledBookingsInput = {
+    where: BookingWhereUniqueInput
+    create: XOR<BookingCreateWithoutRescheduledBookingsInput, BookingUncheckedCreateWithoutRescheduledBookingsInput>
+  }
+
+  export type BookingCreateWithoutParentBookingInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: $Enums.BookingStatus
+    paymentId?: string | null
+    meetingLink?: string | null
+    purposeOfCall?: string | null
+    notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
+    cancelledReason?: string | null
+    cancelledBy?: string | null
+    rescheduledFromId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentee: UserCreateNestedOneWithoutMenteeBookingsInput
+    mentorProfile: MentorProfileCreateNestedOneWithoutMentorBookingsInput
+    mentorService: MentorServiceCreateNestedOneWithoutBookingsInput
+    payment?: PaymentCreateNestedOneWithoutBookingInput
+    review?: ReviewCreateNestedOneWithoutBookingInput
+    feedback?: SessionFeedbackCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceCreateNestedOneWithoutBookingInput
+  }
+
+  export type BookingUncheckedCreateWithoutParentBookingInput = {
+    id?: string
+    menteeId: string
+    mentorProfileId: string
+    mentorServiceId: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: $Enums.BookingStatus
+    paymentId?: string | null
+    meetingLink?: string | null
+    purposeOfCall?: string | null
+    notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
+    cancelledReason?: string | null
+    cancelledBy?: string | null
+    rescheduledFromId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
+    review?: ReviewUncheckedCreateNestedOneWithoutBookingInput
+    feedback?: SessionFeedbackUncheckedCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingUncheckedCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput
+  }
+
+  export type BookingCreateOrConnectWithoutParentBookingInput = {
+    where: BookingWhereUniqueInput
+    create: XOR<BookingCreateWithoutParentBookingInput, BookingUncheckedCreateWithoutParentBookingInput>
+  }
+
+  export type BookingCreateManyParentBookingInputEnvelope = {
+    data: BookingCreateManyParentBookingInput | BookingCreateManyParentBookingInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SessionAttendanceCreateWithoutBookingInput = {
+    id?: string
+    mentorJoinedAt?: Date | string | null
+    mentorLeftAt?: Date | string | null
+    menteeJoinedAt?: Date | string | null
+    menteeLeftAt?: Date | string | null
+    mentorDurationSecs?: number
+    menteeDurationSecs?: number
+    mentorReconnects?: number
+    menteeReconnects?: number
+    mentorPresent?: boolean
+    menteePresent?: boolean
+    minimumDurationMet?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SessionAttendanceUncheckedCreateWithoutBookingInput = {
+    id?: string
+    mentorJoinedAt?: Date | string | null
+    mentorLeftAt?: Date | string | null
+    menteeJoinedAt?: Date | string | null
+    menteeLeftAt?: Date | string | null
+    mentorDurationSecs?: number
+    menteeDurationSecs?: number
+    mentorReconnects?: number
+    menteeReconnects?: number
+    mentorPresent?: boolean
+    menteePresent?: boolean
+    minimumDurationMet?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SessionAttendanceCreateOrConnectWithoutBookingInput = {
+    where: SessionAttendanceWhereUniqueInput
+    create: XOR<SessionAttendanceCreateWithoutBookingInput, SessionAttendanceUncheckedCreateWithoutBookingInput>
   }
 
   export type UserUpsertWithoutMenteeBookingsInput = {
@@ -21728,6 +28586,8 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutMentorBookingsInput = {
@@ -21756,6 +28616,8 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorServiceUpsertWithoutBookingsInput = {
@@ -21814,11 +28676,14 @@ export namespace Prisma {
     razorpayPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     razorpaySignature?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    mentorAmount?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refundedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     refundReason?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpayRefundId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     invoice?: InvoiceUpdateOneWithoutPaymentNestedInput
@@ -21830,11 +28695,14 @@ export namespace Prisma {
     razorpayPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     razorpaySignature?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    mentorAmount?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refundedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     refundReason?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpayRefundId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     invoice?: InvoiceUncheckedUpdateOneWithoutPaymentNestedInput
@@ -21898,6 +28766,134 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BookingUpsertWithoutRescheduledBookingsInput = {
+    update: XOR<BookingUpdateWithoutRescheduledBookingsInput, BookingUncheckedUpdateWithoutRescheduledBookingsInput>
+    create: XOR<BookingCreateWithoutRescheduledBookingsInput, BookingUncheckedCreateWithoutRescheduledBookingsInput>
+    where?: BookingWhereInput
+  }
+
+  export type BookingUpdateToOneWithWhereWithoutRescheduledBookingsInput = {
+    where?: BookingWhereInput
+    data: XOR<BookingUpdateWithoutRescheduledBookingsInput, BookingUncheckedUpdateWithoutRescheduledBookingsInput>
+  }
+
+  export type BookingUpdateWithoutRescheduledBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentee?: UserUpdateOneRequiredWithoutMenteeBookingsNestedInput
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorBookingsNestedInput
+    mentorService?: MentorServiceUpdateOneRequiredWithoutBookingsNestedInput
+    payment?: PaymentUpdateOneWithoutBookingNestedInput
+    review?: ReviewUpdateOneWithoutBookingNestedInput
+    feedback?: SessionFeedbackUpdateOneWithoutBookingNestedInput
+    parentBooking?: BookingUpdateOneWithoutRescheduledBookingsNestedInput
+    attendance?: SessionAttendanceUpdateOneWithoutBookingNestedInput
+  }
+
+  export type BookingUncheckedUpdateWithoutRescheduledBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    menteeId?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    mentorServiceId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
+    review?: ReviewUncheckedUpdateOneWithoutBookingNestedInput
+    feedback?: SessionFeedbackUncheckedUpdateOneWithoutBookingNestedInput
+    attendance?: SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput
+  }
+
+  export type BookingUpsertWithWhereUniqueWithoutParentBookingInput = {
+    where: BookingWhereUniqueInput
+    update: XOR<BookingUpdateWithoutParentBookingInput, BookingUncheckedUpdateWithoutParentBookingInput>
+    create: XOR<BookingCreateWithoutParentBookingInput, BookingUncheckedCreateWithoutParentBookingInput>
+  }
+
+  export type BookingUpdateWithWhereUniqueWithoutParentBookingInput = {
+    where: BookingWhereUniqueInput
+    data: XOR<BookingUpdateWithoutParentBookingInput, BookingUncheckedUpdateWithoutParentBookingInput>
+  }
+
+  export type BookingUpdateManyWithWhereWithoutParentBookingInput = {
+    where: BookingScalarWhereInput
+    data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutParentBookingInput>
+  }
+
+  export type SessionAttendanceUpsertWithoutBookingInput = {
+    update: XOR<SessionAttendanceUpdateWithoutBookingInput, SessionAttendanceUncheckedUpdateWithoutBookingInput>
+    create: XOR<SessionAttendanceCreateWithoutBookingInput, SessionAttendanceUncheckedCreateWithoutBookingInput>
+    where?: SessionAttendanceWhereInput
+  }
+
+  export type SessionAttendanceUpdateToOneWithWhereWithoutBookingInput = {
+    where?: SessionAttendanceWhereInput
+    data: XOR<SessionAttendanceUpdateWithoutBookingInput, SessionAttendanceUncheckedUpdateWithoutBookingInput>
+  }
+
+  export type SessionAttendanceUpdateWithoutBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorDurationSecs?: IntFieldUpdateOperationsInput | number
+    menteeDurationSecs?: IntFieldUpdateOperationsInput | number
+    mentorReconnects?: IntFieldUpdateOperationsInput | number
+    menteeReconnects?: IntFieldUpdateOperationsInput | number
+    mentorPresent?: BoolFieldUpdateOperationsInput | boolean
+    menteePresent?: BoolFieldUpdateOperationsInput | boolean
+    minimumDurationMet?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionAttendanceUncheckedUpdateWithoutBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorDurationSecs?: IntFieldUpdateOperationsInput | number
+    menteeDurationSecs?: IntFieldUpdateOperationsInput | number
+    mentorReconnects?: IntFieldUpdateOperationsInput | number
+    menteeReconnects?: IntFieldUpdateOperationsInput | number
+    mentorPresent?: BoolFieldUpdateOperationsInput | boolean
+    menteePresent?: BoolFieldUpdateOperationsInput | boolean
+    minimumDurationMet?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type BookingCreateWithoutPaymentInput = {
     id?: string
     startTime: Date | string
@@ -21912,6 +28908,7 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21920,6 +28917,9 @@ export namespace Prisma {
     mentorService: MentorServiceCreateNestedOneWithoutBookingsInput
     review?: ReviewCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackCreateNestedOneWithoutBookingInput
+    parentBooking?: BookingCreateNestedOneWithoutRescheduledBookingsInput
+    rescheduledBookings?: BookingCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceCreateNestedOneWithoutBookingInput
   }
 
   export type BookingUncheckedCreateWithoutPaymentInput = {
@@ -21939,11 +28939,15 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     review?: ReviewUncheckedCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackUncheckedCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingUncheckedCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput
   }
 
   export type BookingCreateOrConnectWithoutPaymentInput = {
@@ -21995,6 +28999,7 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22003,6 +29008,9 @@ export namespace Prisma {
     mentorService?: MentorServiceUpdateOneRequiredWithoutBookingsNestedInput
     review?: ReviewUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUpdateOneWithoutBookingNestedInput
+    parentBooking?: BookingUpdateOneWithoutRescheduledBookingsNestedInput
+    rescheduledBookings?: BookingUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateWithoutPaymentInput = {
@@ -22022,11 +29030,15 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     review?: ReviewUncheckedUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUncheckedUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUncheckedUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput
   }
 
   export type InvoiceUpsertWithoutPaymentInput = {
@@ -22060,11 +29072,14 @@ export namespace Prisma {
     razorpayPaymentId?: string | null
     razorpaySignature?: string | null
     amount: number
+    platformFee?: number
+    mentorAmount?: number
     currency?: string
     paymentStatus?: $Enums.PaymentStatus
     paidAt?: Date | string | null
     refundedAmount?: number | null
     refundReason?: string | null
+    razorpayRefundId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     booking: BookingCreateNestedOneWithoutPaymentInput
@@ -22077,11 +29092,14 @@ export namespace Prisma {
     razorpayPaymentId?: string | null
     razorpaySignature?: string | null
     amount: number
+    platformFee?: number
+    mentorAmount?: number
     currency?: string
     paymentStatus?: $Enums.PaymentStatus
     paidAt?: Date | string | null
     refundedAmount?: number | null
     refundReason?: string | null
+    razorpayRefundId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22108,11 +29126,14 @@ export namespace Prisma {
     razorpayPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     razorpaySignature?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    mentorAmount?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refundedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     refundReason?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpayRefundId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     booking?: BookingUpdateOneRequiredWithoutPaymentNestedInput
@@ -22125,11 +29146,14 @@ export namespace Prisma {
     razorpayPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     razorpaySignature?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: FloatFieldUpdateOperationsInput | number
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    mentorAmount?: FloatFieldUpdateOperationsInput | number
     currency?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refundedAmount?: NullableFloatFieldUpdateOperationsInput | number | null
     refundReason?: NullableStringFieldUpdateOperationsInput | string | null
+    razorpayRefundId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22148,6 +29172,7 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -22156,6 +29181,9 @@ export namespace Prisma {
     mentorService: MentorServiceCreateNestedOneWithoutBookingsInput
     payment?: PaymentCreateNestedOneWithoutBookingInput
     review?: ReviewCreateNestedOneWithoutBookingInput
+    parentBooking?: BookingCreateNestedOneWithoutRescheduledBookingsInput
+    rescheduledBookings?: BookingCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceCreateNestedOneWithoutBookingInput
   }
 
   export type BookingUncheckedCreateWithoutFeedbackInput = {
@@ -22175,11 +29203,15 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     review?: ReviewUncheckedCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingUncheckedCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput
   }
 
   export type BookingCreateOrConnectWithoutFeedbackInput = {
@@ -22213,6 +29245,8 @@ export namespace Prisma {
     mentorBookings?: BookingCreateNestedManyWithoutMentorProfileInput
     reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutFeedbacksInput = {
@@ -22241,6 +29275,8 @@ export namespace Prisma {
     mentorBookings?: BookingUncheckedCreateNestedManyWithoutMentorProfileInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutFeedbacksInput = {
@@ -22273,6 +29309,7 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22281,6 +29318,9 @@ export namespace Prisma {
     mentorService?: MentorServiceUpdateOneRequiredWithoutBookingsNestedInput
     payment?: PaymentUpdateOneWithoutBookingNestedInput
     review?: ReviewUpdateOneWithoutBookingNestedInput
+    parentBooking?: BookingUpdateOneWithoutRescheduledBookingsNestedInput
+    rescheduledBookings?: BookingUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateWithoutFeedbackInput = {
@@ -22300,11 +29340,15 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     review?: ReviewUncheckedUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUncheckedUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput
   }
 
   export type MentorProfileUpsertWithoutFeedbacksInput = {
@@ -22344,6 +29388,8 @@ export namespace Prisma {
     mentorBookings?: BookingUpdateManyWithoutMentorProfileNestedInput
     reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutFeedbacksInput = {
@@ -22372,6 +29418,8 @@ export namespace Prisma {
     mentorBookings?: BookingUncheckedUpdateManyWithoutMentorProfileNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type BookingCreateWithoutReviewInput = {
@@ -22388,6 +29436,7 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -22396,6 +29445,9 @@ export namespace Prisma {
     mentorService: MentorServiceCreateNestedOneWithoutBookingsInput
     payment?: PaymentCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackCreateNestedOneWithoutBookingInput
+    parentBooking?: BookingCreateNestedOneWithoutRescheduledBookingsInput
+    rescheduledBookings?: BookingCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceCreateNestedOneWithoutBookingInput
   }
 
   export type BookingUncheckedCreateWithoutReviewInput = {
@@ -22415,11 +29467,15 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     feedback?: SessionFeedbackUncheckedCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingUncheckedCreateNestedManyWithoutParentBookingInput
+    attendance?: SessionAttendanceUncheckedCreateNestedOneWithoutBookingInput
   }
 
   export type BookingCreateOrConnectWithoutReviewInput = {
@@ -22453,6 +29509,8 @@ export namespace Prisma {
     mentorBookings?: BookingCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutReviewsInput = {
@@ -22481,6 +29539,8 @@ export namespace Prisma {
     mentorBookings?: BookingUncheckedCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutReviewsInput = {
@@ -22558,6 +29618,7 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22566,6 +29627,9 @@ export namespace Prisma {
     mentorService?: MentorServiceUpdateOneRequiredWithoutBookingsNestedInput
     payment?: PaymentUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUpdateOneWithoutBookingNestedInput
+    parentBooking?: BookingUpdateOneWithoutRescheduledBookingsNestedInput
+    rescheduledBookings?: BookingUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateWithoutReviewInput = {
@@ -22585,11 +29649,15 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUncheckedUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUncheckedUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput
   }
 
   export type MentorProfileUpsertWithoutReviewsInput = {
@@ -22629,6 +29697,8 @@ export namespace Prisma {
     mentorBookings?: BookingUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutReviewsInput = {
@@ -22657,6 +29727,8 @@ export namespace Prisma {
     mentorBookings?: BookingUncheckedUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type UserUpsertWithoutReviewsGivenInput = {
@@ -22710,6 +29782,525 @@ export namespace Prisma {
     menteeBookings?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
   }
 
+  export type BookingCreateWithoutAttendanceInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: $Enums.BookingStatus
+    paymentId?: string | null
+    meetingLink?: string | null
+    purposeOfCall?: string | null
+    notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
+    cancelledReason?: string | null
+    cancelledBy?: string | null
+    rescheduledFromId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentee: UserCreateNestedOneWithoutMenteeBookingsInput
+    mentorProfile: MentorProfileCreateNestedOneWithoutMentorBookingsInput
+    mentorService: MentorServiceCreateNestedOneWithoutBookingsInput
+    payment?: PaymentCreateNestedOneWithoutBookingInput
+    review?: ReviewCreateNestedOneWithoutBookingInput
+    feedback?: SessionFeedbackCreateNestedOneWithoutBookingInput
+    parentBooking?: BookingCreateNestedOneWithoutRescheduledBookingsInput
+    rescheduledBookings?: BookingCreateNestedManyWithoutParentBookingInput
+  }
+
+  export type BookingUncheckedCreateWithoutAttendanceInput = {
+    id?: string
+    menteeId: string
+    mentorProfileId: string
+    mentorServiceId: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: $Enums.BookingStatus
+    paymentId?: string | null
+    meetingLink?: string | null
+    purposeOfCall?: string | null
+    notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
+    cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
+    rescheduledFromId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
+    review?: ReviewUncheckedCreateNestedOneWithoutBookingInput
+    feedback?: SessionFeedbackUncheckedCreateNestedOneWithoutBookingInput
+    rescheduledBookings?: BookingUncheckedCreateNestedManyWithoutParentBookingInput
+  }
+
+  export type BookingCreateOrConnectWithoutAttendanceInput = {
+    where: BookingWhereUniqueInput
+    create: XOR<BookingCreateWithoutAttendanceInput, BookingUncheckedCreateWithoutAttendanceInput>
+  }
+
+  export type BookingUpsertWithoutAttendanceInput = {
+    update: XOR<BookingUpdateWithoutAttendanceInput, BookingUncheckedUpdateWithoutAttendanceInput>
+    create: XOR<BookingCreateWithoutAttendanceInput, BookingUncheckedCreateWithoutAttendanceInput>
+    where?: BookingWhereInput
+  }
+
+  export type BookingUpdateToOneWithWhereWithoutAttendanceInput = {
+    where?: BookingWhereInput
+    data: XOR<BookingUpdateWithoutAttendanceInput, BookingUncheckedUpdateWithoutAttendanceInput>
+  }
+
+  export type BookingUpdateWithoutAttendanceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentee?: UserUpdateOneRequiredWithoutMenteeBookingsNestedInput
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorBookingsNestedInput
+    mentorService?: MentorServiceUpdateOneRequiredWithoutBookingsNestedInput
+    payment?: PaymentUpdateOneWithoutBookingNestedInput
+    review?: ReviewUpdateOneWithoutBookingNestedInput
+    feedback?: SessionFeedbackUpdateOneWithoutBookingNestedInput
+    parentBooking?: BookingUpdateOneWithoutRescheduledBookingsNestedInput
+    rescheduledBookings?: BookingUpdateManyWithoutParentBookingNestedInput
+  }
+
+  export type BookingUncheckedUpdateWithoutAttendanceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    menteeId?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    mentorServiceId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
+    review?: ReviewUncheckedUpdateOneWithoutBookingNestedInput
+    feedback?: SessionFeedbackUncheckedUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUncheckedUpdateManyWithoutParentBookingNestedInput
+  }
+
+  export type MentorProfileCreateWithoutWalletInput = {
+    id?: string
+    username: string
+    bio: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgCollegeProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    collegeDocumentUrl?: string | null
+    approvalStatus?: $Enums.MentorApprovalStatus
+    isVerified?: boolean
+    totalSessions?: number
+    totalEarnings?: number
+    averageRating?: number
+    timezone?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMentorProfileInput
+    mentorServices?: MentorServiceCreateNestedManyWithoutMentorProfileInput
+    availabilityWindows?: AvailabilityWindowCreateNestedManyWithoutMentorProfileInput
+    mentorBookings?: BookingCreateNestedManyWithoutMentorProfileInput
+    reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
+    feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
+    payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+  }
+
+  export type MentorProfileUncheckedCreateWithoutWalletInput = {
+    id?: string
+    userId: string
+    username: string
+    bio: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgCollegeProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    collegeDocumentUrl?: string | null
+    approvalStatus?: $Enums.MentorApprovalStatus
+    isVerified?: boolean
+    totalSessions?: number
+    totalEarnings?: number
+    averageRating?: number
+    timezone?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorServices?: MentorServiceUncheckedCreateNestedManyWithoutMentorProfileInput
+    availabilityWindows?: AvailabilityWindowUncheckedCreateNestedManyWithoutMentorProfileInput
+    mentorBookings?: BookingUncheckedCreateNestedManyWithoutMentorProfileInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
+    feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
+    payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+  }
+
+  export type MentorProfileCreateOrConnectWithoutWalletInput = {
+    where: MentorProfileWhereUniqueInput
+    create: XOR<MentorProfileCreateWithoutWalletInput, MentorProfileUncheckedCreateWithoutWalletInput>
+  }
+
+  export type WalletTransactionCreateWithoutWalletInput = {
+    id?: string
+    bookingId?: string | null
+    type: $Enums.WalletTransactionType
+    amount: number
+    description?: string | null
+    balanceBefore: number
+    balanceAfter: number
+    createdAt?: Date | string
+  }
+
+  export type WalletTransactionUncheckedCreateWithoutWalletInput = {
+    id?: string
+    bookingId?: string | null
+    type: $Enums.WalletTransactionType
+    amount: number
+    description?: string | null
+    balanceBefore: number
+    balanceAfter: number
+    createdAt?: Date | string
+  }
+
+  export type WalletTransactionCreateOrConnectWithoutWalletInput = {
+    where: WalletTransactionWhereUniqueInput
+    create: XOR<WalletTransactionCreateWithoutWalletInput, WalletTransactionUncheckedCreateWithoutWalletInput>
+  }
+
+  export type WalletTransactionCreateManyWalletInputEnvelope = {
+    data: WalletTransactionCreateManyWalletInput | WalletTransactionCreateManyWalletInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MentorProfileUpsertWithoutWalletInput = {
+    update: XOR<MentorProfileUpdateWithoutWalletInput, MentorProfileUncheckedUpdateWithoutWalletInput>
+    create: XOR<MentorProfileCreateWithoutWalletInput, MentorProfileUncheckedCreateWithoutWalletInput>
+    where?: MentorProfileWhereInput
+  }
+
+  export type MentorProfileUpdateToOneWithWhereWithoutWalletInput = {
+    where?: MentorProfileWhereInput
+    data: XOR<MentorProfileUpdateWithoutWalletInput, MentorProfileUncheckedUpdateWithoutWalletInput>
+  }
+
+  export type MentorProfileUpdateWithoutWalletInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    totalSessions?: IntFieldUpdateOperationsInput | number
+    totalEarnings?: FloatFieldUpdateOperationsInput | number
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMentorProfileNestedInput
+    mentorServices?: MentorServiceUpdateManyWithoutMentorProfileNestedInput
+    availabilityWindows?: AvailabilityWindowUpdateManyWithoutMentorProfileNestedInput
+    mentorBookings?: BookingUpdateManyWithoutMentorProfileNestedInput
+    reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
+    feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
+    payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+  }
+
+  export type MentorProfileUncheckedUpdateWithoutWalletInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    totalSessions?: IntFieldUpdateOperationsInput | number
+    totalEarnings?: FloatFieldUpdateOperationsInput | number
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorServices?: MentorServiceUncheckedUpdateManyWithoutMentorProfileNestedInput
+    availabilityWindows?: AvailabilityWindowUncheckedUpdateManyWithoutMentorProfileNestedInput
+    mentorBookings?: BookingUncheckedUpdateManyWithoutMentorProfileNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
+    feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
+    payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+  }
+
+  export type WalletTransactionUpsertWithWhereUniqueWithoutWalletInput = {
+    where: WalletTransactionWhereUniqueInput
+    update: XOR<WalletTransactionUpdateWithoutWalletInput, WalletTransactionUncheckedUpdateWithoutWalletInput>
+    create: XOR<WalletTransactionCreateWithoutWalletInput, WalletTransactionUncheckedCreateWithoutWalletInput>
+  }
+
+  export type WalletTransactionUpdateWithWhereUniqueWithoutWalletInput = {
+    where: WalletTransactionWhereUniqueInput
+    data: XOR<WalletTransactionUpdateWithoutWalletInput, WalletTransactionUncheckedUpdateWithoutWalletInput>
+  }
+
+  export type WalletTransactionUpdateManyWithWhereWithoutWalletInput = {
+    where: WalletTransactionScalarWhereInput
+    data: XOR<WalletTransactionUpdateManyMutationInput, WalletTransactionUncheckedUpdateManyWithoutWalletInput>
+  }
+
+  export type WalletTransactionScalarWhereInput = {
+    AND?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
+    OR?: WalletTransactionScalarWhereInput[]
+    NOT?: WalletTransactionScalarWhereInput | WalletTransactionScalarWhereInput[]
+    id?: StringFilter<"WalletTransaction"> | string
+    walletId?: StringFilter<"WalletTransaction"> | string
+    bookingId?: StringNullableFilter<"WalletTransaction"> | string | null
+    type?: EnumWalletTransactionTypeFilter<"WalletTransaction"> | $Enums.WalletTransactionType
+    amount?: FloatFilter<"WalletTransaction"> | number
+    description?: StringNullableFilter<"WalletTransaction"> | string | null
+    balanceBefore?: FloatFilter<"WalletTransaction"> | number
+    balanceAfter?: FloatFilter<"WalletTransaction"> | number
+    createdAt?: DateTimeFilter<"WalletTransaction"> | Date | string
+  }
+
+  export type MentorWalletCreateWithoutTransactionsInput = {
+    id?: string
+    pendingBalance?: number
+    availableBalance?: number
+    withdrawnBalance?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorProfile: MentorProfileCreateNestedOneWithoutWalletInput
+  }
+
+  export type MentorWalletUncheckedCreateWithoutTransactionsInput = {
+    id?: string
+    mentorProfileId: string
+    pendingBalance?: number
+    availableBalance?: number
+    withdrawnBalance?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorWalletCreateOrConnectWithoutTransactionsInput = {
+    where: MentorWalletWhereUniqueInput
+    create: XOR<MentorWalletCreateWithoutTransactionsInput, MentorWalletUncheckedCreateWithoutTransactionsInput>
+  }
+
+  export type MentorWalletUpsertWithoutTransactionsInput = {
+    update: XOR<MentorWalletUpdateWithoutTransactionsInput, MentorWalletUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<MentorWalletCreateWithoutTransactionsInput, MentorWalletUncheckedCreateWithoutTransactionsInput>
+    where?: MentorWalletWhereInput
+  }
+
+  export type MentorWalletUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: MentorWalletWhereInput
+    data: XOR<MentorWalletUpdateWithoutTransactionsInput, MentorWalletUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type MentorWalletUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
+    availableBalance?: FloatFieldUpdateOperationsInput | number
+    withdrawnBalance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutWalletNestedInput
+  }
+
+  export type MentorWalletUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    pendingBalance?: FloatFieldUpdateOperationsInput | number
+    availableBalance?: FloatFieldUpdateOperationsInput | number
+    withdrawnBalance?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorProfileCreateWithoutCancellationStatInput = {
+    id?: string
+    username: string
+    bio: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgCollegeProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    collegeDocumentUrl?: string | null
+    approvalStatus?: $Enums.MentorApprovalStatus
+    isVerified?: boolean
+    totalSessions?: number
+    totalEarnings?: number
+    averageRating?: number
+    timezone?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMentorProfileInput
+    mentorServices?: MentorServiceCreateNestedManyWithoutMentorProfileInput
+    availabilityWindows?: AvailabilityWindowCreateNestedManyWithoutMentorProfileInput
+    mentorBookings?: BookingCreateNestedManyWithoutMentorProfileInput
+    reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
+    feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
+    payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+  }
+
+  export type MentorProfileUncheckedCreateWithoutCancellationStatInput = {
+    id?: string
+    userId: string
+    username: string
+    bio: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgCollegeProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    collegeDocumentUrl?: string | null
+    approvalStatus?: $Enums.MentorApprovalStatus
+    isVerified?: boolean
+    totalSessions?: number
+    totalEarnings?: number
+    averageRating?: number
+    timezone?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorServices?: MentorServiceUncheckedCreateNestedManyWithoutMentorProfileInput
+    availabilityWindows?: AvailabilityWindowUncheckedCreateNestedManyWithoutMentorProfileInput
+    mentorBookings?: BookingUncheckedCreateNestedManyWithoutMentorProfileInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
+    feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
+    payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+  }
+
+  export type MentorProfileCreateOrConnectWithoutCancellationStatInput = {
+    where: MentorProfileWhereUniqueInput
+    create: XOR<MentorProfileCreateWithoutCancellationStatInput, MentorProfileUncheckedCreateWithoutCancellationStatInput>
+  }
+
+  export type MentorProfileUpsertWithoutCancellationStatInput = {
+    update: XOR<MentorProfileUpdateWithoutCancellationStatInput, MentorProfileUncheckedUpdateWithoutCancellationStatInput>
+    create: XOR<MentorProfileCreateWithoutCancellationStatInput, MentorProfileUncheckedCreateWithoutCancellationStatInput>
+    where?: MentorProfileWhereInput
+  }
+
+  export type MentorProfileUpdateToOneWithWhereWithoutCancellationStatInput = {
+    where?: MentorProfileWhereInput
+    data: XOR<MentorProfileUpdateWithoutCancellationStatInput, MentorProfileUncheckedUpdateWithoutCancellationStatInput>
+  }
+
+  export type MentorProfileUpdateWithoutCancellationStatInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    totalSessions?: IntFieldUpdateOperationsInput | number
+    totalEarnings?: FloatFieldUpdateOperationsInput | number
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMentorProfileNestedInput
+    mentorServices?: MentorServiceUpdateManyWithoutMentorProfileNestedInput
+    availabilityWindows?: AvailabilityWindowUpdateManyWithoutMentorProfileNestedInput
+    mentorBookings?: BookingUpdateManyWithoutMentorProfileNestedInput
+    reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
+    feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
+    payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+  }
+
+  export type MentorProfileUncheckedUpdateWithoutCancellationStatInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    totalSessions?: IntFieldUpdateOperationsInput | number
+    totalEarnings?: FloatFieldUpdateOperationsInput | number
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorServices?: MentorServiceUncheckedUpdateManyWithoutMentorProfileNestedInput
+    availabilityWindows?: AvailabilityWindowUncheckedUpdateManyWithoutMentorProfileNestedInput
+    mentorBookings?: BookingUncheckedUpdateManyWithoutMentorProfileNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
+    feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
+    payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+  }
+
   export type MentorProfileCreateWithoutPayoutsInput = {
     id?: string
     username: string
@@ -22736,6 +30327,8 @@ export namespace Prisma {
     mentorBookings?: BookingCreateNestedManyWithoutMentorProfileInput
     reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutPayoutsInput = {
@@ -22764,6 +30357,8 @@ export namespace Prisma {
     mentorBookings?: BookingUncheckedCreateNestedManyWithoutMentorProfileInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutPayoutsInput = {
@@ -22808,6 +30403,8 @@ export namespace Prisma {
     mentorBookings?: BookingUpdateManyWithoutMentorProfileNestedInput
     reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutPayoutsInput = {
@@ -22836,6 +30433,8 @@ export namespace Prisma {
     mentorBookings?: BookingUncheckedUpdateManyWithoutMentorProfileNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
   }
 
   export type BookingCreateManyMenteeInput = {
@@ -22854,6 +30453,8 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -22882,6 +30483,7 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22890,6 +30492,9 @@ export namespace Prisma {
     payment?: PaymentUpdateOneWithoutBookingNestedInput
     review?: ReviewUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUpdateOneWithoutBookingNestedInput
+    parentBooking?: BookingUpdateOneWithoutRescheduledBookingsNestedInput
+    rescheduledBookings?: BookingUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateWithoutMenteeInput = {
@@ -22908,12 +30513,16 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     review?: ReviewUncheckedUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUncheckedUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUncheckedUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateManyWithoutMenteeInput = {
@@ -22932,6 +30541,8 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23003,6 +30614,8 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23029,9 +30642,17 @@ export namespace Prisma {
   export type PayoutCreateManyMentorProfileInput = {
     id?: string
     amount: number
-    transactionId?: string | null
+    platformFee?: number
+    netAmount: number
+    status?: $Enums.PayoutStatus
+    payoutMethod?: string | null
+    transactionRef?: string | null
+    requestedAt?: Date | string
+    approvedAt?: Date | string | null
     processedAt?: Date | string | null
+    failedReason?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type MentorServiceUpdateWithoutMentorProfileInput = {
@@ -23123,6 +30744,7 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23131,6 +30753,9 @@ export namespace Prisma {
     payment?: PaymentUpdateOneWithoutBookingNestedInput
     review?: ReviewUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUpdateOneWithoutBookingNestedInput
+    parentBooking?: BookingUpdateOneWithoutRescheduledBookingsNestedInput
+    rescheduledBookings?: BookingUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateWithoutMentorProfileInput = {
@@ -23149,12 +30774,16 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     review?: ReviewUncheckedUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUncheckedUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUncheckedUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateManyWithoutMentorProfileInput = {
@@ -23173,6 +30802,8 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23235,25 +30866,49 @@ export namespace Prisma {
   export type PayoutUpdateWithoutMentorProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    netAmount?: FloatFieldUpdateOperationsInput | number
+    status?: EnumPayoutStatusFieldUpdateOperationsInput | $Enums.PayoutStatus
+    payoutMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionRef?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PayoutUncheckedUpdateWithoutMentorProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    netAmount?: FloatFieldUpdateOperationsInput | number
+    status?: EnumPayoutStatusFieldUpdateOperationsInput | $Enums.PayoutStatus
+    payoutMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionRef?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PayoutUncheckedUpdateManyWithoutMentorProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
-    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    platformFee?: FloatFieldUpdateOperationsInput | number
+    netAmount?: FloatFieldUpdateOperationsInput | number
+    status?: EnumPayoutStatusFieldUpdateOperationsInput | $Enums.PayoutStatus
+    payoutMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    transactionRef?: NullableStringFieldUpdateOperationsInput | string | null
+    requestedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    failedReason?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AvailabilityWindowServiceCreateManyMentorServiceInput = {
@@ -23278,6 +30933,8 @@ export namespace Prisma {
     discussionTopic?: string | null
     specificQuestions?: string | null
     cancelledReason?: string | null
+    cancelledBy?: string | null
+    parentBookingId?: string | null
     rescheduledFromId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -23315,6 +30972,7 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23323,6 +30981,9 @@ export namespace Prisma {
     payment?: PaymentUpdateOneWithoutBookingNestedInput
     review?: ReviewUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUpdateOneWithoutBookingNestedInput
+    parentBooking?: BookingUpdateOneWithoutRescheduledBookingsNestedInput
+    rescheduledBookings?: BookingUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateWithoutMentorServiceInput = {
@@ -23341,12 +31002,16 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     review?: ReviewUncheckedUpdateOneWithoutBookingNestedInput
     feedback?: SessionFeedbackUncheckedUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUncheckedUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateManyWithoutMentorServiceInput = {
@@ -23365,6 +31030,8 @@ export namespace Prisma {
     discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
     specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
     cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    parentBookingId?: NullableStringFieldUpdateOperationsInput | string | null
     rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23394,6 +31061,152 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BookingCreateManyParentBookingInput = {
+    id?: string
+    menteeId: string
+    mentorProfileId: string
+    mentorServiceId: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: $Enums.BookingStatus
+    paymentId?: string | null
+    meetingLink?: string | null
+    purposeOfCall?: string | null
+    notes?: string | null
+    menteePhone?: string | null
+    menteeEmail?: string | null
+    discussionTopic?: string | null
+    specificQuestions?: string | null
+    cancelledReason?: string | null
+    cancelledBy?: string | null
+    rescheduledFromId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BookingUpdateWithoutParentBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentee?: UserUpdateOneRequiredWithoutMenteeBookingsNestedInput
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutMentorBookingsNestedInput
+    mentorService?: MentorServiceUpdateOneRequiredWithoutBookingsNestedInput
+    payment?: PaymentUpdateOneWithoutBookingNestedInput
+    review?: ReviewUpdateOneWithoutBookingNestedInput
+    feedback?: SessionFeedbackUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUpdateOneWithoutBookingNestedInput
+  }
+
+  export type BookingUncheckedUpdateWithoutParentBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    menteeId?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    mentorServiceId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
+    review?: ReviewUncheckedUpdateOneWithoutBookingNestedInput
+    feedback?: SessionFeedbackUncheckedUpdateOneWithoutBookingNestedInput
+    rescheduledBookings?: BookingUncheckedUpdateManyWithoutParentBookingNestedInput
+    attendance?: SessionAttendanceUncheckedUpdateOneWithoutBookingNestedInput
+  }
+
+  export type BookingUncheckedUpdateManyWithoutParentBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    menteeId?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    mentorServiceId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    purposeOfCall?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    menteePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    menteeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    discussionTopic?: NullableStringFieldUpdateOperationsInput | string | null
+    specificQuestions?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledReason?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    rescheduledFromId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WalletTransactionCreateManyWalletInput = {
+    id?: string
+    bookingId?: string | null
+    type: $Enums.WalletTransactionType
+    amount: number
+    description?: string | null
+    balanceBefore: number
+    balanceAfter: number
+    createdAt?: Date | string
+  }
+
+  export type WalletTransactionUpdateWithoutWalletInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balanceBefore?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WalletTransactionUncheckedUpdateWithoutWalletInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balanceBefore?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WalletTransactionUncheckedUpdateManyWithoutWalletInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
+    amount?: FloatFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    balanceBefore?: FloatFieldUpdateOperationsInput | number
+    balanceAfter?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
 
 
   /**
@@ -23415,6 +31228,14 @@ export namespace Prisma {
      * @deprecated Use AvailabilityWindowCountOutputTypeDefaultArgs instead
      */
     export type AvailabilityWindowCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AvailabilityWindowCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use BookingCountOutputTypeDefaultArgs instead
+     */
+    export type BookingCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = BookingCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use MentorWalletCountOutputTypeDefaultArgs instead
+     */
+    export type MentorWalletCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorWalletCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use UserDefaultArgs instead
      */
@@ -23459,6 +31280,22 @@ export namespace Prisma {
      * @deprecated Use ReviewDefaultArgs instead
      */
     export type ReviewArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ReviewDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use SessionAttendanceDefaultArgs instead
+     */
+    export type SessionAttendanceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SessionAttendanceDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use MentorWalletDefaultArgs instead
+     */
+    export type MentorWalletArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorWalletDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use WalletTransactionDefaultArgs instead
+     */
+    export type WalletTransactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = WalletTransactionDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use MentorCancellationStatDefaultArgs instead
+     */
+    export type MentorCancellationStatArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorCancellationStatDefaultArgs<ExtArgs>
     /**
      * @deprecated Use PayoutDefaultArgs instead
      */

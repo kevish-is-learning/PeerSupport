@@ -10,6 +10,8 @@ import {
 import { generateSlots } from '../utils/slotGenerator.js';
 import { istToUtc, utcToIst } from '../utils/timezoneUtils.js';
 import emailService from './EmailService.js';
+import { ACTIVE_STATUSES } from '../utils/bookingStateMachine.js';
+import { calculatePlatformFee, calculateMentorEarning } from '../utils/financialCalculator.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -135,7 +137,7 @@ class BookingService {
     const bookings = await prisma.booking.findMany({
       where: {
         mentorProfileId: validMentorId,
-        status: { in: ['PENDING', 'CONFIRMED'] },
+        status: { in: ACTIVE_STATUSES },
         startTime: { gte: requestedDate },
         endTime: { lte: new Date(requestedDate.getTime() + 24 * 60 * 60 * 1000) },
       },
@@ -206,7 +208,7 @@ class BookingService {
     const conflicting = await prisma.booking.findFirst({
       where: {
         mentorProfileId: data.mentorProfileId,
-        status: { in: ['PENDING', 'CONFIRMED'] },
+        status: { in: ACTIVE_STATUSES },
         startTime: { lt: endTimeUtc },
         endTime: { gt: startTimeUtc },
       },
@@ -227,15 +229,20 @@ class BookingService {
           endTime: endTimeUtc,
           purposeOfCall: data.purposeOfCall,
           notes: data.notes,
-          status: 'PENDING',
+          status: 'PAYMENT_PENDING',
         },
         include: bookingInclude,
       });
+
+      const platformFee = calculatePlatformFee(service.price);
+      const mentorAmount = calculateMentorEarning(service.price);
 
       const payment = await tx.payment.create({
         data: {
           bookingId: newBooking.id,
           amount: service.price,
+          platformFee,
+          mentorAmount,
           currency: 'INR',
           paymentStatus: 'PENDING',
         },
@@ -308,15 +315,18 @@ class BookingService {
       throw createServiceError(403, 'You are not authorized to cancel this booking');
     }
 
-    if (!['PENDING', 'CONFIRMED'].includes(booking.status)) {
+    if (!['PAYMENT_PENDING', 'CONFIRMED'].includes(booking.status)) {
       throw createServiceError(400, `Cannot cancel a booking with status: ${booking.status}`);
     }
+
+    const cancelStatus = isMentee ? 'CANCELLED_BY_MENTEE' : 'CANCELLED_BY_MENTOR';
 
     const updated = await prisma.booking.update({
       where: { id: validId },
       data: {
-        status: 'CANCELLED',
+        status: cancelStatus,
         cancelledReason,
+        cancelledBy: userId,
       },
       include: {
         ...bookingInclude,
@@ -399,7 +409,7 @@ class BookingService {
       prisma.booking.findMany({
         where: {
           menteeId,
-          status: { in: ['CONFIRMED', 'PENDING'] },
+          status: { in: ['CONFIRMED', 'PAYMENT_PENDING'] },
           startTime: { gt: now },
         },
         select: sessionSelect,
@@ -410,7 +420,7 @@ class BookingService {
         where: {
           menteeId,
           OR: [
-            { status: { in: ['COMPLETED', 'CANCELLED'] } },
+            { status: { in: ['COMPLETED', 'CANCELLED_BY_MENTOR', 'CANCELLED_BY_MENTEE'] } },
             { status: 'CONFIRMED', startTime: { lte: now } },
           ],
         },

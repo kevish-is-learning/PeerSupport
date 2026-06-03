@@ -243,11 +243,16 @@ export default function MyMenteesPage() {
                   <div>
                     <span className={`rounded-md px-3 py-1 text-xs font-bold tracking-wider uppercase ${
                       session.status === 'COMPLETED' ? 'bg-[#22C55E] text-white' : 
-                      session.status === 'PENDING' ? 'bg-[#F59E0B] text-white' : 
+                      session.status === 'PAYMENT_PENDING' ? 'bg-[#F59E0B] text-white' : 
+                      session.status === 'IN_PROGRESS' ? 'bg-[#3B82F6] text-white' :
                       session.status === 'CONFIRMED' && new Date(session.startTime) > Date.now()  ? 'bg-[#FFB705] text-black' : 
-                      session.status === 'CONFIRMED' && new Date(session.startTime) < Date.now()  ? 'bg-[#5061E4] text-white' : ''
+                      session.status === 'CONFIRMED' && new Date(session.startTime) < Date.now()  ? 'bg-[#5061E4] text-white' :
+                      session.status?.startsWith('CANCELLED') ? 'bg-[#EF4444] text-white' :
+                      session.status?.startsWith('NO_SHOW') ? 'bg-[#DC2626] text-white' :
+                      session.status?.startsWith('RESCHEDULE') ? 'bg-[#8B5CF6] text-white' :
+                      session.status?.startsWith('REFUND') ? 'bg-[#6B7280] text-white' : ''
                     }`}>
-                      {session.status}
+                      {session.status?.replace(/_/g, ' ')}
                     </span>
                   </div>
                 </div>
