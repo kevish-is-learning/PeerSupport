@@ -159,7 +159,7 @@ export default function MentorPaymentsPage() {
     {
       label: "Pending Balance",
       value: `₹${(wallet?.pendingBalance || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
-      subtitle: "Released 48h after session",
+      subtitle: "Available once session completes",
       icon: Clock,
       shadowColor: "#F97316",
       iconColor: "text-[#F97316]",

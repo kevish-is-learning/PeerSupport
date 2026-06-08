@@ -327,7 +327,7 @@ class MentorBookingService {
     const upcomingSessions = await prisma.booking.findMany({
       where: {
         mentorProfileId,
-        status: { in: ["CONFIRMED", "PAYMENT_PENDING"] },
+        status: { in: ["CONFIRMED", "PAYMENT_PENDING", "IN_PROGRESS"] },
         endTime: { gte: now },
       },
       include: sessionInclude,

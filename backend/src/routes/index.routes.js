@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import authRoutes from './auth.routes.js';
-import adminMentorRoutes from './adminMentor.routes.js';
+import adminRoutes from './admin.routes.js';
 import menteeProfileRoutes from './menteeProfile.routes.js';
 import mentorProfileRoutes from './mentorProfile.routes.js';
 import mentorServiceRoutes from './mentorService.routes.js';
@@ -51,7 +51,7 @@ router.use('/mentor-availability', mentorAvailabilityRoutes);
 router.use('/mentor-bookings', mentorBookingRoutes);
 router.use('/mentors', publicMentorRoutes);
 router.use('/mentees', publicMenteeRoutes);
-router.use('/admin', adminMentorRoutes);
+router.use('/admin', adminRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/payments', paymentRoutes);
 router.use('/meetings', meetingRoutes);

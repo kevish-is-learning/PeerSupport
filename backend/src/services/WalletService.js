@@ -141,6 +141,56 @@ class WalletService {
   }
 
   /**
+   * Helper to automatically release earnings for a specific completed booking.
+   * Checks if already released to prevent double-releasing.
+   */
+  async releaseEarningsForCompletedBooking(bookingId) {
+    try {
+      const booking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        include: {
+          payment: {
+            select: { mentorAmount: true, paymentStatus: true },
+          },
+          mentorProfile: {
+            select: { id: true },
+          },
+        },
+      });
+
+      if (!booking || booking.status !== 'COMPLETED') return false;
+      if (!booking.payment || booking.payment.paymentStatus !== 'SUCCESS') return false;
+
+      const mentorAmount = booking.payment.mentorAmount;
+      if (!mentorAmount || mentorAmount <= 0) return false;
+
+      const wallet = await prisma.mentorWallet.findUnique({
+        where: { mentorProfileId: booking.mentorProfileId },
+      });
+
+      if (!wallet || wallet.pendingBalance < mentorAmount) return false;
+
+      // Check if already released
+      const existingRelease = await prisma.walletTransaction.findFirst({
+        where: {
+          walletId: wallet.id,
+          bookingId: booking.id,
+          type: 'EARNING',
+          description: { contains: 'released' },
+        },
+      });
+
+      if (existingRelease) return false; // Already released
+
+      await this.releasePending(wallet.id, mentorAmount, booking.id);
+      return true;
+    } catch (err) {
+      console.error(`Failed to release earnings for booking ${bookingId}:`, err);
+      return false;
+    }
+  }
+
+  /**
    * Debit penalty from available balance.
    */
   async debitPenalty(walletId, amount, bookingId, reason) {

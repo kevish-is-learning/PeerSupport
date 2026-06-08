@@ -3,17 +3,16 @@
  *
  * Automates marketplace operations:
  * 1. Auto-complete sessions past endTime + 30min
- * 2. Release pending earnings after session completion (48h hold)
- * 3. Auto-mark no-shows (15min grace after startTime)
+ * 2. Auto-mark no-shows (15min grace after startTime)
  *
  * Uses simple setInterval-based scheduling (no external cron dependency).
  */
 
 import { prisma } from '../config/database.js';
+import walletService from '../services/WalletService.js';
 
 const INTERVALS = {
   AUTO_COMPLETE: 10 * 60 * 1000,     // Every 10 minutes
-  RELEASE_EARNINGS: 60 * 60 * 1000,  // Every hour
   NO_SHOW_CHECK: 5 * 60 * 1000,      // Every 5 minutes
 };
 
@@ -33,14 +32,10 @@ class CronScheduler {
     );
 
     this._timers.push(
-      setInterval(() => this._releasePendingEarnings(), INTERVALS.RELEASE_EARNINGS)
-    );
-
-    this._timers.push(
       setInterval(() => this._checkNoShows(), INTERVALS.NO_SHOW_CHECK)
     );
 
-    console.log('⏰ Cron jobs registered: auto-complete, release-earnings, no-show-check');
+    console.log('⏰ Cron jobs registered: auto-complete, no-show-check');
   }
 
   /**
@@ -63,7 +58,7 @@ class CronScheduler {
 
       const sessions = await prisma.booking.findMany({
         where: {
-          status: 'CONFIRMED',
+          status: { in: ['CONFIRMED', 'IN_PROGRESS'] },
           endTime: { lt: cutoff },
         },
         select: { id: true },
@@ -74,85 +69,23 @@ class CronScheduler {
       const { count } = await prisma.booking.updateMany({
         where: {
           id: { in: sessions.map((s) => s.id) },
-          status: 'CONFIRMED',
+          status: { in: ['CONFIRMED', 'IN_PROGRESS'] },
         },
         data: { status: 'COMPLETED' },
       });
+
+      // Release earnings for auto-completed sessions
+      if (count > 0) {
+        for (const session of sessions) {
+          await walletService.releaseEarningsForCompletedBooking(session.id);
+        }
+      }
 
       if (count > 0) {
         console.log(`[Cron] Auto-completed ${count} session(s)`);
       }
     } catch (err) {
       console.error('[Cron] auto-complete error:', err.message);
-    }
-  }
-
-  /**
-   * Release pending earnings to available after 48 hours post-completion.
-   */
-  async _releasePendingEarnings() {
-    try {
-      const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000); // 48h ago
-
-      // Find completed bookings older than 48h with unreleased earnings
-      const completedBookings = await prisma.booking.findMany({
-        where: {
-          status: 'COMPLETED',
-          updatedAt: { lt: cutoff },
-        },
-        include: {
-          payment: {
-            select: { mentorAmount: true, paymentStatus: true },
-          },
-        },
-      });
-
-      for (const booking of completedBookings) {
-        if (!booking.payment || booking.payment.paymentStatus !== 'SUCCESS') continue;
-
-        const mentorAmount = booking.payment.mentorAmount;
-        if (!mentorAmount || mentorAmount <= 0) continue;
-
-        const wallet = await prisma.mentorWallet.findUnique({
-          where: { mentorProfileId: booking.mentorProfileId },
-        });
-
-        if (!wallet || wallet.pendingBalance < mentorAmount) continue;
-
-        // Check if already released (avoid duplicate releases)
-        const existingRelease = await prisma.walletTransaction.findFirst({
-          where: {
-            walletId: wallet.id,
-            bookingId: booking.id,
-            description: { contains: 'released' },
-          },
-        });
-
-        if (existingRelease) continue;
-
-        await prisma.$transaction([
-          prisma.mentorWallet.update({
-            where: { id: wallet.id },
-            data: {
-              pendingBalance: { decrement: mentorAmount },
-              availableBalance: { increment: mentorAmount },
-            },
-          }),
-          prisma.walletTransaction.create({
-            data: {
-              walletId: wallet.id,
-              bookingId: booking.id,
-              type: 'EARNING',
-              amount: mentorAmount,
-              description: 'Earnings released after session completion',
-              balanceBefore: wallet.availableBalance,
-              balanceAfter: wallet.availableBalance + mentorAmount,
-            },
-          }),
-        ]);
-      }
-    } catch (err) {
-      console.error('[Cron] release-earnings error:', err.message);
     }
   }
 

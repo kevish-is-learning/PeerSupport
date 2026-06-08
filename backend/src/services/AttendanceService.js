@@ -24,31 +24,36 @@ class AttendanceService {
    */
   async recordJoin(bookingId, userId, role) {
     try {
-      const existing = await prisma.sessionAttendance.findFirst({
-        where: { bookingId, participantId: userId },
+      const isMentor = role === 'MENTOR';
+      const now = new Date();
+
+      let attendance = await prisma.sessionAttendance.upsert({
+        where: { bookingId },
+        create: { bookingId },
+        update: {},
       });
 
-      if (existing) {
-        // Rejoin — increment reconnect count, clear leaveTime
-        await prisma.sessionAttendance.update({
-          where: { id: existing.id },
-          data: {
-            leaveTime: null,
-            reconnectCount: { increment: 1 },
-          },
-        });
-        return existing;
+      const updateData = {};
+      
+      if (isMentor) {
+        if (attendance.mentorJoinedAt) {
+          updateData.mentorLeftAt = null;
+          updateData.mentorReconnects = attendance.mentorReconnects + 1;
+        } else {
+          updateData.mentorJoinedAt = now;
+        }
+      } else {
+        if (attendance.menteeJoinedAt) {
+          updateData.menteeLeftAt = null;
+          updateData.menteeReconnects = attendance.menteeReconnects + 1;
+        } else {
+          updateData.menteeJoinedAt = now;
+        }
       }
 
-      // First join
-      return prisma.sessionAttendance.create({
-        data: {
-          bookingId,
-          participantId: userId,
-          role,
-          joinTime: new Date(),
-          reconnectCount: 0,
-        },
+      return await prisma.sessionAttendance.update({
+        where: { bookingId },
+        data: updateData,
       });
     } catch (err) {
       console.error('[AttendanceService] Failed to record join:', err.message);
@@ -64,22 +69,43 @@ class AttendanceService {
    */
   async recordLeave(bookingId, userId) {
     try {
-      const attendance = await prisma.sessionAttendance.findFirst({
-        where: { bookingId, participantId: userId },
+      const attendance = await prisma.sessionAttendance.findUnique({
+        where: { bookingId },
+        include: {
+          booking: {
+            include: {
+              mentorProfile: { select: { userId: true } }
+            }
+          }
+        }
       });
 
       if (!attendance) return;
 
+      const isMentor = attendance.booking?.mentorProfile?.userId === userId;
       const now = new Date();
-      const durationMinutes = Math.round((now.getTime() - attendance.joinTime.getTime()) / 60000);
 
-      await prisma.sessionAttendance.update({
-        where: { id: attendance.id },
-        data: {
-          leaveTime: now,
-          durationMinutes,
-        },
-      });
+      if (isMentor) {
+        if (!attendance.mentorJoinedAt) return;
+        const durationSecs = Math.round((now.getTime() - attendance.mentorJoinedAt.getTime()) / 1000);
+        await prisma.sessionAttendance.update({
+          where: { bookingId },
+          data: {
+            mentorLeftAt: now,
+            mentorDurationSecs: durationSecs,
+          }
+        });
+      } else {
+        if (!attendance.menteeJoinedAt) return;
+        const durationSecs = Math.round((now.getTime() - attendance.menteeJoinedAt.getTime()) / 1000);
+        await prisma.sessionAttendance.update({
+          where: { bookingId },
+          data: {
+            menteeLeftAt: now,
+            menteeDurationSecs: durationSecs,
+          }
+        });
+      }
     } catch (err) {
       console.error('[AttendanceService] Failed to record leave:', err.message);
     }
@@ -89,39 +115,63 @@ class AttendanceService {
    * Get attendance records for a booking.
    */
   async getAttendance(bookingId) {
-    const records = await prisma.sessionAttendance.findMany({
+    const attendance = await prisma.sessionAttendance.findUnique({
       where: { bookingId },
       include: {
-        participant: {
-          select: { id: true, name: true, email: true, profilePicture: true },
-        },
-      },
-      orderBy: { joinTime: 'asc' },
+        booking: {
+          include: {
+            mentee: { select: { id: true, name: true } },
+            mentorProfile: { select: { user: { select: { id: true, name: true } } } }
+          }
+        }
+      }
     });
 
-    return records.map((r) => ({
-      id: r.id,
-      participantId: r.participantId,
-      participantName: r.participant?.name || 'Unknown',
-      role: r.role,
-      joinTime: r.joinTime,
-      leaveTime: r.leaveTime,
-      durationMinutes: r.durationMinutes,
-      reconnectCount: r.reconnectCount,
-    }));
+    if (!attendance) return [];
+
+    const results = [];
+    const { booking } = attendance;
+
+    if (attendance.mentorJoinedAt) {
+      results.push({
+        id: attendance.id + '_mentor',
+        participantId: booking?.mentorProfile?.user?.id,
+        participantName: booking?.mentorProfile?.user?.name || 'Mentor',
+        role: 'MENTOR',
+        joinTime: attendance.mentorJoinedAt,
+        leaveTime: attendance.mentorLeftAt,
+        durationMinutes: Math.round(attendance.mentorDurationSecs / 60),
+        reconnectCount: attendance.mentorReconnects,
+      });
+    }
+
+    if (attendance.menteeJoinedAt) {
+      results.push({
+        id: attendance.id + '_mentee',
+        participantId: booking?.mentee?.id,
+        participantName: booking?.mentee?.name || 'Mentee',
+        role: 'MENTEE',
+        joinTime: attendance.menteeJoinedAt,
+        leaveTime: attendance.menteeLeftAt,
+        durationMinutes: Math.round(attendance.menteeDurationSecs / 60),
+        reconnectCount: attendance.menteeReconnects,
+      });
+    }
+
+    return results;
   }
 
   /**
    * Check if both mentor and mentee attended a session.
    */
   async bothAttended(bookingId) {
-    const records = await prisma.sessionAttendance.findMany({
+    const attendance = await prisma.sessionAttendance.findUnique({
       where: { bookingId },
-      select: { role: true },
     });
 
-    const roles = new Set(records.map((r) => r.role));
-    return roles.has('MENTOR') && roles.has('MENTEE');
+    if (!attendance) return false;
+
+    return !!(attendance.mentorJoinedAt && attendance.menteeJoinedAt);
   }
 }
 

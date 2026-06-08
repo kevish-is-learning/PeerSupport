@@ -416,6 +416,138 @@ export const payoutApi = {
   },
 };
 
+// ─── Admin APIs (unified) ────────────────────────────────────────────────────
+
+export const adminApi = {
+  // Dashboard
+  getDashboardStats() {
+    return apiRequest('/admin/dashboard/stats');
+  },
+
+  // Users
+  listUsers({ page = 1, limit = 20, search, role, isActive, provider } = {}) {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('limit', limit);
+    if (search) params.set('search', search);
+    if (role) params.set('role', role);
+    if (isActive !== undefined) params.set('isActive', isActive);
+    if (provider) params.set('provider', provider);
+    return apiRequest(`/admin/users?${params.toString()}`);
+  },
+  getUserDetail(userId) {
+    return apiRequest(`/admin/users/${userId}`);
+  },
+  toggleUserActive(userId, data) {
+    return apiRequest(`/admin/users/${userId}`, { method: 'PATCH', body: data });
+  },
+
+  // Mentors
+  getWaitlist() {
+    return apiRequest('/admin/mentor-waitlist');
+  },
+  updateApproval(profileId, data) {
+    return apiRequest(`/admin/mentor-waitlist/${profileId}`, { method: 'PATCH', body: data });
+  },
+  listMentors({ page = 1, limit = 20, search, approvalStatus } = {}) {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('limit', limit);
+    if (search) params.set('search', search);
+    if (approvalStatus) params.set('approvalStatus', approvalStatus);
+    return apiRequest(`/admin/mentors?${params.toString()}`);
+  },
+  getMentorDetail(profileId) {
+    return apiRequest(`/admin/mentors/${profileId}`);
+  },
+  suspendMentor(profileId, data = {}) {
+    return apiRequest(`/admin/mentors/${profileId}/suspend`, { method: 'PATCH', body: data });
+  },
+  unsuspendMentor(profileId) {
+    return apiRequest(`/admin/mentors/${profileId}/unsuspend`, { method: 'PATCH' });
+  },
+
+  // Bookings
+  listBookings({ page = 1, limit = 20, status, mentorProfileId, menteeId, from, to, search } = {}) {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('limit', limit);
+    if (status) params.set('status', status);
+    if (mentorProfileId) params.set('mentorProfileId', mentorProfileId);
+    if (menteeId) params.set('menteeId', menteeId);
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+    if (search) params.set('search', search);
+    return apiRequest(`/admin/bookings?${params.toString()}`);
+  },
+  getBookingDetail(bookingId) {
+    return apiRequest(`/admin/bookings/${bookingId}`);
+  },
+  overrideBookingStatus(bookingId, data) {
+    return apiRequest(`/admin/bookings/${bookingId}/status`, { method: 'PATCH', body: data });
+  },
+  adminCancelBooking(bookingId, data = {}) {
+    return apiRequest(`/admin/bookings/${bookingId}/cancel`, { method: 'PATCH', body: data });
+  },
+
+  // Payments
+  listPayments({ page = 1, limit = 20, status, from, to } = {}) {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('limit', limit);
+    if (status) params.set('status', status);
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+    return apiRequest(`/admin/payments?${params.toString()}`);
+  },
+  getRevenueSummary() {
+    return apiRequest('/admin/payments/summary');
+  },
+  adminRefund(paymentId, data = {}) {
+    return apiRequest(`/admin/payments/${paymentId}/refund`, { method: 'POST', body: data });
+  },
+
+  // Payouts
+  listPayouts({ status, page = 1, limit = 20 } = {}) {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('limit', limit);
+    if (status) params.set('status', status);
+    return apiRequest(`/admin/payouts?${params.toString()}`);
+  },
+  approvePayout(payoutId) {
+    return apiRequest(`/admin/payouts/${payoutId}/approve`, { method: 'PATCH' });
+  },
+  completePayout(payoutId, data = {}) {
+    return apiRequest(`/admin/payouts/${payoutId}/complete`, { method: 'PATCH', body: data });
+  },
+  failPayout(payoutId, data = {}) {
+    return apiRequest(`/admin/payouts/${payoutId}/fail`, { method: 'PATCH', body: data });
+  },
+
+  // Reviews & Feedback
+  listReviews({ page = 1, limit = 20, mentorProfileId, minRating, maxRating } = {}) {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('limit', limit);
+    if (mentorProfileId) params.set('mentorProfileId', mentorProfileId);
+    if (minRating) params.set('minRating', minRating);
+    if (maxRating) params.set('maxRating', maxRating);
+    return apiRequest(`/admin/reviews?${params.toString()}`);
+  },
+  deleteReview(reviewId) {
+    return apiRequest(`/admin/reviews/${reviewId}`, { method: 'DELETE' });
+  },
+  listFeedback({ page = 1, limit = 20 } = {}) {
+    return apiRequest(`/admin/feedback?page=${page}&limit=${limit}`);
+  },
+
+  // Wallet Adjustments
+  adjustWallet(mentorProfileId, data) {
+    return apiRequest(`/admin/wallet/${mentorProfileId}/adjust`, { method: 'POST', body: data });
+  },
+};
+
 export function resolveUploadUrl(filePath) {
   if (!filePath) {
     return "";
@@ -433,3 +565,4 @@ export { API_BASE_URL };
 
 // Alias for components that import v2BookingApi
 export { v2Api as v2BookingApi };
+

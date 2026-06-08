@@ -409,8 +409,8 @@ class BookingService {
       prisma.booking.findMany({
         where: {
           menteeId,
-          status: { in: ['CONFIRMED', 'PAYMENT_PENDING'] },
-          startTime: { gt: now },
+          status: { in: ['CONFIRMED', 'PAYMENT_PENDING', 'IN_PROGRESS'] },
+          endTime: { gt: now },
         },
         select: sessionSelect,
         orderBy: { startTime: 'asc' },
@@ -421,7 +421,7 @@ class BookingService {
           menteeId,
           OR: [
             { status: { in: ['COMPLETED', 'CANCELLED_BY_MENTOR', 'CANCELLED_BY_MENTEE'] } },
-            { status: 'CONFIRMED', startTime: { lte: now } },
+            { status: { in: ['CONFIRMED', 'IN_PROGRESS'] }, endTime: { lte: now } },
           ],
         },
         select: sessionSelect,

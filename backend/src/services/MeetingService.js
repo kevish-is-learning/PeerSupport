@@ -10,6 +10,7 @@ const { RtcTokenBuilder, RtcRole } = agoraToken;
 import { prisma } from '../config/database.js';
 import emailService from '../services/EmailService.js';
 import attendanceService from '../services/AttendanceService.js';
+import walletService from '../services/WalletService.js';
 import crypto from 'crypto';
 
 const AGORA_APP_ID = process.env.AGORA_APP_ID;
@@ -83,8 +84,8 @@ class MeetingService {
       throw createServiceError(403, 'You are not a participant of this session');
     }
 
-    // Booking must be confirmed
-    if (booking.status !== 'CONFIRMED') {
+    // Booking must be confirmed or in progress
+    if (booking.status !== 'CONFIRMED' && booking.status !== 'IN_PROGRESS') {
       throw createServiceError(400, `Cannot join session — booking status is ${booking.status}`);
     }
 
@@ -201,8 +202,8 @@ class MeetingService {
       return { completed: true, message: 'Session is already completed' };
     }
 
-    // Only works on CONFIRMED bookings
-    if (booking.status !== 'CONFIRMED') {
+    // Only works on CONFIRMED or IN_PROGRESS bookings
+    if (booking.status !== 'CONFIRMED' && booking.status !== 'IN_PROGRESS') {
       return { completed: false, message: `Booking status is ${booking.status}` };
     }
 
@@ -228,6 +229,9 @@ class MeetingService {
       await attendanceService.recordLeave(bookingId, userId);
       // Cleanup tracker
       this._finishTracker.delete(bookingId);
+
+      // Instantly release mentor's pending funds to available
+      await walletService.releaseEarningsForCompletedBooking(bookingId);
 
       // Fire-and-forget: send session completed emails to both parties
       const menteeEmail = booking.mentee?.email;

@@ -1,276 +1,168 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import Link from "next/link";
+import { adminApi } from "../../../lib/api";
 
-import { adminMentorApi, resolveUploadUrl } from "../../../lib/api";
-
-const formatDate = (value) => {
-  if (!value) {
-    return "-";
-  }
-
-  try {
-    return new Date(value).toLocaleString();
-  } catch (_error) {
-    return value;
-  }
+const formatCurrency = (v) => `₹${(v || 0).toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+const formatDate = (v) => {
+  if (!v) return "-";
+  try { return new Date(v).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }); } catch { return v; }
+};
+const formatDateTime = (v) => {
+  if (!v) return "-";
+  try { return new Date(v).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch { return v; }
 };
 
-const buildInitialNotes = (profiles) =>
-  profiles.reduce((accumulator, profile) => {
-    accumulator[profile.id] = profile.adminReviewNotes || "";
-    return accumulator;
-  }, {});
+const STATUS_COLORS = {
+  CONFIRMED: "border-blue-900/50 text-blue-400 bg-blue-950/20",
+  COMPLETED: "border-emerald-900/50 text-emerald-400 bg-emerald-950/20",
+  PAYMENT_PENDING: "border-amber-900/50 text-amber-400 bg-amber-950/20",
+  CANCELLED_BY_MENTOR: "border-red-900/50 text-red-400 bg-red-950/20",
+  CANCELLED_BY_MENTEE: "border-red-900/50 text-red-400 bg-red-950/20",
+  NO_SHOW_MENTOR: "border-orange-900/50 text-orange-400 bg-orange-950/20",
+  NO_SHOW_MENTEE: "border-orange-900/50 text-orange-400 bg-orange-950/20",
+  REFUND_INITIATED: "border-purple-900/50 text-purple-400 bg-purple-950/20",
+  REFUND_COMPLETED: "border-purple-900/50 text-purple-400 bg-purple-950/20",
+  IN_PROGRESS: "border-cyan-900/50 text-cyan-400 bg-cyan-950/20",
+};
+
+function StatCard({ label, value, sub }) {
+  return (
+    <article className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-500">{label}</p>
+      <p className="mt-3 text-3xl font-medium tracking-tight text-white">{value}</p>
+      {sub && <p className="mt-2 text-xs text-zinc-500">{sub}</p>}
+    </article>
+  );
+}
+
+function StatusBadge({ status }) {
+  const color = STATUS_COLORS[status] || "border-zinc-800 text-zinc-400 bg-zinc-900/50";
+  return (
+    <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${color}`}>
+      {status?.replace(/_/g, " ")}
+    </span>
+  );
+}
 
 export default function AdminDashboardPage() {
-  const [profiles, setProfiles] = useState([]);
-  const [notesByProfile, setNotesByProfile] = useState({});
-  const [activeProfileId, setActiveProfileId] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const pendingCount = profiles.length;
-
-  const newThisWeek = useMemo(() => {
-    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-
-    return profiles.filter((profile) => {
-      const createdAt = new Date(profile.createdAt).getTime();
-      return Number.isFinite(createdAt) && createdAt >= sevenDaysAgo;
-    }).length;
-  }, [profiles]);
-
-  const withDocumentsCount = useMemo(
-    () => profiles.filter((profile) => Boolean(profile.collegeDocumentUrl)).length,
-    [profiles]
-  );
-
-  const loadWaitlist = async () => {
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const result = await adminMentorApi.getWaitlist();
-      const fetchedProfiles = result?.data?.profiles || [];
-      setProfiles(fetchedProfiles);
-      setNotesByProfile(buildInitialNotes(fetchedProfiles));
-    } catch (apiError) {
-      const message = apiError?.message || "Failed to load mentor applications";
-      setError(message);
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadWaitlist();
+    (async () => {
+      try {
+        const res = await adminApi.getDashboardStats();
+        setStats(res.data);
+      } catch (err) {
+        toast.error(err.message || "Failed to load dashboard stats");
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  const onNoteChange = (profileId, value) => {
-    setNotesByProfile((previous) => ({
-      ...previous,
-      [profileId]: value,
-    }));
-  };
+  if (loading) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-[3px] border-zinc-800 border-t-white" />
+      </div>
+    );
+  }
 
-  const onUpdateStatus = async (profileId, approvalStatus) => {
-    setActiveProfileId(profileId);
-    setError("");
-
-    try {
-      const note = (notesByProfile[profileId] || "").trim();
-      const result = await adminMentorApi.updateApproval(profileId, {
-        approvalStatus,
-        adminReviewNotes: note,
-      });
-
-      toast.success(result?.message || `Application marked as ${approvalStatus}`);
-
-      const filteredProfiles = profiles.filter((profile) => profile.id !== profileId);
-      setProfiles(filteredProfiles);
-      setNotesByProfile((previous) => {
-        const next = { ...previous };
-        delete next[profileId];
-        return next;
-      });
-    } catch (apiError) {
-      const message = apiError?.message || "Failed to update mentor application";
-      setError(message);
-      toast.error(message);
-    } finally {
-      setActiveProfileId("");
-    }
-  };
+  if (!stats) return null;
 
   return (
-    <div className="grid gap-4">
-      <section className="rounded-3xl border border-black/10 bg-[linear-gradient(120deg,#14213d_0%,#1d3557_52%,#2b4865_100%)] p-6 text-white sm:p-7">
-        <p className="text-xs uppercase tracking-[0.18em] text-white/75">Admin Dashboard</p>
-        <h3 className="mt-2 text-3xl font-extrabold tracking-[-0.03em]">Mentor Approval Control Room</h3>
-        <p className="mt-3 max-w-2xl text-white/85">
-          Review mentor onboarding applications, verify documents, and approve or reject submissions with actionable notes.
-        </p>
+    <div className="mx-auto max-w-6xl space-y-8">
+      {/* Header */}
+      <header>
+        <h1 className="text-3xl font-light tracking-tight text-white">Dashboard Overview</h1>
+        <p className="mt-2 text-sm text-zinc-400">Platform metrics and recent activity across PeerSupport.</p>
+      </header>
+
+      {/* Key Metrics */}
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Total Users" value={stats.users.total} sub={`${stats.users.mentors} Mentors · ${stats.users.mentees} Mentees`} />
+        <StatCard label="Total Revenue" value={formatCurrency(stats.revenue.totalCollected)} sub={`Platform: ${formatCurrency(stats.revenue.platformEarnings)}`} />
+        <StatCard label="Total Bookings" value={stats.bookings.total} sub={`${stats.bookings.thisMonth} this month`} />
+        <StatCard label="Pending Payouts" value={stats.payouts.pending} sub={`Disbursed: ${formatCurrency(stats.payouts.completedTotal)}`} />
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        <article className="rounded-2xl border border-black/10 bg-white p-4">
-          <p className="text-xs uppercase tracking-[0.14em] text-black/50">Pending Applications</p>
-          <p className="mt-2 text-3xl font-bold tracking-[-0.03em]">{pendingCount}</p>
-        </article>
-        <article className="rounded-2xl border border-black/10 bg-white p-4">
-          <p className="text-xs uppercase tracking-[0.14em] text-black/50">New This Week</p>
-          <p className="mt-2 text-3xl font-bold tracking-[-0.03em]">{newThisWeek}</p>
-        </article>
-        <article className="rounded-2xl border border-black/10 bg-white p-4">
-          <p className="text-xs uppercase tracking-[0.14em] text-black/50">With Documents</p>
-          <p className="mt-2 text-3xl font-bold tracking-[-0.03em]">{withDocumentsCount}</p>
-        </article>
+      {/* Secondary Metrics */}
+      <section className="grid gap-4 sm:grid-cols-3">
+        <StatCard label="Active Mentors" value={stats.users.activeMentors} />
+        <StatCard label="Pending Applications" value={stats.users.pendingMentors} />
+        <StatCard label="This Month Revenue" value={formatCurrency(stats.revenue.thisMonthCollected)} sub={`Platform: ${formatCurrency(stats.revenue.thisMonthPlatformFee)}`} />
       </section>
 
-      <section className="rounded-2xl border border-black/10 bg-white p-5">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-          <h4 className="text-lg font-bold">Pending Mentor Applications</h4>
-          <button
-            type="button"
-            onClick={loadWaitlist}
-            disabled={isLoading || Boolean(activeProfileId)}
-            className="rounded-xl border-2 border-black bg-[#dbeafe] px-4 py-2 text-sm font-bold text-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            Refresh
-          </button>
+      {/* Booking Status Breakdown */}
+      <section className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-6">
+        <h2 className="text-sm font-medium text-white">Booking Breakdown</h2>
+        <div className="mt-5 flex flex-wrap gap-3">
+          {Object.entries(stats.bookings.byStatus || {}).map(([status, count]) => (
+            <div key={status} className="flex items-center gap-3 rounded-full border border-zinc-800 bg-black pl-1 pr-4 py-1">
+              <StatusBadge status={status} />
+              <span className="text-sm font-medium text-white">{count}</span>
+            </div>
+          ))}
+          {Object.keys(stats.bookings.byStatus || {}).length === 0 && (
+            <p className="text-sm text-zinc-500">No bookings yet</p>
+          )}
         </div>
-
-        {error ? (
-          <p className="mb-4 rounded-xl border border-[#f56565] bg-[#fff1f1] px-4 py-3 text-sm font-semibold text-[#c53030]">
-            {error}
-          </p>
-        ) : null}
-
-        {isLoading ? (
-          <p className="rounded-xl border border-black/10 bg-[#f8fafc] px-4 py-3 text-sm font-semibold text-black/70">
-            Loading mentor applications...
-          </p>
-        ) : null}
-
-        {!isLoading && profiles.length === 0 ? (
-          <p className="rounded-xl border border-black/10 bg-[#f0fdf4] px-4 py-3 text-sm font-semibold text-[#166534]">
-            No pending applications right now. New mentor submissions will appear here automatically.
-          </p>
-        ) : null}
-
-        {!isLoading && profiles.length > 0 ? (
-          <div className="grid gap-4">
-            {profiles.map((profile) => {
-              const isMutating = activeProfileId === profile.id;
-              const profilePhoto = resolveUploadUrl(profile.profilePhotoUrl);
-              const documentUrl = resolveUploadUrl(profile.collegeDocumentUrl);
-
-              return (
-                <article key={profile.id} className="rounded-2xl border border-black/15 bg-[#f8fafc] p-4">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="text-base font-extrabold">{profile.name || "Unnamed Mentor"}</p>
-                      <p className="text-sm text-black/70">{profile.email}</p>
-                      <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-black/50">
-                        Submitted {formatDate(profile.createdAt)}
-                      </p>
-                    </div>
-                    {profilePhoto ? (
-                      <img
-                        src={profilePhoto}
-                        alt={`${profile.name || "Mentor"} profile`}
-                        className="h-14 w-14 rounded-xl border border-black/15 object-cover"
-                      />
-                    ) : null}
-                  </div>
-
-                  <div className="mt-4 grid gap-3 text-sm text-black/80 sm:grid-cols-2">
-                    <p>
-                      <span className="font-semibold text-black">Contact:</span> {profile.contactNumber || "-"}
-                    </p>
-                    <p>
-                      <span className="font-semibold text-black">LinkedIn:</span>{" "}
-                      {profile.linkedInUrl ? (
-                        <a
-                          href={profile.linkedInUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="font-semibold text-[#1d4ed8] underline"
-                        >
-                          Open Profile
-                        </a>
-                      ) : (
-                        "-"
-                      )}
-                    </p>
-                    <p className="sm:col-span-2">
-                      <span className="font-semibold text-black">Expertise Tags:</span>{" "}
-                      {profile.expertiseTags?.length ? profile.expertiseTags.join(", ") : "-"}
-                    </p>
-                    <p className="sm:col-span-2">
-                      <span className="font-semibold text-black">Bio:</span> {profile.bio || "-"}
-                    </p>
-                    <p className="sm:col-span-2">
-                      <span className="font-semibold text-black">Work Experience:</span>{" "}
-                      {profile.workExperience || "-"}
-                    </p>
-                    <p className="sm:col-span-2">
-                      <span className="font-semibold text-black">College Document:</span>{" "}
-                      {documentUrl ? (
-                        <a
-                          href={documentUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="font-semibold text-[#1d4ed8] underline"
-                        >
-                          View Uploaded Proof
-                        </a>
-                      ) : (
-                        "Not uploaded"
-                      )}
-                    </p>
-                  </div>
-
-                  <div className="mt-4 grid gap-3">
-                    <label htmlFor={`admin-notes-${profile.id}`} className="text-sm font-semibold">
-                      Review Notes (optional)
-                    </label>
-                    <textarea
-                      id={`admin-notes-${profile.id}`}
-                      rows={3}
-                      value={notesByProfile[profile.id] || ""}
-                      onChange={(event) => onNoteChange(profile.id, event.target.value)}
-                      placeholder="Add reason, quality notes, or required corrections for mentor."
-                      className="w-full rounded-xl border border-black/20 bg-white px-3 py-2 text-sm outline-none focus:border-black"
-                    />
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      disabled={isMutating || Boolean(activeProfileId && !isMutating)}
-                      onClick={() => onUpdateStatus(profile.id, "APPROVED")}
-                      className="rounded-xl border-2 border-black bg-[#c6f6d5] px-4 py-2 text-sm font-bold text-[#0f3e22] disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {isMutating ? "Updating..." : "Approve"}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={isMutating || Boolean(activeProfileId && !isMutating)}
-                      onClick={() => onUpdateStatus(profile.id, "REJECTED")}
-                      className="rounded-xl border-2 border-black bg-[#fed7d7] px-4 py-2 text-sm font-bold text-[#7a1f1f] disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {isMutating ? "Updating..." : "Reject"}
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        ) : null}
       </section>
+
+      {/* Two-column: Recent Bookings + Mentor Applications */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Recent Bookings */}
+        <section className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] overflow-hidden">
+          <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
+            <h2 className="text-sm font-medium text-white">Recent Bookings</h2>
+            <Link href="/admin/bookings" className="text-[11px] font-medium uppercase tracking-wider text-zinc-400 hover:text-white transition-colors">
+              View All
+            </Link>
+          </div>
+          <div className="divide-y divide-zinc-800/50">
+            {(stats.recentBookings || []).map((b) => (
+              <div key={b.id} className="flex items-center justify-between px-6 py-4 hover:bg-zinc-900/20 transition-colors">
+                <div>
+                  <p className="text-sm font-medium text-white">{b.menteeName} <span className="text-zinc-600 mx-1">→</span> {b.mentorName}</p>
+                  <p className="mt-1 text-[11px] text-zinc-500">{b.serviceName} · {formatDateTime(b.startTime)}</p>
+                </div>
+                <StatusBadge status={b.status} />
+              </div>
+            ))}
+            {(stats.recentBookings || []).length === 0 && (
+              <div className="px-6 py-8 text-center text-sm text-zinc-500">No recent bookings</div>
+            )}
+          </div>
+        </section>
+
+        {/* Pending Mentor Applications */}
+        <section className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] overflow-hidden">
+          <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
+            <h2 className="text-sm font-medium text-white">Pending Mentor Applications</h2>
+            <Link href="/admin/mentors" className="text-[11px] font-medium uppercase tracking-wider text-zinc-400 hover:text-white transition-colors">
+              View All
+            </Link>
+          </div>
+          <div className="divide-y divide-zinc-800/50">
+            {(stats.recentApplications || []).map((a) => (
+              <div key={a.id} className="flex items-center justify-between px-6 py-4 hover:bg-zinc-900/20 transition-colors">
+                <div>
+                  <p className="text-sm font-medium text-white">{a.name}</p>
+                  <p className="mt-1 text-[11px] text-zinc-500">{a.email}</p>
+                </div>
+                <span className="text-[11px] text-zinc-600">{formatDate(a.createdAt)}</span>
+              </div>
+            ))}
+            {(stats.recentApplications || []).length === 0 && (
+              <div className="px-6 py-8 text-center text-sm text-zinc-500">No pending applications</div>
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
