@@ -56,6 +56,15 @@ const optionalResumePathSchema = z
     'Resume must be a valid URL or uploaded file path'
   );
 
+const optionalUrlSchema = z
+  .union([z.string().trim(), z.null()])
+  .optional()
+  .transform((value) => {
+    if (typeof value === 'undefined' || value === null) return undefined;
+    const trimmed = value.trim();
+    return trimmed.length ? trimmed : undefined;
+  });
+
 const skillsetsSchema = z.preprocess(
   (value) => {
     if (typeof value === 'undefined' || value === null || value === '') {
@@ -152,6 +161,7 @@ export const createMenteeProfileSchema = z.object({
     }).nullable()
   ).optional(),
   resumeUrl: optionalResumePathSchema,
+  profilePhotoUrl: optionalUrlSchema,
 });
 
 export const updateMenteeProfileSchema = z.object({
@@ -182,6 +192,7 @@ export const updateMenteeProfileSchema = z.object({
     }).nullable()
   ).optional(),
   resumeUrl: optionalResumePathSchema,
+  profilePhotoUrl: optionalUrlSchema,
 });
 
 export default {

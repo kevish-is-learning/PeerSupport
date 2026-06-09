@@ -28,11 +28,14 @@ const mentorUpload = createUploader(
 
 const menteeUpload = createUploader(
   new Set([
+    'image/jpeg',
+    'image/png',
+    'image/webp',
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   ]),
-  'Only PDF, DOC, and DOCX files are allowed for resume upload'
+  'Only JPG, PNG, WEBP images (for profile photo) or PDF, DOC, DOCX files (for resume) are allowed'
 );
 
 const mentorUploadFieldsHandler = mentorUpload.fields([
@@ -40,7 +43,10 @@ const mentorUploadFieldsHandler = mentorUpload.fields([
   { name: 'collegeDocument', maxCount: 1 },
 ]);
 
-const menteeUploadFieldsHandler = menteeUpload.fields([{ name: 'resume', maxCount: 1 }]);
+const menteeUploadFieldsHandler = menteeUpload.fields([
+  { name: 'profilePhoto', maxCount: 1 },
+  { name: 'resume', maxCount: 1 },
+]);
 
 // ─── Cloudinary streaming helper ─────────────────────────────────────────────
 
@@ -150,9 +156,11 @@ const menteeProfileUpload = (req, res, next) => {
       });
     }
 
+    const profilePhoto = req.files?.profilePhoto?.[0];
     const resume = req.files?.resume?.[0];
 
-    if (!resume) {
+    // Nothing to upload → carry on
+    if (!profilePhoto && !resume) {
       req.uploadedFiles = {};
       return next();
     }
@@ -160,15 +168,29 @@ const menteeProfileUpload = (req, res, next) => {
     try {
       const username = await resolveUsername(req.user.id, 'MENTEE');
 
-      const uniqueId = `${username}_resume_${Date.now()}`;
-      const resumeUrl = await uploadToCloudinary(resume.buffer, {
-        folder: getFolder(username, 'pdfs'),
-        public_id: uniqueId,
-        resource_type: 'raw',
-        overwrite: true,
-      });
+      const uploads = {};
 
-      req.uploadedFiles = { resumeUrl };
+      if (profilePhoto) {
+        const uniqueId = `${username}_${Date.now()}`;
+        uploads.profilePhotoUrl = await uploadToCloudinary(profilePhoto.buffer, {
+          folder: getFolder(username, 'avatar'),
+          public_id: uniqueId,
+          resource_type: 'image',
+          overwrite: true,
+        });
+      }
+
+      if (resume) {
+        const uniqueId = `${username}_resume_${Date.now()}`;
+        uploads.resumeUrl = await uploadToCloudinary(resume.buffer, {
+          folder: getFolder(username, 'pdfs'),
+          public_id: uniqueId,
+          resource_type: 'raw',
+          overwrite: true,
+        });
+      }
+
+      req.uploadedFiles = uploads;
       next();
     } catch (uploadError) {
       console.error('[Cloudinary] Upload failed:', uploadError);

@@ -22,6 +22,7 @@ const mapProfile = (profile) => ({
   username: profile.username,
   name: profile.user.name || null,
   email: profile.user.email,
+  profilePhotoUrl: profile.user.profilePicture || null,
   dateOfBirth: profile.dateOfBirth.toISOString().split('T')[0],
   contactNumber: profile.contactNumber,
   education: profile.education || [],
@@ -42,6 +43,7 @@ const profileInclude = {
     select: {
       name: true,
       email: true,
+      profilePicture: true,
     },
   },
 };
@@ -62,7 +64,7 @@ class MenteeProfileService {
 
   async create(userId, payload) {
     const parsedData = createMenteeProfileSchema.parse(payload);
-    const { name, ...profileData } = parsedData;
+    const { name, profilePhotoUrl, ...profileData } = parsedData;
 
     const existingProfile = await prisma.menteeProfile.findUnique({
       where: { userId },
@@ -84,12 +86,16 @@ class MenteeProfileService {
       include: profileInclude,
     });
 
-    if (name) {
+    if (name || profilePhotoUrl) {
+      const updateData = {};
+      if (name) updateData.name = name;
+      if (profilePhotoUrl) updateData.profilePicture = profilePhotoUrl;
       await prisma.user.update({
         where: { id: userId },
-        data: { name },
+        data: updateData,
       });
-      createdProfile.user.name = name;
+      if (name) createdProfile.user.name = name;
+      if (profilePhotoUrl) createdProfile.user.profilePicture = profilePhotoUrl;
     }
 
     return mapProfile(createdProfile);
@@ -97,13 +103,14 @@ class MenteeProfileService {
 
   async update(userId, payload) {
     const parsedData = updateMenteeProfileSchema.parse(payload);
-    const { name, ...profileData } = parsedData;
+    const { name, profilePhotoUrl, ...profileData } = parsedData;
 
     const existingProfile = await prisma.menteeProfile.findUnique({
       where: { userId },
       select: {
         id: true,
         resumeUrl: true,
+        user: { select: { profilePicture: true } },
       },
     });
 
@@ -122,12 +129,23 @@ class MenteeProfileService {
       include: profileInclude,
     });
 
-    if (name) {
+    // Update User record (name and/or profilePicture)
+    const nextProfilePhotoUrl = profilePhotoUrl ?? existingProfile.user?.profilePicture;
+    if (name || profilePhotoUrl) {
+      const updateData = {};
+      if (name) updateData.name = name;
+      if (profilePhotoUrl) updateData.profilePicture = nextProfilePhotoUrl;
       await prisma.user.update({
         where: { id: userId },
-        data: { name },
+        data: updateData,
       });
-      updatedProfile.user.name = name;
+      if (name) updatedProfile.user.name = name;
+      if (profilePhotoUrl) updatedProfile.user.profilePicture = nextProfilePhotoUrl;
+    }
+
+    // Clean up old profile photo from Cloudinary if replaced
+    if (profilePhotoUrl && existingProfile.user?.profilePicture && profilePhotoUrl !== existingProfile.user.profilePicture) {
+      await removeUploadedAsset(existingProfile.user.profilePicture);
     }
 
     if (profileData.resumeUrl && existingProfile.resumeUrl && profileData.resumeUrl !== existingProfile.resumeUrl) {
@@ -143,6 +161,7 @@ class MenteeProfileService {
       select: {
         id: true,
         resumeUrl: true,
+        user: { select: { profilePicture: true } },
       },
     });
 
@@ -151,6 +170,7 @@ class MenteeProfileService {
     }
 
     await removeUploadedAsset(existingProfile.resumeUrl);
+    await removeUploadedAsset(existingProfile.user?.profilePicture);
 
     await prisma.menteeProfile.delete({ where: { userId } });
 
