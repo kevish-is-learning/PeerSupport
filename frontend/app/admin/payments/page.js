@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Fragment } from "react";
 import { toast } from "sonner";
 import { adminApi } from "../../../lib/api";
 
@@ -147,80 +147,81 @@ export default function AdminPaymentsPage() {
               </thead>
               <tbody className="divide-y divide-zinc-800/50">
                 {payments.map((p) => (
-                  <tr key={p.id} className="hover:bg-zinc-900/20 transition-colors">
-                    <td className="px-6 py-4">
-                      <p className="font-mono text-xs text-white">{p.razorpayPaymentId || p.id.slice(0, 13)}</p>
-                      <p className="mt-1 text-[11px] text-zinc-500">{formatDateTime(p.createdAt)}</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-white">{formatCurrency(p.amount)}</p>
-                      <p className="mt-1 text-[10px] text-zinc-500">Fee: {formatCurrency(p.platformFee)} · Mentor: {formatCurrency(p.mentorAmount)}</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-xs text-white truncate max-w-[150px]">{p.booking?.menteeName || "Unknown"}</p>
-                      <p className="mt-1 text-xs text-zinc-500 truncate max-w-[150px]">→ {p.booking?.mentorName || "Unknown"}</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${STATUS_COLORS[p.paymentStatus] || "border-zinc-800 text-zinc-400 bg-zinc-900/50"}`}>
-                        {p.paymentStatus}
-                      </span>
-                      {p.refundedAmount > 0 && (
-                        <p className="mt-1 text-[10px] text-zinc-500">Refunded: {formatCurrency(p.refundedAmount)}</p>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      {p.paymentStatus === "SUCCESS" && (
-                        <button
-                          onClick={() => setExpandedId(expandedId === p.id ? "" : p.id)}
-                          className="rounded-lg border border-zinc-800 bg-black px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-white transition-colors"
-                        >
-                          Refund
-                        </button>
-                      )}
-                    </td>
-                  </tr>
+                  <Fragment key={p.id}>
+                    <tr className="hover:bg-zinc-900/20 transition-colors">
+                      <td className="px-6 py-4">
+                        <p className="font-mono text-xs text-white">{p.razorpayPaymentId || p.id.slice(0, 13)}</p>
+                        <p className="mt-1 text-[11px] text-zinc-500">{formatDateTime(p.createdAt)}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-medium text-white">{formatCurrency(p.amount)}</p>
+                        <p className="mt-1 text-[10px] text-zinc-500">Fee: {formatCurrency(p.platformFee)} · Mentor: {formatCurrency(p.mentorAmount)}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="text-xs text-white truncate max-w-[150px]">{p.booking?.menteeName || "Unknown"}</p>
+                        <p className="mt-1 text-xs text-zinc-500 truncate max-w-[150px]">→ {p.booking?.mentorName || "Unknown"}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${STATUS_COLORS[p.paymentStatus] || "border-zinc-800 text-zinc-400 bg-zinc-900/50"}`}>
+                          {p.paymentStatus}
+                        </span>
+                        {p.refundedAmount > 0 && (
+                          <p className="mt-1 text-[10px] text-zinc-500">Refunded: {formatCurrency(p.refundedAmount)}</p>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {p.paymentStatus === "SUCCESS" && (
+                          <button
+                            onClick={() => setExpandedId(expandedId === p.id ? "" : p.id)}
+                            className="rounded-lg border border-zinc-800 bg-black px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-white transition-colors"
+                          >
+                            {expandedId === p.id ? "Cancel" : "Refund"}
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                    {expandedId === p.id && (
+                      <tr>
+                        <td colSpan="5" className="p-0 border-b border-zinc-800">
+                          <div className="bg-black/80 p-6">
+                            <h4 className="text-[10px] font-medium uppercase tracking-wider text-red-500 mb-4">Process Refund</h4>
+                            <div className="flex flex-wrap items-end gap-3 max-w-2xl">
+                              <div className="flex-1">
+                                <label className="block text-xs text-zinc-500 mb-1.5">Amount (leave blank for full refund)</label>
+                                <input
+                                  type="number"
+                                  placeholder="₹"
+                                  value={refundAmount}
+                                  onChange={(e) => setRefundAmount(e.target.value)}
+                                  className="w-full rounded-lg border border-zinc-800 bg-[#0a0a0a] px-3 py-2 text-sm text-white outline-none focus:border-zinc-600 transition-colors"
+                                />
+                              </div>
+                              <div className="flex-[2]">
+                                <label className="block text-xs text-zinc-500 mb-1.5">Reason</label>
+                                <input
+                                  type="text"
+                                  placeholder="Reason for refund..."
+                                  value={refundReason}
+                                  onChange={(e) => setRefundReason(e.target.value)}
+                                  className="w-full rounded-lg border border-zinc-800 bg-[#0a0a0a] px-3 py-2 text-sm text-white outline-none focus:border-zinc-600 transition-colors"
+                                />
+                              </div>
+                              <button
+                                onClick={() => handleRefund(p.id, p.amount)}
+                                disabled={!!mutatingId}
+                                className="rounded-lg border border-red-900/50 bg-red-950/30 px-5 py-2 text-sm font-medium text-red-400 hover:bg-red-900/50 transition-colors disabled:opacity-50 h-[38px]"
+                              >
+                                {mutatingId === p.id ? "Processing..." : "Process Refund"}
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 ))}
               </tbody>
             </table>
-          </div>
-        )}
-
-        {/* Refund Expanded Row */}
-        {expandedId && (
-          <div className="border-t border-zinc-800 bg-black p-6">
-            <h4 className="text-[10px] font-medium uppercase tracking-wider text-red-500 mb-4">Process Refund</h4>
-            <div className="flex flex-wrap items-end gap-3 max-w-2xl">
-              <div className="flex-1">
-                <label className="block text-xs text-zinc-500 mb-1.5">Amount (leave blank for full refund)</label>
-                <input
-                  type="number"
-                  placeholder="₹"
-                  value={refundAmount}
-                  onChange={(e) => setRefundAmount(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-800 bg-[#0a0a0a] px-3 py-2 text-sm text-white outline-none focus:border-zinc-600 transition-colors"
-                />
-              </div>
-              <div className="flex-[2]">
-                <label className="block text-xs text-zinc-500 mb-1.5">Reason</label>
-                <input
-                  type="text"
-                  placeholder="Reason for refund..."
-                  value={refundReason}
-                  onChange={(e) => setRefundReason(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-800 bg-[#0a0a0a] px-3 py-2 text-sm text-white outline-none focus:border-zinc-600 transition-colors"
-                />
-              </div>
-              <button
-                onClick={() => {
-                  const p = payments.find(x => x.id === expandedId);
-                  if (p) handleRefund(p.id, p.amount);
-                }}
-                disabled={!!mutatingId}
-                className="rounded-lg border border-red-900/50 bg-red-950/30 px-5 py-2 text-sm font-medium text-red-400 hover:bg-red-900/50 transition-colors disabled:opacity-50 h-[38px]"
-              >
-                {mutatingId === expandedId ? "Processing..." : "Process Refund"}
-              </button>
-            </div>
           </div>
         )}
 

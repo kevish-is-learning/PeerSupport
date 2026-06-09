@@ -24,19 +24,19 @@ async function main() {
   console.log('🌱 Starting Database Seeding...');
 
   // 1. Clean up old data
-  console.log('🧹 Cleaning up existing data...');
-  const modelNames = [
-    'sessionAttendance', 'walletTransaction', 'mentorCancellationStat', 'payout', 
-    'invoice', 'payment', 'sessionFeedback', 'review', 'booking', 
-    'availabilityWindowService', 'availabilityWindow', 'mentorService', 
-    'mentorWallet', 'mentorProfile', 'menteeProfile', 'user'
-  ];
+  // console.log('🧹 Cleaning up existing data...');
+  // const modelNames = [
+  //   'sessionAttendance', 'walletTransaction', 'mentorCancellationStat', 'payout', 
+  //   'invoice', 'payment', 'sessionFeedback', 'review', 'booking', 
+  //   'availabilityWindowService', 'availabilityWindow', 'mentorService', 
+  //   'mentorWallet', 'mentorProfile', 'menteeProfile', 'user'
+  // ];
 
-  for (const model of modelNames) {
-    if (prisma[model]) {
-      await prisma[model].deleteMany();
-    }
-  }
+  // for (const model of modelNames) {
+  //   if (prisma[model]) {
+  //     await prisma[model].deleteMany();
+  //   }
+  // }
 
   const defaultPassword = await bcrypt.hash('password123', 10);
   const now = new Date();
