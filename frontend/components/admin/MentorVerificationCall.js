@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { adminApi } from "../../../lib/api";
+import { adminApi } from "../../lib/api";
 
 const STATUS_COLORS = {
   SCHEDULED: "border-blue-900/50 bg-blue-950/20 text-blue-400",
