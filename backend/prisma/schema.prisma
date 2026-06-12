@@ -56,6 +56,14 @@ enum BookingStatus {
   REFUND_COMPLETED
 }
 
+enum VerificationCallStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+  RESCHEDULED
+}
+
 enum PaymentStatus {
   PENDING
   SUCCESS
@@ -115,6 +123,8 @@ model User {
   menteeBookings Booking[] @relation("MenteeBookings")
 
   reviewsGiven Review[] @relation("ReviewAuthor")
+
+  scheduledVerificationCalls MentorVerificationCall[] @relation("ScheduledVerificationCalls")
 
   @@index([email])
   @@index([role])
@@ -191,6 +201,9 @@ model MentorProfile {
 
   collegeDocumentUrl String?
 
+  /// JSON blob storing "Why I Want to Mentor" Q&A answers
+  mentoringQA Json?
+
   approvalStatus MentorApprovalStatus @default(PENDING)
 
   isVerified Boolean @default(false)
@@ -216,6 +229,7 @@ model MentorProfile {
   payouts             Payout[]
   wallet              MentorWallet?
   cancellationStat    MentorCancellationStat?
+  verificationCalls   MentorVerificationCall[]
 
   @@index([approvalStatus])
   @@index([averageRating])
@@ -650,4 +664,36 @@ model Payout {
 
   @@index([mentorProfileId])
   @@index([status])
+}
+
+// ============================================================
+// MENTOR VERIFICATION CALLS
+// ============================================================
+
+model MentorVerificationCall {
+  id              String  @id @default(uuid())
+
+  mentorProfileId String
+  scheduledById   String
+
+  googleEventId   String?
+  meetingLink     String?
+
+  startsAt        DateTime
+  endsAt          DateTime
+
+  notes           String?
+
+  status          VerificationCallStatus @default(SCHEDULED)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  mentorProfile   MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  scheduledBy     User          @relation("ScheduledVerificationCalls", fields: [scheduledById], references: [id])
+
+  @@index([mentorProfileId])
+  @@index([scheduledById])
+  @@index([status])
+  @@index([startsAt])
 }

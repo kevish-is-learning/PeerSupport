@@ -58,4 +58,13 @@ router.patch('/payouts/:payoutId/approve', (req, res) => adminController.approve
 router.patch('/payouts/:payoutId/complete', (req, res) => adminController.completePayout(req, res));
 router.patch('/payouts/:payoutId/fail', (req, res) => adminController.failPayout(req, res));
 
+// ─── Mentor Verification Calls ────────────────────────────────────────────────
+router.post('/mentor-verification/schedule', (req, res) => adminController.scheduleVerificationCall(req, res));
+router.patch('/mentor-verification/:callId/reschedule', (req, res) => adminController.rescheduleVerificationCall(req, res));
+router.patch('/mentor-verification/:callId/cancel', (req, res) => adminController.cancelVerificationCall(req, res));
+router.patch('/mentor-verification/:callId/complete', (req, res) => adminController.completeVerificationCall(req, res));
+router.patch('/mentor-verification/:callId/no-show', (req, res) => adminController.markVerificationNoShow(req, res));
+router.get('/mentor-verification/:callId', (req, res) => adminController.getVerificationCall(req, res));
+router.get('/mentor-verification/mentor/:mentorProfileId', (req, res) => adminController.getVerificationCallsForMentor(req, res));
+
 export default router;

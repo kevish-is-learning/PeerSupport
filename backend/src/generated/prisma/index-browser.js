@@ -171,6 +171,7 @@ exports.Prisma.MentorProfileScalarFieldEnum = {
   workExperience: 'workExperience',
   certifications: 'certifications',
   collegeDocumentUrl: 'collegeDocumentUrl',
+  mentoringQA: 'mentoringQA',
   approvalStatus: 'approvalStatus',
   isVerified: 'isVerified',
   totalSessions: 'totalSessions',
@@ -351,6 +352,20 @@ exports.Prisma.PayoutScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.MentorVerificationCallScalarFieldEnum = {
+  id: 'id',
+  mentorProfileId: 'mentorProfileId',
+  scheduledById: 'scheduledById',
+  googleEventId: 'googleEventId',
+  meetingLink: 'meetingLink',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  notes: 'notes',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -447,6 +462,14 @@ exports.PayoutStatus = exports.$Enums.PayoutStatus = {
   FAILED: 'FAILED'
 };
 
+exports.VerificationCallStatus = exports.$Enums.VerificationCallStatus = {
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  NO_SHOW: 'NO_SHOW',
+  RESCHEDULED: 'RESCHEDULED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   MenteeProfile: 'MenteeProfile',
@@ -463,7 +486,8 @@ exports.Prisma.ModelName = {
   MentorWallet: 'MentorWallet',
   WalletTransaction: 'WalletTransaction',
   MentorCancellationStat: 'MentorCancellationStat',
-  Payout: 'Payout'
+  Payout: 'Payout',
+  MentorVerificationCall: 'MentorVerificationCall'
 };
 
 /**

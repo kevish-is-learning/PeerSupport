@@ -92,6 +92,15 @@ export const createMentorProfileSchema = z.object({
   certifications: normalizeOptionalText,
   profilePhotoUrl: optionalUrlSchema,
   collegeDocumentUrl: optionalUrlSchema,
+  mentoringQA: z.preprocess(
+    (value) => {
+      if (typeof value === 'string') {
+        try { return JSON.parse(value); } catch (_) { return value; }
+      }
+      return value;
+    },
+    z.record(z.string()).optional().nullable(),
+  ),
 });
 
 export const updateMentorProfileSchema = createMentorProfileSchema;

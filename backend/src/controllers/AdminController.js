@@ -19,6 +19,13 @@ import adminPaymentService from '../services/AdminPaymentService.js';
 import adminReviewService from '../services/AdminReviewService.js';
 import mentorProfileService from '../services/MentorProfileService.js';
 import payoutService from '../services/PayoutService.js';
+import mentorVerificationService from '../services/MentorVerificationService.js';
+import {
+  scheduleCallSchema,
+  rescheduleCallSchema,
+  callIdParamSchema,
+  mentorIdParamSchema
+} from '../validators/mentorVerification.validator.js';
 
 const handleError = (res, err) => {
   const statusCode = err.statusCode || 500;
@@ -311,6 +318,85 @@ class AdminController {
   async failPayout(req, res) {
     try {
       const result = await payoutService.failPayout(req.params.payoutId, req.body);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+
+  // ─── Mentor Verification Calls ─────────────────────────────────────────────
+
+  async scheduleVerificationCall(req, res) {
+    try {
+      const validatedData = scheduleCallSchema.parse(req.body);
+      const result = await mentorVerificationService.scheduleCall({
+        ...validatedData,
+        scheduledById: req.user.id,
+      });
+      res.json({ success: true, data: result });
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+
+  async rescheduleVerificationCall(req, res) {
+    try {
+      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
+      const validatedData = rescheduleCallSchema.parse({
+        callId,
+        ...req.body,
+      });
+      const result = await mentorVerificationService.rescheduleCall(validatedData);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+
+  async cancelVerificationCall(req, res) {
+    try {
+      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
+      const result = await mentorVerificationService.cancelCall(callId);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+
+  async completeVerificationCall(req, res) {
+    try {
+      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
+      const result = await mentorVerificationService.completeCall(callId);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+
+  async markVerificationNoShow(req, res) {
+    try {
+      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
+      const result = await mentorVerificationService.markNoShow(callId);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+
+  async getVerificationCall(req, res) {
+    try {
+      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
+      const result = await mentorVerificationService.getCallById(callId);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+
+  async getVerificationCallsForMentor(req, res) {
+    try {
+      const { mentorProfileId } = mentorIdParamSchema.parse({ mentorProfileId: req.params.mentorProfileId });
+      const result = await mentorVerificationService.getCallsForMentor(mentorProfileId);
       res.json({ success: true, data: result });
     } catch (err) {
       handleError(res, err);

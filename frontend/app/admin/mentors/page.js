@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { adminApi, resolveUploadUrl } from "../../../lib/api";
+import MentorVerificationCall from "../../../components/admin/MentorVerificationCall";
 
 const formatDate = (v) => {
   if (!v) return "-";
@@ -255,27 +256,35 @@ export default function AdminMentorsPage() {
                 {/* Expanded Detail */}
                 {expandedId === m.id && (
                   <div className="mt-6 border-t border-zinc-800 pt-6">
-                    <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-                      <div>
-                        <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Joined</p>
-                        <p className="mt-1 text-sm text-white">{formatDate(m.createdAt)}</p>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      {/* Existing Info */}
+                      <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:border-r lg:border-zinc-800 lg:pr-8">
+                        <div>
+                          <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Joined</p>
+                          <p className="mt-1 text-sm text-white">{formatDate(m.createdAt)}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Configured Services</p>
+                          <p className="mt-1 text-sm text-white">{m.totalServices}</p>
+                        </div>
+                        {m.wallet && (
+                          <>
+                            <div>
+                              <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Pending Wallet</p>
+                              <p className="mt-1 text-sm text-white">{formatCurrency(m.wallet.pending)}</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Withdrawn Total</p>
+                              <p className="mt-1 text-sm text-white">{formatCurrency(m.wallet.withdrawn)}</p>
+                            </div>
+                          </>
+                        )}
                       </div>
-                      <div>
-                        <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Configured Services</p>
-                        <p className="mt-1 text-sm text-white">{m.totalServices}</p>
+
+                      {/* Verification Call Scheduling section */}
+                      <div className="pl-0 lg:pl-2">
+                        <MentorVerificationCall mentorProfileId={m.id} />
                       </div>
-                      {m.wallet && (
-                        <>
-                          <div>
-                            <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Pending Wallet</p>
-                            <p className="mt-1 text-sm text-white">{formatCurrency(m.wallet.pending)}</p>
-                          </div>
-                          <div>
-                            <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Withdrawn Total</p>
-                            <p className="mt-1 text-sm text-white">{formatCurrency(m.wallet.withdrawn)}</p>
-                          </div>
-                        </>
-                      )}
                     </div>
                   </div>
                 )}

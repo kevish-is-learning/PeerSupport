@@ -20,6 +20,7 @@ import {
   mentorProfileApi,
   resolveUploadUrl,
   authApi,
+  uploadApi,
 } from "../../lib/api";
 import PillButton from "../ui/PillButton";
 import UniversalButton from "../ui/universalButton";
@@ -55,6 +56,7 @@ export default function MentorOnboardingWizard({
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const stepsContainerRef = useRef(null);
 
   useEffect(() => {
@@ -82,7 +84,7 @@ export default function MentorOnboardingWizard({
   );
 
   const [formData, setFormData] = useState({
-    profilePhotoUrl: existingProfile?.profilePhotoUrl || "",
+    profilePhotoUrl: existingProfile?.profilePhotoUrl || user?.profilePicture || "",
     fullName: user?.name || "",
     email: user?.email || "",
     contactNumber: existingProfile?.contactNumber || "",
@@ -103,6 +105,10 @@ export default function MentorOnboardingWizard({
 
     expertiseTags: existingProfile?.expertiseTags || [],
     bio: existingProfile?.bio || "",
+
+    mentoringQ1: existingProfile?.mentoringQA?.q1 || "",
+    mentoringQ2: existingProfile?.mentoringQA?.q2 || "",
+    mentoringQ3: existingProfile?.mentoringQA?.q3 || "",
   });
 
   const [files, setFiles] = useState({
@@ -136,20 +142,35 @@ export default function MentorOnboardingWizard({
 
 
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const { name, files } = e.target;
     if (files?.[0]) {
-      setFiles((prev) => ({ ...prev, [name]: files[0] }));
+      const file = files[0];
+      if (name === "profilePhoto") {
+        setIsUploadingPhoto(true);
+        try {
+          const res = await uploadApi.uploadFile(file, 'avatar');
+          setFormData((prev) => ({ ...prev, profilePhotoUrl: res.url }));
+          setFiles((prev) => ({ ...prev, profilePhoto: null }));
+          toast.success("Profile photo uploaded!");
+        } catch (err) {
+          toast.error("Failed to upload photo to Cloudinary");
+        } finally {
+          setIsUploadingPhoto(false);
+        }
+      } else {
+        setFiles((prev) => ({ ...prev, [name]: file }));
+      }
     }
   };
 
   const handleNext = () => {
     // Validation for Step 1
     if (currentStep === 1) {
-      // if (!files.profilePhoto && !formData.profilePhotoUrl) {
-      //   toast.error("Profile picture is required.");
-      //   return;
-      // }
+      if (!files.profilePhoto && !formData.profilePhotoUrl) {
+        toast.error("Profile picture is required.");
+        return;
+      }
       if (!formData.fullName.trim()) {
         toast.error("Full name is required.");
         return;
@@ -226,6 +247,11 @@ export default function MentorOnboardingWizard({
     payload.append("pgProfile", pgProfile);
     payload.append("workExperience", workExp);
     payload.append("linkedInUrl", formData.linkedInUrl || "");
+    payload.append("mentoringQA", JSON.stringify({
+      q1: formData.mentoringQ1,
+      q2: formData.mentoringQ2,
+      q3: formData.mentoringQ3,
+    }));
 
     if (files.profilePhoto) {
       payload.append("profilePhoto", files.profilePhoto);
@@ -257,6 +283,18 @@ export default function MentorOnboardingWizard({
   const handleSubmit = async () => {
     if (!formData.bio.trim()) {
       toast.error("Bio is required.");
+      return;
+    }
+    if (!formData.mentoringQ1.trim()) {
+      toast.error("Please answer: What inspired you to start mentoring?");
+      return;
+    }
+    if (!formData.mentoringQ2.trim()) {
+      toast.error("Please answer: What challenges do you feel equipped to help with?");
+      return;
+    }
+    if (!formData.mentoringQ3.trim()) {
+      toast.error("Please answer: What defining experience would you share?");
       return;
     }
     setIsSubmitting(true);
@@ -358,13 +396,11 @@ export default function MentorOnboardingWizard({
                 </label>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <div className="w-20 h-20 shrink-0 rounded-full border border-dashed border-gray-400 flex items-center justify-center bg-gray-50 overflow-hidden">
-                    {files.profilePhoto || formData.profilePhotoUrl ? (
+                    {isUploadingPhoto ? (
+                      <div className="text-gray-400 text-xs animate-pulse">Uploading…</div>
+                    ) : formData.profilePhotoUrl ? (
                       <img
-                        src={
-                          files.profilePhoto
-                            ? URL.createObjectURL(files.profilePhoto)
-                            : resolveUploadUrl(formData.profilePhotoUrl)
-                        }
+                        src={resolveUploadUrl(formData.profilePhotoUrl)}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
@@ -383,10 +419,10 @@ export default function MentorOnboardingWizard({
                     />
                     <label
                       htmlFor="profilePhoto"
-                      className="cursor-pointer inline-flex items-center bg-[#ffc20f] border-2 border-black px-4 py-2 rounded-xl  text-sm hover:bg-[#e6ae0d] transition-colors shadow-[2px_2px_0_rgba(0,0,0,1)]"
+                      className={`cursor-pointer inline-flex items-center bg-[#ffc20f] border-2 border-black px-4 py-2 rounded-xl text-sm hover:bg-[#e6ae0d] transition-colors shadow-[2px_2px_0_rgba(0,0,0,1)] ${isUploadingPhoto ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
                       <Upload className="w-4 h-4 mr-2" />
-                      Upload Photo
+                      {isUploadingPhoto ? "Uploading..." : "Upload Photo"}
                     </label>
                   </div>
                 </div>
@@ -744,6 +780,69 @@ export default function MentorOnboardingWizard({
                       </button>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* ── Why I Want to Mentor ─────────────────────────────── */}
+              <div className="border-2 border-indigo-200 rounded-2xl p-5 sm:p-6 bg-gradient-to-b from-indigo-50/40 to-white shadow-[0_4px_20px_rgba(95,108,243,0.10)]">
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shrink-0">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-gray-900">Why I Want to Mentor</h3>
+                    <p className="text-xs text-gray-500">Help students understand your journey and what drives you to PeerSupport</p>
+                  </div>
+                </div>
+
+                <div className="space-y-5 mt-5">
+                  {/* Q1 */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
+                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold shrink-0 mt-0.5">1</span>
+                      What inspired you to start mentoring MBA aspirants?
+                    </label>
+                    <textarea
+                      name="mentoringQ1"
+                      value={formData.mentoringQ1}
+                      onChange={handleChange}
+                      rows={3}
+                      placeholder="Share the moment or experience that made you want to give back and help students on their MBA journey..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                    />
+                  </div>
+
+                  {/* Q2 */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
+                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-400 text-white text-[10px] font-bold shrink-0 mt-0.5">2</span>
+                      What specific challenges in the MBA journey do you feel most equipped to help students navigate?
+                    </label>
+                    <textarea
+                      name="mentoringQ2"
+                      value={formData.mentoringQ2}
+                      onChange={handleChange}
+                      rows={3}
+                      placeholder="e.g., mock interviews, SOP writing, college shortlisting, managing work-study balance..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                    />
+                  </div>
+
+                  {/* Q3 */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
+                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pink-400 text-white text-[10px] font-bold shrink-0 mt-0.5">3</span>
+                      What has been your most defining experience during your MBA or career that you&apos;d like to share with mentees?
+                    </label>
+                    <textarea
+                      name="mentoringQ3"
+                      value={formData.mentoringQ3}
+                      onChange={handleChange}
+                      rows={3}
+                      placeholder="A failure, a turning point, or a lesson learned that shaped who you are today..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                    />
+                  </div>
                 </div>
               </div>
 

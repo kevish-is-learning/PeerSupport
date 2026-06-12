@@ -22,8 +22,8 @@ const createUploader = (allowedMimeTypes, errorMessage) =>
   });
 
 const mentorUpload = createUploader(
-  new Set(['image/jpeg', 'image/png', 'image/webp']),
-  'Only JPG, PNG, and WEBP image uploads are allowed'
+  new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']),
+  'Only JPG, PNG, WEBP, and HEIC image uploads are allowed'
 );
 
 const menteeUpload = createUploader(
@@ -31,11 +31,13 @@ const menteeUpload = createUploader(
     'image/jpeg',
     'image/png',
     'image/webp',
+    'image/heic',
+    'image/heif',
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   ]),
-  'Only JPG, PNG, WEBP images (for profile photo) or PDF, DOC, DOCX files (for resume) are allowed'
+  'Only JPG, PNG, WEBP, HEIC images (for profile photo) or PDF, DOC, DOCX files (for resume) are allowed'
 );
 
 const mentorUploadFieldsHandler = mentorUpload.fields([
@@ -119,6 +121,7 @@ const mentorProfileUpload = (req, res, next) => {
           folder: getFolder(username, 'avatar'),
           public_id: uniqueId,
           resource_type: 'image',
+          format: 'webp',
           overwrite: true,
         });
       }
@@ -176,6 +179,7 @@ const menteeProfileUpload = (req, res, next) => {
           folder: getFolder(username, 'avatar'),
           public_id: uniqueId,
           resource_type: 'image',
+          format: 'webp',
           overwrite: true,
         });
       }

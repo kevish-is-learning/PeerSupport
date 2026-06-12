@@ -96,6 +96,11 @@ export type MentorCancellationStat = $Result.DefaultSelection<Prisma.$MentorCanc
  * 
  */
 export type Payout = $Result.DefaultSelection<Prisma.$PayoutPayload>
+/**
+ * Model MentorVerificationCall
+ * 
+ */
+export type MentorVerificationCall = $Result.DefaultSelection<Prisma.$MentorVerificationCallPayload>
 
 /**
  * Enums
@@ -191,6 +196,17 @@ export const PayoutStatus: {
 
 export type PayoutStatus = (typeof PayoutStatus)[keyof typeof PayoutStatus]
 
+
+export const VerificationCallStatus: {
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  NO_SHOW: 'NO_SHOW',
+  RESCHEDULED: 'RESCHEDULED'
+};
+
+export type VerificationCallStatus = (typeof VerificationCallStatus)[keyof typeof VerificationCallStatus]
+
 }
 
 export type AuthProvider = $Enums.AuthProvider
@@ -224,6 +240,10 @@ export const WalletTransactionType: typeof $Enums.WalletTransactionType
 export type PayoutStatus = $Enums.PayoutStatus
 
 export const PayoutStatus: typeof $Enums.PayoutStatus
+
+export type VerificationCallStatus = $Enums.VerificationCallStatus
+
+export const VerificationCallStatus: typeof $Enums.VerificationCallStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -507,6 +527,16 @@ export class PrismaClient<
     * ```
     */
   get payout(): Prisma.PayoutDelegate<ExtArgs>;
+
+  /**
+   * `prisma.mentorVerificationCall`: Exposes CRUD operations for the **MentorVerificationCall** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MentorVerificationCalls
+    * const mentorVerificationCalls = await prisma.mentorVerificationCall.findMany()
+    * ```
+    */
+  get mentorVerificationCall(): Prisma.MentorVerificationCallDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -963,7 +993,8 @@ export namespace Prisma {
     MentorWallet: 'MentorWallet',
     WalletTransaction: 'WalletTransaction',
     MentorCancellationStat: 'MentorCancellationStat',
-    Payout: 'Payout'
+    Payout: 'Payout',
+    MentorVerificationCall: 'MentorVerificationCall'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -979,7 +1010,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "menteeProfile" | "mentorProfile" | "mentorService" | "availabilityWindow" | "availabilityWindowService" | "booking" | "payment" | "invoice" | "sessionFeedback" | "review" | "sessionAttendance" | "mentorWallet" | "walletTransaction" | "mentorCancellationStat" | "payout"
+      modelProps: "user" | "menteeProfile" | "mentorProfile" | "mentorService" | "availabilityWindow" | "availabilityWindowService" | "booking" | "payment" | "invoice" | "sessionFeedback" | "review" | "sessionAttendance" | "mentorWallet" | "walletTransaction" | "mentorCancellationStat" | "payout" | "mentorVerificationCall"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2103,6 +2134,76 @@ export namespace Prisma {
           }
         }
       }
+      MentorVerificationCall: {
+        payload: Prisma.$MentorVerificationCallPayload<ExtArgs>
+        fields: Prisma.MentorVerificationCallFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MentorVerificationCallFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MentorVerificationCallFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload>
+          }
+          findFirst: {
+            args: Prisma.MentorVerificationCallFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MentorVerificationCallFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload>
+          }
+          findMany: {
+            args: Prisma.MentorVerificationCallFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload>[]
+          }
+          create: {
+            args: Prisma.MentorVerificationCallCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload>
+          }
+          createMany: {
+            args: Prisma.MentorVerificationCallCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MentorVerificationCallCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload>[]
+          }
+          delete: {
+            args: Prisma.MentorVerificationCallDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload>
+          }
+          update: {
+            args: Prisma.MentorVerificationCallUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload>
+          }
+          deleteMany: {
+            args: Prisma.MentorVerificationCallDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MentorVerificationCallUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MentorVerificationCallUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MentorVerificationCallPayload>
+          }
+          aggregate: {
+            args: Prisma.MentorVerificationCallAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMentorVerificationCall>
+          }
+          groupBy: {
+            args: Prisma.MentorVerificationCallGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MentorVerificationCallGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MentorVerificationCallCountArgs<ExtArgs>
+            result: $Utils.Optional<MentorVerificationCallCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2266,11 +2367,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     menteeBookings: number
     reviewsGiven: number
+    scheduledVerificationCalls: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     menteeBookings?: boolean | UserCountOutputTypeCountMenteeBookingsArgs
     reviewsGiven?: boolean | UserCountOutputTypeCountReviewsGivenArgs
+    scheduledVerificationCalls?: boolean | UserCountOutputTypeCountScheduledVerificationCallsArgs
   }
 
   // Custom InputTypes
@@ -2298,6 +2401,13 @@ export namespace Prisma {
     where?: ReviewWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountScheduledVerificationCallsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorVerificationCallWhereInput
+  }
+
 
   /**
    * Count Type MentorProfileCountOutputType
@@ -2310,6 +2420,7 @@ export namespace Prisma {
     reviews: number
     feedbacks: number
     payouts: number
+    verificationCalls: number
   }
 
   export type MentorProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2319,6 +2430,7 @@ export namespace Prisma {
     reviews?: boolean | MentorProfileCountOutputTypeCountReviewsArgs
     feedbacks?: boolean | MentorProfileCountOutputTypeCountFeedbacksArgs
     payouts?: boolean | MentorProfileCountOutputTypeCountPayoutsArgs
+    verificationCalls?: boolean | MentorProfileCountOutputTypeCountVerificationCallsArgs
   }
 
   // Custom InputTypes
@@ -2372,6 +2484,13 @@ export namespace Prisma {
    */
   export type MentorProfileCountOutputTypeCountPayoutsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PayoutWhereInput
+  }
+
+  /**
+   * MentorProfileCountOutputType without action
+   */
+  export type MentorProfileCountOutputTypeCountVerificationCallsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorVerificationCallWhereInput
   }
 
 
@@ -2752,6 +2871,7 @@ export namespace Prisma {
     mentorProfile?: boolean | User$mentorProfileArgs<ExtArgs>
     menteeBookings?: boolean | User$menteeBookingsArgs<ExtArgs>
     reviewsGiven?: boolean | User$reviewsGivenArgs<ExtArgs>
+    scheduledVerificationCalls?: boolean | User$scheduledVerificationCallsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2794,6 +2914,7 @@ export namespace Prisma {
     mentorProfile?: boolean | User$mentorProfileArgs<ExtArgs>
     menteeBookings?: boolean | User$menteeBookingsArgs<ExtArgs>
     reviewsGiven?: boolean | User$reviewsGivenArgs<ExtArgs>
+    scheduledVerificationCalls?: boolean | User$scheduledVerificationCallsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2805,6 +2926,7 @@ export namespace Prisma {
       mentorProfile: Prisma.$MentorProfilePayload<ExtArgs> | null
       menteeBookings: Prisma.$BookingPayload<ExtArgs>[]
       reviewsGiven: Prisma.$ReviewPayload<ExtArgs>[]
+      scheduledVerificationCalls: Prisma.$MentorVerificationCallPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3189,6 +3311,7 @@ export namespace Prisma {
     mentorProfile<T extends User$mentorProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$mentorProfileArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     menteeBookings<T extends User$menteeBookingsArgs<ExtArgs> = {}>(args?: Subset<T, User$menteeBookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany"> | Null>
     reviewsGiven<T extends User$reviewsGivenArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewsGivenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany"> | Null>
+    scheduledVerificationCalls<T extends User$scheduledVerificationCallsArgs<ExtArgs> = {}>(args?: Subset<T, User$scheduledVerificationCallsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3613,6 +3736,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ReviewScalarFieldEnum | ReviewScalarFieldEnum[]
+  }
+
+  /**
+   * User.scheduledVerificationCalls
+   */
+  export type User$scheduledVerificationCallsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    where?: MentorVerificationCallWhereInput
+    orderBy?: MentorVerificationCallOrderByWithRelationInput | MentorVerificationCallOrderByWithRelationInput[]
+    cursor?: MentorVerificationCallWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MentorVerificationCallScalarFieldEnum | MentorVerificationCallScalarFieldEnum[]
   }
 
   /**
@@ -4798,6 +4941,7 @@ export namespace Prisma {
     workExperience: number
     certifications: number
     collegeDocumentUrl: number
+    mentoringQA: number
     approvalStatus: number
     isVerified: number
     totalSessions: number
@@ -4879,6 +5023,7 @@ export namespace Prisma {
     workExperience?: true
     certifications?: true
     collegeDocumentUrl?: true
+    mentoringQA?: true
     approvalStatus?: true
     isVerified?: true
     totalSessions?: true
@@ -4989,6 +5134,7 @@ export namespace Prisma {
     workExperience: string | null
     certifications: string | null
     collegeDocumentUrl: string | null
+    mentoringQA: JsonValue | null
     approvalStatus: $Enums.MentorApprovalStatus
     isVerified: boolean
     totalSessions: number
@@ -5031,6 +5177,7 @@ export namespace Prisma {
     workExperience?: boolean
     certifications?: boolean
     collegeDocumentUrl?: boolean
+    mentoringQA?: boolean
     approvalStatus?: boolean
     isVerified?: boolean
     totalSessions?: boolean
@@ -5048,6 +5195,7 @@ export namespace Prisma {
     payouts?: boolean | MentorProfile$payoutsArgs<ExtArgs>
     wallet?: boolean | MentorProfile$walletArgs<ExtArgs>
     cancellationStat?: boolean | MentorProfile$cancellationStatArgs<ExtArgs>
+    verificationCalls?: boolean | MentorProfile$verificationCallsArgs<ExtArgs>
     _count?: boolean | MentorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["mentorProfile"]>
 
@@ -5064,6 +5212,7 @@ export namespace Prisma {
     workExperience?: boolean
     certifications?: boolean
     collegeDocumentUrl?: boolean
+    mentoringQA?: boolean
     approvalStatus?: boolean
     isVerified?: boolean
     totalSessions?: boolean
@@ -5088,6 +5237,7 @@ export namespace Prisma {
     workExperience?: boolean
     certifications?: boolean
     collegeDocumentUrl?: boolean
+    mentoringQA?: boolean
     approvalStatus?: boolean
     isVerified?: boolean
     totalSessions?: boolean
@@ -5108,6 +5258,7 @@ export namespace Prisma {
     payouts?: boolean | MentorProfile$payoutsArgs<ExtArgs>
     wallet?: boolean | MentorProfile$walletArgs<ExtArgs>
     cancellationStat?: boolean | MentorProfile$cancellationStatArgs<ExtArgs>
+    verificationCalls?: boolean | MentorProfile$verificationCallsArgs<ExtArgs>
     _count?: boolean | MentorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MentorProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5126,6 +5277,7 @@ export namespace Prisma {
       payouts: Prisma.$PayoutPayload<ExtArgs>[]
       wallet: Prisma.$MentorWalletPayload<ExtArgs> | null
       cancellationStat: Prisma.$MentorCancellationStatPayload<ExtArgs> | null
+      verificationCalls: Prisma.$MentorVerificationCallPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5140,6 +5292,10 @@ export namespace Prisma {
       workExperience: string | null
       certifications: string | null
       collegeDocumentUrl: string | null
+      /**
+       * JSON blob storing "Why I Want to Mentor" Q&A answers
+       */
+      mentoringQA: Prisma.JsonValue | null
       approvalStatus: $Enums.MentorApprovalStatus
       isVerified: boolean
       totalSessions: number
@@ -5521,6 +5677,7 @@ export namespace Prisma {
     payouts<T extends MentorProfile$payoutsArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$payoutsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PayoutPayload<ExtArgs>, T, "findMany"> | Null>
     wallet<T extends MentorProfile$walletArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$walletArgs<ExtArgs>>): Prisma__MentorWalletClient<$Result.GetResult<Prisma.$MentorWalletPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     cancellationStat<T extends MentorProfile$cancellationStatArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$cancellationStatArgs<ExtArgs>>): Prisma__MentorCancellationStatClient<$Result.GetResult<Prisma.$MentorCancellationStatPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    verificationCalls<T extends MentorProfile$verificationCallsArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfile$verificationCallsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5562,6 +5719,7 @@ export namespace Prisma {
     readonly workExperience: FieldRef<"MentorProfile", 'String'>
     readonly certifications: FieldRef<"MentorProfile", 'String'>
     readonly collegeDocumentUrl: FieldRef<"MentorProfile", 'String'>
+    readonly mentoringQA: FieldRef<"MentorProfile", 'Json'>
     readonly approvalStatus: FieldRef<"MentorProfile", 'MentorApprovalStatus'>
     readonly isVerified: FieldRef<"MentorProfile", 'Boolean'>
     readonly totalSessions: FieldRef<"MentorProfile", 'Int'>
@@ -6035,6 +6193,26 @@ export namespace Prisma {
      */
     include?: MentorCancellationStatInclude<ExtArgs> | null
     where?: MentorCancellationStatWhereInput
+  }
+
+  /**
+   * MentorProfile.verificationCalls
+   */
+  export type MentorProfile$verificationCallsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    where?: MentorVerificationCallWhereInput
+    orderBy?: MentorVerificationCallOrderByWithRelationInput | MentorVerificationCallOrderByWithRelationInput[]
+    cursor?: MentorVerificationCallWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MentorVerificationCallScalarFieldEnum | MentorVerificationCallScalarFieldEnum[]
   }
 
   /**
@@ -19700,6 +19878,1017 @@ export namespace Prisma {
 
 
   /**
+   * Model MentorVerificationCall
+   */
+
+  export type AggregateMentorVerificationCall = {
+    _count: MentorVerificationCallCountAggregateOutputType | null
+    _min: MentorVerificationCallMinAggregateOutputType | null
+    _max: MentorVerificationCallMaxAggregateOutputType | null
+  }
+
+  export type MentorVerificationCallMinAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    scheduledById: string | null
+    googleEventId: string | null
+    meetingLink: string | null
+    startsAt: Date | null
+    endsAt: Date | null
+    notes: string | null
+    status: $Enums.VerificationCallStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorVerificationCallMaxAggregateOutputType = {
+    id: string | null
+    mentorProfileId: string | null
+    scheduledById: string | null
+    googleEventId: string | null
+    meetingLink: string | null
+    startsAt: Date | null
+    endsAt: Date | null
+    notes: string | null
+    status: $Enums.VerificationCallStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MentorVerificationCallCountAggregateOutputType = {
+    id: number
+    mentorProfileId: number
+    scheduledById: number
+    googleEventId: number
+    meetingLink: number
+    startsAt: number
+    endsAt: number
+    notes: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MentorVerificationCallMinAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    scheduledById?: true
+    googleEventId?: true
+    meetingLink?: true
+    startsAt?: true
+    endsAt?: true
+    notes?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorVerificationCallMaxAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    scheduledById?: true
+    googleEventId?: true
+    meetingLink?: true
+    startsAt?: true
+    endsAt?: true
+    notes?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MentorVerificationCallCountAggregateInputType = {
+    id?: true
+    mentorProfileId?: true
+    scheduledById?: true
+    googleEventId?: true
+    meetingLink?: true
+    startsAt?: true
+    endsAt?: true
+    notes?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MentorVerificationCallAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorVerificationCall to aggregate.
+     */
+    where?: MentorVerificationCallWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorVerificationCalls to fetch.
+     */
+    orderBy?: MentorVerificationCallOrderByWithRelationInput | MentorVerificationCallOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MentorVerificationCallWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorVerificationCalls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorVerificationCalls.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MentorVerificationCalls
+    **/
+    _count?: true | MentorVerificationCallCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MentorVerificationCallMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MentorVerificationCallMaxAggregateInputType
+  }
+
+  export type GetMentorVerificationCallAggregateType<T extends MentorVerificationCallAggregateArgs> = {
+        [P in keyof T & keyof AggregateMentorVerificationCall]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMentorVerificationCall[P]>
+      : GetScalarType<T[P], AggregateMentorVerificationCall[P]>
+  }
+
+
+
+
+  export type MentorVerificationCallGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MentorVerificationCallWhereInput
+    orderBy?: MentorVerificationCallOrderByWithAggregationInput | MentorVerificationCallOrderByWithAggregationInput[]
+    by: MentorVerificationCallScalarFieldEnum[] | MentorVerificationCallScalarFieldEnum
+    having?: MentorVerificationCallScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MentorVerificationCallCountAggregateInputType | true
+    _min?: MentorVerificationCallMinAggregateInputType
+    _max?: MentorVerificationCallMaxAggregateInputType
+  }
+
+  export type MentorVerificationCallGroupByOutputType = {
+    id: string
+    mentorProfileId: string
+    scheduledById: string
+    googleEventId: string | null
+    meetingLink: string | null
+    startsAt: Date
+    endsAt: Date
+    notes: string | null
+    status: $Enums.VerificationCallStatus
+    createdAt: Date
+    updatedAt: Date
+    _count: MentorVerificationCallCountAggregateOutputType | null
+    _min: MentorVerificationCallMinAggregateOutputType | null
+    _max: MentorVerificationCallMaxAggregateOutputType | null
+  }
+
+  type GetMentorVerificationCallGroupByPayload<T extends MentorVerificationCallGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MentorVerificationCallGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MentorVerificationCallGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MentorVerificationCallGroupByOutputType[P]>
+            : GetScalarType<T[P], MentorVerificationCallGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MentorVerificationCallSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    scheduledById?: boolean
+    googleEventId?: boolean
+    meetingLink?: boolean
+    startsAt?: boolean
+    endsAt?: boolean
+    notes?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorVerificationCall"]>
+
+  export type MentorVerificationCallSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    mentorProfileId?: boolean
+    scheduledById?: boolean
+    googleEventId?: boolean
+    meetingLink?: boolean
+    startsAt?: boolean
+    endsAt?: boolean
+    notes?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["mentorVerificationCall"]>
+
+  export type MentorVerificationCallSelectScalar = {
+    id?: boolean
+    mentorProfileId?: boolean
+    scheduledById?: boolean
+    googleEventId?: boolean
+    meetingLink?: boolean
+    startsAt?: boolean
+    endsAt?: boolean
+    notes?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MentorVerificationCallInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type MentorVerificationCallIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mentorProfile?: boolean | MentorProfileDefaultArgs<ExtArgs>
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $MentorVerificationCallPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MentorVerificationCall"
+    objects: {
+      mentorProfile: Prisma.$MentorProfilePayload<ExtArgs>
+      scheduledBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      mentorProfileId: string
+      scheduledById: string
+      googleEventId: string | null
+      meetingLink: string | null
+      startsAt: Date
+      endsAt: Date
+      notes: string | null
+      status: $Enums.VerificationCallStatus
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["mentorVerificationCall"]>
+    composites: {}
+  }
+
+  type MentorVerificationCallGetPayload<S extends boolean | null | undefined | MentorVerificationCallDefaultArgs> = $Result.GetResult<Prisma.$MentorVerificationCallPayload, S>
+
+  type MentorVerificationCallCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<MentorVerificationCallFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: MentorVerificationCallCountAggregateInputType | true
+    }
+
+  export interface MentorVerificationCallDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MentorVerificationCall'], meta: { name: 'MentorVerificationCall' } }
+    /**
+     * Find zero or one MentorVerificationCall that matches the filter.
+     * @param {MentorVerificationCallFindUniqueArgs} args - Arguments to find a MentorVerificationCall
+     * @example
+     * // Get one MentorVerificationCall
+     * const mentorVerificationCall = await prisma.mentorVerificationCall.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MentorVerificationCallFindUniqueArgs>(args: SelectSubset<T, MentorVerificationCallFindUniqueArgs<ExtArgs>>): Prisma__MentorVerificationCallClient<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one MentorVerificationCall that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {MentorVerificationCallFindUniqueOrThrowArgs} args - Arguments to find a MentorVerificationCall
+     * @example
+     * // Get one MentorVerificationCall
+     * const mentorVerificationCall = await prisma.mentorVerificationCall.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MentorVerificationCallFindUniqueOrThrowArgs>(args: SelectSubset<T, MentorVerificationCallFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MentorVerificationCallClient<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first MentorVerificationCall that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorVerificationCallFindFirstArgs} args - Arguments to find a MentorVerificationCall
+     * @example
+     * // Get one MentorVerificationCall
+     * const mentorVerificationCall = await prisma.mentorVerificationCall.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MentorVerificationCallFindFirstArgs>(args?: SelectSubset<T, MentorVerificationCallFindFirstArgs<ExtArgs>>): Prisma__MentorVerificationCallClient<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first MentorVerificationCall that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorVerificationCallFindFirstOrThrowArgs} args - Arguments to find a MentorVerificationCall
+     * @example
+     * // Get one MentorVerificationCall
+     * const mentorVerificationCall = await prisma.mentorVerificationCall.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MentorVerificationCallFindFirstOrThrowArgs>(args?: SelectSubset<T, MentorVerificationCallFindFirstOrThrowArgs<ExtArgs>>): Prisma__MentorVerificationCallClient<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more MentorVerificationCalls that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorVerificationCallFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MentorVerificationCalls
+     * const mentorVerificationCalls = await prisma.mentorVerificationCall.findMany()
+     * 
+     * // Get first 10 MentorVerificationCalls
+     * const mentorVerificationCalls = await prisma.mentorVerificationCall.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const mentorVerificationCallWithIdOnly = await prisma.mentorVerificationCall.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MentorVerificationCallFindManyArgs>(args?: SelectSubset<T, MentorVerificationCallFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a MentorVerificationCall.
+     * @param {MentorVerificationCallCreateArgs} args - Arguments to create a MentorVerificationCall.
+     * @example
+     * // Create one MentorVerificationCall
+     * const MentorVerificationCall = await prisma.mentorVerificationCall.create({
+     *   data: {
+     *     // ... data to create a MentorVerificationCall
+     *   }
+     * })
+     * 
+     */
+    create<T extends MentorVerificationCallCreateArgs>(args: SelectSubset<T, MentorVerificationCallCreateArgs<ExtArgs>>): Prisma__MentorVerificationCallClient<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many MentorVerificationCalls.
+     * @param {MentorVerificationCallCreateManyArgs} args - Arguments to create many MentorVerificationCalls.
+     * @example
+     * // Create many MentorVerificationCalls
+     * const mentorVerificationCall = await prisma.mentorVerificationCall.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MentorVerificationCallCreateManyArgs>(args?: SelectSubset<T, MentorVerificationCallCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MentorVerificationCalls and returns the data saved in the database.
+     * @param {MentorVerificationCallCreateManyAndReturnArgs} args - Arguments to create many MentorVerificationCalls.
+     * @example
+     * // Create many MentorVerificationCalls
+     * const mentorVerificationCall = await prisma.mentorVerificationCall.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MentorVerificationCalls and only return the `id`
+     * const mentorVerificationCallWithIdOnly = await prisma.mentorVerificationCall.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MentorVerificationCallCreateManyAndReturnArgs>(args?: SelectSubset<T, MentorVerificationCallCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a MentorVerificationCall.
+     * @param {MentorVerificationCallDeleteArgs} args - Arguments to delete one MentorVerificationCall.
+     * @example
+     * // Delete one MentorVerificationCall
+     * const MentorVerificationCall = await prisma.mentorVerificationCall.delete({
+     *   where: {
+     *     // ... filter to delete one MentorVerificationCall
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MentorVerificationCallDeleteArgs>(args: SelectSubset<T, MentorVerificationCallDeleteArgs<ExtArgs>>): Prisma__MentorVerificationCallClient<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one MentorVerificationCall.
+     * @param {MentorVerificationCallUpdateArgs} args - Arguments to update one MentorVerificationCall.
+     * @example
+     * // Update one MentorVerificationCall
+     * const mentorVerificationCall = await prisma.mentorVerificationCall.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MentorVerificationCallUpdateArgs>(args: SelectSubset<T, MentorVerificationCallUpdateArgs<ExtArgs>>): Prisma__MentorVerificationCallClient<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more MentorVerificationCalls.
+     * @param {MentorVerificationCallDeleteManyArgs} args - Arguments to filter MentorVerificationCalls to delete.
+     * @example
+     * // Delete a few MentorVerificationCalls
+     * const { count } = await prisma.mentorVerificationCall.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MentorVerificationCallDeleteManyArgs>(args?: SelectSubset<T, MentorVerificationCallDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MentorVerificationCalls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorVerificationCallUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MentorVerificationCalls
+     * const mentorVerificationCall = await prisma.mentorVerificationCall.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MentorVerificationCallUpdateManyArgs>(args: SelectSubset<T, MentorVerificationCallUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MentorVerificationCall.
+     * @param {MentorVerificationCallUpsertArgs} args - Arguments to update or create a MentorVerificationCall.
+     * @example
+     * // Update or create a MentorVerificationCall
+     * const mentorVerificationCall = await prisma.mentorVerificationCall.upsert({
+     *   create: {
+     *     // ... data to create a MentorVerificationCall
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MentorVerificationCall we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MentorVerificationCallUpsertArgs>(args: SelectSubset<T, MentorVerificationCallUpsertArgs<ExtArgs>>): Prisma__MentorVerificationCallClient<$Result.GetResult<Prisma.$MentorVerificationCallPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of MentorVerificationCalls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorVerificationCallCountArgs} args - Arguments to filter MentorVerificationCalls to count.
+     * @example
+     * // Count the number of MentorVerificationCalls
+     * const count = await prisma.mentorVerificationCall.count({
+     *   where: {
+     *     // ... the filter for the MentorVerificationCalls we want to count
+     *   }
+     * })
+    **/
+    count<T extends MentorVerificationCallCountArgs>(
+      args?: Subset<T, MentorVerificationCallCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MentorVerificationCallCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MentorVerificationCall.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorVerificationCallAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MentorVerificationCallAggregateArgs>(args: Subset<T, MentorVerificationCallAggregateArgs>): Prisma.PrismaPromise<GetMentorVerificationCallAggregateType<T>>
+
+    /**
+     * Group by MentorVerificationCall.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MentorVerificationCallGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MentorVerificationCallGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MentorVerificationCallGroupByArgs['orderBy'] }
+        : { orderBy?: MentorVerificationCallGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MentorVerificationCallGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMentorVerificationCallGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MentorVerificationCall model
+   */
+  readonly fields: MentorVerificationCallFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MentorVerificationCall.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MentorVerificationCallClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    mentorProfile<T extends MentorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MentorProfileDefaultArgs<ExtArgs>>): Prisma__MentorProfileClient<$Result.GetResult<Prisma.$MentorProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    scheduledBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MentorVerificationCall model
+   */ 
+  interface MentorVerificationCallFieldRefs {
+    readonly id: FieldRef<"MentorVerificationCall", 'String'>
+    readonly mentorProfileId: FieldRef<"MentorVerificationCall", 'String'>
+    readonly scheduledById: FieldRef<"MentorVerificationCall", 'String'>
+    readonly googleEventId: FieldRef<"MentorVerificationCall", 'String'>
+    readonly meetingLink: FieldRef<"MentorVerificationCall", 'String'>
+    readonly startsAt: FieldRef<"MentorVerificationCall", 'DateTime'>
+    readonly endsAt: FieldRef<"MentorVerificationCall", 'DateTime'>
+    readonly notes: FieldRef<"MentorVerificationCall", 'String'>
+    readonly status: FieldRef<"MentorVerificationCall", 'VerificationCallStatus'>
+    readonly createdAt: FieldRef<"MentorVerificationCall", 'DateTime'>
+    readonly updatedAt: FieldRef<"MentorVerificationCall", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MentorVerificationCall findUnique
+   */
+  export type MentorVerificationCallFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorVerificationCall to fetch.
+     */
+    where: MentorVerificationCallWhereUniqueInput
+  }
+
+  /**
+   * MentorVerificationCall findUniqueOrThrow
+   */
+  export type MentorVerificationCallFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorVerificationCall to fetch.
+     */
+    where: MentorVerificationCallWhereUniqueInput
+  }
+
+  /**
+   * MentorVerificationCall findFirst
+   */
+  export type MentorVerificationCallFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorVerificationCall to fetch.
+     */
+    where?: MentorVerificationCallWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorVerificationCalls to fetch.
+     */
+    orderBy?: MentorVerificationCallOrderByWithRelationInput | MentorVerificationCallOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorVerificationCalls.
+     */
+    cursor?: MentorVerificationCallWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorVerificationCalls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorVerificationCalls.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorVerificationCalls.
+     */
+    distinct?: MentorVerificationCallScalarFieldEnum | MentorVerificationCallScalarFieldEnum[]
+  }
+
+  /**
+   * MentorVerificationCall findFirstOrThrow
+   */
+  export type MentorVerificationCallFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorVerificationCall to fetch.
+     */
+    where?: MentorVerificationCallWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorVerificationCalls to fetch.
+     */
+    orderBy?: MentorVerificationCallOrderByWithRelationInput | MentorVerificationCallOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MentorVerificationCalls.
+     */
+    cursor?: MentorVerificationCallWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorVerificationCalls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorVerificationCalls.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MentorVerificationCalls.
+     */
+    distinct?: MentorVerificationCallScalarFieldEnum | MentorVerificationCallScalarFieldEnum[]
+  }
+
+  /**
+   * MentorVerificationCall findMany
+   */
+  export type MentorVerificationCallFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    /**
+     * Filter, which MentorVerificationCalls to fetch.
+     */
+    where?: MentorVerificationCallWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MentorVerificationCalls to fetch.
+     */
+    orderBy?: MentorVerificationCallOrderByWithRelationInput | MentorVerificationCallOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MentorVerificationCalls.
+     */
+    cursor?: MentorVerificationCallWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MentorVerificationCalls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MentorVerificationCalls.
+     */
+    skip?: number
+    distinct?: MentorVerificationCallScalarFieldEnum | MentorVerificationCallScalarFieldEnum[]
+  }
+
+  /**
+   * MentorVerificationCall create
+   */
+  export type MentorVerificationCallCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MentorVerificationCall.
+     */
+    data: XOR<MentorVerificationCallCreateInput, MentorVerificationCallUncheckedCreateInput>
+  }
+
+  /**
+   * MentorVerificationCall createMany
+   */
+  export type MentorVerificationCallCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MentorVerificationCalls.
+     */
+    data: MentorVerificationCallCreateManyInput | MentorVerificationCallCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MentorVerificationCall createManyAndReturn
+   */
+  export type MentorVerificationCallCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many MentorVerificationCalls.
+     */
+    data: MentorVerificationCallCreateManyInput | MentorVerificationCallCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MentorVerificationCall update
+   */
+  export type MentorVerificationCallUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MentorVerificationCall.
+     */
+    data: XOR<MentorVerificationCallUpdateInput, MentorVerificationCallUncheckedUpdateInput>
+    /**
+     * Choose, which MentorVerificationCall to update.
+     */
+    where: MentorVerificationCallWhereUniqueInput
+  }
+
+  /**
+   * MentorVerificationCall updateMany
+   */
+  export type MentorVerificationCallUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MentorVerificationCalls.
+     */
+    data: XOR<MentorVerificationCallUpdateManyMutationInput, MentorVerificationCallUncheckedUpdateManyInput>
+    /**
+     * Filter which MentorVerificationCalls to update
+     */
+    where?: MentorVerificationCallWhereInput
+  }
+
+  /**
+   * MentorVerificationCall upsert
+   */
+  export type MentorVerificationCallUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MentorVerificationCall to update in case it exists.
+     */
+    where: MentorVerificationCallWhereUniqueInput
+    /**
+     * In case the MentorVerificationCall found by the `where` argument doesn't exist, create a new MentorVerificationCall with this data.
+     */
+    create: XOR<MentorVerificationCallCreateInput, MentorVerificationCallUncheckedCreateInput>
+    /**
+     * In case the MentorVerificationCall was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MentorVerificationCallUpdateInput, MentorVerificationCallUncheckedUpdateInput>
+  }
+
+  /**
+   * MentorVerificationCall delete
+   */
+  export type MentorVerificationCallDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+    /**
+     * Filter which MentorVerificationCall to delete.
+     */
+    where: MentorVerificationCallWhereUniqueInput
+  }
+
+  /**
+   * MentorVerificationCall deleteMany
+   */
+  export type MentorVerificationCallDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MentorVerificationCalls to delete
+     */
+    where?: MentorVerificationCallWhereInput
+  }
+
+  /**
+   * MentorVerificationCall without action
+   */
+  export type MentorVerificationCallDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MentorVerificationCall
+     */
+    select?: MentorVerificationCallSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MentorVerificationCallInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -19768,6 +20957,7 @@ export namespace Prisma {
     workExperience: 'workExperience',
     certifications: 'certifications',
     collegeDocumentUrl: 'collegeDocumentUrl',
+    mentoringQA: 'mentoringQA',
     approvalStatus: 'approvalStatus',
     isVerified: 'isVerified',
     totalSessions: 'totalSessions',
@@ -19988,6 +21178,23 @@ export namespace Prisma {
   };
 
   export type PayoutScalarFieldEnum = (typeof PayoutScalarFieldEnum)[keyof typeof PayoutScalarFieldEnum]
+
+
+  export const MentorVerificationCallScalarFieldEnum: {
+    id: 'id',
+    mentorProfileId: 'mentorProfileId',
+    scheduledById: 'scheduledById',
+    googleEventId: 'googleEventId',
+    meetingLink: 'meetingLink',
+    startsAt: 'startsAt',
+    endsAt: 'endsAt',
+    notes: 'notes',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MentorVerificationCallScalarFieldEnum = (typeof MentorVerificationCallScalarFieldEnum)[keyof typeof MentorVerificationCallScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -20223,6 +21430,20 @@ export namespace Prisma {
    */
   export type ListEnumPayoutStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PayoutStatus[]'>
     
+
+
+  /**
+   * Reference to a field of type 'VerificationCallStatus'
+   */
+  export type EnumVerificationCallStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationCallStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'VerificationCallStatus[]'
+   */
+  export type ListEnumVerificationCallStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationCallStatus[]'>
+    
   /**
    * Deep Input Types
    */
@@ -20250,6 +21471,7 @@ export namespace Prisma {
     mentorProfile?: XOR<MentorProfileNullableRelationFilter, MentorProfileWhereInput> | null
     menteeBookings?: BookingListRelationFilter
     reviewsGiven?: ReviewListRelationFilter
+    scheduledVerificationCalls?: MentorVerificationCallListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -20271,6 +21493,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileOrderByWithRelationInput
     menteeBookings?: BookingOrderByRelationAggregateInput
     reviewsGiven?: ReviewOrderByRelationAggregateInput
+    scheduledVerificationCalls?: MentorVerificationCallOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -20295,6 +21518,7 @@ export namespace Prisma {
     mentorProfile?: XOR<MentorProfileNullableRelationFilter, MentorProfileWhereInput> | null
     menteeBookings?: BookingListRelationFilter
     reviewsGiven?: ReviewListRelationFilter
+    scheduledVerificationCalls?: MentorVerificationCallListRelationFilter
   }, "id" | "email" | "googleId">
 
   export type UserOrderByWithAggregationInput = {
@@ -20465,6 +21689,7 @@ export namespace Prisma {
     workExperience?: StringNullableFilter<"MentorProfile"> | string | null
     certifications?: StringNullableFilter<"MentorProfile"> | string | null
     collegeDocumentUrl?: StringNullableFilter<"MentorProfile"> | string | null
+    mentoringQA?: JsonNullableFilter<"MentorProfile">
     approvalStatus?: EnumMentorApprovalStatusFilter<"MentorProfile"> | $Enums.MentorApprovalStatus
     isVerified?: BoolFilter<"MentorProfile"> | boolean
     totalSessions?: IntFilter<"MentorProfile"> | number
@@ -20482,6 +21707,7 @@ export namespace Prisma {
     payouts?: PayoutListRelationFilter
     wallet?: XOR<MentorWalletNullableRelationFilter, MentorWalletWhereInput> | null
     cancellationStat?: XOR<MentorCancellationStatNullableRelationFilter, MentorCancellationStatWhereInput> | null
+    verificationCalls?: MentorVerificationCallListRelationFilter
   }
 
   export type MentorProfileOrderByWithRelationInput = {
@@ -20497,6 +21723,7 @@ export namespace Prisma {
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     collegeDocumentUrl?: SortOrderInput | SortOrder
+    mentoringQA?: SortOrderInput | SortOrder
     approvalStatus?: SortOrder
     isVerified?: SortOrder
     totalSessions?: SortOrder
@@ -20514,6 +21741,7 @@ export namespace Prisma {
     payouts?: PayoutOrderByRelationAggregateInput
     wallet?: MentorWalletOrderByWithRelationInput
     cancellationStat?: MentorCancellationStatOrderByWithRelationInput
+    verificationCalls?: MentorVerificationCallOrderByRelationAggregateInput
   }
 
   export type MentorProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -20532,6 +21760,7 @@ export namespace Prisma {
     workExperience?: StringNullableFilter<"MentorProfile"> | string | null
     certifications?: StringNullableFilter<"MentorProfile"> | string | null
     collegeDocumentUrl?: StringNullableFilter<"MentorProfile"> | string | null
+    mentoringQA?: JsonNullableFilter<"MentorProfile">
     approvalStatus?: EnumMentorApprovalStatusFilter<"MentorProfile"> | $Enums.MentorApprovalStatus
     isVerified?: BoolFilter<"MentorProfile"> | boolean
     totalSessions?: IntFilter<"MentorProfile"> | number
@@ -20549,6 +21778,7 @@ export namespace Prisma {
     payouts?: PayoutListRelationFilter
     wallet?: XOR<MentorWalletNullableRelationFilter, MentorWalletWhereInput> | null
     cancellationStat?: XOR<MentorCancellationStatNullableRelationFilter, MentorCancellationStatWhereInput> | null
+    verificationCalls?: MentorVerificationCallListRelationFilter
   }, "id" | "userId" | "username">
 
   export type MentorProfileOrderByWithAggregationInput = {
@@ -20564,6 +21794,7 @@ export namespace Prisma {
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     collegeDocumentUrl?: SortOrderInput | SortOrder
+    mentoringQA?: SortOrderInput | SortOrder
     approvalStatus?: SortOrder
     isVerified?: SortOrder
     totalSessions?: SortOrder
@@ -20595,6 +21826,7 @@ export namespace Prisma {
     workExperience?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     certifications?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     collegeDocumentUrl?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    mentoringQA?: JsonNullableWithAggregatesFilter<"MentorProfile">
     approvalStatus?: EnumMentorApprovalStatusWithAggregatesFilter<"MentorProfile"> | $Enums.MentorApprovalStatus
     isVerified?: BoolWithAggregatesFilter<"MentorProfile"> | boolean
     totalSessions?: IntWithAggregatesFilter<"MentorProfile"> | number
@@ -21718,6 +22950,94 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Payout"> | Date | string
   }
 
+  export type MentorVerificationCallWhereInput = {
+    AND?: MentorVerificationCallWhereInput | MentorVerificationCallWhereInput[]
+    OR?: MentorVerificationCallWhereInput[]
+    NOT?: MentorVerificationCallWhereInput | MentorVerificationCallWhereInput[]
+    id?: StringFilter<"MentorVerificationCall"> | string
+    mentorProfileId?: StringFilter<"MentorVerificationCall"> | string
+    scheduledById?: StringFilter<"MentorVerificationCall"> | string
+    googleEventId?: StringNullableFilter<"MentorVerificationCall"> | string | null
+    meetingLink?: StringNullableFilter<"MentorVerificationCall"> | string | null
+    startsAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    endsAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    notes?: StringNullableFilter<"MentorVerificationCall"> | string | null
+    status?: EnumVerificationCallStatusFilter<"MentorVerificationCall"> | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+    scheduledBy?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type MentorVerificationCallOrderByWithRelationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    scheduledById?: SortOrder
+    googleEventId?: SortOrderInput | SortOrder
+    meetingLink?: SortOrderInput | SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    mentorProfile?: MentorProfileOrderByWithRelationInput
+    scheduledBy?: UserOrderByWithRelationInput
+  }
+
+  export type MentorVerificationCallWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: MentorVerificationCallWhereInput | MentorVerificationCallWhereInput[]
+    OR?: MentorVerificationCallWhereInput[]
+    NOT?: MentorVerificationCallWhereInput | MentorVerificationCallWhereInput[]
+    mentorProfileId?: StringFilter<"MentorVerificationCall"> | string
+    scheduledById?: StringFilter<"MentorVerificationCall"> | string
+    googleEventId?: StringNullableFilter<"MentorVerificationCall"> | string | null
+    meetingLink?: StringNullableFilter<"MentorVerificationCall"> | string | null
+    startsAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    endsAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    notes?: StringNullableFilter<"MentorVerificationCall"> | string | null
+    status?: EnumVerificationCallStatusFilter<"MentorVerificationCall"> | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    mentorProfile?: XOR<MentorProfileRelationFilter, MentorProfileWhereInput>
+    scheduledBy?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type MentorVerificationCallOrderByWithAggregationInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    scheduledById?: SortOrder
+    googleEventId?: SortOrderInput | SortOrder
+    meetingLink?: SortOrderInput | SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MentorVerificationCallCountOrderByAggregateInput
+    _max?: MentorVerificationCallMaxOrderByAggregateInput
+    _min?: MentorVerificationCallMinOrderByAggregateInput
+  }
+
+  export type MentorVerificationCallScalarWhereWithAggregatesInput = {
+    AND?: MentorVerificationCallScalarWhereWithAggregatesInput | MentorVerificationCallScalarWhereWithAggregatesInput[]
+    OR?: MentorVerificationCallScalarWhereWithAggregatesInput[]
+    NOT?: MentorVerificationCallScalarWhereWithAggregatesInput | MentorVerificationCallScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MentorVerificationCall"> | string
+    mentorProfileId?: StringWithAggregatesFilter<"MentorVerificationCall"> | string
+    scheduledById?: StringWithAggregatesFilter<"MentorVerificationCall"> | string
+    googleEventId?: StringNullableWithAggregatesFilter<"MentorVerificationCall"> | string | null
+    meetingLink?: StringNullableWithAggregatesFilter<"MentorVerificationCall"> | string | null
+    startsAt?: DateTimeWithAggregatesFilter<"MentorVerificationCall"> | Date | string
+    endsAt?: DateTimeWithAggregatesFilter<"MentorVerificationCall"> | Date | string
+    notes?: StringNullableWithAggregatesFilter<"MentorVerificationCall"> | string | null
+    status?: EnumVerificationCallStatusWithAggregatesFilter<"MentorVerificationCall"> | $Enums.VerificationCallStatus
+    createdAt?: DateTimeWithAggregatesFilter<"MentorVerificationCall"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MentorVerificationCall"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -21737,6 +23057,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeBookings?: BookingCreateNestedManyWithoutMenteeInput
     reviewsGiven?: ReviewCreateNestedManyWithoutAuthorInput
+    scheduledVerificationCalls?: MentorVerificationCallCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -21758,6 +23079,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeBookings?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     reviewsGiven?: ReviewUncheckedCreateNestedManyWithoutAuthorInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserUpdateInput = {
@@ -21779,6 +23101,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeBookings?: BookingUpdateManyWithoutMenteeNestedInput
     reviewsGiven?: ReviewUpdateManyWithoutAuthorNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUpdateManyWithoutScheduledByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -21800,6 +23123,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeBookings?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     reviewsGiven?: ReviewUncheckedUpdateManyWithoutAuthorNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutScheduledByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -21997,6 +23321,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -22014,6 +23339,7 @@ export namespace Prisma {
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateInput = {
@@ -22029,6 +23355,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -22045,6 +23372,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUpdateInput = {
@@ -22059,6 +23387,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -22076,6 +23405,7 @@ export namespace Prisma {
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateInput = {
@@ -22091,6 +23421,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -22107,6 +23438,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileCreateManyInput = {
@@ -22122,6 +23454,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -22144,6 +23477,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -22167,6 +23501,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -23387,6 +24722,102 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MentorVerificationCallCreateInput = {
+    id?: string
+    googleEventId?: string | null
+    meetingLink?: string | null
+    startsAt: Date | string
+    endsAt: Date | string
+    notes?: string | null
+    status?: $Enums.VerificationCallStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorProfile: MentorProfileCreateNestedOneWithoutVerificationCallsInput
+    scheduledBy: UserCreateNestedOneWithoutScheduledVerificationCallsInput
+  }
+
+  export type MentorVerificationCallUncheckedCreateInput = {
+    id?: string
+    mentorProfileId: string
+    scheduledById: string
+    googleEventId?: string | null
+    meetingLink?: string | null
+    startsAt: Date | string
+    endsAt: Date | string
+    notes?: string | null
+    status?: $Enums.VerificationCallStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorVerificationCallUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutVerificationCallsNestedInput
+    scheduledBy?: UserUpdateOneRequiredWithoutScheduledVerificationCallsNestedInput
+  }
+
+  export type MentorVerificationCallUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    scheduledById?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorVerificationCallCreateManyInput = {
+    id?: string
+    mentorProfileId: string
+    scheduledById: string
+    googleEventId?: string | null
+    meetingLink?: string | null
+    startsAt: Date | string
+    endsAt: Date | string
+    notes?: string | null
+    status?: $Enums.VerificationCallStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorVerificationCallUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorVerificationCallUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    scheduledById?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -23480,6 +24911,12 @@ export namespace Prisma {
     none?: ReviewWhereInput
   }
 
+  export type MentorVerificationCallListRelationFilter = {
+    every?: MentorVerificationCallWhereInput
+    some?: MentorVerificationCallWhereInput
+    none?: MentorVerificationCallWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -23490,6 +24927,10 @@ export namespace Prisma {
   }
 
   export type ReviewOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MentorVerificationCallOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -23921,6 +25362,7 @@ export namespace Prisma {
     workExperience?: SortOrder
     certifications?: SortOrder
     collegeDocumentUrl?: SortOrder
+    mentoringQA?: SortOrder
     approvalStatus?: SortOrder
     isVerified?: SortOrder
     totalSessions?: SortOrder
@@ -24803,6 +26245,65 @@ export namespace Prisma {
     _max?: NestedEnumPayoutStatusFilter<$PrismaModel>
   }
 
+  export type EnumVerificationCallStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationCallStatus | EnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationCallStatus[] | ListEnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationCallStatus[] | ListEnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationCallStatusFilter<$PrismaModel> | $Enums.VerificationCallStatus
+  }
+
+  export type MentorVerificationCallCountOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    scheduledById?: SortOrder
+    googleEventId?: SortOrder
+    meetingLink?: SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrder
+    notes?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorVerificationCallMaxOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    scheduledById?: SortOrder
+    googleEventId?: SortOrder
+    meetingLink?: SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrder
+    notes?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MentorVerificationCallMinOrderByAggregateInput = {
+    id?: SortOrder
+    mentorProfileId?: SortOrder
+    scheduledById?: SortOrder
+    googleEventId?: SortOrder
+    meetingLink?: SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrder
+    notes?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumVerificationCallStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationCallStatus | EnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationCallStatus[] | ListEnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationCallStatus[] | ListEnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationCallStatusWithAggregatesFilter<$PrismaModel> | $Enums.VerificationCallStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVerificationCallStatusFilter<$PrismaModel>
+    _max?: NestedEnumVerificationCallStatusFilter<$PrismaModel>
+  }
+
   export type MenteeProfileCreateNestedOneWithoutUserInput = {
     create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
@@ -24829,6 +26330,13 @@ export namespace Prisma {
     connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
   }
 
+  export type MentorVerificationCallCreateNestedManyWithoutScheduledByInput = {
+    create?: XOR<MentorVerificationCallCreateWithoutScheduledByInput, MentorVerificationCallUncheckedCreateWithoutScheduledByInput> | MentorVerificationCallCreateWithoutScheduledByInput[] | MentorVerificationCallUncheckedCreateWithoutScheduledByInput[]
+    connectOrCreate?: MentorVerificationCallCreateOrConnectWithoutScheduledByInput | MentorVerificationCallCreateOrConnectWithoutScheduledByInput[]
+    createMany?: MentorVerificationCallCreateManyScheduledByInputEnvelope
+    connect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+  }
+
   export type MenteeProfileUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
@@ -24853,6 +26361,13 @@ export namespace Prisma {
     connectOrCreate?: ReviewCreateOrConnectWithoutAuthorInput | ReviewCreateOrConnectWithoutAuthorInput[]
     createMany?: ReviewCreateManyAuthorInputEnvelope
     connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
+  }
+
+  export type MentorVerificationCallUncheckedCreateNestedManyWithoutScheduledByInput = {
+    create?: XOR<MentorVerificationCallCreateWithoutScheduledByInput, MentorVerificationCallUncheckedCreateWithoutScheduledByInput> | MentorVerificationCallCreateWithoutScheduledByInput[] | MentorVerificationCallUncheckedCreateWithoutScheduledByInput[]
+    connectOrCreate?: MentorVerificationCallCreateOrConnectWithoutScheduledByInput | MentorVerificationCallCreateOrConnectWithoutScheduledByInput[]
+    createMany?: MentorVerificationCallCreateManyScheduledByInputEnvelope
+    connect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -24931,6 +26446,20 @@ export namespace Prisma {
     deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
   }
 
+  export type MentorVerificationCallUpdateManyWithoutScheduledByNestedInput = {
+    create?: XOR<MentorVerificationCallCreateWithoutScheduledByInput, MentorVerificationCallUncheckedCreateWithoutScheduledByInput> | MentorVerificationCallCreateWithoutScheduledByInput[] | MentorVerificationCallUncheckedCreateWithoutScheduledByInput[]
+    connectOrCreate?: MentorVerificationCallCreateOrConnectWithoutScheduledByInput | MentorVerificationCallCreateOrConnectWithoutScheduledByInput[]
+    upsert?: MentorVerificationCallUpsertWithWhereUniqueWithoutScheduledByInput | MentorVerificationCallUpsertWithWhereUniqueWithoutScheduledByInput[]
+    createMany?: MentorVerificationCallCreateManyScheduledByInputEnvelope
+    set?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    disconnect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    delete?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    connect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    update?: MentorVerificationCallUpdateWithWhereUniqueWithoutScheduledByInput | MentorVerificationCallUpdateWithWhereUniqueWithoutScheduledByInput[]
+    updateMany?: MentorVerificationCallUpdateManyWithWhereWithoutScheduledByInput | MentorVerificationCallUpdateManyWithWhereWithoutScheduledByInput[]
+    deleteMany?: MentorVerificationCallScalarWhereInput | MentorVerificationCallScalarWhereInput[]
+  }
+
   export type MenteeProfileUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: MenteeProfileCreateOrConnectWithoutUserInput
@@ -24977,6 +26506,20 @@ export namespace Prisma {
     update?: ReviewUpdateWithWhereUniqueWithoutAuthorInput | ReviewUpdateWithWhereUniqueWithoutAuthorInput[]
     updateMany?: ReviewUpdateManyWithWhereWithoutAuthorInput | ReviewUpdateManyWithWhereWithoutAuthorInput[]
     deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
+  }
+
+  export type MentorVerificationCallUncheckedUpdateManyWithoutScheduledByNestedInput = {
+    create?: XOR<MentorVerificationCallCreateWithoutScheduledByInput, MentorVerificationCallUncheckedCreateWithoutScheduledByInput> | MentorVerificationCallCreateWithoutScheduledByInput[] | MentorVerificationCallUncheckedCreateWithoutScheduledByInput[]
+    connectOrCreate?: MentorVerificationCallCreateOrConnectWithoutScheduledByInput | MentorVerificationCallCreateOrConnectWithoutScheduledByInput[]
+    upsert?: MentorVerificationCallUpsertWithWhereUniqueWithoutScheduledByInput | MentorVerificationCallUpsertWithWhereUniqueWithoutScheduledByInput[]
+    createMany?: MentorVerificationCallCreateManyScheduledByInputEnvelope
+    set?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    disconnect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    delete?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    connect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    update?: MentorVerificationCallUpdateWithWhereUniqueWithoutScheduledByInput | MentorVerificationCallUpdateWithWhereUniqueWithoutScheduledByInput[]
+    updateMany?: MentorVerificationCallUpdateManyWithWhereWithoutScheduledByInput | MentorVerificationCallUpdateManyWithWhereWithoutScheduledByInput[]
+    deleteMany?: MentorVerificationCallScalarWhereInput | MentorVerificationCallScalarWhereInput[]
   }
 
   export type MenteeProfileCreateskillsetsInput = {
@@ -25074,6 +26617,13 @@ export namespace Prisma {
     connect?: MentorCancellationStatWhereUniqueInput
   }
 
+  export type MentorVerificationCallCreateNestedManyWithoutMentorProfileInput = {
+    create?: XOR<MentorVerificationCallCreateWithoutMentorProfileInput, MentorVerificationCallUncheckedCreateWithoutMentorProfileInput> | MentorVerificationCallCreateWithoutMentorProfileInput[] | MentorVerificationCallUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: MentorVerificationCallCreateOrConnectWithoutMentorProfileInput | MentorVerificationCallCreateOrConnectWithoutMentorProfileInput[]
+    createMany?: MentorVerificationCallCreateManyMentorProfileInputEnvelope
+    connect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+  }
+
   export type MentorServiceUncheckedCreateNestedManyWithoutMentorProfileInput = {
     create?: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput> | MentorServiceCreateWithoutMentorProfileInput[] | MentorServiceUncheckedCreateWithoutMentorProfileInput[]
     connectOrCreate?: MentorServiceCreateOrConnectWithoutMentorProfileInput | MentorServiceCreateOrConnectWithoutMentorProfileInput[]
@@ -25126,6 +26676,13 @@ export namespace Prisma {
     create?: XOR<MentorCancellationStatCreateWithoutMentorProfileInput, MentorCancellationStatUncheckedCreateWithoutMentorProfileInput>
     connectOrCreate?: MentorCancellationStatCreateOrConnectWithoutMentorProfileInput
     connect?: MentorCancellationStatWhereUniqueInput
+  }
+
+  export type MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput = {
+    create?: XOR<MentorVerificationCallCreateWithoutMentorProfileInput, MentorVerificationCallUncheckedCreateWithoutMentorProfileInput> | MentorVerificationCallCreateWithoutMentorProfileInput[] | MentorVerificationCallUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: MentorVerificationCallCreateOrConnectWithoutMentorProfileInput | MentorVerificationCallCreateOrConnectWithoutMentorProfileInput[]
+    createMany?: MentorVerificationCallCreateManyMentorProfileInputEnvelope
+    connect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
   }
 
   export type MentorProfileUpdateexpertiseTagsInput = {
@@ -25265,6 +26822,20 @@ export namespace Prisma {
     update?: XOR<XOR<MentorCancellationStatUpdateToOneWithWhereWithoutMentorProfileInput, MentorCancellationStatUpdateWithoutMentorProfileInput>, MentorCancellationStatUncheckedUpdateWithoutMentorProfileInput>
   }
 
+  export type MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput = {
+    create?: XOR<MentorVerificationCallCreateWithoutMentorProfileInput, MentorVerificationCallUncheckedCreateWithoutMentorProfileInput> | MentorVerificationCallCreateWithoutMentorProfileInput[] | MentorVerificationCallUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: MentorVerificationCallCreateOrConnectWithoutMentorProfileInput | MentorVerificationCallCreateOrConnectWithoutMentorProfileInput[]
+    upsert?: MentorVerificationCallUpsertWithWhereUniqueWithoutMentorProfileInput | MentorVerificationCallUpsertWithWhereUniqueWithoutMentorProfileInput[]
+    createMany?: MentorVerificationCallCreateManyMentorProfileInputEnvelope
+    set?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    disconnect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    delete?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    connect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    update?: MentorVerificationCallUpdateWithWhereUniqueWithoutMentorProfileInput | MentorVerificationCallUpdateWithWhereUniqueWithoutMentorProfileInput[]
+    updateMany?: MentorVerificationCallUpdateManyWithWhereWithoutMentorProfileInput | MentorVerificationCallUpdateManyWithWhereWithoutMentorProfileInput[]
+    deleteMany?: MentorVerificationCallScalarWhereInput | MentorVerificationCallScalarWhereInput[]
+  }
+
   export type MentorServiceUncheckedUpdateManyWithoutMentorProfileNestedInput = {
     create?: XOR<MentorServiceCreateWithoutMentorProfileInput, MentorServiceUncheckedCreateWithoutMentorProfileInput> | MentorServiceCreateWithoutMentorProfileInput[] | MentorServiceUncheckedCreateWithoutMentorProfileInput[]
     connectOrCreate?: MentorServiceCreateOrConnectWithoutMentorProfileInput | MentorServiceCreateOrConnectWithoutMentorProfileInput[]
@@ -25367,6 +26938,20 @@ export namespace Prisma {
     delete?: MentorCancellationStatWhereInput | boolean
     connect?: MentorCancellationStatWhereUniqueInput
     update?: XOR<XOR<MentorCancellationStatUpdateToOneWithWhereWithoutMentorProfileInput, MentorCancellationStatUpdateWithoutMentorProfileInput>, MentorCancellationStatUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput = {
+    create?: XOR<MentorVerificationCallCreateWithoutMentorProfileInput, MentorVerificationCallUncheckedCreateWithoutMentorProfileInput> | MentorVerificationCallCreateWithoutMentorProfileInput[] | MentorVerificationCallUncheckedCreateWithoutMentorProfileInput[]
+    connectOrCreate?: MentorVerificationCallCreateOrConnectWithoutMentorProfileInput | MentorVerificationCallCreateOrConnectWithoutMentorProfileInput[]
+    upsert?: MentorVerificationCallUpsertWithWhereUniqueWithoutMentorProfileInput | MentorVerificationCallUpsertWithWhereUniqueWithoutMentorProfileInput[]
+    createMany?: MentorVerificationCallCreateManyMentorProfileInputEnvelope
+    set?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    disconnect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    delete?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    connect?: MentorVerificationCallWhereUniqueInput | MentorVerificationCallWhereUniqueInput[]
+    update?: MentorVerificationCallUpdateWithWhereUniqueWithoutMentorProfileInput | MentorVerificationCallUpdateWithWhereUniqueWithoutMentorProfileInput[]
+    updateMany?: MentorVerificationCallUpdateManyWithWhereWithoutMentorProfileInput | MentorVerificationCallUpdateManyWithWhereWithoutMentorProfileInput[]
+    deleteMany?: MentorVerificationCallScalarWhereInput | MentorVerificationCallScalarWhereInput[]
   }
 
   export type MentorProfileCreateNestedOneWithoutMentorServicesInput = {
@@ -26041,6 +27626,38 @@ export namespace Prisma {
     update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutPayoutsInput, MentorProfileUpdateWithoutPayoutsInput>, MentorProfileUncheckedUpdateWithoutPayoutsInput>
   }
 
+  export type MentorProfileCreateNestedOneWithoutVerificationCallsInput = {
+    create?: XOR<MentorProfileCreateWithoutVerificationCallsInput, MentorProfileUncheckedCreateWithoutVerificationCallsInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutVerificationCallsInput
+    connect?: MentorProfileWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutScheduledVerificationCallsInput = {
+    create?: XOR<UserCreateWithoutScheduledVerificationCallsInput, UserUncheckedCreateWithoutScheduledVerificationCallsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutScheduledVerificationCallsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumVerificationCallStatusFieldUpdateOperationsInput = {
+    set?: $Enums.VerificationCallStatus
+  }
+
+  export type MentorProfileUpdateOneRequiredWithoutVerificationCallsNestedInput = {
+    create?: XOR<MentorProfileCreateWithoutVerificationCallsInput, MentorProfileUncheckedCreateWithoutVerificationCallsInput>
+    connectOrCreate?: MentorProfileCreateOrConnectWithoutVerificationCallsInput
+    upsert?: MentorProfileUpsertWithoutVerificationCallsInput
+    connect?: MentorProfileWhereUniqueInput
+    update?: XOR<XOR<MentorProfileUpdateToOneWithWhereWithoutVerificationCallsInput, MentorProfileUpdateWithoutVerificationCallsInput>, MentorProfileUncheckedUpdateWithoutVerificationCallsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutScheduledVerificationCallsNestedInput = {
+    create?: XOR<UserCreateWithoutScheduledVerificationCallsInput, UserUncheckedCreateWithoutScheduledVerificationCallsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutScheduledVerificationCallsInput
+    upsert?: UserUpsertWithoutScheduledVerificationCallsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutScheduledVerificationCallsInput, UserUpdateWithoutScheduledVerificationCallsInput>, UserUncheckedUpdateWithoutScheduledVerificationCallsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -26438,6 +28055,23 @@ export namespace Prisma {
     _max?: NestedEnumPayoutStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumVerificationCallStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationCallStatus | EnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationCallStatus[] | ListEnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationCallStatus[] | ListEnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationCallStatusFilter<$PrismaModel> | $Enums.VerificationCallStatus
+  }
+
+  export type NestedEnumVerificationCallStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VerificationCallStatus | EnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VerificationCallStatus[] | ListEnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VerificationCallStatus[] | ListEnumVerificationCallStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVerificationCallStatusWithAggregatesFilter<$PrismaModel> | $Enums.VerificationCallStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVerificationCallStatusFilter<$PrismaModel>
+    _max?: NestedEnumVerificationCallStatusFilter<$PrismaModel>
+  }
+
   export type MenteeProfileCreateWithoutUserInput = {
     id?: string
     username: string
@@ -26491,6 +28125,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -26507,6 +28142,7 @@ export namespace Prisma {
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutUserInput = {
@@ -26521,6 +28157,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -26537,6 +28174,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutUserInput = {
@@ -26638,6 +28276,42 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MentorVerificationCallCreateWithoutScheduledByInput = {
+    id?: string
+    googleEventId?: string | null
+    meetingLink?: string | null
+    startsAt: Date | string
+    endsAt: Date | string
+    notes?: string | null
+    status?: $Enums.VerificationCallStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorProfile: MentorProfileCreateNestedOneWithoutVerificationCallsInput
+  }
+
+  export type MentorVerificationCallUncheckedCreateWithoutScheduledByInput = {
+    id?: string
+    mentorProfileId: string
+    googleEventId?: string | null
+    meetingLink?: string | null
+    startsAt: Date | string
+    endsAt: Date | string
+    notes?: string | null
+    status?: $Enums.VerificationCallStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorVerificationCallCreateOrConnectWithoutScheduledByInput = {
+    where: MentorVerificationCallWhereUniqueInput
+    create: XOR<MentorVerificationCallCreateWithoutScheduledByInput, MentorVerificationCallUncheckedCreateWithoutScheduledByInput>
+  }
+
+  export type MentorVerificationCallCreateManyScheduledByInputEnvelope = {
+    data: MentorVerificationCallCreateManyScheduledByInput | MentorVerificationCallCreateManyScheduledByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type MenteeProfileUpsertWithoutUserInput = {
     update: XOR<MenteeProfileUpdateWithoutUserInput, MenteeProfileUncheckedUpdateWithoutUserInput>
     create: XOR<MenteeProfileCreateWithoutUserInput, MenteeProfileUncheckedCreateWithoutUserInput>
@@ -26708,6 +28382,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -26724,6 +28399,7 @@ export namespace Prisma {
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutUserInput = {
@@ -26738,6 +28414,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -26754,6 +28431,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type BookingUpsertWithWhereUniqueWithoutMenteeInput = {
@@ -26828,6 +28506,39 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Review"> | Date | string
   }
 
+  export type MentorVerificationCallUpsertWithWhereUniqueWithoutScheduledByInput = {
+    where: MentorVerificationCallWhereUniqueInput
+    update: XOR<MentorVerificationCallUpdateWithoutScheduledByInput, MentorVerificationCallUncheckedUpdateWithoutScheduledByInput>
+    create: XOR<MentorVerificationCallCreateWithoutScheduledByInput, MentorVerificationCallUncheckedCreateWithoutScheduledByInput>
+  }
+
+  export type MentorVerificationCallUpdateWithWhereUniqueWithoutScheduledByInput = {
+    where: MentorVerificationCallWhereUniqueInput
+    data: XOR<MentorVerificationCallUpdateWithoutScheduledByInput, MentorVerificationCallUncheckedUpdateWithoutScheduledByInput>
+  }
+
+  export type MentorVerificationCallUpdateManyWithWhereWithoutScheduledByInput = {
+    where: MentorVerificationCallScalarWhereInput
+    data: XOR<MentorVerificationCallUpdateManyMutationInput, MentorVerificationCallUncheckedUpdateManyWithoutScheduledByInput>
+  }
+
+  export type MentorVerificationCallScalarWhereInput = {
+    AND?: MentorVerificationCallScalarWhereInput | MentorVerificationCallScalarWhereInput[]
+    OR?: MentorVerificationCallScalarWhereInput[]
+    NOT?: MentorVerificationCallScalarWhereInput | MentorVerificationCallScalarWhereInput[]
+    id?: StringFilter<"MentorVerificationCall"> | string
+    mentorProfileId?: StringFilter<"MentorVerificationCall"> | string
+    scheduledById?: StringFilter<"MentorVerificationCall"> | string
+    googleEventId?: StringNullableFilter<"MentorVerificationCall"> | string | null
+    meetingLink?: StringNullableFilter<"MentorVerificationCall"> | string | null
+    startsAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    endsAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    notes?: StringNullableFilter<"MentorVerificationCall"> | string | null
+    status?: EnumVerificationCallStatusFilter<"MentorVerificationCall"> | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+    updatedAt?: DateTimeFilter<"MentorVerificationCall"> | Date | string
+  }
+
   export type UserCreateWithoutMenteeProfileInput = {
     id?: string
     email: string
@@ -26846,6 +28557,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeBookings?: BookingCreateNestedManyWithoutMenteeInput
     reviewsGiven?: ReviewCreateNestedManyWithoutAuthorInput
+    scheduledVerificationCalls?: MentorVerificationCallCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserUncheckedCreateWithoutMenteeProfileInput = {
@@ -26866,6 +28578,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeBookings?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     reviewsGiven?: ReviewUncheckedCreateNestedManyWithoutAuthorInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserCreateOrConnectWithoutMenteeProfileInput = {
@@ -26902,6 +28615,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeBookings?: BookingUpdateManyWithoutMenteeNestedInput
     reviewsGiven?: ReviewUpdateManyWithoutAuthorNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUpdateManyWithoutScheduledByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMenteeProfileInput = {
@@ -26922,6 +28636,7 @@ export namespace Prisma {
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeBookings?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     reviewsGiven?: ReviewUncheckedUpdateManyWithoutAuthorNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutScheduledByNestedInput
   }
 
   export type UserCreateWithoutMentorProfileInput = {
@@ -26942,6 +28657,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     menteeBookings?: BookingCreateNestedManyWithoutMenteeInput
     reviewsGiven?: ReviewCreateNestedManyWithoutAuthorInput
+    scheduledVerificationCalls?: MentorVerificationCallCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserUncheckedCreateWithoutMentorProfileInput = {
@@ -26962,6 +28678,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     menteeBookings?: BookingUncheckedCreateNestedManyWithoutMenteeInput
     reviewsGiven?: ReviewUncheckedCreateNestedManyWithoutAuthorInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserCreateOrConnectWithoutMentorProfileInput = {
@@ -27253,6 +28970,42 @@ export namespace Prisma {
     create: XOR<MentorCancellationStatCreateWithoutMentorProfileInput, MentorCancellationStatUncheckedCreateWithoutMentorProfileInput>
   }
 
+  export type MentorVerificationCallCreateWithoutMentorProfileInput = {
+    id?: string
+    googleEventId?: string | null
+    meetingLink?: string | null
+    startsAt: Date | string
+    endsAt: Date | string
+    notes?: string | null
+    status?: $Enums.VerificationCallStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scheduledBy: UserCreateNestedOneWithoutScheduledVerificationCallsInput
+  }
+
+  export type MentorVerificationCallUncheckedCreateWithoutMentorProfileInput = {
+    id?: string
+    scheduledById: string
+    googleEventId?: string | null
+    meetingLink?: string | null
+    startsAt: Date | string
+    endsAt: Date | string
+    notes?: string | null
+    status?: $Enums.VerificationCallStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorVerificationCallCreateOrConnectWithoutMentorProfileInput = {
+    where: MentorVerificationCallWhereUniqueInput
+    create: XOR<MentorVerificationCallCreateWithoutMentorProfileInput, MentorVerificationCallUncheckedCreateWithoutMentorProfileInput>
+  }
+
+  export type MentorVerificationCallCreateManyMentorProfileInputEnvelope = {
+    data: MentorVerificationCallCreateManyMentorProfileInput | MentorVerificationCallCreateManyMentorProfileInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutMentorProfileInput = {
     update: XOR<UserUpdateWithoutMentorProfileInput, UserUncheckedUpdateWithoutMentorProfileInput>
     create: XOR<UserCreateWithoutMentorProfileInput, UserUncheckedCreateWithoutMentorProfileInput>
@@ -27282,6 +29035,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     menteeBookings?: BookingUpdateManyWithoutMenteeNestedInput
     reviewsGiven?: ReviewUpdateManyWithoutAuthorNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUpdateManyWithoutScheduledByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMentorProfileInput = {
@@ -27302,6 +29056,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeBookings?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
     reviewsGiven?: ReviewUncheckedUpdateManyWithoutAuthorNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutScheduledByNestedInput
   }
 
   export type MentorServiceUpsertWithWhereUniqueWithoutMentorProfileInput = {
@@ -27524,6 +29279,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MentorVerificationCallUpsertWithWhereUniqueWithoutMentorProfileInput = {
+    where: MentorVerificationCallWhereUniqueInput
+    update: XOR<MentorVerificationCallUpdateWithoutMentorProfileInput, MentorVerificationCallUncheckedUpdateWithoutMentorProfileInput>
+    create: XOR<MentorVerificationCallCreateWithoutMentorProfileInput, MentorVerificationCallUncheckedCreateWithoutMentorProfileInput>
+  }
+
+  export type MentorVerificationCallUpdateWithWhereUniqueWithoutMentorProfileInput = {
+    where: MentorVerificationCallWhereUniqueInput
+    data: XOR<MentorVerificationCallUpdateWithoutMentorProfileInput, MentorVerificationCallUncheckedUpdateWithoutMentorProfileInput>
+  }
+
+  export type MentorVerificationCallUpdateManyWithWhereWithoutMentorProfileInput = {
+    where: MentorVerificationCallScalarWhereInput
+    data: XOR<MentorVerificationCallUpdateManyMutationInput, MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileInput>
+  }
+
   export type MentorProfileCreateWithoutMentorServicesInput = {
     id?: string
     username: string
@@ -27536,6 +29307,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -27552,6 +29324,7 @@ export namespace Prisma {
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutMentorServicesInput = {
@@ -27567,6 +29340,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -27582,6 +29356,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutMentorServicesInput = {
@@ -27700,6 +29475,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -27716,6 +29492,7 @@ export namespace Prisma {
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutMentorServicesInput = {
@@ -27731,6 +29508,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -27746,6 +29524,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type AvailabilityWindowServiceUpsertWithWhereUniqueWithoutMentorServiceInput = {
@@ -27802,6 +29581,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -27818,6 +29598,7 @@ export namespace Prisma {
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutAvailabilityWindowsInput = {
@@ -27833,6 +29614,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -27848,6 +29630,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutAvailabilityWindowsInput = {
@@ -27900,6 +29683,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -27916,6 +29700,7 @@ export namespace Prisma {
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutAvailabilityWindowsInput = {
@@ -27931,6 +29716,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -27946,6 +29732,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type AvailabilityWindowServiceUpsertWithWhereUniqueWithoutWindowInput = {
@@ -28118,6 +29905,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     reviewsGiven?: ReviewCreateNestedManyWithoutAuthorInput
+    scheduledVerificationCalls?: MentorVerificationCallCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserUncheckedCreateWithoutMenteeBookingsInput = {
@@ -28138,6 +29926,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     reviewsGiven?: ReviewUncheckedCreateNestedManyWithoutAuthorInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserCreateOrConnectWithoutMenteeBookingsInput = {
@@ -28157,6 +29946,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -28173,6 +29963,7 @@ export namespace Prisma {
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutMentorBookingsInput = {
@@ -28188,6 +29979,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -28203,6 +29995,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutMentorBookingsInput = {
@@ -28527,6 +30320,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     reviewsGiven?: ReviewUpdateManyWithoutAuthorNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUpdateManyWithoutScheduledByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMenteeBookingsInput = {
@@ -28547,6 +30341,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     reviewsGiven?: ReviewUncheckedUpdateManyWithoutAuthorNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutScheduledByNestedInput
   }
 
   export type MentorProfileUpsertWithoutMentorBookingsInput = {
@@ -28572,6 +30367,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -28588,6 +30384,7 @@ export namespace Prisma {
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutMentorBookingsInput = {
@@ -28603,6 +30400,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -28618,6 +30416,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorServiceUpsertWithoutBookingsInput = {
@@ -29231,6 +31030,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -29247,6 +31047,7 @@ export namespace Prisma {
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutFeedbacksInput = {
@@ -29262,6 +31063,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -29277,6 +31079,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutFeedbacksInput = {
@@ -29374,6 +31177,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -29390,6 +31194,7 @@ export namespace Prisma {
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutFeedbacksInput = {
@@ -29405,6 +31210,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -29420,6 +31226,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type BookingCreateWithoutReviewInput = {
@@ -29495,6 +31302,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -29511,6 +31319,7 @@ export namespace Prisma {
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutReviewsInput = {
@@ -29526,6 +31335,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -29541,6 +31351,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutReviewsInput = {
@@ -29566,6 +31377,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
     mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
     menteeBookings?: BookingCreateNestedManyWithoutMenteeInput
+    scheduledVerificationCalls?: MentorVerificationCallCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserUncheckedCreateWithoutReviewsGivenInput = {
@@ -29586,6 +31398,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
     mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
     menteeBookings?: BookingUncheckedCreateNestedManyWithoutMenteeInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutScheduledByInput
   }
 
   export type UserCreateOrConnectWithoutReviewsGivenInput = {
@@ -29683,6 +31496,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -29699,6 +31513,7 @@ export namespace Prisma {
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutReviewsInput = {
@@ -29714,6 +31529,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -29729,6 +31545,7 @@ export namespace Prisma {
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type UserUpsertWithoutReviewsGivenInput = {
@@ -29760,6 +31577,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
     mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
     menteeBookings?: BookingUpdateManyWithoutMenteeNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUpdateManyWithoutScheduledByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsGivenInput = {
@@ -29780,6 +31598,7 @@ export namespace Prisma {
     menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
     mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
     menteeBookings?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
+    scheduledVerificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutScheduledByNestedInput
   }
 
   export type BookingCreateWithoutAttendanceInput = {
@@ -29922,6 +31741,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -29938,6 +31758,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutWalletInput = {
@@ -29953,6 +31774,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -29968,6 +31790,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutWalletInput = {
@@ -30030,6 +31853,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -30046,6 +31870,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutWalletInput = {
@@ -30061,6 +31886,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -30076,6 +31902,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type WalletTransactionUpsertWithWhereUniqueWithoutWalletInput = {
@@ -30177,6 +32004,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -30193,6 +32021,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutCancellationStatInput = {
@@ -30208,6 +32037,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -30223,6 +32053,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
     payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutCancellationStatInput = {
@@ -30253,6 +32084,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -30269,6 +32101,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutCancellationStatInput = {
@@ -30284,6 +32117,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -30299,6 +32133,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileCreateWithoutPayoutsInput = {
@@ -30313,6 +32148,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -30329,6 +32165,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileUncheckedCreateWithoutPayoutsInput = {
@@ -30344,6 +32181,7 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
     isVerified?: boolean
     totalSessions?: number
@@ -30359,6 +32197,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
     wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
     cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+    verificationCalls?: MentorVerificationCallUncheckedCreateNestedManyWithoutMentorProfileInput
   }
 
   export type MentorProfileCreateOrConnectWithoutPayoutsInput = {
@@ -30389,6 +32228,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -30405,6 +32245,7 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUpdateManyWithoutMentorProfileNestedInput
   }
 
   export type MentorProfileUncheckedUpdateWithoutPayoutsInput = {
@@ -30420,6 +32261,7 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
@@ -30435,6 +32277,251 @@ export namespace Prisma {
     feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
     wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
     cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+    verificationCalls?: MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileNestedInput
+  }
+
+  export type MentorProfileCreateWithoutVerificationCallsInput = {
+    id?: string
+    username: string
+    bio: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgCollegeProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
+    approvalStatus?: $Enums.MentorApprovalStatus
+    isVerified?: boolean
+    totalSessions?: number
+    totalEarnings?: number
+    averageRating?: number
+    timezone?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMentorProfileInput
+    mentorServices?: MentorServiceCreateNestedManyWithoutMentorProfileInput
+    availabilityWindows?: AvailabilityWindowCreateNestedManyWithoutMentorProfileInput
+    mentorBookings?: BookingCreateNestedManyWithoutMentorProfileInput
+    reviews?: ReviewCreateNestedManyWithoutMentorProfileInput
+    feedbacks?: SessionFeedbackCreateNestedManyWithoutMentorProfileInput
+    payouts?: PayoutCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatCreateNestedOneWithoutMentorProfileInput
+  }
+
+  export type MentorProfileUncheckedCreateWithoutVerificationCallsInput = {
+    id?: string
+    userId: string
+    username: string
+    bio: string
+    linkedInUrl?: string | null
+    contactNumber: string
+    expertiseTags?: MentorProfileCreateexpertiseTagsInput | string[]
+    ugCollegeProfile?: string | null
+    pgCollegeProfile?: string | null
+    workExperience?: string | null
+    certifications?: string | null
+    collegeDocumentUrl?: string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
+    approvalStatus?: $Enums.MentorApprovalStatus
+    isVerified?: boolean
+    totalSessions?: number
+    totalEarnings?: number
+    averageRating?: number
+    timezone?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mentorServices?: MentorServiceUncheckedCreateNestedManyWithoutMentorProfileInput
+    availabilityWindows?: AvailabilityWindowUncheckedCreateNestedManyWithoutMentorProfileInput
+    mentorBookings?: BookingUncheckedCreateNestedManyWithoutMentorProfileInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutMentorProfileInput
+    feedbacks?: SessionFeedbackUncheckedCreateNestedManyWithoutMentorProfileInput
+    payouts?: PayoutUncheckedCreateNestedManyWithoutMentorProfileInput
+    wallet?: MentorWalletUncheckedCreateNestedOneWithoutMentorProfileInput
+    cancellationStat?: MentorCancellationStatUncheckedCreateNestedOneWithoutMentorProfileInput
+  }
+
+  export type MentorProfileCreateOrConnectWithoutVerificationCallsInput = {
+    where: MentorProfileWhereUniqueInput
+    create: XOR<MentorProfileCreateWithoutVerificationCallsInput, MentorProfileUncheckedCreateWithoutVerificationCallsInput>
+  }
+
+  export type UserCreateWithoutScheduledVerificationCallsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    provider?: $Enums.AuthProvider
+    role?: $Enums.Role
+    name: string
+    profilePicture?: string | null
+    isVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    menteeProfile?: MenteeProfileCreateNestedOneWithoutUserInput
+    mentorProfile?: MentorProfileCreateNestedOneWithoutUserInput
+    menteeBookings?: BookingCreateNestedManyWithoutMenteeInput
+    reviewsGiven?: ReviewCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutScheduledVerificationCallsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    googleId?: string | null
+    provider?: $Enums.AuthProvider
+    role?: $Enums.Role
+    name: string
+    profilePicture?: string | null
+    isVerified?: boolean
+    isActive?: boolean
+    lastLoginAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    menteeProfile?: MenteeProfileUncheckedCreateNestedOneWithoutUserInput
+    mentorProfile?: MentorProfileUncheckedCreateNestedOneWithoutUserInput
+    menteeBookings?: BookingUncheckedCreateNestedManyWithoutMenteeInput
+    reviewsGiven?: ReviewUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutScheduledVerificationCallsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutScheduledVerificationCallsInput, UserUncheckedCreateWithoutScheduledVerificationCallsInput>
+  }
+
+  export type MentorProfileUpsertWithoutVerificationCallsInput = {
+    update: XOR<MentorProfileUpdateWithoutVerificationCallsInput, MentorProfileUncheckedUpdateWithoutVerificationCallsInput>
+    create: XOR<MentorProfileCreateWithoutVerificationCallsInput, MentorProfileUncheckedCreateWithoutVerificationCallsInput>
+    where?: MentorProfileWhereInput
+  }
+
+  export type MentorProfileUpdateToOneWithWhereWithoutVerificationCallsInput = {
+    where?: MentorProfileWhereInput
+    data: XOR<MentorProfileUpdateWithoutVerificationCallsInput, MentorProfileUncheckedUpdateWithoutVerificationCallsInput>
+  }
+
+  export type MentorProfileUpdateWithoutVerificationCallsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    totalSessions?: IntFieldUpdateOperationsInput | number
+    totalEarnings?: FloatFieldUpdateOperationsInput | number
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMentorProfileNestedInput
+    mentorServices?: MentorServiceUpdateManyWithoutMentorProfileNestedInput
+    availabilityWindows?: AvailabilityWindowUpdateManyWithoutMentorProfileNestedInput
+    mentorBookings?: BookingUpdateManyWithoutMentorProfileNestedInput
+    reviews?: ReviewUpdateManyWithoutMentorProfileNestedInput
+    feedbacks?: SessionFeedbackUpdateManyWithoutMentorProfileNestedInput
+    payouts?: PayoutUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUpdateOneWithoutMentorProfileNestedInput
+  }
+
+  export type MentorProfileUncheckedUpdateWithoutVerificationCallsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    bio?: StringFieldUpdateOperationsInput | string
+    linkedInUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNumber?: StringFieldUpdateOperationsInput | string
+    expertiseTags?: MentorProfileUpdateexpertiseTagsInput | string[]
+    ugCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    pgCollegeProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    workExperience?: NullableStringFieldUpdateOperationsInput | string | null
+    certifications?: NullableStringFieldUpdateOperationsInput | string | null
+    collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    mentoringQA?: NullableJsonNullValueInput | InputJsonValue
+    approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    totalSessions?: IntFieldUpdateOperationsInput | number
+    totalEarnings?: FloatFieldUpdateOperationsInput | number
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    timezone?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorServices?: MentorServiceUncheckedUpdateManyWithoutMentorProfileNestedInput
+    availabilityWindows?: AvailabilityWindowUncheckedUpdateManyWithoutMentorProfileNestedInput
+    mentorBookings?: BookingUncheckedUpdateManyWithoutMentorProfileNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutMentorProfileNestedInput
+    feedbacks?: SessionFeedbackUncheckedUpdateManyWithoutMentorProfileNestedInput
+    payouts?: PayoutUncheckedUpdateManyWithoutMentorProfileNestedInput
+    wallet?: MentorWalletUncheckedUpdateOneWithoutMentorProfileNestedInput
+    cancellationStat?: MentorCancellationStatUncheckedUpdateOneWithoutMentorProfileNestedInput
+  }
+
+  export type UserUpsertWithoutScheduledVerificationCallsInput = {
+    update: XOR<UserUpdateWithoutScheduledVerificationCallsInput, UserUncheckedUpdateWithoutScheduledVerificationCallsInput>
+    create: XOR<UserCreateWithoutScheduledVerificationCallsInput, UserUncheckedCreateWithoutScheduledVerificationCallsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutScheduledVerificationCallsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutScheduledVerificationCallsInput, UserUncheckedUpdateWithoutScheduledVerificationCallsInput>
+  }
+
+  export type UserUpdateWithoutScheduledVerificationCallsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    name?: StringFieldUpdateOperationsInput | string
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeProfile?: MenteeProfileUpdateOneWithoutUserNestedInput
+    mentorProfile?: MentorProfileUpdateOneWithoutUserNestedInput
+    menteeBookings?: BookingUpdateManyWithoutMenteeNestedInput
+    reviewsGiven?: ReviewUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutScheduledVerificationCallsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    provider?: EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    name?: StringFieldUpdateOperationsInput | string
+    profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeProfile?: MenteeProfileUncheckedUpdateOneWithoutUserNestedInput
+    mentorProfile?: MentorProfileUncheckedUpdateOneWithoutUserNestedInput
+    menteeBookings?: BookingUncheckedUpdateManyWithoutMenteeNestedInput
+    reviewsGiven?: ReviewUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type BookingCreateManyMenteeInput = {
@@ -30467,6 +32554,19 @@ export namespace Prisma {
     rating: number
     review?: string | null
     createdAt?: Date | string
+  }
+
+  export type MentorVerificationCallCreateManyScheduledByInput = {
+    id?: string
+    mentorProfileId: string
+    googleEventId?: string | null
+    meetingLink?: string | null
+    startsAt: Date | string
+    endsAt: Date | string
+    notes?: string | null
+    status?: $Enums.VerificationCallStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BookingUpdateWithoutMenteeInput = {
@@ -30575,6 +32675,45 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MentorVerificationCallUpdateWithoutScheduledByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mentorProfile?: MentorProfileUpdateOneRequiredWithoutVerificationCallsNestedInput
+  }
+
+  export type MentorVerificationCallUncheckedUpdateWithoutScheduledByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorVerificationCallUncheckedUpdateManyWithoutScheduledByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    mentorProfileId?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type MentorServiceCreateManyMentorProfileInput = {
     id?: string
     title?: string | null
@@ -30651,6 +32790,19 @@ export namespace Prisma {
     approvedAt?: Date | string | null
     processedAt?: Date | string | null
     failedReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MentorVerificationCallCreateManyMentorProfileInput = {
+    id?: string
+    scheduledById: string
+    googleEventId?: string | null
+    meetingLink?: string | null
+    startsAt: Date | string
+    endsAt: Date | string
+    notes?: string | null
+    status?: $Enums.VerificationCallStatus
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -30907,6 +33059,45 @@ export namespace Prisma {
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     failedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorVerificationCallUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledBy?: UserUpdateOneRequiredWithoutScheduledVerificationCallsNestedInput
+  }
+
+  export type MentorVerificationCallUncheckedUpdateWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scheduledById?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MentorVerificationCallUncheckedUpdateManyWithoutMentorProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scheduledById?: StringFieldUpdateOperationsInput | string
+    googleEventId?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumVerificationCallStatusFieldUpdateOperationsInput | $Enums.VerificationCallStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -31300,6 +33491,10 @@ export namespace Prisma {
      * @deprecated Use PayoutDefaultArgs instead
      */
     export type PayoutArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PayoutDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use MentorVerificationCallDefaultArgs instead
+     */
+    export type MentorVerificationCallArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MentorVerificationCallDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

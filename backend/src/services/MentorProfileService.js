@@ -88,6 +88,7 @@ const mapProfile = (profile) => ({
   certifications: profile.certifications,
   profilePhotoUrl: profile.user?.profilePicture,
   collegeDocumentUrl: profile.collegeDocumentUrl,
+  mentoringQA: profile.mentoringQA || null,
   isVerified: profile.isVerified,
   approvalStatus: profile.approvalStatus,
   createdAt: profile.createdAt,
@@ -133,7 +134,7 @@ class MentorProfileService {
     const parsedData = createMentorProfileSchema.parse(payload);
     
     // Extract fields that don't match MentorProfile model directly
-    const { profilePhotoUrl, pgProfile, ...restData } = parsedData;
+    const { profilePhotoUrl, pgProfile, mentoringQA, ...restData } = parsedData;
 
     const existingProfile = await prisma.mentorProfile.findUnique({
       where: { userId },
@@ -153,6 +154,7 @@ class MentorProfileService {
         username: baseUsername,
         ...restData,
         pgCollegeProfile: pgProfile,
+        mentoringQA: mentoringQA || undefined,
         isVerified: false,
         approvalStatus: 'PENDING',
       },
@@ -172,7 +174,7 @@ class MentorProfileService {
 
   async update(userId, payload) {
     const parsedData = updateMentorProfileSchema.parse(payload);
-    const { profilePhotoUrl, pgProfile, ...restData } = parsedData;
+    const { profilePhotoUrl, pgProfile, mentoringQA, ...restData } = parsedData;
 
     const existingProfile = await prisma.mentorProfile.findUnique({
       where: { userId },
@@ -195,6 +197,7 @@ class MentorProfileService {
       data: {
         ...restData,
         pgCollegeProfile: pgProfile,
+        mentoringQA: mentoringQA || undefined,
         collegeDocumentUrl: nextCollegeDocumentUrl,
       },
       include: profileInclude,

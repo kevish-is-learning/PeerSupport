@@ -74,6 +74,19 @@ export const authApi = {
   },
 };
 
+export const uploadApi = {
+  uploadFile(file, folder = 'general') {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', folder);
+    
+    return apiRequest("/upload", { 
+      method: "POST", 
+      body: formData 
+    });
+  }
+};
+
 export const menteeProfileApi = {
   getMine() {
     return apiRequest('/mentee-profile');
@@ -545,6 +558,29 @@ export const adminApi = {
   // Wallet Adjustments
   adjustWallet(mentorProfileId, data) {
     return apiRequest(`/admin/wallet/${mentorProfileId}/adjust`, { method: 'POST', body: data });
+  },
+
+  // Verification Calls
+  scheduleVerificationCall(data) {
+    return apiRequest('/admin/mentor-verification/schedule', { method: 'POST', body: data });
+  },
+  rescheduleVerificationCall(callId, data) {
+    return apiRequest(`/admin/mentor-verification/${callId}/reschedule`, { method: 'PATCH', body: data });
+  },
+  cancelVerificationCall(callId) {
+    return apiRequest(`/admin/mentor-verification/${callId}/cancel`, { method: 'PATCH' });
+  },
+  completeVerificationCall(callId) {
+    return apiRequest(`/admin/mentor-verification/${callId}/complete`, { method: 'PATCH' });
+  },
+  markVerificationNoShow(callId) {
+    return apiRequest(`/admin/mentor-verification/${callId}/no-show`, { method: 'PATCH' });
+  },
+  getVerificationCall(callId) {
+    return apiRequest(`/admin/mentor-verification/${callId}`);
+  },
+  getVerificationCallsForMentor(mentorProfileId) {
+    return apiRequest(`/admin/mentor-verification/mentor/${mentorProfileId}`);
   },
 };
 

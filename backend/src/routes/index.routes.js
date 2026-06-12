@@ -17,6 +17,7 @@ import meetingRoutes from './meeting.routes.js';
 import walletRoutes from './wallet.routes.js';
 import payoutRoutes from './payout.routes.js';
 import cancellationRoutes from './cancellation.routes.js';
+import uploadRoutes from './upload.routes.js';
 
 // V2 routes — new booking & availability system
 import v2MentorRoutes from './v2/mentor.routes.js';
@@ -58,6 +59,7 @@ router.use('/meetings', meetingRoutes);
 router.use('/wallet', walletRoutes);
 router.use('/payouts', payoutRoutes);
 router.use('/cancellations', cancellationRoutes);
+router.use('/upload', uploadRoutes);
 
 // ─── V2 Routes ─────────────────────────────────────────────────────────────
 router.use('/v2', v2MentorRoutes);
