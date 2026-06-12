@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -9,8 +9,10 @@ import {
   Calendar,
   CreditCard,
   Banknote,
-  Star
+  Star,
+  LogOut
 } from "lucide-react";
+import useAuthStore from "../../store/useAuthStore";
 
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -24,6 +26,17 @@ const NAV_ITEMS = [
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace("/auth?mode=login");
+    } catch (_error) {
+      // Error handled in store
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-black text-zinc-100 font-sans selection:bg-zinc-800">
@@ -57,6 +70,18 @@ export default function AdminLayout({ children }) {
               </Link>
             );
           })}
+
+          {/* Divider */}
+          <div className="mx-1 h-6 w-px bg-zinc-700/50" />
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            title="Logout"
+            className="flex items-center justify-center text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-full w-[46px] h-[46px] sm:w-[50px] sm:h-[50px] border border-transparent transition-all duration-300 ease-in-out"
+          >
+            <LogOut strokeWidth={2} className="w-5 h-5 sm:w-[22px] sm:h-[22px] transition-all" />
+          </button>
         </nav>
       </div>
     </div>
