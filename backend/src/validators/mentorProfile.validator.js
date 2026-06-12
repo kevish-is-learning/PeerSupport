@@ -11,8 +11,15 @@ const normalizeOptionalText = z
     return trimmed.length ? trimmed : null;
   });
 
-const linkedInUrlSchema = normalizeOptionalText.pipe(
-  z.string().url("LinkedIn URL must be a valid URL").optional().nullable(),
+const linkedInUrlSchema = z.preprocess(
+  (val) => {
+    if (typeof val === 'string') {
+      const trimmed = val.trim();
+      return trimmed === '' ? null : trimmed;
+    }
+    return val;
+  },
+  z.string().url("LinkedIn URL must be a valid URL").optional().nullable()
 );
 
 const contactNumberSchema = z
@@ -99,7 +106,7 @@ export const createMentorProfileSchema = z.object({
       }
       return value;
     },
-    z.record(z.string()).optional().nullable(),
+    z.record(z.string(), z.string()).optional().nullable(),
   ),
 });
 
