@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+google-service-account.json
 
 # Environment variables
 .env
