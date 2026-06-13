@@ -85,7 +85,7 @@ class GoogleCalendarService {
         calendarId: getCalendarId(),
         resource: event,
         conferenceDataVersion: 1,
-        sendUpdates: 'all', // Google sends invite emails automatically
+        sendUpdates: 'all',
       });
 
       const createdEvent = response.data;

@@ -35,3 +35,6 @@ build/
 
 # Uploads (user-generated content)
 uploads/
+
+# Google Calendar OAuth tokens
+google-calendar-token.json
