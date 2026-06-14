@@ -13,9 +13,10 @@ function formatNextAvailable(dateStr) {
 }
 
 const SPECIALIZATIONS = [
-  "All Specializations", "CAT Prep", "GMAT Prep", "Interview Prep",
-  "Case Studies", "Personal Essays", "Essay Review", "Resume Review",
-  "Profile Building", "Career Counseling", "Mock Interviews",
+  "All Specializations", "Interview Preparation", "Resume Review",
+  "Career Guidance", "Case Study Practice", "GD/WAT Preparation",
+  "College Selection", "Application Strategy", "Mock Interviews",
+  "Essay Writing", "Networking Tips",
 ];
 
 const COLLEGES = [

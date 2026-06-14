@@ -29,19 +29,16 @@ const SCHOOLS = [
 
 const SPECIALIZATIONS = [
   "",
-  "Resume Strategy",
-  "Interview Prep",
-  "Case Studies",
-  "Personal Essay",
-  "Essay Guidance",
-  "Global Strategy",
-  "Case Prep",
-  "Leadership Skills",
-  "Profile Building",
-  "Career Guidance",
-  "Mock Interview",
-  "Application Strategy",
+  "Interview Preparation",
   "Resume Review",
+  "Career Guidance",
+  "Case Study Practice",
+  "GD/WAT Preparation",
+  "College Selection",
+  "Application Strategy",
+  "Mock Interviews",
+  "Essay Writing",
+  "Networking Tips",
 ];
 
 const AVAILABILITY_OPTIONS = [
@@ -234,7 +231,7 @@ export default function ExploreMentorsPage() {
   const [search, setSearch] = useState("");
   const [school, setSchool] = useState("");
   const [specialization, setSpecialization] = useState("");
-  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(5000);
   const [minRating, setMinRating] = useState(0);
   const [availability, setAvailability] = useState("");
   const [experience, setExperience] = useState("");
@@ -247,6 +244,7 @@ export default function ExploreMentorsPage() {
         search: search.trim() || undefined,
         college: school || undefined,
         specialization: specialization || undefined,
+        maxPrice: maxPrice < 5000 ? maxPrice : undefined,
         minRating: minRating > 0 ? minRating : undefined,
         sort,
         limit: 20,
@@ -259,7 +257,7 @@ export default function ExploreMentorsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [search, school, specialization, minRating, sort]);
+  }, [search, school, specialization, maxPrice, minRating, sort]);
 
   // Debounce
   useEffect(() => {
@@ -299,20 +297,23 @@ export default function ExploreMentorsPage() {
           {/* Price Range */}
           <div className="mb-5">
             <label className="mb-2 block text-sm font-bold text-gray-900">
-              Price Range (Minimum)
+              Maximum Price (₹/session)
             </label>
             <input
               type="range"
-              min={0}
+              min={500}
               max={5000}
               step={100}
-              value={minPrice}
-              onChange={(e) => setMinPrice(Number(e.target.value))}
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(Number(e.target.value))}
               className="w-full accent-[#7C3AED] h-1.5 rounded-full cursor-pointer"
             />
-            <p className="mt-1.5 text-sm font-bold text-[#7C3AED]">
-              ₹{minPrice.toLocaleString("en-IN")}
-            </p>
+            <div className="mt-1.5 flex justify-between text-sm font-bold">
+              <span className="text-gray-500">₹500</span>
+              <span className="text-[#7C3AED]">
+                {maxPrice >= 5000 ? "₹5,000+" : `₹${maxPrice.toLocaleString("en-IN")}`}
+              </span>
+            </div>
           </div>
 
           {/* Minimum Rating */}
@@ -468,7 +469,7 @@ export default function ExploreMentorsPage() {
                 onClick={() => {
                   setSchool("");
                   setSpecialization("");
-                  setMinPrice(0);
+                  setMaxPrice(5000);
                   setMinRating(0);
                   setAvailability("");
                   setExperience("");
