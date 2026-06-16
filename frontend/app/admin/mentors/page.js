@@ -254,19 +254,153 @@ export default function AdminMentorsPage() {
                 </div>
 
                 {/* Expanded Detail */}
-                {expandedId === m.id && (
-                  <div className="mt-6 border-t border-zinc-800 pt-6">
+                {expandedId === m.id && (() => {
+                  const pg = (m.pgProfile || "").split("|");
+                  const ug = (m.ugCollegeProfile || "").split("|");
+                  const we = (m.workExperience || "").split("|");
+                  const qa = m.mentoringQA || {};
+                  return (
+                  <div className="mt-6 border-t border-zinc-800 pt-6 space-y-6">
+                    {/* Row 1: Contact & Basic Info */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                      <div>
+                        <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Joined</p>
+                        <p className="mt-1 text-sm text-white">{formatDate(m.createdAt)}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Phone</p>
+                        <p className="mt-1 text-sm text-white">{m.contactNumber ? `+91 ${m.contactNumber}` : "—"}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">LinkedIn</p>
+                        {m.linkedInUrl ? (
+                          <a href={m.linkedInUrl} target="_blank" rel="noopener noreferrer" className="mt-1 text-sm text-blue-400 hover:underline block truncate">{m.linkedInUrl.replace(/https?:\/\/(www\.)?/, "")}</a>
+                        ) : (
+                          <p className="mt-1 text-sm text-zinc-500">—</p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Services</p>
+                        <p className="mt-1 text-sm text-white">{m.totalServices}</p>
+                      </div>
+                    </div>
+
+                    {/* Row 2: Education */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* MBA Education */}
+                      <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
+                        <h4 className="text-[10px] font-semibold uppercase tracking-wider text-blue-400 mb-3">🎓 MBA / PG Education</h4>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">B-School</p>
+                            <p className="text-sm text-white mt-0.5">{pg[0] || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Specialization</p>
+                            <p className="text-sm text-white mt-0.5">{pg[1] || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Year</p>
+                            <p className="text-sm text-white mt-0.5">{pg[2] || "—"}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* UG Education */}
+                      <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
+                        <h4 className="text-[10px] font-semibold uppercase tracking-wider text-amber-400 mb-3">🏫 Undergraduate Education</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                          <div>
+                            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">College</p>
+                            <p className="text-sm text-white mt-0.5">{ug[0] || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Degree</p>
+                            <p className="text-sm text-white mt-0.5">{ug[1] || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Specialization</p>
+                            <p className="text-sm text-white mt-0.5">{ug[2] || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Year</p>
+                            <p className="text-sm text-white mt-0.5">{ug[3] || "—"}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Row 3: Work Experience */}
+                    <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
+                      <h4 className="text-[10px] font-semibold uppercase tracking-wider text-cyan-400 mb-3">💼 Work Experience</h4>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Years</p>
+                          <p className="text-sm text-white mt-0.5">{we[0] ? `${we[0]} years` : "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Company</p>
+                          <p className="text-sm text-white mt-0.5">{we[1] || "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Role</p>
+                          <p className="text-sm text-white mt-0.5">{we[2] || "—"}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Row 4: Expertise Tags */}
+                    {m.expertiseTags && m.expertiseTags.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500 mb-2">Expertise</p>
+                        <div className="flex flex-wrap gap-2">
+                          {m.expertiseTags.map((tag) => (
+                            <span key={tag} className="inline-block rounded-full border border-indigo-900/50 bg-indigo-950/30 px-2.5 py-0.5 text-[11px] font-medium text-indigo-400">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Row 5: Bio */}
+                    {m.bio && (
+                      <div>
+                        <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500 mb-2">Bio</p>
+                        <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-900/50 rounded-xl border border-zinc-800 p-4">{m.bio}</p>
+                      </div>
+                    )}
+
+                    {/* Row 6: Onboarding Q&A */}
+                    {(qa.q1 || qa.q2 || qa.q3) && (
+                      <div className="rounded-xl border border-indigo-900/40 bg-indigo-950/10 p-5">
+                        <h4 className="text-[10px] font-semibold uppercase tracking-wider text-indigo-400 mb-4">📝 Onboarding Answers — "Why I Want to Mentor"</h4>
+                        <div className="space-y-4">
+                          {qa.q1 && (
+                            <div>
+                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q1: What inspired you to start mentoring MBA aspirants?</p>
+                              <p className="text-sm text-zinc-200 leading-relaxed">{qa.q1}</p>
+                            </div>
+                          )}
+                          {qa.q2 && (
+                            <div>
+                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q2: What specific challenges do you feel most equipped to help students navigate?</p>
+                              <p className="text-sm text-zinc-200 leading-relaxed">{qa.q2}</p>
+                            </div>
+                          )}
+                          {qa.q3 && (
+                            <div>
+                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q3: What has been your most defining experience during your MBA or career?</p>
+                              <p className="text-sm text-zinc-200 leading-relaxed">{qa.q3}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Row 7: Wallet + Verification Call */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                      {/* Existing Info */}
-                      <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:border-r lg:border-zinc-800 lg:pr-8">
-                        <div>
-                          <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Joined</p>
-                          <p className="mt-1 text-sm text-white">{formatDate(m.createdAt)}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Configured Services</p>
-                          <p className="mt-1 text-sm text-white">{m.totalServices}</p>
-                        </div>
+                      <div className="grid grid-cols-2 gap-6 lg:border-r lg:border-zinc-800 lg:pr-8">
                         {m.wallet && (
                           <>
                             <div>
@@ -287,7 +421,8 @@ export default function AdminMentorsPage() {
                       </div>
                     </div>
                   </div>
-                )}
+                  );
+                })()}
               </div>
             </article>
           ))

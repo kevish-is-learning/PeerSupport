@@ -63,6 +63,7 @@ export default function MentorProfilePage() {
     fullName: "",
     contactNumber: "",
     bSchool: "",
+    bSchoolSpecialization: "",
     bSchoolYear: "",
     expertiseTagsArr: [],
     bio: "",
@@ -88,6 +89,7 @@ export default function MentorProfilePage() {
           fullName: p.name || "",
           contactNumber: p.contactNumber || "",
           bSchool: pg[0] || "",
+          bSchoolSpecialization: pg[1] || "",
           bSchoolYear: pg[2] || "",
           expertiseTagsArr: p.expertiseTags || [],
           bio: p.bio || "",
@@ -120,6 +122,7 @@ export default function MentorProfilePage() {
       fullName: profile.name || "",
       contactNumber: profile.contactNumber || "",
       bSchool: pg[0] || "",
+      bSchoolSpecialization: pg[1] || "",
       bSchoolYear: pg[2] || "",
       expertiseTagsArr: profile.expertiseTags || [],
       bio: profile.bio || "",
@@ -143,7 +146,7 @@ export default function MentorProfilePage() {
         } catch (_) {}
       }
       const pgParts = profile?.pgProfile?.split("|") || ["", "", ""];
-      const newPgProfile = `${form.bSchool}|${pgParts[1] || ""}|${form.bSchoolYear}`;
+      const newPgProfile = `${form.bSchool}|${form.bSchoolSpecialization}|${form.bSchoolYear}`;
       const newWorkExperience = `${form.workExpYears}|${form.workExpCompany}|${form.workExpRole}`;
       const newUgProfile = `${form.ugCollege}|${form.ugDegree}|${form.ugSpecialization}|${form.ugYear}`;
       const res = await mentorProfileApi.update({
@@ -210,7 +213,7 @@ export default function MentorProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="w-full h-full overflow-y-auto bg-[#FAF9F6] p-8 lg:p-12">
+      <div className="w-full h-full overflow-y-auto bg-[#FAF9F6] p-4 sm:p-8 lg:p-12">
         <div className="flex flex-col lg:flex-row gap-8 items-start max-w-6xl mx-auto">
           {/* LEFT: Profile Preview Skeleton */}
           <div className="w-full lg:w-[340px] shrink-0 animate-pulse">
@@ -255,7 +258,7 @@ export default function MentorProfilePage() {
   const remainingTagsCount = expertiseTags.length - 3;
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#FAF9F6] p-8 lg:p-12">
+    <div className="w-full h-full overflow-y-auto bg-[#FAF9F6] p-4 sm:p-8 lg:p-12">
       <div className="flex flex-col lg:flex-row gap-8 items-start max-w-6xl mx-auto">
 
         {/* ── LEFT: Profile Preview Card ── */}
@@ -358,7 +361,7 @@ export default function MentorProfilePage() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 pl-2">
             <div>
-              <h1 className="text-3xl font-black text-black">Profile Settings</h1>
+              <h1 className="text-2xl sm:text-3xl font-black text-black">Profile Settings</h1>
               <p className="text-sm text-gray-500 font-medium mt-1">Manage your profile information and preferences</p>
             </div>
             {isEditing ? (
@@ -466,6 +469,14 @@ export default function MentorProfilePage() {
                         <option key={s} value={s}>{s}</option>
                       ))}
                     </select>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-black uppercase tracking-wider text-gray-400">Specialization</label>
+                    <input
+                      value={form.bSchoolSpecialization}
+                      onChange={(e) => setForm((f) => ({ ...f, bSchoolSpecialization: e.target.value }))}
+                      className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#3B82F6]/20"
+                    />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-xs font-black uppercase tracking-wider text-gray-400">Graduation Year</label>
@@ -578,25 +589,31 @@ export default function MentorProfilePage() {
              </div>
              
              {isEditing ? (
-               <div className="flex flex-col gap-2">
-                 <label className="text-xs font-black uppercase tracking-wider text-gray-400">Work Experience</label>
-                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                 <div className="flex flex-col gap-2">
+                   <label className="text-xs font-black uppercase tracking-wider text-gray-400">Years of Exp</label>
                    <input
                      type="number"
                      min="0"
-                     placeholder="Years"
+                     placeholder="e.g., 5"
                      value={form.workExpYears}
                      onChange={(e) => setForm((f) => ({ ...f, workExpYears: e.target.value }))}
                      className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/20"
                    />
+                 </div>
+                 <div className="flex flex-col gap-2">
+                   <label className="text-xs font-black uppercase tracking-wider text-gray-400">Company</label>
                    <input
-                     placeholder="Company"
+                     placeholder="e.g., Google"
                      value={form.workExpCompany}
                      onChange={(e) => setForm((f) => ({ ...f, workExpCompany: e.target.value }))}
                      className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/20"
                    />
+                 </div>
+                 <div className="flex flex-col gap-2">
+                   <label className="text-xs font-black uppercase tracking-wider text-gray-400">Role</label>
                    <input
-                     placeholder="Role"
+                     placeholder="e.g., Senior PM"
                      value={form.workExpRole}
                      onChange={(e) => setForm((f) => ({ ...f, workExpRole: e.target.value }))}
                      className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/20"
