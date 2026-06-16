@@ -68,26 +68,53 @@ const uploadToCloudinary = (buffer, options) =>
     stream.end(buffer);
   });
 
-// ─── Username resolver ───────────────────────────────────────────────────────
+// ─── Name helpers ────────────────────────────────────────────────────────────
 
 /**
- * Try to resolve the user's profile username for folder naming.
- * Falls back to a deterministic `<role>_<userId-prefix>` pattern if no profile exists yet.
+ * Sanitize a name for use in Cloudinary public_id / folder paths.
+ * Lowercases, replaces spaces/special chars with underscores, collapses runs.
  */
-const resolveUsername = async (userId, role) => {
+const sanitizeName = (name) =>
+  (name || 'unknown')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '_')   // replace non-alphanumeric with _
+    .replace(/_+/g, '_')          // collapse multiple underscores
+    .replace(/^_|_$/g, '')        // trim leading/trailing underscores
+    .substring(0, 40);            // keep it reasonable length
+
+/**
+ * Resolve the user's folder username AND their display name for file naming.
+ * Falls back gracefully if no profile exists yet (onboarding flow).
+ */
+const resolveUserInfo = async (userId, role) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true },
+  });
+
+  const displayName = sanitizeName(user?.name);
+
   if (role === 'MENTOR') {
     const profile = await prisma.mentorProfile.findUnique({
       where: { userId },
       select: { username: true },
     });
-    return profile?.username || `mentor_${userId.substring(0, 8)}`;
+    return {
+      folderName: profile?.username || `mentor_${userId.substring(0, 8)}`,
+      displayName,
+      prefix: 'mentor',
+    };
   }
 
   const profile = await prisma.menteeProfile.findUnique({
     where: { userId },
     select: { username: true },
   });
-  return profile?.username || `mentee_${userId.substring(0, 8)}`;
+  return {
+    folderName: profile?.username || `mentee_${userId.substring(0, 8)}`,
+    displayName,
+    prefix: 'mentee',
+  };
 };
 
 // ─── Middleware: Mentor profile uploads ──────────────────────────────────────
@@ -111,15 +138,16 @@ const mentorProfileUpload = (req, res, next) => {
     }
 
     try {
-      const username = await resolveUsername(req.user.id, 'MENTOR');
+      const { folderName, displayName, prefix } = await resolveUserInfo(req.user.id, 'MENTOR');
 
       const uploads = {};
 
       if (profilePhoto) {
-        const uniqueId = `${username}_${Date.now()}`;
+        // e.g. mentor_john_doe_avatar
+        const publicId = `${prefix}_${displayName}_avatar`;
         uploads.profilePhotoUrl = await uploadToCloudinary(profilePhoto.buffer, {
-          folder: getFolder(username, 'avatar'),
-          public_id: uniqueId,
+          folder: getFolder(folderName, 'avatar'),
+          public_id: publicId,
           resource_type: 'image',
           format: 'webp',
           overwrite: true,
@@ -127,10 +155,11 @@ const mentorProfileUpload = (req, res, next) => {
       }
 
       if (collegeDocument) {
-        const uniqueId = `${username}_doc_${Date.now()}`;
+        // e.g. mentor_john_doe_college_doc
+        const publicId = `${prefix}_${displayName}_college_doc`;
         uploads.collegeDocumentUrl = await uploadToCloudinary(collegeDocument.buffer, {
-          folder: getFolder(username, 'pdfs'),
-          public_id: uniqueId,
+          folder: getFolder(folderName, 'pdfs'),
+          public_id: publicId,
           resource_type: 'image',
           overwrite: true,
         });
@@ -169,15 +198,16 @@ const menteeProfileUpload = (req, res, next) => {
     }
 
     try {
-      const username = await resolveUsername(req.user.id, 'MENTEE');
+      const { folderName, displayName, prefix } = await resolveUserInfo(req.user.id, 'MENTEE');
 
       const uploads = {};
 
       if (profilePhoto) {
-        const uniqueId = `${username}_${Date.now()}`;
+        // e.g. mentee_jane_doe_avatar
+        const publicId = `${prefix}_${displayName}_avatar`;
         uploads.profilePhotoUrl = await uploadToCloudinary(profilePhoto.buffer, {
-          folder: getFolder(username, 'avatar'),
-          public_id: uniqueId,
+          folder: getFolder(folderName, 'avatar'),
+          public_id: publicId,
           resource_type: 'image',
           format: 'webp',
           overwrite: true,
@@ -185,19 +215,33 @@ const menteeProfileUpload = (req, res, next) => {
       }
 
       if (resume) {
-        const uniqueId = `${username}_resume_${Date.now()}`;
+        // e.g. mentee_jane_doe_resume
+        // PDFs must be uploaded as resource_type 'image' on Cloudinary — this enables
+        // visual processing, thumbnail generation, and proper Content-Type handling.
+        const publicId = `${prefix}_${displayName}_resume`;
+
+        console.log('[Upload] Uploading resume →', {
+          folder: getFolder(folderName, 'pdfs'),
+          publicId,
+          originalName: resume.originalname,
+          mimetype: resume.mimetype,
+          size: resume.size,
+        });
+
         uploads.resumeUrl = await uploadToCloudinary(resume.buffer, {
-          folder: getFolder(username, 'pdfs'),
-          public_id: uniqueId,
-          resource_type: 'raw',
+          folder: getFolder(folderName, 'pdfs'),
+          public_id: publicId,
+          resource_type: 'image',
           overwrite: true,
         });
+
+        console.log('[Upload] Resume uploaded successfully →', uploads.resumeUrl);
       }
 
       req.uploadedFiles = uploads;
       next();
     } catch (uploadError) {
-      console.error('[Cloudinary] Upload failed:', uploadError);
+      console.error('[Cloudinary] Mentee upload failed:', uploadError);
       return res.status(500).json({
         success: false,
         message: 'Cloud upload failed. Please try again.',
