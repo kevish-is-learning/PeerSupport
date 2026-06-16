@@ -1,9 +1,10 @@
-import { Home, Users, Calendar, Wallet, User, Briefcase, CalendarDays } from "lucide-react";
+import { Home, Users, Calendar, Wallet, User, Briefcase, CalendarDays, BarChart3 } from "lucide-react";
 
 export const MENTOR_NAV_ITEMS = [
   { label: "Home", href: "/mentor/dashboard", icon: Home, requiresApproval: true },
   { label: "My Mentees", href: "/mentor/mentees", icon: Users, requiresApproval: true },
   { label: "Sessions", href: "/mentor/bookings", icon: Calendar, requiresApproval: true },
+  { label: "Analytics", href: "/mentor/analytics", icon: BarChart3, requiresApproval: true },
   { label: "Payouts", href: "/mentor/payments", icon: Wallet, requiresApproval: true },
   { label: "Profile", href: "/mentor/profile", icon: User, requiresApproval: false },
   { label: "Availability", href: "/mentor/availability", icon: CalendarDays, requiresApproval: false },

@@ -1,10 +1,14 @@
 import { Router } from 'express';
 import { authenticateJWT, authorizeRoles } from '../middleware/auth.js';
 import mentorBookingController from '../controllers/MentorBookingController.js';
+import mentorAnalyticsController from '../controllers/MentorAnalyticsController.js';
 
 const router = Router();
 
 router.use(authenticateJWT, authorizeRoles('MENTOR'));
+
+// GET /api/mentor-bookings/analytics  – full analytics page data
+router.get('/analytics', (req, res) => mentorAnalyticsController.getAnalytics(req, res));
 
 // GET /api/mentor-bookings/dashboard  – stats cards
 router.get('/dashboard', (req, res) => mentorBookingController.getDashboardStats(req, res));

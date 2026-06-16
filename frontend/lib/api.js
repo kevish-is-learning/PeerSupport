@@ -275,6 +275,9 @@ export const mentorBookingApi = {
   getEarnings() {
     return apiRequest('/mentor-bookings/earnings');
   },
+  getAnalytics() {
+    return apiRequest('/mentor-bookings/analytics');
+  },
   getSessions({ month, year } = {}) {
     const params = new URLSearchParams();
     if (month) params.set('month', month);
