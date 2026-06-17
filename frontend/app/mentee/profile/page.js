@@ -655,7 +655,7 @@ export default function MenteeProfileSettingsPage() {
                             });
                           }}
                           placeholder="9876543210"
-                          className={`${inputClass} pl-[4.5rem]`}
+                          className={`${inputClass} pl-18`}
                         />
                       </div>
                     </FieldGroup>

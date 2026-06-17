@@ -8,13 +8,14 @@ import {
   MENTEE_NAV_ITEMS,
   normalizeMenteePath,
 } from "./menteeNavigation";
-import { LogOut, Home, CalendarDays, Compass, User as UserIcon, Menu, X } from "lucide-react";
+import { LogOut, Home, CalendarDays, Compass, User as UserIcon, Menu, X, BarChart3 } from "lucide-react";
 
 // Map labels to icons
 const getIconForNav = (label) => {
   switch (label) {
     case "Home": return Home;
     case "My Sessions": return CalendarDays;
+    case "Analytics": return BarChart3;
     case "Explore Mentors": return Compass;
     case "Profile": return UserIcon;
     default: return Home;

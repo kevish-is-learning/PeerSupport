@@ -46,9 +46,12 @@ class MenteeBookingController {
           price: b.payment?.amount || b.mentorService?.price || 0,
         };
 
-        if (new Date(b.endTime) > now && b.status !== 'CANCELLED_BY_MENTOR' && b.status !== 'CANCELLED_BY_MENTEE' && b.status !== 'COMPLETED') {
+        // Terminal statuses that should always appear in past sessions
+        const terminalStatuses = ['CANCELLED_BY_MENTOR', 'CANCELLED_BY_MENTEE', 'COMPLETED', 'NO_SHOW_MENTOR', 'NO_SHOW_MENTEE'];
+
+        if (!terminalStatuses.includes(b.status) && new Date(b.endTime) > now) {
           upcoming.push(sessionData);
-        } else if (new Date(b.endTime) <= now || b.status === 'COMPLETED') {
+        } else if (terminalStatuses.includes(b.status) || new Date(b.endTime) <= now) {
           past.push({
             ...sessionData,
             rating: b.mentorProfile.averageRating,

@@ -108,6 +108,12 @@ export const menteeDashboardApi = {
   },
 };
 
+export const menteeAnalyticsApi = {
+  getAnalytics() {
+    return apiRequest('/mentee-analytics');
+  },
+};
+
 export const menteeBookingApi = {
   getMySessions() {
     return apiRequest('/mentee-bookings/my-sessions');
