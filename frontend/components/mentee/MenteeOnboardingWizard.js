@@ -179,12 +179,14 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
               <input 
                 type="tel" 
                 required
-                maxLength="15"
-                value={form.contactNumber} 
+                minLength={10}
+                maxLength={10}
+                value={form.contactNumber.replace(/^\+91\s*/, '').replace(/\D/g, '')} 
                 onChange={e => {
-                  setForm({...form, contactNumber: e.target.value});
+                  const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                  setForm({...form, contactNumber: digits});
                 }}
-                placeholder="+91 9876543210"
+                placeholder="9876543210"
                 className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:border-[#B388EB] focus:outline-none focus:ring-1 focus:ring-[#B388EB] transition-colors"
               />
             </div>
@@ -324,13 +326,14 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
           <div>
             <label className="mb-1 block text-xs font-bold text-gray-500">Cumulative Score (e.g. GMAT, XAT, NMAT)</label>
              <input 
-               type="text"
+               type="number"
+               step="0.01"
                value={form.otherMbaScore} 
                onChange={e => setForm({...form, otherMbaScore: e.target.value})} 
-               placeholder="e.g. GMAT: 720, XAT: 95 percentile"
+               placeholder="e.g. 99.5"
                className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:border-[#B388EB] focus:outline-none focus:ring-1 focus:ring-[#B388EB] transition-colors"
              />
-             <p className="text-[10px] text-gray-400 mt-1">Enter test name and score</p>
+             <p className="text-[10px] text-gray-400 mt-1">Enter cumulative score</p>
           </div>
         </Card>
 
@@ -347,7 +350,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
                  <Upload className="h-8 w-8 text-gray-400 mb-3" />
                  <p className="text-sm font-medium text-gray-500">Drag and drop your resume here, or click to browse</p>
                  <div className="mt-4 px-6 py-2 bg-[#FABE28] text-black border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-sm font-bold rounded-lg pointer-events-none">
-                    Choose File
+                    {resumeFile || existingProfile?.resumeUrl ? "Replace File" : "Choose File"}
                  </div>
                  <p className="text-[10px] text-gray-400 mt-4">Accepted formats: PDF, DOC, DOCX (Max 5MB)</p>
                  {resumeFile && <p className="text-sm text-green-600 font-bold mt-2 text-center">Selected: {resumeFile.name}</p>}

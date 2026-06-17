@@ -462,22 +462,28 @@ export default function MenteeProfileSettingsPage() {
                     </div>
                   )}
                 </div>
-                <label
-                  className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border-2 border-black bg-[#8B5CF6] text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] ${isSaving ? "opacity-50 pointer-events-none" : ""}`}
-                >
-                  <Camera className="h-4 w-4" />
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={handlePhotoUpload}
-                    disabled={isSaving}
-                  />
-                </label>
+                {isEditing && (
+                  <>
+                    <label
+                      className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border-2 border-black bg-[#8B5CF6] text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] ${isSaving ? "opacity-50 pointer-events-none" : ""}`}
+                    >
+                      <Camera className="h-4 w-4" />
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={handlePhotoUpload}
+                        disabled={isSaving}
+                      />
+                    </label>
+                  </>
+                )}
               </div>
-              <p className="text-center text-xs font-medium text-gray-500">
-                Click the camera icon to upload a new photo
-              </p>
+              {isEditing && (
+                <p className="text-center text-xs font-medium text-gray-500 mt-2">
+                  Click the camera icon to upload a new photo
+                </p>
+              )}
             </div>
           </div>
 

@@ -26,11 +26,7 @@ function formatDate(date) {
 function StepIndicator({ current }) {
   const steps = ["Session Details", "Your Information", "Payment"];
   return (
-    <div className="flex items-center justify-center gap-0 py-6 px-4"
-      style={{
-        background: "linear-gradient(135deg, #EEF0FF 0%, #E8F4FD 50%, #FFF7F5 100%)",
-        borderRadius: "16px", border: "2px solid #e5e7eb",
-      }}>
+    <div className="flex items-center justify-center gap-0 py-6 px-4 bg-white border-2 border-black rounded-2xl shadow-[5px_5px_0px_0px_#FDBA74] ">
       {steps.map((label, i) => {
         const stepNum = i + 1;
         const done = current > stepNum;
@@ -160,6 +156,8 @@ function Step2({ form, setForm, service, date, slot }) {
             type="tel"
             value={form.menteePhone}
             onChange={(e) => setForm({ ...form, menteePhone: e.target.value.replace(/[^0-9+\s-]/g, "") })}
+            maxLength={10}
+            minLength={10}
             placeholder="+91 XXXXX XXXXX"
             className="w-full rounded-xl border-2 border-gray-200 bg-white pl-10 pr-4 py-3 text-sm focus:border-[#5061E4] focus:outline-none transition-colors"
           />
@@ -437,8 +435,7 @@ export default function BookingWizard({ mentor, service, date, slot, onBack, onB
       <StepIndicator current={step} />
 
       {/* Step Content */}
-      <div className="rounded-2xl border-2 border-gray-200 bg-white p-6"
-        style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+      <div className="rounded-2xl border-2 border-black bg-white p-6 shadow-[5px_5px_0px_0px_#5061E4]">
         {step === 1 && <Step1 form={form} setForm={setForm} />}
         {step === 2 && <Step2 form={form} setForm={setForm} service={service} date={date} slot={slot} />}
         {step === 3 && <Step3 service={service} date={date} slot={slot} mentor={mentor} agreedToTerms={agreedToTerms} setAgreedToTerms={setAgreedToTerms} />}
@@ -448,20 +445,20 @@ export default function BookingWizard({ mentor, service, date, slot, onBack, onB
       <div className="flex justify-between items-center">
         <button
           onClick={step === 1 ? onBack : () => setStep((s) => s - 1)}
-          className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-white px-5 py-2.5 text-sm font-bold hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 rounded-full border-[3px] border-black bg-white px-5 py-2.5 text-sm font-bold hover:bg-gray-50 transition-colors"
           style={{ boxShadow: "3px 3px 0 0 #d1d5db" }}>
           <ArrowLeft size={14} /> Previous
         </button>
 
         {step < 3 ? (
           <button onClick={handleNext}
-            className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-[#0D9488] px-6 py-2.5 text-sm font-bold text-white hover:-translate-y-0.5 transition-all"
+            className="flex items-center gap-2 rounded-full border-[3px] border-black bg-[#0D9488] px-6 py-2.5 text-sm font-bold text-white hover:-translate-y-0.5 transition-all"
             style={{ boxShadow: "3px 3px 0 0 #000" }}>
             Continue <ArrowRight size={14} />
           </button>
         ) : (
           <button onClick={handlePay} disabled={loading || !agreedToTerms}
-            className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-[#22C55E] px-6 py-2.5 text-sm font-bold text-white hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 rounded-full border-[3px] border-black bg-[#22C55E] px-6 py-2.5 text-sm font-bold text-white hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ boxShadow: "3px 3px 0 0 #000" }}>
             {loading ? <Loader2 size={14} className="animate-spin" /> : <IndianRupee size={14} />}
             {loading ? "Processing..." : `Pay ₹${service?.price || 0}`}
