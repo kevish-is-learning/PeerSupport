@@ -18,13 +18,14 @@ import {
   sessionCompletedMentorEmail,
   paymentReceiptEmail,
 } from '../emails/templates.js';
+import { generateInvoiceBuffer } from '../utils/invoiceGenerator.js';
 
 class EmailService {
   /**
    * Internal send helper — wraps Resend API call with error handling.
    * Never throws; logs errors and continues.
    */
-  async _send(to, { subject, html }) {
+  async _send(to, { subject, html, attachments }) {
     if (!resend) {
       console.log(`📧 [EmailService] Resend not configured — skipping email to ${to}: "${subject}"`);
       return null;
@@ -36,6 +37,7 @@ class EmailService {
         to,
         subject,
         html,
+        attachments,
       });
 
       if (error) {
@@ -232,6 +234,30 @@ class EmailService {
       bookingId,
       startTime,
     });
+
+    try {
+      const invoiceBuffer = await generateInvoiceBuffer({
+        paymentId,
+        amount,
+        currency,
+        paidAt,
+        menteeName,
+        menteeEmail,
+        mentorName,
+        serviceName,
+        bookingId,
+      });
+
+      template.attachments = [
+        {
+          filename: `Invoice-${paymentId}.pdf`,
+          content: invoiceBuffer,
+        },
+      ];
+    } catch (err) {
+      console.error(`📧 [EmailService] Failed to generate invoice PDF for payment ${paymentId}:`, err.message);
+    }
+
     return this._send(menteeEmail, template);
   }
 }
