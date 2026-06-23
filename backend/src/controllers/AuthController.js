@@ -1,39 +1,46 @@
-import authService, { mapUserWithOnboardingState } from "../services/AuthService.js";
+import authService, {
+  mapUserWithOnboardingState,
+} from "../services/AuthService.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 class AuthController {
   // Get currently authenticated user
   async getMe(req, res) {
     try {
-      const { prisma } = await import('../config/database.js');
-      const authServiceModule = await import('../services/AuthService.js');
-      
+      const { prisma } = await import("../config/database.js");
+      const authServiceModule = await import("../services/AuthService.js");
+
       const updatedUser = await prisma.user.findUnique({
         where: { id: req.user.id },
         include: {
-          mentorProfile: { select: { id: true, approvalStatus: true, isVerified: true } },
-          menteeProfile: { select: { id: true } }
-        }
+          mentorProfile: {
+            select: { id: true, approvalStatus: true, isVerified: true },
+          },
+          menteeProfile: { select: { id: true } },
+        },
       });
 
       if (!updatedUser) {
         return res.status(404).json(new ApiError(404, "User not found"));
       }
 
-      const mappedUser = authServiceModule.mapUserWithOnboardingState(updatedUser);
-      
+      const mappedUser =
+        authServiceModule.mapUserWithOnboardingState(updatedUser);
+
       // Refresh the token in case their approval status or other state changed
       const token = authServiceModule.default.generateToken(mappedUser);
-      res.cookie('token', token, {
+      res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
       return res
         .status(200)
-        .json(new ApiResponse(200, "Current user fetched", { user: mappedUser }));
+        .json(
+          new ApiResponse(200, "Current user fetched", { user: mappedUser }),
+        );
     } catch (error) {
       return res
         .status(500)
@@ -46,20 +53,29 @@ class AuthController {
     try {
       const { email, password, name, role } = req.body;
 
-      const result = await authService.register({ email, password, name, role });
+      const result = await authService.register({
+        email,
+        password,
+        name,
+        role,
+      });
 
       // Set JWT token in HTTP-only cookie
-      res.cookie('token', result.token, {
+      res.cookie("token", result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: 21 * 24 * 60 * 60 * 1000, // 21 days
       });
 
       // Return user data without token
       res
         .status(201)
-        .json(new ApiResponse(201, "Registration successful", { user: result.user }));
+        .json(
+          new ApiResponse(201, "Registration successful", {
+            user: result.user,
+          }),
+        );
     } catch (error) {
       res
         .status(500)
@@ -71,19 +87,21 @@ class AuthController {
   async login(req, res) {
     try {
       const { email, password } = req.body;
- 
+
       const result = await authService.login({ email, password });
 
       // Set JWT token in HTTP-only cookie
-      res.cookie('token', result.token, {
+      res.cookie("token", result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
       // Return user data without token
-      res.status(200).json(new ApiResponse(200, "Login successful", { user: result.user }));
+      res
+        .status(200)
+        .json(new ApiResponse(200, "Login successful", { user: result.user }));
     } catch (error) {
       res.status(401).json(new ApiError(401, "Login failed", error.message));
     }
@@ -96,16 +114,20 @@ class AuthController {
 
       const result = await authService.selectRole(req.user.id, { role });
 
-      res.cookie('token', result.token, {
+      res.cookie("token", result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
       return res
         .status(200)
-        .json(new ApiResponse(200, "Role selected successfully", { user: result.user }));
+        .json(
+          new ApiResponse(200, "Role selected successfully", {
+            user: result.user,
+          }),
+        );
     } catch (error) {
       const statusCode = error?.name === "ZodError" ? 400 : 500;
       return res.status(statusCode).json({
@@ -118,12 +140,12 @@ class AuthController {
   // Google OAuth Callback Handler
   async googleCallback(req, res) {
     try {
-      const frontendUrl = process.env.FRONTEND_URL || `http://localhost:${process.env.PORT || 5000}`;
-      
+      const frontendUrl =
+        process.env.FRONTEND_URL ||
+        `http://localhost:${process.env.PORT || 5000}`;
+
       if (!req.user) {
-        return res.redirect(
-          `${frontendUrl}/login?error=authentication_failed`,
-        );
+        return res.redirect(`${frontendUrl}/login?error=authentication_failed`);
       }
 
       // Generate JWT token with full stateless profile
@@ -131,19 +153,23 @@ class AuthController {
       const token = authService.generateToken(mappedUser);
 
       // Set JWT token in HTTP-only cookie
-      res.cookie('token', token, {
+      res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
-      const postAuthRedirectPath = await authService.getPostAuthRedirectPath(req.user.id);
+      const postAuthRedirectPath = await authService.getPostAuthRedirectPath(
+        req.user.id,
+      );
 
       // Redirect to frontend without token in URL
       res.redirect(`${frontendUrl}${postAuthRedirectPath}?success=true`);
     } catch (error) {
-      const frontendUrl = process.env.FRONTEND_URL || `http://localhost:${process.env.PORT || 5000}`;
+      const frontendUrl =
+        process.env.FRONTEND_URL ||
+        `http://localhost:${process.env.PORT || 5000}`;
       res.redirect(`${frontendUrl}/?error=server_error`);
     }
   }
@@ -172,17 +198,17 @@ class AuthController {
   logout(req, res) {
     try {
       // Clear the token cookie
-      res.clearCookie('token', {
+      res.clearCookie("token", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
       });
 
       // Also handle passport session logout if exists
       if (req.logout) {
         req.logout((err) => {
           if (err) {
-            console.error('Passport logout error:', err);
+            console.error("Passport logout error:", err);
           }
         });
       }
@@ -196,29 +222,35 @@ class AuthController {
   async updateProfile(req, res) {
     try {
       const { name } = req.body;
-      const { prisma } = await import('../config/database.js');
+      const { prisma } = await import("../config/database.js");
       const updatedUser = await prisma.user.update({
         where: { id: req.user.id },
         data: { name: name?.trim() || req.user.name },
         include: {
-          mentorProfile: { select: { id: true, approvalStatus: true, isVerified: true } },
-          menteeProfile: { select: { id: true } }
-        }
+          mentorProfile: {
+            select: { id: true, approvalStatus: true, isVerified: true },
+          },
+          menteeProfile: { select: { id: true } },
+        },
       });
-      
+
       const mappedUser = mapUserWithOnboardingState(updatedUser);
       const token = authService.generateToken(mappedUser);
 
-      res.cookie('token', token, {
+      res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      return res.status(200).json(new ApiResponse(200, "Profile updated", { user: mappedUser }));
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Profile updated", { user: mappedUser }));
     } catch (error) {
-      return res.status(500).json({ success:false, message: error.message || "Update failed" });
+      return res
+        .status(500)
+        .json({ success: false, message: error.message || "Update failed" });
     }
   }
 }
