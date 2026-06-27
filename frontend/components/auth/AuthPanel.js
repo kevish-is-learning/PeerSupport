@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import useAuthStore from "../../store/useAuthStore";
 import { authApi } from "../../lib/api";
 import { Eye, EyeOff } from "lucide-react";
+import UniversalButton from "../ui/universalButton";
 
 const defaultForm = {
   name: "",
@@ -256,13 +257,14 @@ export default function AuthPanel({ initialMode = "login", initialRole = "MENTEE
           {pwdError && <p className="text-red-500 text-xs mt-1">{pwdError}</p>}
 
           <div className="pt-2">
-            <button
+            <UniversalButton
               type="submit"
+              variant="primary"
               disabled={isLoading}
-              className="bg-[#596df2] text-white font-semibold py-3 px-6 rounded-full inline-flex items-center gap-2 hover:bg-[#485bdc] transition-colors border-2 border-black/80 shadow-[3px_3px_0px_rgba(0,0,0,0.8)] disabled:opacity-70 disabled:cursor-not-allowed"
+              className="disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? "Please wait..." : isLogin ? "Login →" : "Sign up →"}
-            </button>
+            </UniversalButton>
           </div>
         </form>
 

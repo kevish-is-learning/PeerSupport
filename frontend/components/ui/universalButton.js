@@ -4,6 +4,7 @@ export default function UniversalButton({
   variant = "primary",
   className = "",
   onClick,
+  ...props
 }) {
   const variants = {
     primary: "bg-[#5f6cf3] text-[#FFFFFF] shadow-[3px_3px_0_#1a1a1a]",
@@ -17,6 +18,7 @@ export default function UniversalButton({
     <button
       className={`inline-flex cursor-pointer h-11 min-w-41.25 items-center justify-center rounded-full border-2 border-black px-5 text-sm font-semibold transition-all hover:translate-y-0.5 hover:shadow-[0px_0px_0_rgba(0,0,0,1)] ${variants[variant]} ${className}`}
       onClick={onClick}
+      {...props}
     >
       {children}
     </button>
