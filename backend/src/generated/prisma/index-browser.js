@@ -147,7 +147,7 @@ exports.Prisma.MenteeProfileScalarFieldEnum = {
   contactNumber: 'contactNumber',
   education: 'education',
   catHistory: 'catHistory',
-  otherMbaScore: 'otherMbaScore',
+  otherMbaTest: 'otherMbaTest',
   workExperience: 'workExperience',
   certifications: 'certifications',
   expectations: 'expectations',

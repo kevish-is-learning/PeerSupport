@@ -77,7 +77,7 @@ export default function MenteePublicProfilePage() {
     resumeUrl, 
     linkedInUrl,
     catHistory,
-    otherMbaScore,
+    otherMbaTest,
     certifications
   } = profile || {};
 
@@ -185,7 +185,7 @@ export default function MenteePublicProfilePage() {
             )}
 
             {/* Scores & Certifications (Mapped to Goals visual) */}
-            {(catHistory || otherMbaScore || certifications) && (
+            {(catHistory || (otherMbaTest && otherMbaTest.testName) || certifications) && (
               <section 
                 className="rounded-2xl border-[3px] border-gray-400 bg-white"
                 style={{ boxShadow: "6px 6px 0 0 #86EFAC" }}
@@ -203,11 +203,11 @@ export default function MenteePublicProfilePage() {
                       </div>
                     </div>
                   )}
-                  {otherMbaScore && (
+                  {otherMbaTest && otherMbaTest.testName && (
                     <div>
-                      <h4 className="font-bold text-gray-600 mb-3">Target B-Schools</h4>
+                      <h4 className="font-bold text-gray-600 mb-3">{otherMbaTest.testName} Score</h4>
                       <div className="inline-block rounded-md border-[2px] border-[#A855F7] bg-[#F3E8FF] px-4 py-2 text-sm font-bold text-[#9333EA]">
-                        {otherMbaScore}
+                        {otherMbaTest.score}
                       </div>
                     </div>
                   )}

@@ -82,8 +82,10 @@ export default function AuthPanel({ initialMode = "login", initialRole = "MENTEE
 
   useEffect(() => {
     checkBackendHealth().catch(() => {});
-    if (!hasCheckedSession) fetchCurrentUser();
-  }, [checkBackendHealth, fetchCurrentUser, hasCheckedSession]);
+    fetchCurrentUser();
+    // Always re-verify session on mount — don't trust stale store state
+    // (e.g. after navigating back from Google OAuth without completing login)
+  }, []);
 
   useEffect(() => {
     setMode(initialMode === "register" ? "register" : "login");
@@ -151,26 +153,26 @@ export default function AuthPanel({ initialMode = "login", initialRole = "MENTEE
               <button
                 type="button"
                 onClick={() => setForm({ ...form, role: "MENTEE" })}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-full border-2 transition-all whitespace-nowrap ${
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-full border-2 transition-all whitespace-nowrap cursor-pointer ${
                   form.role === "MENTEE"
                     ? "bg-[#596df2] text-white border-[#596df2]"
                     : "bg-white text-black border-black/80 shadow-[2px_2px_0px_rgba(0,0,0,0.8)]"
                 }`}
-                style={form.role === "MENTEE" ? {} : { opacity: 0.7 }}
+                style={form.role === "MENTEE" ? {} : { opacity: 0.8 }}
               >
-                Signing up as a mentee.
+                Signing up as a mentee
               </button>
               <button
                 type="button"
                 onClick={() => setForm({ ...form, role: "MENTOR" })}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-full border-2 transition-all whitespace-nowrap ${
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-full border-2 transition-all whitespace-nowrap cursor-pointer ${
                   form.role === "MENTOR"
                     ? "bg-[#f08849] text-white border-[#f08849]"
                     : "bg-white text-black border-black/80 shadow-[2px_2px_0px_rgba(0,0,0,0.8)]"
                 }`}
-                style={form.role === "MENTOR" ? {} : { opacity: 0.7 }}
+                style={form.role === "MENTOR" ? {} : { opacity: 0.8 }}
               >
-                Signing up as a mentor.
+                Signing up as a mentor
               </button>
             </div>
           )}

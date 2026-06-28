@@ -89,7 +89,7 @@ class MenteeAnalyticsService {
           username: true,
           education: true,
           catHistory: true,
-          otherMbaScore: true,
+          otherMbaTest: true,
           workExperience: true,
           certifications: true,
           expectations: true,

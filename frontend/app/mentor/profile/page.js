@@ -483,7 +483,7 @@ export default function MentorProfilePage() {
                     <input
                       type="number"
                       min="1990"
-                      max="2040"
+                      max={new Date().getFullYear() + 10}
                       value={form.bSchoolYear}
                       onChange={(e) => setForm((f) => ({ ...f, bSchoolYear: e.target.value }))}
                       className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#3B82F6]/20"
@@ -549,7 +549,7 @@ export default function MentorProfilePage() {
                     <input
                       type="number"
                       min="1990"
-                      max="2040"
+                      max={new Date().getFullYear() + 10}
                       value={form.ugYear}
                       onChange={(e) => setForm((f) => ({ ...f, ugYear: e.target.value }))}
                       className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#F59E0B]/20"

@@ -547,7 +547,7 @@ export default function MentorOnboardingWizard({
                       <input
                         type="number"
                         min="1950"
-                        max="2040"
+                        max={new Date().getFullYear() + 10}
                         name="mbaYear"
                         value={formData.mbaYear}
                         onChange={handleChange}
@@ -623,7 +623,7 @@ export default function MentorOnboardingWizard({
                       <input
                         type="number"
                         min="1950"
-                        max="2040"
+                        max={new Date().getFullYear() + 10}
                         name="ugYear"
                         value={formData.ugYear}
                         onChange={handleChange}

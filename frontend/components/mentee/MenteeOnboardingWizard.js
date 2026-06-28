@@ -35,7 +35,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
     workExperience: existingProfile?.workExperience || "",
     certifications: existingProfile?.certifications || "",
     catHistory: existingProfile?.catHistory || { LRDI: "", VARC: "", Quants: "" },
-    otherMbaScore: existingProfile?.otherMbaScore || "",
+    otherMbaTest: existingProfile?.otherMbaTest || { testName: "", score: "" },
   });
 
   const [resumeFile, setResumeFile] = useState(null);
@@ -119,7 +119,12 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
         formData.append("catHistory", JSON.stringify(catHist));
       }
       
-      if (form.otherMbaScore) formData.append("otherMbaScore", form.otherMbaScore);
+      if (form.otherMbaTest && form.otherMbaTest.testName && form.otherMbaTest.score) {
+        formData.append("otherMbaTest", JSON.stringify({
+          testName: form.otherMbaTest.testName,
+          score: Number(form.otherMbaTest.score)
+        }));
+      }
       if (resumeFile) formData.append("resume", resumeFile);
 
       if (existingProfile) {
@@ -138,12 +143,28 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
 
   return (
     <div className="mx-auto w-full max-w-3xl pb-16 pt-8">
+      {/* Onboarding Header */}
+      <div className="bg-[#FCF0EC] rounded-2xl px-6 py-10 mb-10 text-center">
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <div className="w-10 h-10 bg-[#8B5CF6] rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-md">
+            P
+          </div>
+          <span className="text-[#1a1a1a] font-semibold text-lg">Peer Support</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1a1a1a] tracking-tight mb-2">
+          Mentee Onboarding
+        </h1>
+        <p className="text-gray-500 text-sm">
+          Complete your profile to get started
+        </p>
+      </div>
+
       <form onSubmit={handleSubmit} className="px-4">
         
         <Card title="Basic Information" icon={User} shadowColor="#B388EB">
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-xs font-bold text-gray-500">Full Name</label>
+              <label className="mb-1 block text-xs font-bold text-gray-500">Full Name <span className="text-red-500">*</span></label>
               <input 
                 type="text" 
                 value={form.name} 
@@ -164,7 +185,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-bold text-gray-500">Date of Birth</label>
+                <label className="mb-1 block text-xs font-bold text-gray-500">Date of Birth <span className="text-red-500">*</span></label>
                 <input 
                    type="date" 
                    required
@@ -175,7 +196,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-bold text-gray-500">Phone Number</label>
+              <label className="mb-1 block text-xs font-bold text-gray-500">Phone Number <span className="text-red-500">*</span></label>
               <input 
                 type="tel" 
                 required
@@ -205,7 +226,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-gray-500">Degree Type</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">Degree Type <span className="text-red-500">*</span></label>
                       <select 
                         value={edu.type} 
                         onChange={e => updateEducation(idx, "type", e.target.value)} 
@@ -219,22 +240,22 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
                       </select>
                     </div>
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-gray-500">Institution Name</label>
+                      <label className="mb-1 block text-xs font-bold text-gray-500">Institution Name <span className="text-red-500">*</span></label>
                       <input type="text" placeholder="e.g. XYZ University" value={edu.institutionName} onChange={e => updateEducation(idx, "institutionName", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:border-[#44C2C9] focus:outline-none focus:ring-1 focus:ring-[#44C2C9]" />
                     </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="mb-1 block text-xs font-bold text-gray-500">From Year</label>
-                        <input type="number" placeholder="2018" value={edu.fromYear} onChange={e => updateEducation(idx, "fromYear", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:border-[#44C2C9] focus:outline-none focus:ring-1 focus:ring-[#44C2C9]" />
+                        <label className="mb-1 block text-xs font-bold text-gray-500">From Year <span className="text-red-500">*</span></label>
+                        <input type="number" min="1950" max={new Date().getFullYear()} placeholder="2018" value={edu.fromYear} onChange={e => updateEducation(idx, "fromYear", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:border-[#44C2C9] focus:outline-none focus:ring-1 focus:ring-[#44C2C9]" />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs font-bold text-gray-500">To Year</label>
-                         <input type="number" placeholder="2022" value={edu.toYear} onChange={e => updateEducation(idx, "toYear", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:border-[#44C2C9] focus:outline-none focus:ring-1 focus:ring-[#44C2C9]" />
+                        <label className="mb-1 block text-xs font-bold text-gray-500">To Year <span className="text-red-500">*</span></label>
+                         <input type="number" min="1950" max={new Date().getFullYear() + 10} placeholder="2022" value={edu.toYear} onChange={e => updateEducation(idx, "toYear", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:border-[#44C2C9] focus:outline-none focus:ring-1 focus:ring-[#44C2C9]" />
                       </div>
                     </div>
                     <div>
-                      <label className="mb-1 block text-xs font-bold text-gray-500">Score (% or CGPA)</label>
-                      <input type="number" step="0.01" placeholder="85.5 or 8.5" value={edu.score} onChange={e => updateEducation(idx, "score", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:border-[#44C2C9] focus:outline-none focus:ring-1 focus:ring-[#44C2C9]" />
+                      <label className="mb-1 block text-xs font-bold text-gray-500">Score (% or CGPA) <span className="text-red-500">*</span></label>
+                      <input type="number" min="0" max="100" step="0.01" placeholder="85.5 or 8.5" value={edu.score} onChange={e => updateEducation(idx, "score", e.target.value)} className="w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:border-[#44C2C9] focus:outline-none focus:ring-1 focus:ring-[#44C2C9]" />
                     </div>
                   </div>
                 </div>
@@ -292,7 +313,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
              <div>
                 <label className="mb-1 block text-xs font-bold text-gray-500">LRDI Percentile</label>
                 <input 
-                  type="number" step="0.01"
+                  type="number" min="0" max="100" step="0.01"
                   value={form.catHistory.LRDI} 
                   onChange={e => setForm({...form, catHistory: {...form.catHistory, LRDI: e.target.value}})} 
                   placeholder="e.g. 95.5"
@@ -302,7 +323,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
              <div>
                 <label className="mb-1 block text-xs font-bold text-gray-500">VARC Percentile</label>
                 <input 
-                  type="number" step="0.01"
+                  type="number" min="0" max="100" step="0.01"
                   value={form.catHistory.VARC} 
                   onChange={e => setForm({...form, catHistory: {...form.catHistory, VARC: e.target.value}})} 
                   placeholder="e.g. 92.3"
@@ -312,7 +333,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
              <div>
                 <label className="mb-1 block text-xs font-bold text-gray-500">Quants Percentile</label>
                 <input 
-                   type="number" step="0.01"
+                   type="number" min="0" max="100" step="0.01"
                    value={form.catHistory.Quants} 
                    onChange={e => setForm({...form, catHistory: {...form.catHistory, Quants: e.target.value}})} 
                    placeholder="e.g. 98.1"
@@ -323,17 +344,29 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
         </Card>
 
         <Card title="Other MBA Test Score" titleSuffix="(Optional)" icon={ClipboardCheck} shadowColor="#B388EB">
-          <div>
-            <label className="mb-1 block text-xs font-bold text-gray-500">Cumulative Score (e.g. GMAT, XAT, NMAT)</label>
-             <input 
-               type="number"
-               step="0.01"
-               value={form.otherMbaScore} 
-               onChange={e => setForm({...form, otherMbaScore: e.target.value})} 
-               placeholder="e.g. 99.5"
-               className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:border-[#B388EB] focus:outline-none focus:ring-1 focus:ring-[#B388EB] transition-colors"
-             />
-             <p className="text-[10px] text-gray-400 mt-1">Enter cumulative score</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-xs font-bold text-gray-500">Test Name (e.g. GMAT, XAT)</label>
+               <input 
+                 type="text"
+                 value={form.otherMbaTest.testName} 
+                 onChange={e => setForm({...form, otherMbaTest: {...form.otherMbaTest, testName: e.target.value}})} 
+                 placeholder="e.g. GMAT"
+                 className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:border-[#B388EB] focus:outline-none focus:ring-1 focus:ring-[#B388EB] transition-colors"
+               />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-bold text-gray-500">Cumulative Score</label>
+               <input 
+                 type="number"
+                 min="0"
+                 step="0.01"
+                 value={form.otherMbaTest.score} 
+                 onChange={e => setForm({...form, otherMbaTest: {...form.otherMbaTest, score: e.target.value}})} 
+                 placeholder="e.g. 720"
+                 className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm focus:border-[#B388EB] focus:outline-none focus:ring-1 focus:ring-[#B388EB] transition-colors"
+               />
+            </div>
           </div>
         </Card>
 

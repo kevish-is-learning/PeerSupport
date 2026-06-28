@@ -26,21 +26,19 @@ const contactNumberSchema = z
   .max(20, 'Contact number must be at most 20 characters long')
   .refine((value) => /^[+0-9()\-\s]+$/.test(value), 'Contact number can only include digits and +()- characters');
 
-const otherMbaScoreSchema = z.preprocess(
+const otherMbaTestSchema = z.preprocess(
   (value) => {
-    if (typeof value === 'undefined' || value === null || value === '') {
-      return undefined;
+    if (!value) return undefined;
+    if (typeof value === 'string') {
+      try { return JSON.parse(value); } catch(e) { return undefined; }
     }
-
-    const parsed = Number(value);
-    return Number.isNaN(parsed) ? value : parsed;
+    return value;
   },
-  z
-    .number({ invalid_type_error: 'Other MBA score must be a number' })
-    .min(0, 'Other MBA cumulative score must be >= 0')
-    .max(100, 'Other MBA cumulative score must be <= 100')
-    .optional()
-);
+  z.object({
+    testName: z.string().min(1, 'Test name is required').trim(),
+    score: z.coerce.number({ invalid_type_error: 'Score must be a number' }).min(0)
+  }).nullable()
+).optional();
 
 const optionalResumePathSchema = z
   .union([z.string().trim(), z.null()])
@@ -149,7 +147,7 @@ export const createMenteeProfileSchema = z.object({
       score: z.coerce.number().min(0).max(100),
     }))
   ).default([]),
-  otherMbaScore: otherMbaScoreSchema,
+  otherMbaTest: otherMbaTestSchema,
   workExperience: normalizeOptionalText,
   certifications: normalizeOptionalText,
   catHistory: z.preprocess(
@@ -178,7 +176,7 @@ export const updateMenteeProfileSchema = z.object({
       score: z.coerce.number().min(0).max(100),
     }))
   ).optional(),
-  otherMbaScore: otherMbaScoreSchema,
+  otherMbaTest: otherMbaTestSchema,
   workExperience: normalizeOptionalText,
   certifications: normalizeOptionalText,
   expectations: normalizeOptionalText,

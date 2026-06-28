@@ -149,7 +149,7 @@ model MenteeProfile {
 
   catHistory Json?
 
-  otherMbaScore Float?
+  otherMbaTest Json?
 
   workExperience String?
 

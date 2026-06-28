@@ -27,7 +27,7 @@ const mapProfile = (profile) => ({
   contactNumber: profile.contactNumber,
   education: profile.education || [],
   catHistory: profile.catHistory,
-  otherMbaScore: profile.otherMbaScore,
+  otherMbaTest: profile.otherMbaTest,
   workExperience: profile.workExperience,
   certifications: profile.certifications,
   expectations: profile.expectations,

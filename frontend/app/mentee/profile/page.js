@@ -106,7 +106,7 @@ export default function MenteeProfileSettingsPage() {
     workExperience: "",
     certifications: "",
     catHistory: { LRDI: "", VARC: "", Quants: "" },
-    otherMbaScore: "",
+    otherMbaTest: { testName: "", score: "" },
   });
 
   const [resumeFile, setResumeFile] = useState(null);
@@ -133,7 +133,7 @@ export default function MenteeProfileSettingsPage() {
         VARC: p.catHistory?.VARC?.toString() || "",
         Quants: p.catHistory?.Quants?.toString() || "",
       },
-      otherMbaScore: p.otherMbaScore?.toString() || "",
+      otherMbaTest: p.otherMbaTest || { testName: "", score: "" },
     });
   };
 
@@ -301,8 +301,12 @@ export default function MenteeProfileSettingsPage() {
         formData.append("catHistory", JSON.stringify(catHist));
       }
 
-      if (form.otherMbaScore)
-        formData.append("otherMbaScore", form.otherMbaScore);
+      if (form.otherMbaTest && form.otherMbaTest.testName && form.otherMbaTest.score) {
+        formData.append("otherMbaTest", JSON.stringify({
+          testName: form.otherMbaTest.testName,
+          score: Number(form.otherMbaTest.score)
+        }));
+      }
 
       if (resumeFile) formData.append("resume", resumeFile);
 
@@ -785,6 +789,8 @@ export default function MenteeProfileSettingsPage() {
                         <FieldGroup label="From Year" required>
                           <input
                             type="number"
+                            min="1950"
+                            max={new Date().getFullYear()}
                             placeholder="2018"
                             value={edu.fromYear}
                             onChange={(e) =>
@@ -797,6 +803,8 @@ export default function MenteeProfileSettingsPage() {
                         <FieldGroup label="To Year" required>
                           <input
                             type="number"
+                            min="1950"
+                            max={new Date().getFullYear() + 10}
                             placeholder="2022"
                             value={edu.toYear}
                             onChange={(e) =>
@@ -809,6 +817,8 @@ export default function MenteeProfileSettingsPage() {
                         <FieldGroup label="Score" required>
                           <input
                             type="number"
+                            min="0"
+                            max="100"
                             step="0.01"
                             placeholder="8.5 CGPA"
                             value={edu.score}
@@ -881,6 +891,8 @@ export default function MenteeProfileSettingsPage() {
                   <FieldGroup label="LRDI">
                     <input
                       type="number"
+                      min="0"
+                      max="100"
                       step="0.01"
                       value={form.catHistory.LRDI}
                       onChange={(e) =>
@@ -900,6 +912,8 @@ export default function MenteeProfileSettingsPage() {
                   <FieldGroup label="VARC">
                     <input
                       type="number"
+                      min="0"
+                      max="100"
                       step="0.01"
                       value={form.catHistory.VARC}
                       onChange={(e) =>
@@ -919,6 +933,8 @@ export default function MenteeProfileSettingsPage() {
                   <FieldGroup label="Quants">
                     <input
                       type="number"
+                      min="0"
+                      max="100"
                       step="0.01"
                       value={form.catHistory.Quants}
                       onChange={(e) =>
@@ -943,18 +959,38 @@ export default function MenteeProfileSettingsPage() {
                 icon={BookOpen}
                 shadowColor="#06B6D4"
               >
-                <FieldGroup label="Cumulative Percentile">
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={form.otherMbaScore}
-                    onChange={(e) =>
-                      setForm({ ...form, otherMbaScore: e.target.value })
-                    }
-                    placeholder="e.g. GMAT: 720"
-                    className={inputClass}
-                  />
-                </FieldGroup>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FieldGroup label="Test Name (e.g. GMAT, XAT)">
+                    <input
+                      type="text"
+                      value={form.otherMbaTest.testName}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          otherMbaTest: { ...form.otherMbaTest, testName: e.target.value },
+                        })
+                      }
+                      placeholder="e.g. GMAT"
+                      className={inputClass}
+                    />
+                  </FieldGroup>
+                  <FieldGroup label="Cumulative Score">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={form.otherMbaTest.score}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          otherMbaTest: { ...form.otherMbaTest, score: e.target.value },
+                        })
+                      }
+                      placeholder="e.g. 720"
+                      className={inputClass}
+                    />
+                  </FieldGroup>
+                </div>
               </SectionCard>
 
             </>
@@ -1067,7 +1103,7 @@ export default function MenteeProfileSettingsPage() {
               )}
 
               {/* ── Other MBA Score ── */}
-              {profileData?.otherMbaScore != null && (
+              {profileData?.otherMbaTest && profileData.otherMbaTest.testName && (
                 <SectionCard
                   title="Other MBA Test Score"
                   icon={BookOpen}
@@ -1075,7 +1111,7 @@ export default function MenteeProfileSettingsPage() {
                 >
                   <InfoRow
                     icon={<BookOpen size={20} className="text-gray-500" />}
-                    label={`Cumulative Percentile: ${profileData.otherMbaScore}`}
+                    label={`${profileData.otherMbaTest.testName} Score: ${profileData.otherMbaTest.score}`}
                   />
                 </SectionCard>
               )}
@@ -1085,7 +1121,7 @@ export default function MenteeProfileSettingsPage() {
                 !profileData?.workExperience &&
                 !profileData?.certifications &&
                 !hasCatScores &&
-                profileData?.otherMbaScore == null && (
+                (!profileData?.otherMbaTest?.testName) && (
                   <div
                     className="rounded-2xl border-2 border-dashed border-gray-300 bg-white p-10 text-center"
                   >

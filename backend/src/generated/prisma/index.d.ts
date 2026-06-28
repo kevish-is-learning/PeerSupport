@@ -3779,18 +3779,8 @@ export namespace Prisma {
 
   export type AggregateMenteeProfile = {
     _count: MenteeProfileCountAggregateOutputType | null
-    _avg: MenteeProfileAvgAggregateOutputType | null
-    _sum: MenteeProfileSumAggregateOutputType | null
     _min: MenteeProfileMinAggregateOutputType | null
     _max: MenteeProfileMaxAggregateOutputType | null
-  }
-
-  export type MenteeProfileAvgAggregateOutputType = {
-    otherMbaScore: number | null
-  }
-
-  export type MenteeProfileSumAggregateOutputType = {
-    otherMbaScore: number | null
   }
 
   export type MenteeProfileMinAggregateOutputType = {
@@ -3799,7 +3789,6 @@ export namespace Prisma {
     username: string | null
     dateOfBirth: Date | null
     contactNumber: string | null
-    otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
     expectations: string | null
@@ -3815,7 +3804,6 @@ export namespace Prisma {
     username: string | null
     dateOfBirth: Date | null
     contactNumber: string | null
-    otherMbaScore: number | null
     workExperience: string | null
     certifications: string | null
     expectations: string | null
@@ -3833,7 +3821,7 @@ export namespace Prisma {
     contactNumber: number
     education: number
     catHistory: number
-    otherMbaScore: number
+    otherMbaTest: number
     workExperience: number
     certifications: number
     expectations: number
@@ -3846,21 +3834,12 @@ export namespace Prisma {
   }
 
 
-  export type MenteeProfileAvgAggregateInputType = {
-    otherMbaScore?: true
-  }
-
-  export type MenteeProfileSumAggregateInputType = {
-    otherMbaScore?: true
-  }
-
   export type MenteeProfileMinAggregateInputType = {
     id?: true
     userId?: true
     username?: true
     dateOfBirth?: true
     contactNumber?: true
-    otherMbaScore?: true
     workExperience?: true
     certifications?: true
     expectations?: true
@@ -3876,7 +3855,6 @@ export namespace Prisma {
     username?: true
     dateOfBirth?: true
     contactNumber?: true
-    otherMbaScore?: true
     workExperience?: true
     certifications?: true
     expectations?: true
@@ -3894,7 +3872,7 @@ export namespace Prisma {
     contactNumber?: true
     education?: true
     catHistory?: true
-    otherMbaScore?: true
+    otherMbaTest?: true
     workExperience?: true
     certifications?: true
     expectations?: true
@@ -3944,18 +3922,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: MenteeProfileAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: MenteeProfileSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: MenteeProfileMinAggregateInputType
@@ -3986,8 +3952,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: MenteeProfileCountAggregateInputType | true
-    _avg?: MenteeProfileAvgAggregateInputType
-    _sum?: MenteeProfileSumAggregateInputType
     _min?: MenteeProfileMinAggregateInputType
     _max?: MenteeProfileMaxAggregateInputType
   }
@@ -4000,7 +3964,7 @@ export namespace Prisma {
     contactNumber: string
     education: JsonValue
     catHistory: JsonValue | null
-    otherMbaScore: number | null
+    otherMbaTest: JsonValue | null
     workExperience: string | null
     certifications: string | null
     expectations: string | null
@@ -4010,8 +3974,6 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     _count: MenteeProfileCountAggregateOutputType | null
-    _avg: MenteeProfileAvgAggregateOutputType | null
-    _sum: MenteeProfileSumAggregateOutputType | null
     _min: MenteeProfileMinAggregateOutputType | null
     _max: MenteeProfileMaxAggregateOutputType | null
   }
@@ -4038,7 +4000,7 @@ export namespace Prisma {
     contactNumber?: boolean
     education?: boolean
     catHistory?: boolean
-    otherMbaScore?: boolean
+    otherMbaTest?: boolean
     workExperience?: boolean
     certifications?: boolean
     expectations?: boolean
@@ -4058,7 +4020,7 @@ export namespace Prisma {
     contactNumber?: boolean
     education?: boolean
     catHistory?: boolean
-    otherMbaScore?: boolean
+    otherMbaTest?: boolean
     workExperience?: boolean
     certifications?: boolean
     expectations?: boolean
@@ -4078,7 +4040,7 @@ export namespace Prisma {
     contactNumber?: boolean
     education?: boolean
     catHistory?: boolean
-    otherMbaScore?: boolean
+    otherMbaTest?: boolean
     workExperience?: boolean
     certifications?: boolean
     expectations?: boolean
@@ -4109,7 +4071,7 @@ export namespace Prisma {
       contactNumber: string
       education: Prisma.JsonValue
       catHistory: Prisma.JsonValue | null
-      otherMbaScore: number | null
+      otherMbaTest: Prisma.JsonValue | null
       workExperience: string | null
       certifications: string | null
       expectations: string | null
@@ -4519,7 +4481,7 @@ export namespace Prisma {
     readonly contactNumber: FieldRef<"MenteeProfile", 'String'>
     readonly education: FieldRef<"MenteeProfile", 'Json'>
     readonly catHistory: FieldRef<"MenteeProfile", 'Json'>
-    readonly otherMbaScore: FieldRef<"MenteeProfile", 'Float'>
+    readonly otherMbaTest: FieldRef<"MenteeProfile", 'Json'>
     readonly workExperience: FieldRef<"MenteeProfile", 'String'>
     readonly certifications: FieldRef<"MenteeProfile", 'String'>
     readonly expectations: FieldRef<"MenteeProfile", 'String'>
@@ -20930,7 +20892,7 @@ export namespace Prisma {
     contactNumber: 'contactNumber',
     education: 'education',
     catHistory: 'catHistory',
-    otherMbaScore: 'otherMbaScore',
+    otherMbaTest: 'otherMbaTest',
     workExperience: 'workExperience',
     certifications: 'certifications',
     expectations: 'expectations',
@@ -21321,20 +21283,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
-
-
-  /**
    * Reference to a field of type 'MentorApprovalStatus'
    */
   export type EnumMentorApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MentorApprovalStatus'>
@@ -21359,6 +21307,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -21572,7 +21534,7 @@ export namespace Prisma {
     contactNumber?: StringFilter<"MenteeProfile"> | string
     education?: JsonFilter<"MenteeProfile">
     catHistory?: JsonNullableFilter<"MenteeProfile">
-    otherMbaScore?: FloatNullableFilter<"MenteeProfile"> | number | null
+    otherMbaTest?: JsonNullableFilter<"MenteeProfile">
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableFilter<"MenteeProfile"> | string | null
     expectations?: StringNullableFilter<"MenteeProfile"> | string | null
@@ -21592,7 +21554,7 @@ export namespace Prisma {
     contactNumber?: SortOrder
     education?: SortOrder
     catHistory?: SortOrderInput | SortOrder
-    otherMbaScore?: SortOrderInput | SortOrder
+    otherMbaTest?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     expectations?: SortOrderInput | SortOrder
@@ -21615,7 +21577,7 @@ export namespace Prisma {
     contactNumber?: StringFilter<"MenteeProfile"> | string
     education?: JsonFilter<"MenteeProfile">
     catHistory?: JsonNullableFilter<"MenteeProfile">
-    otherMbaScore?: FloatNullableFilter<"MenteeProfile"> | number | null
+    otherMbaTest?: JsonNullableFilter<"MenteeProfile">
     workExperience?: StringNullableFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableFilter<"MenteeProfile"> | string | null
     expectations?: StringNullableFilter<"MenteeProfile"> | string | null
@@ -21635,7 +21597,7 @@ export namespace Prisma {
     contactNumber?: SortOrder
     education?: SortOrder
     catHistory?: SortOrderInput | SortOrder
-    otherMbaScore?: SortOrderInput | SortOrder
+    otherMbaTest?: SortOrderInput | SortOrder
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     expectations?: SortOrderInput | SortOrder
@@ -21645,10 +21607,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: MenteeProfileCountOrderByAggregateInput
-    _avg?: MenteeProfileAvgOrderByAggregateInput
     _max?: MenteeProfileMaxOrderByAggregateInput
     _min?: MenteeProfileMinOrderByAggregateInput
-    _sum?: MenteeProfileSumOrderByAggregateInput
   }
 
   export type MenteeProfileScalarWhereWithAggregatesInput = {
@@ -21662,7 +21622,7 @@ export namespace Prisma {
     contactNumber?: StringWithAggregatesFilter<"MenteeProfile"> | string
     education?: JsonWithAggregatesFilter<"MenteeProfile">
     catHistory?: JsonNullableWithAggregatesFilter<"MenteeProfile">
-    otherMbaScore?: FloatNullableWithAggregatesFilter<"MenteeProfile"> | number | null
+    otherMbaTest?: JsonNullableWithAggregatesFilter<"MenteeProfile">
     workExperience?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     certifications?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
     expectations?: StringNullableWithAggregatesFilter<"MenteeProfile"> | string | null
@@ -23184,7 +23144,7 @@ export namespace Prisma {
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -23204,7 +23164,7 @@ export namespace Prisma {
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -23222,7 +23182,7 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23242,7 +23202,7 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23261,7 +23221,7 @@ export namespace Prisma {
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -23279,7 +23239,7 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -23298,7 +23258,7 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25121,17 +25081,6 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type StringNullableListFilter<$PrismaModel = never> = {
     equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     has?: string | StringFieldRefInput<$PrismaModel> | null
@@ -25153,7 +25102,7 @@ export namespace Prisma {
     contactNumber?: SortOrder
     education?: SortOrder
     catHistory?: SortOrder
-    otherMbaScore?: SortOrder
+    otherMbaTest?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
     expectations?: SortOrder
@@ -25164,17 +25113,12 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type MenteeProfileAvgOrderByAggregateInput = {
-    otherMbaScore?: SortOrder
-  }
-
   export type MenteeProfileMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
     username?: SortOrder
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
-    otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
     expectations?: SortOrder
@@ -25190,7 +25134,6 @@ export namespace Prisma {
     username?: SortOrder
     dateOfBirth?: SortOrder
     contactNumber?: SortOrder
-    otherMbaScore?: SortOrder
     workExperience?: SortOrder
     certifications?: SortOrder
     expectations?: SortOrder
@@ -25198,10 +25141,6 @@ export namespace Prisma {
     linkedInUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type MenteeProfileSumOrderByAggregateInput = {
-    otherMbaScore?: SortOrder
   }
   export type JsonWithAggregatesFilter<$PrismaModel = never> = 
     | PatchUndefined<
@@ -25252,22 +25191,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
-  }
-
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type EnumMentorApprovalStatusFilter<$PrismaModel = never> = {
@@ -25747,6 +25670,17 @@ export namespace Prisma {
     not?: NestedEnumPaymentStatusFilter<$PrismaModel> | $Enums.PaymentStatus
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type BookingRelationFilter = {
     is?: BookingWhereInput
     isNot?: BookingWhereInput
@@ -25836,6 +25770,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPaymentStatusFilter<$PrismaModel>
     _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type PaymentRelationFilter = {
@@ -26530,14 +26480,6 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutMenteeProfileInput, UserUncheckedCreateWithoutMenteeProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutMenteeProfileInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type MenteeProfileUpdateskillsetsInput = {
@@ -27394,6 +27336,14 @@ export namespace Prisma {
     set?: $Enums.PaymentStatus
   }
 
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type BookingUpdateOneRequiredWithoutPaymentNestedInput = {
     create?: XOR<BookingCreateWithoutPaymentInput, BookingUncheckedCreateWithoutPaymentInput>
     connectOrCreate?: BookingCreateOrConnectWithoutPaymentInput
@@ -27838,17 +27788,6 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
   export type NestedJsonFilter<$PrismaModel = never> = 
     | PatchUndefined<
         Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -27892,22 +27831,6 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumMentorApprovalStatusFilter<$PrismaModel = never> = {
@@ -28011,6 +27934,17 @@ export namespace Prisma {
     not?: NestedEnumPaymentStatusFilter<$PrismaModel> | $Enums.PaymentStatus
   }
 
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.PaymentStatus | EnumPaymentStatusFieldRefInput<$PrismaModel>
     in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
@@ -28019,6 +27953,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPaymentStatusFilter<$PrismaModel>
     _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumWalletTransactionTypeFilter<$PrismaModel = never> = {
@@ -28079,7 +28029,7 @@ export namespace Prisma {
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -28097,7 +28047,7 @@ export namespace Prisma {
     contactNumber: string
     education: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: string | null
     certifications?: string | null
     expectations?: string | null
@@ -28330,7 +28280,7 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28348,7 +28298,7 @@ export namespace Prisma {
     contactNumber?: StringFieldUpdateOperationsInput | string
     education?: JsonNullValueInput | InputJsonValue
     catHistory?: NullableJsonNullValueInput | InputJsonValue
-    otherMbaScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    otherMbaTest?: NullableJsonNullValueInput | InputJsonValue
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     expectations?: NullableStringFieldUpdateOperationsInput | string | null
