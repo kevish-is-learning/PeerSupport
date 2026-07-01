@@ -65,8 +65,8 @@ class BookingController {
    */
   async cancelBooking(req, res) {
     try {
-      const booking = await bookingService.cancelBooking(req.user.id, req.params.id, req.body);
-      return res.status(200).json(new ApiResponse(200, 'Booking cancelled', { booking }));
+      const result = await bookingService.cancelBooking(req.user.id, req.params.id, req.body);
+      return res.status(200).json(new ApiResponse(200, 'Booking cancelled', result));
     } catch (error) {
       const statusCode = getStatusCode(error);
       return res.status(statusCode).json({ success: false, message: formatError(error) });

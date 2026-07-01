@@ -25,9 +25,22 @@ export async function checkConflictWithLock(tx, mentorProfileId, startTime, endT
   // Raw SQL for SELECT FOR UPDATE — Prisma doesn't support this natively.
   // Overlap logic: booking.startTime < proposedEnd AND booking.endTime > proposedStart
   // Only PAYMENT_PENDING, CONFIRMED, IN_PROGRESS, and RESCHEDULE_REQUESTED bookings block.
-  const excludeClause = excludeBookingId
-    ? `AND b.id != '${excludeBookingId}'`
-    : '';
+
+  if (excludeBookingId) {
+    // Use parameterized query with 4 params to avoid SQL injection
+    const conflicts = await tx.$queryRawUnsafe(`
+      SELECT b.id, b."startTime", b."endTime", b.status, b."mentorServiceId"
+      FROM "Booking" b
+      WHERE b."mentorProfileId" = $1
+        AND b.status IN ('PAYMENT_PENDING', 'CONFIRMED', 'IN_PROGRESS', 'RESCHEDULE_REQUESTED')
+        AND b."startTime" < $2
+        AND b."endTime" > $3
+        AND b.id != $4
+      FOR UPDATE
+    `, mentorProfileId, endTime, startTime, excludeBookingId);
+
+    return conflicts;
+  }
 
   const conflicts = await tx.$queryRawUnsafe(`
     SELECT b.id, b."startTime", b."endTime", b.status, b."mentorServiceId"
@@ -36,7 +49,6 @@ export async function checkConflictWithLock(tx, mentorProfileId, startTime, endT
       AND b.status IN ('PAYMENT_PENDING', 'CONFIRMED', 'IN_PROGRESS', 'RESCHEDULE_REQUESTED')
       AND b."startTime" < $2
       AND b."endTime" > $3
-      ${excludeClause}
     FOR UPDATE
   `, mentorProfileId, endTime, startTime);
 

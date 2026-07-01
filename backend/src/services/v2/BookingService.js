@@ -14,7 +14,7 @@ import {
   rescheduleBookingSchema,
   bookingIdParamSchema,
 } from '../../validators/v2.validator.js';
-import { createBookingWithGuard, rescheduleBookingWithGuard } from '../../utils/conflictGuard.js';
+import { createBookingWithGuard, checkConflictWithLock } from '../../utils/conflictGuard.js';
 import { generateSlots } from '../../utils/slotGenerator.js';
 import { dateTimeToTimeString } from '../../utils/timeUtils.js';
 import { istTimeAndDateToUtc, istToUtc, utcToIst, utcToIstDateString } from '../../utils/timezoneUtils.js';
@@ -338,10 +338,32 @@ class BookingServiceV2 {
       mentorService: existing.mentorService,
       startTimeUtc: newStartUtc,
       endTimeUtc: newEndUtc,
+      excludeBookingId: validId,
     });
 
-    // Create child booking + mark original as rescheduled (atomic)
+    // Create child booking + mark original as rescheduled (atomic, with conflict guard)
     const childBooking = await prisma.$transaction(async (tx) => {
+      // 0. SELECT FOR UPDATE conflict guard — prevents race-condition double-bookings
+      const conflicts = await checkConflictWithLock(
+        tx,
+        existing.mentorProfileId,
+        newStartUtc,
+        newEndUtc,
+        validId // exclude original booking
+      );
+
+      if (conflicts.length > 0) {
+        const err = new Error('New time slot conflicts with an existing booking');
+        err.statusCode = 409;
+        err.conflicts = conflicts.map((c) => ({
+          bookingId: c.id,
+          startTime: c.startTime,
+          endTime: c.endTime,
+          status: c.status,
+        }));
+        throw err;
+      }
+
       // 1. Mark original as RESCHEDULE_ACCEPTED
       await tx.booking.update({
         where: { id: validId },
@@ -409,7 +431,7 @@ class BookingServiceV2 {
     return mapBooking(fullBooking);
   }
 
-  async _assertSlotAvailable({ mentorProfileId, mentorService, startTimeUtc, endTimeUtc }) {
+  async _assertSlotAvailable({ mentorProfileId, mentorService, startTimeUtc, endTimeUtc, excludeBookingId = null }) {
     const dateStr = utcToIstDateString(startTimeUtc);
     const requestedDate = new Date(`${dateStr}T00:00:00.000Z`);
 
@@ -430,6 +452,28 @@ class BookingServiceV2 {
       throw createServiceError(400, 'No availability windows found for this date');
     }
 
+    // Query existing active bookings for this mentor on this date
+    // so generateSlots can properly exclude already-booked time ranges
+    const dayStartUtc = istTimeAndDateToUtc(dateStr, '00:00');
+    const dayEndUtc = istTimeAndDateToUtc(dateStr, '23:59');
+
+    const existingBookingsFilter = {
+      mentorProfileId,
+      status: { in: ACTIVE_STATUSES },
+      startTime: { lt: dayEndUtc },
+      endTime: { gt: dayStartUtc },
+    };
+
+    // For reschedule, exclude the booking being rescheduled from the overlap check
+    if (excludeBookingId) {
+      existingBookingsFilter.id = { not: excludeBookingId };
+    }
+
+    const existingBookings = await prisma.booking.findMany({
+      where: existingBookingsFilter,
+      select: { startTime: true, endTime: true },
+    });
+
     const now = new Date();
     const slots = [];
 
@@ -447,7 +491,7 @@ class BookingServiceV2 {
         ...generateSlots(
           { startTime: windowStart, endTime: windowEnd },
           mentorService.durationMinutes,
-          [],
+          existingBookings,
           {
             bufferMinutes: mentorService.bufferMinutes ?? 0,
             now,

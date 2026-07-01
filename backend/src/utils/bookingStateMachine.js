@@ -14,6 +14,7 @@ const TRANSITIONS = {
   PAYMENT_PENDING: new Set([
     'CONFIRMED',             // Payment success
     'CANCELLED_BY_MENTEE',   // Payment failure / timeout / mentee cancels before paying
+    'CANCELLED_BY_MENTOR',   // Mentor cancels before payment is completed
   ]),
 
   CONFIRMED: new Set([

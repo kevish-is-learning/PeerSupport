@@ -156,8 +156,9 @@ function SessionCard({ session, isUpcoming, onFeedbackClick, onSessionUpdated })
         cancelledReason: cancelReason || undefined,
       });
       toast.success("Session cancelled successfully");
-      if (res.data?.refund?.eligible) {
-        toast.info(`Refund of ₹${res.data.refund.amount} (${res.data.refund.percentage}%) will be processed`);
+      const refund = res.data?.refund;
+      if (refund?.eligible) {
+        toast.info(`Refund of ₹${refund.amount} (${refund.percentage}%) will be processed`);
       }
       setShowCancelConfirm(false);
       onSessionUpdated?.();
