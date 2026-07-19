@@ -33,12 +33,6 @@ function userIdToUid(userId) {
 }
 
 class MeetingService {
-  constructor() {
-    // In-memory tracker: bookingId → Set<'mentor'|'mentee'>
-    // Tracks which participants have signalled "finish"
-    this._finishTracker = new Map();
-  }
-
   /**
    * Generate an Agora RTC token for a booking session.
    *
@@ -207,19 +201,24 @@ class MeetingService {
       return { completed: false, message: `Booking status is ${booking.status}` };
     }
 
-    // Track who has finished
-    if (!this._finishTracker.has(bookingId)) {
-      this._finishTracker.set(bookingId, new Set());
+    if (new Date() < new Date(booking.startTime)) {
+      throw createServiceError(400, 'A session cannot be completed before its scheduled start time');
     }
-    const finished = this._finishTracker.get(bookingId);
+
+    // Completion requires durable proof that both participants joined. This
+    // prevents two clients from immediately completing a paid booking.
     const role = isMentor ? 'mentor' : 'mentee';
-    finished.add(role);
+    const attendance = await attendanceService.recordFinish(bookingId, isMentor ? 'MENTOR' : 'MENTEE');
+    if (!attendance) {
+      throw createServiceError(400, 'Join the meeting before marking it finished');
+    }
 
     // Determine if we should mark as completed
-    const bothFinished = finished.has('mentor') && finished.has('mentee');
+    const bothFinished = Boolean(attendance.mentorFinishedAt && attendance.menteeFinishedAt);
+    const minimumDurationMet = attendanceService.hasMinimumSharedAttendance(attendance);
     const isPastEnd = new Date() >= new Date(booking.endTime);
 
-    if (bothFinished || isPastEnd) {
+    if ((bothFinished && minimumDurationMet) || (isPastEnd && minimumDurationMet)) {
       // Mark as COMPLETED
       await prisma.booking.update({
         where: { id: bookingId },
@@ -227,9 +226,6 @@ class MeetingService {
       });
       // Record leave for this participant
       await attendanceService.recordLeave(bookingId, userId);
-      // Cleanup tracker
-      this._finishTracker.delete(bookingId);
-
       // Instantly release mentor's pending funds to available
       await walletService.releaseEarningsForCompletedBooking(bookingId);
 
@@ -254,10 +250,11 @@ class MeetingService {
     // Only one participant finished so far
     return {
       completed: false,
-      message: `You have finished. Waiting for the ${role === 'mentor' ? 'mentee' : 'mentor'} to finish.`,
+      message: !minimumDurationMet
+        ? 'Both participants must attend for at least 15 minutes before completion.'
+        : `You have finished. Waiting for the ${role === 'mentor' ? 'mentee' : 'mentor'} to finish.`,
     };
   }
 }
 
 export default new MeetingService();
-

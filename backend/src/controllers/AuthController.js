@@ -129,7 +129,7 @@ class AuthController {
           }),
         );
     } catch (error) {
-      const statusCode = error?.name === "ZodError" ? 400 : 500;
+      const statusCode = error?.name === "ZodError" ? 400 : error.statusCode || 500;
       return res.status(statusCode).json({
         success: false,
         message: error.message || "Failed to select role",

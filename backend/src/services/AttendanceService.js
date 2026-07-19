@@ -173,6 +173,32 @@ class AttendanceService {
 
     return !!(attendance.mentorJoinedAt && attendance.menteeJoinedAt);
   }
+
+  /**
+   * Persist a participant's completion signal. Completion is intentionally
+   * durable so it survives restarts and works across multiple API instances.
+   */
+  async recordFinish(bookingId, role) {
+    const attendance = await prisma.sessionAttendance.findUnique({ where: { bookingId } });
+    if (!attendance) return null;
+    if (role === 'MENTOR' && !attendance.mentorJoinedAt) return null;
+    if (role === 'MENTEE' && !attendance.menteeJoinedAt) return null;
+
+    return prisma.sessionAttendance.update({
+      where: { bookingId },
+      data: role === 'MENTOR' ? { mentorFinishedAt: new Date() } : { menteeFinishedAt: new Date() },
+    });
+  }
+
+  /** Both participants must have attended for at least the configured period. */
+  hasMinimumSharedAttendance(attendance, minimumMinutes = 15) {
+    if (!attendance?.mentorJoinedAt || !attendance?.menteeJoinedAt) return false;
+    const sharedStart = Math.max(
+      attendance.mentorJoinedAt.getTime(),
+      attendance.menteeJoinedAt.getTime(),
+    );
+    return Date.now() - sharedStart >= minimumMinutes * 60 * 1000;
+  }
 }
 
 export default new AttendanceService();

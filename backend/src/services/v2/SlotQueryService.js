@@ -39,10 +39,10 @@ class SlotQueryService {
     // 1. Verify the mentor profile exists
     const mentorProfile = await prisma.mentorProfile.findUnique({
       where: { id: validMentorId },
-      select: { id: true },
+      select: { id: true, approvalStatus: true, isVerified: true },
     });
 
-    if (!mentorProfile) {
+    if (!mentorProfile || mentorProfile.approvalStatus !== 'APPROVED' || !mentorProfile.isVerified) {
       throw createServiceError(404, 'Mentor not found');
     }
 

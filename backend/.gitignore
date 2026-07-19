@@ -25,8 +25,11 @@ Thumbs.db
 *.swo
 *~
 
-# Prisma
-prisma/migrations/
+# Existing local migration experiments stay untracked; ship the integrity
+# migration that accompanies this change.
+prisma/migrations/*
+!prisma/migrations/20260719000000_booking_integrity/
+!prisma/migrations/20260719000000_booking_integrity/migration.sql
 
 # Build
 dist/

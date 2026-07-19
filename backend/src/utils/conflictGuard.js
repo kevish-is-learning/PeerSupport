@@ -127,7 +127,7 @@ export async function createBookingWithGuard(params) {
     });
 
     return booking;
-  });
+  }, { isolationLevel: 'Serializable' });
 }
 
 /**
@@ -188,5 +188,5 @@ export async function rescheduleBookingWithGuard(bookingId, newStartTime, newEnd
     });
 
     return updated;
-  });
+  }, { isolationLevel: 'Serializable' });
 }

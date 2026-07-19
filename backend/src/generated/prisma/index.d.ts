@@ -14596,6 +14596,8 @@ export namespace Prisma {
     mentorLeftAt: Date | null
     menteeJoinedAt: Date | null
     menteeLeftAt: Date | null
+    mentorFinishedAt: Date | null
+    menteeFinishedAt: Date | null
     mentorDurationSecs: number | null
     menteeDurationSecs: number | null
     mentorReconnects: number | null
@@ -14614,6 +14616,8 @@ export namespace Prisma {
     mentorLeftAt: Date | null
     menteeJoinedAt: Date | null
     menteeLeftAt: Date | null
+    mentorFinishedAt: Date | null
+    menteeFinishedAt: Date | null
     mentorDurationSecs: number | null
     menteeDurationSecs: number | null
     mentorReconnects: number | null
@@ -14632,6 +14636,8 @@ export namespace Prisma {
     mentorLeftAt: number
     menteeJoinedAt: number
     menteeLeftAt: number
+    mentorFinishedAt: number
+    menteeFinishedAt: number
     mentorDurationSecs: number
     menteeDurationSecs: number
     mentorReconnects: number
@@ -14666,6 +14672,8 @@ export namespace Prisma {
     mentorLeftAt?: true
     menteeJoinedAt?: true
     menteeLeftAt?: true
+    mentorFinishedAt?: true
+    menteeFinishedAt?: true
     mentorDurationSecs?: true
     menteeDurationSecs?: true
     mentorReconnects?: true
@@ -14684,6 +14692,8 @@ export namespace Prisma {
     mentorLeftAt?: true
     menteeJoinedAt?: true
     menteeLeftAt?: true
+    mentorFinishedAt?: true
+    menteeFinishedAt?: true
     mentorDurationSecs?: true
     menteeDurationSecs?: true
     mentorReconnects?: true
@@ -14702,6 +14712,8 @@ export namespace Prisma {
     mentorLeftAt?: true
     menteeJoinedAt?: true
     menteeLeftAt?: true
+    mentorFinishedAt?: true
+    menteeFinishedAt?: true
     mentorDurationSecs?: true
     menteeDurationSecs?: true
     mentorReconnects?: true
@@ -14807,6 +14819,8 @@ export namespace Prisma {
     mentorLeftAt: Date | null
     menteeJoinedAt: Date | null
     menteeLeftAt: Date | null
+    mentorFinishedAt: Date | null
+    menteeFinishedAt: Date | null
     mentorDurationSecs: number
     menteeDurationSecs: number
     mentorReconnects: number
@@ -14844,6 +14858,8 @@ export namespace Prisma {
     mentorLeftAt?: boolean
     menteeJoinedAt?: boolean
     menteeLeftAt?: boolean
+    mentorFinishedAt?: boolean
+    menteeFinishedAt?: boolean
     mentorDurationSecs?: boolean
     menteeDurationSecs?: boolean
     mentorReconnects?: boolean
@@ -14863,6 +14879,8 @@ export namespace Prisma {
     mentorLeftAt?: boolean
     menteeJoinedAt?: boolean
     menteeLeftAt?: boolean
+    mentorFinishedAt?: boolean
+    menteeFinishedAt?: boolean
     mentorDurationSecs?: boolean
     menteeDurationSecs?: boolean
     mentorReconnects?: boolean
@@ -14882,6 +14900,8 @@ export namespace Prisma {
     mentorLeftAt?: boolean
     menteeJoinedAt?: boolean
     menteeLeftAt?: boolean
+    mentorFinishedAt?: boolean
+    menteeFinishedAt?: boolean
     mentorDurationSecs?: boolean
     menteeDurationSecs?: boolean
     mentorReconnects?: boolean
@@ -14912,6 +14932,8 @@ export namespace Prisma {
       mentorLeftAt: Date | null
       menteeJoinedAt: Date | null
       menteeLeftAt: Date | null
+      mentorFinishedAt: Date | null
+      menteeFinishedAt: Date | null
       /**
        * Duration in seconds each participant was present
        */
@@ -15333,6 +15355,8 @@ export namespace Prisma {
     readonly mentorLeftAt: FieldRef<"SessionAttendance", 'DateTime'>
     readonly menteeJoinedAt: FieldRef<"SessionAttendance", 'DateTime'>
     readonly menteeLeftAt: FieldRef<"SessionAttendance", 'DateTime'>
+    readonly mentorFinishedAt: FieldRef<"SessionAttendance", 'DateTime'>
+    readonly menteeFinishedAt: FieldRef<"SessionAttendance", 'DateTime'>
     readonly mentorDurationSecs: FieldRef<"SessionAttendance", 'Int'>
     readonly menteeDurationSecs: FieldRef<"SessionAttendance", 'Int'>
     readonly mentorReconnects: FieldRef<"SessionAttendance", 'Int'>
@@ -16739,6 +16763,7 @@ export namespace Prisma {
     type: $Enums.WalletTransactionType | null
     amount: number | null
     description: string | null
+    idempotencyKey: string | null
     balanceBefore: number | null
     balanceAfter: number | null
     createdAt: Date | null
@@ -16751,6 +16776,7 @@ export namespace Prisma {
     type: $Enums.WalletTransactionType | null
     amount: number | null
     description: string | null
+    idempotencyKey: string | null
     balanceBefore: number | null
     balanceAfter: number | null
     createdAt: Date | null
@@ -16763,6 +16789,7 @@ export namespace Prisma {
     type: number
     amount: number
     description: number
+    idempotencyKey: number
     balanceBefore: number
     balanceAfter: number
     createdAt: number
@@ -16789,6 +16816,7 @@ export namespace Prisma {
     type?: true
     amount?: true
     description?: true
+    idempotencyKey?: true
     balanceBefore?: true
     balanceAfter?: true
     createdAt?: true
@@ -16801,6 +16829,7 @@ export namespace Prisma {
     type?: true
     amount?: true
     description?: true
+    idempotencyKey?: true
     balanceBefore?: true
     balanceAfter?: true
     createdAt?: true
@@ -16813,6 +16842,7 @@ export namespace Prisma {
     type?: true
     amount?: true
     description?: true
+    idempotencyKey?: true
     balanceBefore?: true
     balanceAfter?: true
     createdAt?: true
@@ -16912,6 +16942,7 @@ export namespace Prisma {
     type: $Enums.WalletTransactionType
     amount: number
     description: string | null
+    idempotencyKey: string | null
     balanceBefore: number
     balanceAfter: number
     createdAt: Date
@@ -16943,6 +16974,7 @@ export namespace Prisma {
     type?: boolean
     amount?: boolean
     description?: boolean
+    idempotencyKey?: boolean
     balanceBefore?: boolean
     balanceAfter?: boolean
     createdAt?: boolean
@@ -16956,6 +16988,7 @@ export namespace Prisma {
     type?: boolean
     amount?: boolean
     description?: boolean
+    idempotencyKey?: boolean
     balanceBefore?: boolean
     balanceAfter?: boolean
     createdAt?: boolean
@@ -16969,6 +17002,7 @@ export namespace Prisma {
     type?: boolean
     amount?: boolean
     description?: boolean
+    idempotencyKey?: boolean
     balanceBefore?: boolean
     balanceAfter?: boolean
     createdAt?: boolean
@@ -16993,6 +17027,10 @@ export namespace Prisma {
       type: $Enums.WalletTransactionType
       amount: number
       description: string | null
+      /**
+       * Unique event key for idempotent balance mutations.
+       */
+      idempotencyKey: string | null
       /**
        * Balance snapshots for audit trail
        */
@@ -17399,6 +17437,7 @@ export namespace Prisma {
     readonly type: FieldRef<"WalletTransaction", 'WalletTransactionType'>
     readonly amount: FieldRef<"WalletTransaction", 'Float'>
     readonly description: FieldRef<"WalletTransaction", 'String'>
+    readonly idempotencyKey: FieldRef<"WalletTransaction", 'String'>
     readonly balanceBefore: FieldRef<"WalletTransaction", 'Float'>
     readonly balanceAfter: FieldRef<"WalletTransaction", 'Float'>
     readonly createdAt: FieldRef<"WalletTransaction", 'DateTime'>
@@ -21067,6 +21106,8 @@ export namespace Prisma {
     mentorLeftAt: 'mentorLeftAt',
     menteeJoinedAt: 'menteeJoinedAt',
     menteeLeftAt: 'menteeLeftAt',
+    mentorFinishedAt: 'mentorFinishedAt',
+    menteeFinishedAt: 'menteeFinishedAt',
     mentorDurationSecs: 'mentorDurationSecs',
     menteeDurationSecs: 'menteeDurationSecs',
     mentorReconnects: 'mentorReconnects',
@@ -21101,6 +21142,7 @@ export namespace Prisma {
     type: 'type',
     amount: 'amount',
     description: 'description',
+    idempotencyKey: 'idempotencyKey',
     balanceBefore: 'balanceBefore',
     balanceAfter: 'balanceAfter',
     createdAt: 'createdAt'
@@ -22224,11 +22266,11 @@ export namespace Prisma {
   export type PaymentWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     bookingId?: string
+    razorpayPaymentId?: string
     AND?: PaymentWhereInput | PaymentWhereInput[]
     OR?: PaymentWhereInput[]
     NOT?: PaymentWhereInput | PaymentWhereInput[]
     razorpayOrderId?: StringNullableFilter<"Payment"> | string | null
-    razorpayPaymentId?: StringNullableFilter<"Payment"> | string | null
     razorpaySignature?: StringNullableFilter<"Payment"> | string | null
     amount?: FloatFilter<"Payment"> | number
     platformFee?: FloatFilter<"Payment"> | number
@@ -22243,7 +22285,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Payment"> | Date | string
     booking?: XOR<BookingRelationFilter, BookingWhereInput>
     invoice?: XOR<InvoiceNullableRelationFilter, InvoiceWhereInput> | null
-  }, "id" | "bookingId">
+  }, "id" | "bookingId" | "razorpayPaymentId">
 
   export type PaymentOrderByWithAggregationInput = {
     id?: SortOrder
@@ -22497,6 +22539,8 @@ export namespace Prisma {
     mentorLeftAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
     menteeJoinedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
     menteeLeftAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    mentorFinishedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    menteeFinishedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
     mentorDurationSecs?: IntFilter<"SessionAttendance"> | number
     menteeDurationSecs?: IntFilter<"SessionAttendance"> | number
     mentorReconnects?: IntFilter<"SessionAttendance"> | number
@@ -22516,6 +22560,8 @@ export namespace Prisma {
     mentorLeftAt?: SortOrderInput | SortOrder
     menteeJoinedAt?: SortOrderInput | SortOrder
     menteeLeftAt?: SortOrderInput | SortOrder
+    mentorFinishedAt?: SortOrderInput | SortOrder
+    menteeFinishedAt?: SortOrderInput | SortOrder
     mentorDurationSecs?: SortOrder
     menteeDurationSecs?: SortOrder
     mentorReconnects?: SortOrder
@@ -22538,6 +22584,8 @@ export namespace Prisma {
     mentorLeftAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
     menteeJoinedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
     menteeLeftAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    mentorFinishedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
+    menteeFinishedAt?: DateTimeNullableFilter<"SessionAttendance"> | Date | string | null
     mentorDurationSecs?: IntFilter<"SessionAttendance"> | number
     menteeDurationSecs?: IntFilter<"SessionAttendance"> | number
     mentorReconnects?: IntFilter<"SessionAttendance"> | number
@@ -22557,6 +22605,8 @@ export namespace Prisma {
     mentorLeftAt?: SortOrderInput | SortOrder
     menteeJoinedAt?: SortOrderInput | SortOrder
     menteeLeftAt?: SortOrderInput | SortOrder
+    mentorFinishedAt?: SortOrderInput | SortOrder
+    menteeFinishedAt?: SortOrderInput | SortOrder
     mentorDurationSecs?: SortOrder
     menteeDurationSecs?: SortOrder
     mentorReconnects?: SortOrder
@@ -22583,6 +22633,8 @@ export namespace Prisma {
     mentorLeftAt?: DateTimeNullableWithAggregatesFilter<"SessionAttendance"> | Date | string | null
     menteeJoinedAt?: DateTimeNullableWithAggregatesFilter<"SessionAttendance"> | Date | string | null
     menteeLeftAt?: DateTimeNullableWithAggregatesFilter<"SessionAttendance"> | Date | string | null
+    mentorFinishedAt?: DateTimeNullableWithAggregatesFilter<"SessionAttendance"> | Date | string | null
+    menteeFinishedAt?: DateTimeNullableWithAggregatesFilter<"SessionAttendance"> | Date | string | null
     mentorDurationSecs?: IntWithAggregatesFilter<"SessionAttendance"> | number
     menteeDurationSecs?: IntWithAggregatesFilter<"SessionAttendance"> | number
     mentorReconnects?: IntWithAggregatesFilter<"SessionAttendance"> | number
@@ -22674,6 +22726,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeFilter<"WalletTransaction"> | $Enums.WalletTransactionType
     amount?: FloatFilter<"WalletTransaction"> | number
     description?: StringNullableFilter<"WalletTransaction"> | string | null
+    idempotencyKey?: StringNullableFilter<"WalletTransaction"> | string | null
     balanceBefore?: FloatFilter<"WalletTransaction"> | number
     balanceAfter?: FloatFilter<"WalletTransaction"> | number
     createdAt?: DateTimeFilter<"WalletTransaction"> | Date | string
@@ -22687,6 +22740,7 @@ export namespace Prisma {
     type?: SortOrder
     amount?: SortOrder
     description?: SortOrderInput | SortOrder
+    idempotencyKey?: SortOrderInput | SortOrder
     balanceBefore?: SortOrder
     balanceAfter?: SortOrder
     createdAt?: SortOrder
@@ -22695,6 +22749,7 @@ export namespace Prisma {
 
   export type WalletTransactionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    idempotencyKey?: string
     AND?: WalletTransactionWhereInput | WalletTransactionWhereInput[]
     OR?: WalletTransactionWhereInput[]
     NOT?: WalletTransactionWhereInput | WalletTransactionWhereInput[]
@@ -22707,7 +22762,7 @@ export namespace Prisma {
     balanceAfter?: FloatFilter<"WalletTransaction"> | number
     createdAt?: DateTimeFilter<"WalletTransaction"> | Date | string
     wallet?: XOR<MentorWalletRelationFilter, MentorWalletWhereInput>
-  }, "id">
+  }, "id" | "idempotencyKey">
 
   export type WalletTransactionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -22716,6 +22771,7 @@ export namespace Prisma {
     type?: SortOrder
     amount?: SortOrder
     description?: SortOrderInput | SortOrder
+    idempotencyKey?: SortOrderInput | SortOrder
     balanceBefore?: SortOrder
     balanceAfter?: SortOrder
     createdAt?: SortOrder
@@ -22736,6 +22792,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeWithAggregatesFilter<"WalletTransaction"> | $Enums.WalletTransactionType
     amount?: FloatWithAggregatesFilter<"WalletTransaction"> | number
     description?: StringNullableWithAggregatesFilter<"WalletTransaction"> | string | null
+    idempotencyKey?: StringNullableWithAggregatesFilter<"WalletTransaction"> | string | null
     balanceBefore?: FloatWithAggregatesFilter<"WalletTransaction"> | number
     balanceAfter?: FloatWithAggregatesFilter<"WalletTransaction"> | number
     createdAt?: DateTimeWithAggregatesFilter<"WalletTransaction"> | Date | string
@@ -24220,6 +24277,8 @@ export namespace Prisma {
     mentorLeftAt?: Date | string | null
     menteeJoinedAt?: Date | string | null
     menteeLeftAt?: Date | string | null
+    mentorFinishedAt?: Date | string | null
+    menteeFinishedAt?: Date | string | null
     mentorDurationSecs?: number
     menteeDurationSecs?: number
     mentorReconnects?: number
@@ -24239,6 +24298,8 @@ export namespace Prisma {
     mentorLeftAt?: Date | string | null
     menteeJoinedAt?: Date | string | null
     menteeLeftAt?: Date | string | null
+    mentorFinishedAt?: Date | string | null
+    menteeFinishedAt?: Date | string | null
     mentorDurationSecs?: number
     menteeDurationSecs?: number
     mentorReconnects?: number
@@ -24256,6 +24317,8 @@ export namespace Prisma {
     mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorDurationSecs?: IntFieldUpdateOperationsInput | number
     menteeDurationSecs?: IntFieldUpdateOperationsInput | number
     mentorReconnects?: IntFieldUpdateOperationsInput | number
@@ -24275,6 +24338,8 @@ export namespace Prisma {
     mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorDurationSecs?: IntFieldUpdateOperationsInput | number
     menteeDurationSecs?: IntFieldUpdateOperationsInput | number
     mentorReconnects?: IntFieldUpdateOperationsInput | number
@@ -24293,6 +24358,8 @@ export namespace Prisma {
     mentorLeftAt?: Date | string | null
     menteeJoinedAt?: Date | string | null
     menteeLeftAt?: Date | string | null
+    mentorFinishedAt?: Date | string | null
+    menteeFinishedAt?: Date | string | null
     mentorDurationSecs?: number
     menteeDurationSecs?: number
     mentorReconnects?: number
@@ -24310,6 +24377,8 @@ export namespace Prisma {
     mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorDurationSecs?: IntFieldUpdateOperationsInput | number
     menteeDurationSecs?: IntFieldUpdateOperationsInput | number
     mentorReconnects?: IntFieldUpdateOperationsInput | number
@@ -24328,6 +24397,8 @@ export namespace Prisma {
     mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorDurationSecs?: IntFieldUpdateOperationsInput | number
     menteeDurationSecs?: IntFieldUpdateOperationsInput | number
     mentorReconnects?: IntFieldUpdateOperationsInput | number
@@ -24418,6 +24489,7 @@ export namespace Prisma {
     type: $Enums.WalletTransactionType
     amount: number
     description?: string | null
+    idempotencyKey?: string | null
     balanceBefore: number
     balanceAfter: number
     createdAt?: Date | string
@@ -24431,6 +24503,7 @@ export namespace Prisma {
     type: $Enums.WalletTransactionType
     amount: number
     description?: string | null
+    idempotencyKey?: string | null
     balanceBefore: number
     balanceAfter: number
     createdAt?: Date | string
@@ -24442,6 +24515,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     balanceBefore?: FloatFieldUpdateOperationsInput | number
     balanceAfter?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24455,6 +24529,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     balanceBefore?: FloatFieldUpdateOperationsInput | number
     balanceAfter?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24467,6 +24542,7 @@ export namespace Prisma {
     type: $Enums.WalletTransactionType
     amount: number
     description?: string | null
+    idempotencyKey?: string | null
     balanceBefore: number
     balanceAfter: number
     createdAt?: Date | string
@@ -24478,6 +24554,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     balanceBefore?: FloatFieldUpdateOperationsInput | number
     balanceAfter?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24490,6 +24567,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     balanceBefore?: FloatFieldUpdateOperationsInput | number
     balanceAfter?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25892,6 +25970,8 @@ export namespace Prisma {
     mentorLeftAt?: SortOrder
     menteeJoinedAt?: SortOrder
     menteeLeftAt?: SortOrder
+    mentorFinishedAt?: SortOrder
+    menteeFinishedAt?: SortOrder
     mentorDurationSecs?: SortOrder
     menteeDurationSecs?: SortOrder
     mentorReconnects?: SortOrder
@@ -25917,6 +25997,8 @@ export namespace Prisma {
     mentorLeftAt?: SortOrder
     menteeJoinedAt?: SortOrder
     menteeLeftAt?: SortOrder
+    mentorFinishedAt?: SortOrder
+    menteeFinishedAt?: SortOrder
     mentorDurationSecs?: SortOrder
     menteeDurationSecs?: SortOrder
     mentorReconnects?: SortOrder
@@ -25935,6 +26017,8 @@ export namespace Prisma {
     mentorLeftAt?: SortOrder
     menteeJoinedAt?: SortOrder
     menteeLeftAt?: SortOrder
+    mentorFinishedAt?: SortOrder
+    menteeFinishedAt?: SortOrder
     mentorDurationSecs?: SortOrder
     menteeDurationSecs?: SortOrder
     mentorReconnects?: SortOrder
@@ -26024,6 +26108,7 @@ export namespace Prisma {
     type?: SortOrder
     amount?: SortOrder
     description?: SortOrder
+    idempotencyKey?: SortOrder
     balanceBefore?: SortOrder
     balanceAfter?: SortOrder
     createdAt?: SortOrder
@@ -26042,6 +26127,7 @@ export namespace Prisma {
     type?: SortOrder
     amount?: SortOrder
     description?: SortOrder
+    idempotencyKey?: SortOrder
     balanceBefore?: SortOrder
     balanceAfter?: SortOrder
     createdAt?: SortOrder
@@ -26054,6 +26140,7 @@ export namespace Prisma {
     type?: SortOrder
     amount?: SortOrder
     description?: SortOrder
+    idempotencyKey?: SortOrder
     balanceBefore?: SortOrder
     balanceAfter?: SortOrder
     createdAt?: SortOrder
@@ -30208,6 +30295,8 @@ export namespace Prisma {
     mentorLeftAt?: Date | string | null
     menteeJoinedAt?: Date | string | null
     menteeLeftAt?: Date | string | null
+    mentorFinishedAt?: Date | string | null
+    menteeFinishedAt?: Date | string | null
     mentorDurationSecs?: number
     menteeDurationSecs?: number
     mentorReconnects?: number
@@ -30225,6 +30314,8 @@ export namespace Prisma {
     mentorLeftAt?: Date | string | null
     menteeJoinedAt?: Date | string | null
     menteeLeftAt?: Date | string | null
+    mentorFinishedAt?: Date | string | null
+    menteeFinishedAt?: Date | string | null
     mentorDurationSecs?: number
     menteeDurationSecs?: number
     mentorReconnects?: number
@@ -30615,6 +30706,8 @@ export namespace Prisma {
     mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorDurationSecs?: IntFieldUpdateOperationsInput | number
     menteeDurationSecs?: IntFieldUpdateOperationsInput | number
     mentorReconnects?: IntFieldUpdateOperationsInput | number
@@ -30632,6 +30725,8 @@ export namespace Prisma {
     mentorLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeJoinedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     menteeLeftAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mentorFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    menteeFinishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mentorDurationSecs?: IntFieldUpdateOperationsInput | number
     menteeDurationSecs?: IntFieldUpdateOperationsInput | number
     mentorReconnects?: IntFieldUpdateOperationsInput | number
@@ -31754,6 +31849,7 @@ export namespace Prisma {
     type: $Enums.WalletTransactionType
     amount: number
     description?: string | null
+    idempotencyKey?: string | null
     balanceBefore: number
     balanceAfter: number
     createdAt?: Date | string
@@ -31765,6 +31861,7 @@ export namespace Prisma {
     type: $Enums.WalletTransactionType
     amount: number
     description?: string | null
+    idempotencyKey?: string | null
     balanceBefore: number
     balanceAfter: number
     createdAt?: Date | string
@@ -31881,6 +31978,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeFilter<"WalletTransaction"> | $Enums.WalletTransactionType
     amount?: FloatFilter<"WalletTransaction"> | number
     description?: StringNullableFilter<"WalletTransaction"> | string | null
+    idempotencyKey?: StringNullableFilter<"WalletTransaction"> | string | null
     balanceBefore?: FloatFilter<"WalletTransaction"> | number
     balanceAfter?: FloatFilter<"WalletTransaction"> | number
     createdAt?: DateTimeFilter<"WalletTransaction"> | Date | string
@@ -33310,6 +33408,7 @@ export namespace Prisma {
     type: $Enums.WalletTransactionType
     amount: number
     description?: string | null
+    idempotencyKey?: string | null
     balanceBefore: number
     balanceAfter: number
     createdAt?: Date | string
@@ -33321,6 +33420,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     balanceBefore?: FloatFieldUpdateOperationsInput | number
     balanceAfter?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33332,6 +33432,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     balanceBefore?: FloatFieldUpdateOperationsInput | number
     balanceAfter?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33343,6 +33444,7 @@ export namespace Prisma {
     type?: EnumWalletTransactionTypeFieldUpdateOperationsInput | $Enums.WalletTransactionType
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
     balanceBefore?: FloatFieldUpdateOperationsInput | number
     balanceAfter?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

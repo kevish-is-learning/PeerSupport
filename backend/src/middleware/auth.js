@@ -43,8 +43,22 @@ const authenticateJWT = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Check if user is active
-    if (decoded.isActive === false) {
+    // JWTs are intentionally short-lived credentials, not the source of truth
+    // for account state. Re-read authorization-critical fields so suspension,
+    // role changes, and deactivation take effect immediately.
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        role: true,
+        isActive: true,
+        deletedAt: true,
+        mentorProfile: { select: { approvalStatus: true, isVerified: true, id: true } },
+        menteeProfile: { select: { id: true } },
+      },
+    });
+
+    if (!user || user.deletedAt || !user.isActive) {
       return res
         .status(403)
         .json(
@@ -56,7 +70,16 @@ const authenticateJWT = async (req, res, next) => {
         );
     }
 
-    req.user = decoded;
+    req.user = {
+      ...decoded,
+      id: user.id,
+      role: user.role,
+      isActive: user.isActive,
+      mentorApprovalStatus: user.mentorProfile?.approvalStatus || null,
+      mentorIsVerified: Boolean(user.mentorProfile?.isVerified),
+      mentorProfileId: user.mentorProfile?.id || null,
+      menteeProfileId: user.menteeProfile?.id || null,
+    };
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {

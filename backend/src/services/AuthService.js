@@ -205,6 +205,29 @@ class AuthService {
   async selectRole(userId, data) {
     const { role } = selectRoleSchema.parse(data);
 
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        role: true,
+        menteeProfile: { select: { id: true } },
+        mentorProfile: { select: { id: true } },
+        _count: { select: { menteeBookings: true } },
+      },
+    });
+    if (!currentUser) throw new Error('User not found');
+
+    // Role selection belongs to onboarding. Allowing it after profile or
+    // booking creation leaves orphaned records and used to make stale tokens
+    // retain the previous role's privileges.
+    if (
+      currentUser.role !== role &&
+      (currentUser.menteeProfile || currentUser.mentorProfile || currentUser._count.menteeBookings > 0)
+    ) {
+      const error = new Error('Role cannot be changed after onboarding has started');
+      error.statusCode = 409;
+      throw error;
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {

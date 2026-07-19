@@ -177,7 +177,7 @@ class BookingService {
     const startTimeUtc = new Date(data.startTime);
     const endTimeUtc = new Date(data.endTime);
 
-    if (startTimeUtc <= new Date()) {
+    if (Number.isNaN(startTimeUtc.getTime()) || Number.isNaN(endTimeUtc.getTime()) || startTimeUtc <= new Date()) {
       throw createServiceError(400, 'Cannot book a slot in the past');
     }
 
@@ -197,11 +197,19 @@ class BookingService {
     // Prevent self-booking
     const mentorProfile = await prisma.mentorProfile.findUnique({
       where: { id: data.mentorProfileId },
-      select: { userId: true },
+      select: { userId: true, approvalStatus: true, isVerified: true },
     });
+
+    if (!mentorProfile || mentorProfile.approvalStatus !== 'APPROVED' || !mentorProfile.isVerified) {
+      throw createServiceError(404, 'Mentor is not available for booking');
+    }
 
     if (mentorProfile?.userId === menteeId) {
       throw createServiceError(400, 'You cannot book your own session');
+    }
+
+    if (endTimeUtc.getTime() - startTimeUtc.getTime() !== service.durationMinutes * 60 * 1000) {
+      throw createServiceError(400, `Slot duration must be ${service.durationMinutes} minutes for this service`);
     }
 
     // Check for conflicts

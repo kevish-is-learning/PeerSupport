@@ -164,26 +164,41 @@ class WalletService {
       const mentorAmount = booking.payment.mentorAmount;
       if (!mentorAmount || mentorAmount <= 0) return false;
 
-      const wallet = await prisma.mentorWallet.findUnique({
-        where: { mentorProfileId: booking.mentorProfileId },
-      });
+      const releaseKey = `earnings-release:${booking.id}`;
+      return prisma.$transaction(async (tx) => {
+        const wallet = await tx.mentorWallet.findUnique({
+          where: { mentorProfileId: booking.mentorProfileId },
+        });
+        if (!wallet || wallet.pendingBalance < mentorAmount) return false;
 
-      if (!wallet || wallet.pendingBalance < mentorAmount) return false;
+        // The unique key makes the release exactly-once even when the meeting
+        // endpoint and the cron worker race each other.
+        const existingRelease = await tx.walletTransaction.findUnique({
+          where: { idempotencyKey: releaseKey },
+        });
+        if (existingRelease) return false;
 
-      // Check if already released
-      const existingRelease = await prisma.walletTransaction.findFirst({
-        where: {
-          walletId: wallet.id,
-          bookingId: booking.id,
-          type: 'EARNING',
-          description: { contains: 'released' },
-        },
-      });
-
-      if (existingRelease) return false; // Already released
-
-      await this.releasePending(wallet.id, mentorAmount, booking.id);
-      return true;
+        await tx.mentorWallet.update({
+          where: { id: wallet.id },
+          data: {
+            pendingBalance: { decrement: mentorAmount },
+            availableBalance: { increment: mentorAmount },
+          },
+        });
+        await tx.walletTransaction.create({
+          data: {
+            walletId: wallet.id,
+            bookingId: booking.id,
+            type: 'EARNING',
+            amount: mentorAmount,
+            description: 'Earnings released after session completion',
+            idempotencyKey: releaseKey,
+            balanceBefore: wallet.availableBalance,
+            balanceAfter: wallet.availableBalance + mentorAmount,
+          },
+        });
+        return true;
+      }, { isolationLevel: 'Serializable' });
     } catch (err) {
       console.error(`Failed to release earnings for booking ${bookingId}:`, err);
       return false;

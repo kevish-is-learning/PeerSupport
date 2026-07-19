@@ -134,8 +134,11 @@ class BookingServiceV2 {
     // Prevent self-booking
     const mentorProfile = await prisma.mentorProfile.findUnique({
       where: { id: data.mentorProfileId },
-      select: { userId: true },
+      select: { userId: true, approvalStatus: true, isVerified: true },
     });
+    if (!mentorProfile || mentorProfile.approvalStatus !== 'APPROVED' || !mentorProfile.isVerified) {
+      throw createServiceError(404, 'Mentor is not available for booking');
+    }
     if (mentorProfile?.userId === menteeId) {
       throw createServiceError(400, 'You cannot book your own session');
     }

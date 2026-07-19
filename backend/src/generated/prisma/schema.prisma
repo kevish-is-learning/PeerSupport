@@ -408,7 +408,7 @@ model Payment {
   bookingId String @unique
 
   razorpayOrderId   String?
-  razorpayPaymentId String?
+  razorpayPaymentId String? @unique
   razorpaySignature String?
 
   amount Float
@@ -519,10 +519,12 @@ model SessionAttendance {
 
   bookingId String @unique
 
-  mentorJoinedAt DateTime?
-  mentorLeftAt   DateTime?
-  menteeJoinedAt DateTime?
-  menteeLeftAt   DateTime?
+  mentorJoinedAt   DateTime?
+  mentorLeftAt     DateTime?
+  menteeJoinedAt   DateTime?
+  menteeLeftAt     DateTime?
+  mentorFinishedAt DateTime?
+  menteeFinishedAt DateTime?
 
   /// Duration in seconds each participant was present
   mentorDurationSecs Int @default(0)
@@ -585,6 +587,9 @@ model WalletTransaction {
   amount Float
 
   description String?
+
+  /// Unique event key for idempotent balance mutations.
+  idempotencyKey String? @unique
 
   /// Balance snapshots for audit trail
   balanceBefore Float

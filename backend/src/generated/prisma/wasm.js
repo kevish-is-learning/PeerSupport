@@ -292,6 +292,8 @@ exports.Prisma.SessionAttendanceScalarFieldEnum = {
   mentorLeftAt: 'mentorLeftAt',
   menteeJoinedAt: 'menteeJoinedAt',
   menteeLeftAt: 'menteeLeftAt',
+  mentorFinishedAt: 'mentorFinishedAt',
+  menteeFinishedAt: 'menteeFinishedAt',
   mentorDurationSecs: 'mentorDurationSecs',
   menteeDurationSecs: 'menteeDurationSecs',
   mentorReconnects: 'mentorReconnects',
@@ -320,6 +322,7 @@ exports.Prisma.WalletTransactionScalarFieldEnum = {
   type: 'type',
   amount: 'amount',
   description: 'description',
+  idempotencyKey: 'idempotencyKey',
   balanceBefore: 'balanceBefore',
   balanceAfter: 'balanceAfter',
   createdAt: 'createdAt'

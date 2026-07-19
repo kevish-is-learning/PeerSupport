@@ -53,6 +53,10 @@ class PaymentService {
       throw createServiceError(404, 'Payment not found for this order');
     }
 
+    if (payment.booking.id !== bookingId) {
+      throw createServiceError(400, 'Payment order does not belong to this booking');
+    }
+
     if (payment.booking.menteeId !== userId) {
       throw createServiceError(403, 'Unauthorized');
     }
@@ -67,26 +71,30 @@ class PaymentService {
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex');
 
-    if (generatedSignature !== razorpay_signature) {
-      // Signature invalid → mark payment FAILED and cancel booking immediately
-      const [, updatedBooking] = await prisma.$transaction([
-        prisma.payment.update({
-          where: { id: payment.id },
-          data: { paymentStatus: 'FAILED' },
-        }),
-        prisma.booking.update({
-          where: { id: payment.booking.id },
-          data: { status: 'CANCELLED_BY_MENTEE' },
-          select: {
-            mentorProfileId: true,
-            mentorServiceId: true,
-            startTime: true,
-            endTime: true,
-          },
-        }),
-      ]);
+    const signatureIsValid =
+      generatedSignature.length === razorpay_signature.length &&
+      crypto.timingSafeEqual(Buffer.from(generatedSignature), Buffer.from(razorpay_signature));
 
-      emitSlotUpdate(updatedBooking.mentorProfileId, {
+    if (!signatureIsValid) {
+      // Signature invalid → mark payment FAILED and cancel booking immediately
+      const updatedBooking = await prisma.$transaction(async (tx) => {
+        const updated = await tx.booking.updateMany({
+          where: { id: payment.booking.id, status: 'PAYMENT_PENDING' },
+          data: { status: 'CANCELLED_BY_MENTEE' },
+        });
+        if (updated.count !== 1) return null;
+
+        await tx.payment.updateMany({
+          where: { id: payment.id, paymentStatus: 'PENDING' },
+          data: { paymentStatus: 'FAILED' },
+        });
+        return tx.booking.findUnique({
+          where: { id: payment.booking.id },
+          select: { mentorProfileId: true, mentorServiceId: true, startTime: true, endTime: true },
+        });
+      });
+
+      if (updatedBooking) emitSlotUpdate(updatedBooking.mentorProfileId, {
         startTime: utcToIst(updatedBooking.startTime),
         endTime: utcToIst(updatedBooking.endTime),
         serviceId: updatedBooking.mentorServiceId,
@@ -100,9 +108,20 @@ class PaymentService {
     const platformFee = calculatePlatformFee(amount);
     const mentorAmount = calculateMentorEarning(amount);
 
-    const [updatedPayment] = await prisma.$transaction([
-      prisma.payment.update({
-        where: { id: payment.id },
+    const updatedPayment = await prisma.$transaction(async (tx) => {
+      // A cancelled/expired slot must never be revived by a delayed callback.
+      const claimedBooking = await tx.booking.updateMany({
+        where: { id: payment.booking.id, status: 'PAYMENT_PENDING' },
+        data: { status: 'CONFIRMED', meetingLink: `/meeting/${payment.booking.id}` },
+      });
+      if (claimedBooking.count !== 1) {
+        const current = await tx.payment.findUnique({ where: { id: payment.id } });
+        if (current?.paymentStatus === 'SUCCESS') return current;
+        throw createServiceError(409, 'Booking is no longer awaiting payment');
+      }
+
+      const claimedPayment = await tx.payment.updateMany({
+        where: { id: payment.id, paymentStatus: 'PENDING' },
         data: {
           razorpayPaymentId: razorpay_payment_id,
           razorpaySignature: razorpay_signature,
@@ -111,18 +130,34 @@ class PaymentService {
           mentorAmount,
           paidAt: new Date(),
         },
-      }),
-      prisma.booking.update({
-        where: { id: payment.booking.id },
-        data: {
-          status: 'CONFIRMED',
-          meetingLink: `/meeting/${payment.booking.id}`,
-        },
-      }),
-    ]);
+      });
+      if (claimedPayment.count !== 1) {
+        throw createServiceError(409, 'Payment has already been processed');
+      }
 
-    // Credit mentor wallet (pending balance — released after session completion)
-    await this._creditMentorWallet(payment.booking.mentorProfileId, mentorAmount, payment.booking.id);
+      const wallet = await tx.mentorWallet.upsert({
+        where: { mentorProfileId: payment.booking.mentorProfileId },
+        create: { mentorProfileId: payment.booking.mentorProfileId },
+        update: {},
+      });
+      await tx.mentorWallet.update({
+        where: { id: wallet.id },
+        data: { pendingBalance: { increment: mentorAmount } },
+      });
+      await tx.walletTransaction.create({
+        data: {
+          walletId: wallet.id,
+          bookingId: payment.booking.id,
+          type: 'EARNING',
+          amount: mentorAmount,
+          description: 'Session earning (net after 13% platform fee)',
+          idempotencyKey: `payment-credit:${payment.booking.id}`,
+          balanceBefore: wallet.pendingBalance,
+          balanceAfter: wallet.pendingBalance + mentorAmount,
+        },
+      });
+      return tx.payment.findUnique({ where: { id: payment.id } });
+    }, { isolationLevel: 'Serializable' });
 
     // Fire-and-forget: send booking confirmation + payment receipt emails
     this._sendPaymentSuccessEmails(updatedPayment, payment.booking);
@@ -234,23 +269,32 @@ class PaymentService {
       return { message: 'Booking already released', bookingId };
     }
 
-    // Mark payment as FAILED and booking as CANCELLED → instant slot release
-    const [, updatedBooking] = await prisma.$transaction([
-      prisma.payment.update({
-        where: { id: payment.id },
-        data: { paymentStatus: 'FAILED' },
-      }),
-      prisma.booking.update({
-        where: { id: payment.booking.id },
+    // Claim both pending records atomically. A browser dismissal must never
+    // cancel a payment callback that has already confirmed the booking.
+    const updatedBooking = await prisma.$transaction(async (tx) => {
+      const bookingUpdate = await tx.booking.updateMany({
+        where: { id: payment.booking.id, status: 'PAYMENT_PENDING' },
         data: { status: 'CANCELLED_BY_MENTEE' },
-        select: {
-          mentorProfileId: true,
-          mentorServiceId: true,
-          startTime: true,
-          endTime: true,
-        },
-      }),
-    ]);
+      });
+      if (bookingUpdate.count !== 1) return null;
+
+      const paymentUpdate = await tx.payment.updateMany({
+        where: { id: payment.id, paymentStatus: 'PENDING' },
+        data: { paymentStatus: 'FAILED' },
+      });
+      if (paymentUpdate.count !== 1) {
+        throw createServiceError(409, 'Payment has already been processed');
+      }
+
+      return tx.booking.findUnique({
+        where: { id: payment.booking.id },
+        select: { mentorProfileId: true, mentorServiceId: true, startTime: true, endTime: true },
+      });
+    }, { isolationLevel: 'Serializable' });
+
+    if (!updatedBooking) {
+      return { message: 'Booking is no longer awaiting payment', bookingId };
+    }
 
     emitSlotUpdate(updatedBooking.mentorProfileId, {
       startTime: utcToIst(updatedBooking.startTime),
@@ -260,45 +304,6 @@ class PaymentService {
     });
 
     return { message: 'Payment failure recorded — slot released', bookingId };
-  }
-  /**
-   * Credit mentor wallet with pending earnings after successful payment.
-   * Creates wallet if it doesn't exist.
-   */
-  async _creditMentorWallet(mentorProfileId, mentorAmount, bookingId) {
-    try {
-      // Upsert wallet
-      let wallet = await prisma.mentorWallet.findUnique({
-        where: { mentorProfileId },
-      });
-
-      if (!wallet) {
-        wallet = await prisma.mentorWallet.create({
-          data: { mentorProfileId, pendingBalance: 0, availableBalance: 0, withdrawnBalance: 0 },
-        });
-      }
-
-      // Credit pending balance + create ledger entry
-      await prisma.$transaction([
-        prisma.mentorWallet.update({
-          where: { id: wallet.id },
-          data: { pendingBalance: { increment: mentorAmount } },
-        }),
-        prisma.walletTransaction.create({
-          data: {
-            walletId: wallet.id,
-            bookingId,
-            type: 'EARNING',
-            amount: mentorAmount,
-            description: `Session earning (net after 13% platform fee)`,
-            balanceBefore: wallet.pendingBalance,
-            balanceAfter: wallet.pendingBalance + mentorAmount,
-          },
-        }),
-      ]);
-    } catch (err) {
-      console.error('[PaymentService] Failed to credit mentor wallet:', err.message);
-    }
   }
 }
 

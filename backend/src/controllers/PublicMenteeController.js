@@ -5,7 +5,7 @@ class PublicMenteeController {
   async getMenteeProfile(req, res) {
     try {
       const { menteeId } = req.params;
-      const mentee = await publicMenteeService.getMenteeProfile(menteeId);
+      const mentee = await publicMenteeService.getMenteeProfile(menteeId, req.user);
 
       return res.status(200).json(
         new ApiResponse(200, 'Mentee profile fetched successfully', { mentee })

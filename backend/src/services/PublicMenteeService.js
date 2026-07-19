@@ -7,7 +7,7 @@ const createServiceError = (statusCode, message) => {
 };
 
 class PublicMenteeService {
-  async getMenteeProfile(menteeId) {
+  async getMenteeProfile(menteeId, requester) {
     const user = await prisma.user.findUnique({
       where: { id: menteeId },
       include: {
@@ -23,16 +23,33 @@ class PublicMenteeService {
       throw createServiceError(404, 'Mentee profile not set up yet');
     }
 
+    if (requester.role !== 'ADMIN') {
+      const hasBookingRelationship = await prisma.booking.findFirst({
+        where: {
+          menteeId,
+          mentorProfile: { userId: requester.id },
+        },
+        select: { id: true },
+      });
+      if (!hasBookingRelationship) {
+        throw createServiceError(403, 'You are not authorized to view this mentee');
+      }
+    }
+
     const { menteeProfile, ...userData } = user;
 
     return {
       id: user.id,
       name: user.name,
-      email: user.email,
       profilePicture: user.profilePicture,
-      createdAt: user.createdAt,
       profile: {
-        ...menteeProfile,
+        username: menteeProfile.username,
+        education: menteeProfile.education,
+        workExperience: menteeProfile.workExperience,
+        certifications: menteeProfile.certifications,
+        expectations: menteeProfile.expectations,
+        skillsets: menteeProfile.skillsets,
+        linkedInUrl: menteeProfile.linkedInUrl,
       },
     };
   }
