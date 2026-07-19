@@ -29,7 +29,7 @@ A real-time booking and availability management system for peer-to-peer mentorin
 ```env
 DATABASE_URL=postgresql://user:password@host:5432/dbname
 PORT=8080
-CORS_ORIGIN=http://localhost:3000
+FRONTEND_URL=http://localhost:3000
 JWT_SECRET=your_jwt_secret
 JWT_REFRESH_SECRET=your_refresh_secret
 CLIENT_URL=http://localhost:3000
@@ -73,36 +73,38 @@ All V2 endpoints are prefixed with `/api/v2`.
 
 ### Public
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v2/services` | List all 6 seeded services |
+| Method | Path           | Description                |
+| ------ | -------------- | -------------------------- |
+| GET    | `/v2/services` | List all 6 seeded services |
 
 ### Mentor (auth + MENTOR role)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v2/mentor/services` | Get mentor's configured services |
-| PUT | `/v2/mentor/services` | Upsert service configs |
-| GET | `/v2/mentor/availability` | Get availability windows |
-| PUT | `/v2/mentor/availability` | Replace availability windows |
+| Method | Path                      | Description                      |
+| ------ | ------------------------- | -------------------------------- |
+| GET    | `/v2/mentor/services`     | Get mentor's configured services |
+| PUT    | `/v2/mentor/services`     | Upsert service configs           |
+| GET    | `/v2/mentor/availability` | Get availability windows         |
+| PUT    | `/v2/mentor/availability` | Replace availability windows     |
 
 ### Slots & Bookings (auth required)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v2/mentors/:id/slots?serviceId=&date=` | Generate available slots |
-| POST | `/v2/bookings` | Create booking (MENTEE) |
-| GET | `/v2/bookings/:id` | Get booking details |
-| PATCH | `/v2/bookings/:id/cancel` | Cancel booking (MENTOR) |
-| PATCH | `/v2/bookings/:id/reschedule` | Reschedule booking |
+| Method | Path                                     | Description              |
+| ------ | ---------------------------------------- | ------------------------ |
+| GET    | `/v2/mentors/:id/slots?serviceId=&date=` | Generate available slots |
+| POST   | `/v2/bookings`                           | Create booking (MENTEE)  |
+| GET    | `/v2/bookings/:id`                       | Get booking details      |
+| PATCH  | `/v2/bookings/:id/cancel`                | Cancel booking (MENTOR)  |
+| PATCH  | `/v2/bookings/:id/reschedule`            | Reschedule booking       |
 
 ### Socket.io Events
 
 **Client → Server:**
+
 - `join-mentor-room(mentorProfileId)` — Join a mentor's room for real-time updates
 - `leave-mentor-room(mentorProfileId)` — Leave a mentor's room
 
 **Server → Client (room: `mentor:{mentorId}`):**
+
 - `slot-update` — `{ event: 'slot-update', startTime, endTime, serviceId, action: 'taken'|'released' }`
 
 ## Slot Generation Algorithm

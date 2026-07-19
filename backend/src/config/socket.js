@@ -7,7 +7,7 @@
  * Frontend joins the room when viewing a mentor's availability.
  */
 
-import { Server } from 'socket.io';
+import { Server } from "socket.io";
 
 let io = null;
 
@@ -20,16 +20,16 @@ let io = null;
 export function initSocket(httpServer) {
   io = new Server(httpServer, {
     cors: {
-      origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+      origin: process.env.FRONTEND_URL || "http://localhost:3000",
       credentials: true,
     },
   });
 
-  io.on('connection', (socket) => {
+  io.on("connection", (socket) => {
     console.log(`🔌 Socket connected: ${socket.id}`);
 
     // Client joins a mentor's room to receive real-time slot updates
-    socket.on('join-mentor-room', (mentorProfileId) => {
+    socket.on("join-mentor-room", (mentorProfileId) => {
       if (mentorProfileId) {
         const room = `mentor:${mentorProfileId}`;
         socket.join(room);
@@ -38,7 +38,7 @@ export function initSocket(httpServer) {
     });
 
     // Client leaves a mentor's room
-    socket.on('leave-mentor-room', (mentorProfileId) => {
+    socket.on("leave-mentor-room", (mentorProfileId) => {
       if (mentorProfileId) {
         const room = `mentor:${mentorProfileId}`;
         socket.leave(room);
@@ -46,7 +46,7 @@ export function initSocket(httpServer) {
       }
     });
 
-    socket.on('disconnect', (reason) => {
+    socket.on("disconnect", (reason) => {
       console.log(`🔌 Socket disconnected: ${socket.id} (${reason})`);
     });
   });
@@ -75,13 +75,13 @@ export function getIO() {
  */
 export function emitSlotUpdate(mentorProfileId, payload) {
   if (!io) {
-    console.warn('⚠️ Socket.io not initialized — cannot emit slot-update');
+    console.warn("⚠️ Socket.io not initialized — cannot emit slot-update");
     return;
   }
 
   const room = `mentor:${mentorProfileId}`;
-  io.to(room).emit('slot-update', {
-    event: 'slot-update',
+  io.to(room).emit("slot-update", {
+    event: "slot-update",
     startTime: payload.startTime,
     endTime: payload.endTime,
     serviceId: payload.serviceId,
