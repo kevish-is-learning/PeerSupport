@@ -266,6 +266,8 @@ export default function MentorProfilePage() {
   const expertiseTags = profile?.expertiseTags || [];
   const visibleTags = expertiseTags.slice(0, 3);
   const remainingTagsCount = expertiseTags.length - 3;
+  const profilePhotoUrl = profile?.profilePhotoUrl || user?.profilePicture || "";
+  const profilePhotoSrc = resolveUploadUrl(profilePhotoUrl);
 
   return (
     <div className="w-full h-full overflow-y-auto bg-[#FAF9F6] p-4 sm:p-8 lg:p-12">
@@ -280,11 +282,12 @@ export default function MentorProfilePage() {
             {/* Photo */}
             <div className="relative mb-5 mt-2">
               <div className="h-[180px] w-[180px] overflow-hidden rounded-[20px] border-2 border-black bg-gray-100">
-                {(profile?.profilePhotoUrl || user?.profilePicture) ? (
+                {profilePhotoSrc ? (
                   <img
-                    src={resolveUploadUrl(profile?.profilePhotoUrl)}
+                    src={profilePhotoSrc}
                     alt="Profile"
                     className="h-full w-full object-cover"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center">

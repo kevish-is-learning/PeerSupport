@@ -1,5 +1,5 @@
 import { prisma } from '../config/database.js';
-import { destroyAsset } from '../config/cloudinary.js';
+import { destroyAsset, isSameCloudinaryAsset } from '../config/cloudinary.js';
 import {
   createMenteeProfileSchema,
   updateMenteeProfileSchema,
@@ -144,11 +144,21 @@ class MenteeProfileService {
     }
 
     // Clean up old profile photo from Cloudinary if replaced
-    if (profilePhotoUrl && existingProfile.user?.profilePicture && profilePhotoUrl !== existingProfile.user.profilePicture) {
+    if (
+      profilePhotoUrl
+      && existingProfile.user?.profilePicture
+      && profilePhotoUrl !== existingProfile.user.profilePicture
+      && !isSameCloudinaryAsset(profilePhotoUrl, existingProfile.user.profilePicture)
+    ) {
       await removeUploadedAsset(existingProfile.user.profilePicture);
     }
 
-    if (profileData.resumeUrl && existingProfile.resumeUrl && profileData.resumeUrl !== existingProfile.resumeUrl) {
+    if (
+      profileData.resumeUrl
+      && existingProfile.resumeUrl
+      && profileData.resumeUrl !== existingProfile.resumeUrl
+      && !isSameCloudinaryAsset(profileData.resumeUrl, existingProfile.resumeUrl)
+    ) {
       await removeUploadedAsset(existingProfile.resumeUrl);
     }
 

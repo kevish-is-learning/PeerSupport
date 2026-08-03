@@ -62,6 +62,27 @@ export const stripExtension = (publicId) => {
 };
 
 /**
+ * Whether two Cloudinary URLs point to the same stored asset. Cloudinary
+ * changes the version in a URL whenever an asset is overwritten, so comparing
+ * the URLs alone is not enough before deciding whether an old file is safe to
+ * delete.
+ */
+export const isSameCloudinaryAsset = (firstUrl, secondUrl) => {
+  const firstPublicId = extractPublicId(firstUrl);
+  const secondPublicId = extractPublicId(secondUrl);
+
+  if (!firstPublicId || !secondPublicId) return false;
+
+  const firstResourceType = firstUrl.includes('/raw/upload/') ? 'raw' : 'image';
+  const secondResourceType = secondUrl.includes('/raw/upload/') ? 'raw' : 'image';
+  const normalize = (publicId, resourceType) =>
+    resourceType === 'raw' ? publicId : stripExtension(publicId);
+
+  return firstResourceType === secondResourceType
+    && normalize(firstPublicId, firstResourceType) === normalize(secondPublicId, secondResourceType);
+};
+
+/**
  * Delete an asset from Cloudinary by its URL.
  * Automatically detects whether it's an image or raw resource.
  */

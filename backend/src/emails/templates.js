@@ -1,608 +1,309 @@
 /**
- * Email Templates
+ * Transactional email templates for PeerSupport.
  *
- * Premium, responsive HTML email templates for PeerSupport notifications.
- * Each template function accepts data and returns { subject, html }.
+ * Templates deliberately use table-based markup and inline styles for reliable
+ * rendering in Gmail, Outlook, Apple Mail, and mobile clients. Each returns a
+ * subject, HTML, and plain-text fallback.
  */
 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || 'hello@peersupport.com';
+const IST_TIME_ZONE = 'Asia/Kolkata';
 
-// ─── Shared Layout ──────────────────────────────────────────────────────────
-
-function layout(title, bodyContent) {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${title}</title>
-  <style>
-    /* Reset */
-    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-    body { margin: 0; padding: 0; width: 100% !important; }
-    img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-
-    /* Base */
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background-color: #f0f0f0;
-      color: #1a1a1a;
-    }
-
-    .email-wrapper {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 24px 16px;
-    }
-
-    .email-card {
-      background: #ffffff;
-      border: 3px solid #1a1a1a;
-      border-radius: 12px;
-      box-shadow: 6px 6px 0px #1a1a1a;
-      overflow: hidden;
-    }
-
-    .email-header {
-      background: #1a1a1a;
-      padding: 28px 32px;
-      text-align: center;
-    }
-
-    .email-header h1 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 800;
-      color: #ffffff;
-      letter-spacing: -0.5px;
-    }
-
-    .email-header .logo-accent {
-      color: #fbbf24;
-    }
-
-    .email-body {
-      padding: 32px;
-    }
-
-    .email-body h2 {
-      margin: 0 0 8px 0;
-      font-size: 24px;
-      font-weight: 800;
-      color: #1a1a1a;
-      letter-spacing: -0.5px;
-    }
-
-    .email-body .subtitle {
-      margin: 0 0 24px 0;
-      font-size: 15px;
-      color: #6b7280;
-      line-height: 1.5;
-    }
-
-    .email-body p {
-      margin: 0 0 16px 0;
-      font-size: 15px;
-      line-height: 1.6;
-      color: #374151;
-    }
-
-    /* Info card (used for booking details, session details, etc.) */
-    .info-card {
-      background: #fffbeb;
-      border: 2px solid #1a1a1a;
-      border-radius: 8px;
-      padding: 20px;
-      margin: 20px 0;
-    }
-
-    .info-card .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      font-size: 14px;
-      border-bottom: 1px dashed #e5e7eb;
-    }
-
-    .info-card .info-row:last-child {
-      border-bottom: none;
-    }
-
-    .info-card .info-label {
-      font-weight: 700;
-      color: #1a1a1a;
-    }
-
-    .info-card .info-value {
-      color: #4b5563;
-      text-align: right;
-    }
-
-    /* CTA Button */
-    .cta-button {
-      display: inline-block;
-      background: #1a1a1a;
-      color: #ffffff !important;
-      font-size: 15px;
-      font-weight: 700;
-      text-decoration: none;
-      padding: 14px 32px;
-      border-radius: 8px;
-      margin: 20px 0;
-      border: 2px solid #1a1a1a;
-      box-shadow: 4px 4px 0px #fbbf24;
-      transition: all 0.2s;
-    }
-
-    .cta-button:hover {
-      box-shadow: 2px 2px 0px #fbbf24;
-      transform: translate(2px, 2px);
-    }
-
-    /* Status badge */
-    .status-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .status-confirmed {
-      background: #d1fae5;
-      color: #065f46;
-      border: 1.5px solid #065f46;
-    }
-
-    .status-cancelled {
-      background: #fee2e2;
-      color: #991b1b;
-      border: 1.5px solid #991b1b;
-    }
-
-    .status-completed {
-      background: #dbeafe;
-      color: #1e40af;
-      border: 1.5px solid #1e40af;
-    }
-
-    /* Divider */
-    .divider {
-      height: 2px;
-      background: #e5e7eb;
-      margin: 24px 0;
-      border: none;
-    }
-
-    /* Footer */
-    .email-footer {
-      padding: 20px 32px;
-      text-align: center;
-      border-top: 2px solid #e5e7eb;
-    }
-
-    .email-footer p {
-      margin: 4px 0;
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-    .email-footer a {
-      color: #6b7280;
-      text-decoration: underline;
-    }
-
-    /* Responsive */
-    @media only screen and (max-width: 620px) {
-      .email-wrapper { padding: 12px 8px; }
-      .email-body { padding: 24px 20px; }
-      .email-header { padding: 20px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="email-wrapper">
-    <div class="email-card">
-      <div class="email-header">
-        <h1>Peer<span class="logo-accent">Support</span></h1>
-      </div>
-      ${bodyContent}
-      <div class="email-footer">
-        <p>© ${new Date().getFullYear()} PeerSupport. All rights reserved.</p>
-        <p>
-          <a href="${FRONTEND_URL}">Visit PeerSupport</a>
-        </p>
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[character]));
 }
 
-// ─── Helper: format date/time in IST ─────────────────────────────────────────
+function safeText(value, fallback = 'Not available') {
+  const text = String(value ?? '').trim();
+  return escapeHtml(text || fallback);
+}
 
-function formatDateIST(date) {
-  const d = new Date(date);
-  return d.toLocaleDateString('en-IN', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'Asia/Kolkata',
+function safeUrl(path = '') {
+  const url = path.startsWith('http') ? path : `${FRONTEND_URL}${path}`;
+  try {
+    const parsed = new URL(url);
+    return ['http:', 'https:'].includes(parsed.protocol) ? escapeHtml(parsed.toString()) : FRONTEND_URL;
+  } catch {
+    return FRONTEND_URL;
+  }
+}
+
+function validDate(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatDateIST(value) {
+  const date = validDate(value);
+  return date
+    ? date.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: IST_TIME_ZONE })
+    : 'To be confirmed';
+}
+
+function formatTimeIST(value) {
+  const date = validDate(value);
+  return date
+    ? date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: IST_TIME_ZONE })
+    : 'To be confirmed';
+}
+
+function formatCurrency(amount, currency = 'INR') {
+  const numericAmount = Number(amount);
+  if (!Number.isFinite(numericAmount)) return 'Amount to be confirmed';
+  try {
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency, maximumFractionDigits: 2 }).format(numericAmount);
+  } catch {
+    return `${currency} ${numericAmount.toFixed(2)}`;
+  }
+}
+
+function dashboardPath(role) {
+  return role === 'MENTOR' ? '/mentor/dashboard' : '/mentee/dashboard';
+}
+
+function sessionPath(role) {
+  return role === 'MENTOR' ? '/mentor/bookings' : '/mentee/sessions';
+}
+
+function calendarUrl({ mentorName, serviceName, startTime, endTime, bookingId }) {
+  const start = validDate(startTime);
+  const end = validDate(endTime);
+  if (!start || !end) return null;
+  const toGoogleDate = (date) => date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const details = `PeerSupport booking ${bookingId || ''}`.trim();
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: `${serviceName || 'Mentoring session'} with ${mentorName || 'PeerSupport'}`,
+    dates: `${toGoogleDate(start)}/${toGoogleDate(end)}`,
+    details,
   });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
-function formatTimeIST(date) {
-  const d = new Date(date);
-  return d.toLocaleTimeString('en-IN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: 'Asia/Kolkata',
-  });
-}
-
-function infoRow(label, value) {
+function row(label, value, last = false) {
   return `
-    <table width="100%" cellpadding="0" cellspacing="0" style="border-bottom: 1px dashed #e5e7eb;">
-      <tr>
-        <td style="padding: 8px 0; font-size: 14px; font-weight: 700; color: #1a1a1a;">${label}</td>
-        <td style="padding: 8px 0; font-size: 14px; color: #4b5563; text-align: right;">${value}</td>
-      </tr>
+    <tr>
+      <td style="padding:10px 0;border-bottom:${last ? '0' : '1px solid #e5e7eb'};font:600 13px/18px Arial,sans-serif;color:#52525b;">${escapeHtml(label)}</td>
+      <td align="right" style="padding:10px 0;border-bottom:${last ? '0' : '1px solid #e5e7eb'};font:600 13px/18px Arial,sans-serif;color:#18181b;">${value}</td>
+    </tr>`;
+}
+
+function detailCard(rows) {
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;background:#fafafa;border:1px solid #e4e4e7;border-radius:10px;">
+      <tr><td style="padding:8px 18px;">${rows.join('')}</td></tr>
     </table>`;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE: Welcome / Registration
-// ═══════════════════════════════════════════════════════════════════════════════
+function status(label, tone = 'green') {
+  const colors = {
+    green: ['#ecfdf5', '#047857'],
+    red: ['#fef2f2', '#b91c1c'],
+    blue: ['#eff6ff', '#1d4ed8'],
+    amber: ['#fffbeb', '#b45309'],
+  };
+  const [background, color] = colors[tone] || colors.green;
+  return `<span style="display:inline-block;padding:3px 8px;border-radius:999px;background:${background};color:${color};font:700 11px/14px Arial,sans-serif;letter-spacing:.3px;text-transform:uppercase;">${escapeHtml(label)}</span>`;
+}
+
+function button(href, label, secondary = false) {
+  const background = secondary ? '#ffffff' : '#18181b';
+  const color = secondary ? '#18181b' : '#ffffff';
+  const border = secondary ? '1px solid #d4d4d8' : '1px solid #18181b';
+  return `
+    <table role="presentation" cellpadding="0" cellspacing="0" style="display:inline-table;margin:0 8px 10px 0;">
+      <tr><td style="border-radius:8px;background:${background};border:${border};">
+        <a href="${safeUrl(href)}" style="display:inline-block;padding:12px 18px;font:700 14px/18px Arial,sans-serif;color:${color};text-decoration:none;border-radius:8px;">${escapeHtml(label)} &rarr;</a>
+      </td></tr>
+    </table>`;
+}
+
+function layout({ title, preheader, content }) {
+  const year = new Date().getFullYear();
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="x-apple-disable-message-reformatting"><title>${escapeHtml(title)}</title>
+<style>
+  @media screen and (max-width:620px){.container{width:100% !important}.content{padding:28px 22px !important}.mobile-block{display:block !important;width:100% !important}.mobile-hide{display:none !important}}
+</style></head>
+<body style="margin:0;padding:0;background:#f4f4f5;color:#18181b;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">${escapeHtml(preheader)}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;"><tr><td align="center" style="padding:32px 12px;">
+    <table class="container" role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;border:1px solid #e4e4e7;border-radius:14px;overflow:hidden;">
+      <tr><td style="padding:22px 32px;background:#18181b;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td style="font:700 20px/24px Arial,sans-serif;color:#ffffff;letter-spacing:-.4px;">Peer<span style="color:#fbbf24;">Support</span></td>
+          <td align="right" class="mobile-hide" style="font:600 12px/16px Arial,sans-serif;color:#a1a1aa;">Mentorship, made personal</td>
+        </tr></table>
+      </td></tr>
+      <tr><td class="content" style="padding:34px 32px;">${content}</td></tr>
+      <tr><td style="padding:22px 32px;background:#fafafa;border-top:1px solid #e4e4e7;text-align:center;">
+        <p style="margin:0 0 6px;font:400 12px/18px Arial,sans-serif;color:#71717a;">Questions? <a href="mailto:${escapeHtml(SUPPORT_EMAIL)}" style="color:#3f3f46;text-decoration:underline;">Contact support</a></p>
+        <p style="margin:0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">&copy; ${year} PeerSupport</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+}
+
+function message({ eyebrow, heading, intro, children }) {
+  return `
+    <p style="margin:0 0 10px;font:700 11px/14px Arial,sans-serif;letter-spacing:1px;text-transform:uppercase;color:#71717a;">${escapeHtml(eyebrow)}</p>
+    <h1 style="margin:0 0 12px;font:700 28px/34px Arial,sans-serif;letter-spacing:-.7px;color:#18181b;">${escapeHtml(heading)}</h1>
+    <p style="margin:0;font:400 15px/24px Arial,sans-serif;color:#52525b;">${intro}</p>
+    ${children}`;
+}
 
 export function welcomeEmail({ name, email, role }) {
-  const roleName = role === 'MENTOR' ? 'Mentor' : 'Mentee';
-  const dashboardUrl =
-    role === 'MENTOR'
-      ? `${FRONTEND_URL}/mentor/dashboard`
-      : `${FRONTEND_URL}/mentee/dashboard`;
-
-  const body = `
-    <div class="email-body">
-      <h2>Welcome to PeerSupport! 🎉</h2>
-      <p class="subtitle">Your account has been created successfully.</p>
-
-      <p>Hey <strong>${name || 'there'}</strong>,</p>
-      <p>
-        We're thrilled to have you join PeerSupport as a <strong>${roleName}</strong>.
-        ${
-          role === 'MENTOR'
-            ? 'Share your expertise and help mentees achieve their goals.'
-            : 'Connect with experienced mentors who can guide your journey.'
-        }
-      </p>
-
-      <div class="info-card">
-        ${infoRow('Email', email)}
-        ${infoRow('Role', roleName)}
-        ${infoRow('Joined', formatDateIST(new Date()))}
-      </div>
-
-      <p>Complete your profile to get started:</p>
-
-      <div style="text-align: center;">
-        <a href="${FRONTEND_URL}/onboarding" class="cta-button">
-          Complete Your Profile →
-        </a>
-      </div>
-
-      <hr class="divider" />
-
-      <p style="font-size: 13px; color: #9ca3af;">
-        If you didn't create this account, please ignore this email or contact our support.
-      </p>
-    </div>`;
-
+  const isMentor = role === 'MENTOR';
+  const roleName = isMentor ? 'Mentor' : 'Mentee';
+  const body = message({
+    eyebrow: 'Your account is ready',
+    heading: `Welcome, ${name || 'there'}`,
+    intro: `You’re now part of PeerSupport as a <strong>${roleName}</strong>. ${isMentor ? 'Set up your profile so mentees can find the experience you bring.' : 'Complete your profile, then find a mentor who can help you make progress.'}`,
+    children: `${detailCard([
+      row('Email', safeText(email, 'Not provided')),
+      row('Role', roleName),
+      row('Joined', escapeHtml(formatDateIST(new Date())), true),
+    ])}
+    <p style="margin:0 0 20px;font:400 15px/24px Arial,sans-serif;color:#52525b;">A complete profile helps make every introduction more useful.</p>
+    ${button('/onboarding', 'Complete profile')}
+    ${button(dashboardPath(role), 'Open dashboard', true)}
+    <p style="margin:18px 0 0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">If you didn’t create this account, you can safely ignore this email.</p>`,
+  });
+  const firstNameText = String(name || 'there').trim() || 'there';
   return {
-    subject: `Welcome to PeerSupport, ${name || 'there'}! 🚀`,
-    html: layout('Welcome to PeerSupport', body),
+    subject: `Welcome to PeerSupport, ${firstNameText}`,
+    html: layout({ title: 'Welcome to PeerSupport', preheader: 'Your PeerSupport account is ready.', content: body }),
+    text: `Welcome, ${firstNameText}! Your PeerSupport ${roleName.toLowerCase()} account is ready. Complete your profile: ${safeUrl('/onboarding')}`,
   };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE: Booking Confirmed (for Mentee)
-// ═══════════════════════════════════════════════════════════════════════════════
-
-export function bookingConfirmedMenteeEmail({
-  menteeName,
-  mentorName,
-  serviceName,
-  startTime,
-  endTime,
-  amount,
-  bookingId,
-}) {
-  const body = `
-    <div class="email-body">
-      <h2>Booking Confirmed! ✅</h2>
-      <p class="subtitle">Your session has been booked and payment verified.</p>
-
-      <p>Hey <strong>${menteeName || 'there'}</strong>,</p>
-      <p>
-        Great news! Your session with <strong>${mentorName}</strong> has been confirmed.
-        Here are the details:
-      </p>
-
-      <div class="info-card">
-        ${infoRow('Mentor', mentorName)}
-        ${infoRow('Service', serviceName || 'Mentoring Session')}
-        ${infoRow('Date', formatDateIST(startTime))}
-        ${infoRow('Time', `${formatTimeIST(startTime)} – ${formatTimeIST(endTime)}`)}
-        ${infoRow('Amount Paid', `₹${amount}`)}
-        ${infoRow('Status', '<span class="status-badge status-confirmed">Confirmed</span>')}
-      </div>
-
-      <p>You'll be able to join the meeting room 5 minutes before the scheduled time.</p>
-
-      <div style="text-align: center;">
-        <a href="${FRONTEND_URL}/mentee/sessions" class="cta-button">
-          View My Sessions →
-        </a>
-      </div>
-
-      <hr class="divider" />
-
-      <p style="font-size: 13px; color: #9ca3af;">
-        Booking ID: ${bookingId}
-      </p>
-    </div>`;
-
+export function bookingConfirmedMenteeEmail({ menteeName, mentorName, serviceName, startTime, endTime, amount, bookingId }) {
+  const mentor = safeText(mentorName, 'your mentor');
+  const service = safeText(serviceName, 'Mentoring session');
+  const calendar = calendarUrl({ mentorName, serviceName, startTime, endTime, bookingId });
+  const body = message({
+    eyebrow: 'Booking confirmed', heading: 'Your session is scheduled',
+    intro: `Hi <strong>${safeText(menteeName, 'there')}</strong> — your session with <strong>${mentor}</strong> is confirmed. We’ll have the meeting room ready shortly before it begins.`,
+    children: `${detailCard([
+      row('Mentor', mentor), row('Session', service), row('Date', escapeHtml(formatDateIST(startTime))),
+      row('Time', escapeHtml(`${formatTimeIST(startTime)} – ${formatTimeIST(endTime)} IST`)),
+      row('Amount paid', escapeHtml(formatCurrency(amount))), row('Status', status('Confirmed'), true),
+    ])}
+    ${button(sessionPath('MENTEE'), 'View session')}
+    ${calendar ? button(calendar, 'Add to calendar', true) : ''}
+    <p style="margin:14px 0 0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">Booking ID: ${safeText(bookingId)}</p>`,
+  });
   return {
-    subject: `Session Confirmed with ${mentorName} — ${formatDateIST(startTime)}`,
-    html: layout('Booking Confirmed', body),
+    subject: `Confirmed: session with ${String(mentorName || 'your mentor').trim()} on ${formatDateIST(startTime)}`,
+    html: layout({ title: 'Booking confirmed', preheader: `Your session with ${mentorName || 'your mentor'} is confirmed.`, content: body }),
+    text: `Your PeerSupport session with ${mentorName || 'your mentor'} is confirmed for ${formatDateIST(startTime)}, ${formatTimeIST(startTime)} IST. View it: ${safeUrl(sessionPath('MENTEE'))}`,
   };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE: New Booking Alert (for Mentor)
-// ═══════════════════════════════════════════════════════════════════════════════
-
-export function newBookingMentorEmail({
-  mentorName,
-  menteeName,
-  menteeEmail,
-  serviceName,
-  startTime,
-  endTime,
-  amount,
-  purposeOfCall,
-  bookingId,
-}) {
-  const body = `
-    <div class="email-body">
-      <h2>New Session Booked! 📅</h2>
-      <p class="subtitle">A mentee has booked a session with you.</p>
-
-      <p>Hey <strong>${mentorName || 'Mentor'}</strong>,</p>
-      <p>
-        <strong>${menteeName}</strong> has booked a <strong>${serviceName || 'mentoring session'}</strong> with you.
-      </p>
-
-      <div class="info-card">
-        ${infoRow('Mentee', menteeName)}
-        ${infoRow('Email', menteeEmail)}
-        ${infoRow('Service', serviceName || 'Mentoring Session')}
-        ${infoRow('Date', formatDateIST(startTime))}
-        ${infoRow('Time', `${formatTimeIST(startTime)} – ${formatTimeIST(endTime)}`)}
-        ${infoRow('Earnings', `₹${amount}`)}
-        ${purposeOfCall ? infoRow('Purpose', purposeOfCall) : ''}
-      </div>
-
-      <div style="text-align: center;">
-        <a href="${FRONTEND_URL}/mentor/sessions" class="cta-button">
-          View Sessions →
-        </a>
-      </div>
-
-      <hr class="divider" />
-
-      <p style="font-size: 13px; color: #9ca3af;">
-        Booking ID: ${bookingId}
-      </p>
-    </div>`;
-
+export function newBookingMentorEmail({ mentorName, menteeName, menteeEmail, serviceName, startTime, endTime, amount, purposeOfCall, bookingId }) {
+  const mentee = safeText(menteeName, 'A mentee');
+  const calendar = calendarUrl({ mentorName, serviceName, startTime, endTime, bookingId });
+  const body = message({
+    eyebrow: 'New booking', heading: 'A new session is on your calendar',
+    intro: `Hi <strong>${safeText(mentorName, 'there')}</strong> — <strong>${mentee}</strong> has booked a session with you.`,
+    children: `${detailCard([
+      row('Mentee', mentee), row('Email', safeText(menteeEmail)), row('Session', safeText(serviceName, 'Mentoring session')),
+      row('Date', escapeHtml(formatDateIST(startTime))), row('Time', escapeHtml(`${formatTimeIST(startTime)} – ${formatTimeIST(endTime)} IST`)),
+      row('Earnings', escapeHtml(formatCurrency(amount))),
+      ...(purposeOfCall ? [row('Goal for this session', safeText(purposeOfCall))] : []),
+      row('Status', status('Confirmed'), true),
+    ])}
+    ${button(sessionPath('MENTOR'), 'Review booking')}
+    ${calendar ? button(calendar, 'Add to calendar', true) : ''}
+    <p style="margin:14px 0 0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">Booking ID: ${safeText(bookingId)}</p>`,
+  });
   return {
-    subject: `New Booking from ${menteeName} — ${formatDateIST(startTime)}`,
-    html: layout('New Session Booked', body),
+    subject: `New booking: ${String(menteeName || 'a mentee').trim()} on ${formatDateIST(startTime)}`,
+    html: layout({ title: 'New booking', preheader: 'A new mentoring session has been booked.', content: body }),
+    text: `${menteeName || 'A mentee'} booked ${serviceName || 'a mentoring session'} for ${formatDateIST(startTime)}, ${formatTimeIST(startTime)} IST. Review it: ${safeUrl(sessionPath('MENTOR'))}`,
   };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE: Booking Cancelled
-// ═══════════════════════════════════════════════════════════════════════════════
-
-export function bookingCancelledEmail({
-  recipientName,
-  cancelledByRole,
-  mentorName,
-  menteeName,
-  serviceName,
-  startTime,
-  endTime,
-  cancelledReason,
-  bookingId,
-}) {
-  const cancelledBy = cancelledByRole === 'mentee' ? menteeName : mentorName;
-
-  const body = `
-    <div class="email-body">
-      <h2>Session Cancelled ❌</h2>
-      <p class="subtitle">A scheduled session has been cancelled.</p>
-
-      <p>Hey <strong>${recipientName || 'there'}</strong>,</p>
-      <p>
-        The session between <strong>${menteeName}</strong> and <strong>${mentorName}</strong>
-        has been cancelled by the <strong>${cancelledByRole}</strong>.
-      </p>
-
-      <div class="info-card">
-        ${infoRow('Service', serviceName || 'Mentoring Session')}
-        ${infoRow('Date', formatDateIST(startTime))}
-        ${infoRow('Time', `${formatTimeIST(startTime)} – ${formatTimeIST(endTime)}`)}
-        ${cancelledReason ? infoRow('Reason', cancelledReason) : ''}
-        ${infoRow('Status', '<span class="status-badge status-cancelled">Cancelled</span>')}
-      </div>
-
-      ${
-        cancelledByRole === 'mentor'
-          ? `<p>If a payment was made, a refund will be initiated shortly.</p>`
-          : ''
-      }
-
-      <div style="text-align: center;">
-        <a href="${FRONTEND_URL}" class="cta-button">
-          Go to Dashboard →
-        </a>
-      </div>
-
-      <hr class="divider" />
-
-      <p style="font-size: 13px; color: #9ca3af;">
-        Booking ID: ${bookingId}
-      </p>
-    </div>`;
-
+export function bookingCancelledEmail({ recipientName, recipientRole, cancelledByRole, mentorName, menteeName, serviceName, startTime, endTime, cancelledReason, bookingId }) {
+  const isMentorCancellation = cancelledByRole === 'mentor';
+  const cancelledBy = isMentorCancellation ? safeText(mentorName, 'the mentor') : safeText(menteeName, 'the mentee');
+  const body = message({
+    eyebrow: 'Session update', heading: 'This session was cancelled',
+    intro: `Hi <strong>${safeText(recipientName, 'there')}</strong> — ${cancelledBy} cancelled the scheduled session.`,
+    children: `${detailCard([
+      row('Session', safeText(serviceName, 'Mentoring session')), row('Date', escapeHtml(formatDateIST(startTime))),
+      row('Time', escapeHtml(`${formatTimeIST(startTime)} – ${formatTimeIST(endTime)} IST`)),
+      ...(cancelledReason ? [row('Reason', safeText(cancelledReason))] : []), row('Status', status('Cancelled', 'red'), true),
+    ])}
+    <p style="margin:0 0 20px;font:400 15px/24px Arial,sans-serif;color:#52525b;">${isMentorCancellation ? 'If you paid for this session, your refund will be initiated shortly.' : 'You can book another time whenever you’re ready.'}</p>
+    ${recipientRole === 'MENTOR'
+      ? button(sessionPath('MENTOR'), 'View bookings')
+      : `${button('/mentee/find-mentors', 'Find a mentor')}${button(sessionPath('MENTEE'), 'View sessions', true)}`}
+    <p style="margin:14px 0 0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">Booking ID: ${safeText(bookingId)}</p>`,
+  });
   return {
-    subject: `Session Cancelled — ${formatDateIST(startTime)}`,
-    html: layout('Session Cancelled', body),
+    subject: `Cancelled: ${serviceName || 'your session'} on ${formatDateIST(startTime)}`,
+    html: layout({ title: 'Session cancelled', preheader: 'A scheduled PeerSupport session has been cancelled.', content: body }),
+    text: `Your PeerSupport session on ${formatDateIST(startTime)} was cancelled by ${isMentorCancellation ? 'the mentor' : 'the mentee'}. ${isMentorCancellation ? 'Your refund will be initiated shortly.' : ''}`,
   };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE: Session Completed
-// ═══════════════════════════════════════════════════════════════════════════════
-
-export function sessionCompletedMenteeEmail({
-  menteeName,
-  mentorName,
-  serviceName,
-  startTime,
-  bookingId,
-}) {
-  const body = `
-    <div class="email-body">
-      <h2>Session Completed! 🎓</h2>
-      <p class="subtitle">Hope you had a great session!</p>
-
-      <p>Hey <strong>${menteeName || 'there'}</strong>,</p>
-      <p>
-        Your session with <strong>${mentorName}</strong> has been marked as completed.
-        We hope it was a productive experience!
-      </p>
-
-      <div class="info-card">
-        ${infoRow('Mentor', mentorName)}
-        ${infoRow('Service', serviceName || 'Mentoring Session')}
-        ${infoRow('Date', formatDateIST(startTime))}
-        ${infoRow('Status', '<span class="status-badge status-completed">Completed</span>')}
-      </div>
-
-      <p>Your feedback helps mentors improve and helps others find the right mentor. Take a moment to leave a review:</p>
-
-      <div style="text-align: center;">
-        <a href="${FRONTEND_URL}/mentee/sessions" class="cta-button">
-          Leave a Review →
-        </a>
-      </div>
-    </div>`;
-
+export function sessionCompletedMenteeEmail({ menteeName, mentorName, serviceName, startTime, bookingId }) {
+  const body = message({
+    eyebrow: 'Session complete', heading: 'Thanks for showing up',
+    intro: `Hi <strong>${safeText(menteeName, 'there')}</strong> — your session with <strong>${safeText(mentorName, 'your mentor')}</strong> is complete. A quick review helps other mentees find the right support.`,
+    children: `${detailCard([
+      row('Mentor', safeText(mentorName, 'Your mentor')), row('Session', safeText(serviceName, 'Mentoring session')),
+      row('Date', escapeHtml(formatDateIST(startTime))), row('Status', status('Completed', 'blue'), true),
+    ])}
+    ${button(sessionPath('MENTEE'), 'Leave a review')}
+    <p style="margin:14px 0 0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">Booking ID: ${safeText(bookingId)}</p>`,
+  });
   return {
-    subject: `Session with ${mentorName} Completed — Share Your Feedback! ⭐`,
-    html: layout('Session Completed', body),
+    subject: `How was your session with ${String(mentorName || 'your mentor').trim()}?`,
+    html: layout({ title: 'Session completed', preheader: 'Your session is complete — share your feedback.', content: body }),
+    text: `Your session with ${mentorName || 'your mentor'} is complete. Leave a review: ${safeUrl(sessionPath('MENTEE'))}`,
   };
 }
 
-export function sessionCompletedMentorEmail({
-  mentorName,
-  menteeName,
-  serviceName,
-  startTime,
-  bookingId,
-}) {
-  const body = `
-    <div class="email-body">
-      <h2>Session Completed! ✅</h2>
-      <p class="subtitle">Another successful session in the books.</p>
-
-      <p>Hey <strong>${mentorName || 'Mentor'}</strong>,</p>
-      <p>
-        Your session with <strong>${menteeName}</strong> has been marked as completed.
-        Great job sharing your expertise!
-      </p>
-
-      <div class="info-card">
-        ${infoRow('Mentee', menteeName)}
-        ${infoRow('Service', serviceName || 'Mentoring Session')}
-        ${infoRow('Date', formatDateIST(startTime))}
-        ${infoRow('Status', '<span class="status-badge status-completed">Completed</span>')}
-      </div>
-
-      <p>Don't forget to provide feedback for your mentee to help them grow:</p>
-
-      <div style="text-align: center;">
-        <a href="${FRONTEND_URL}/mentor/sessions" class="cta-button">
-          Give Feedback →
-        </a>
-      </div>
-    </div>`;
-
+export function sessionCompletedMentorEmail({ mentorName, menteeName, serviceName, startTime, bookingId }) {
+  const body = message({
+    eyebrow: 'Session complete', heading: 'Another session, well done',
+    intro: `Hi <strong>${safeText(mentorName, 'there')}</strong> — your session with <strong>${safeText(menteeName, 'your mentee')}</strong> is complete. Share feedback while the conversation is fresh.`,
+    children: `${detailCard([
+      row('Mentee', safeText(menteeName, 'Your mentee')), row('Session', safeText(serviceName, 'Mentoring session')),
+      row('Date', escapeHtml(formatDateIST(startTime))), row('Status', status('Completed', 'blue'), true),
+    ])}
+    ${button(sessionPath('MENTOR'), 'Add feedback')}
+    <p style="margin:14px 0 0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">Booking ID: ${safeText(bookingId)}</p>`,
+  });
   return {
-    subject: `Session with ${menteeName} Completed`,
-    html: layout('Session Completed', body),
+    subject: `Session complete: ${String(menteeName || 'your mentee').trim()}`,
+    html: layout({ title: 'Session completed', preheader: 'Your mentoring session is complete.', content: body }),
+    text: `Your session with ${menteeName || 'your mentee'} is complete. Add feedback: ${safeUrl(sessionPath('MENTOR'))}`,
   };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// TEMPLATE: Payment Receipt
-// ═══════════════════════════════════════════════════════════════════════════════
-
-export function paymentReceiptEmail({
-  menteeName,
-  mentorName,
-  serviceName,
-  amount,
-  currency,
-  paymentId,
-  paidAt,
-  bookingId,
-  startTime,
-}) {
-  const body = `
-    <div class="email-body">
-      <h2>Payment Receipt 🧾</h2>
-      <p class="subtitle">Your payment has been processed successfully.</p>
-
-      <p>Hey <strong>${menteeName || 'there'}</strong>,</p>
-      <p>Here's your payment receipt for the upcoming session:</p>
-
-      <div class="info-card">
-        ${infoRow('Payment ID', paymentId)}
-        ${infoRow('Amount', `${currency === 'INR' ? '₹' : currency}${amount}`)}
-        ${infoRow('Paid On', formatDateIST(paidAt))}
-        ${infoRow('Mentor', mentorName)}
-        ${infoRow('Service', serviceName || 'Mentoring Session')}
-        ${startTime ? infoRow('Session Date', formatDateIST(startTime)) : ''}
-        ${infoRow('Status', '<span class="status-badge status-confirmed">Paid</span>')}
-      </div>
-
-      <hr class="divider" />
-
-      <p style="font-size: 13px; color: #9ca3af;">
-        Booking ID: ${bookingId} · For any payment issues, contact support.
-      </p>
-    </div>`;
-
+export function paymentReceiptEmail({ menteeName, mentorName, serviceName, amount, currency, paymentId, paidAt, bookingId, startTime }) {
+  const amountLabel = formatCurrency(amount, currency || 'INR');
+  const body = message({
+    eyebrow: 'Payment receipt', heading: 'Payment received',
+    intro: `Hi <strong>${safeText(menteeName, 'there')}</strong> — we received your payment of <strong>${escapeHtml(amountLabel)}</strong>. Your invoice is attached to this email.`,
+    children: `${detailCard([
+      row('Payment ID', safeText(paymentId)), row('Paid on', escapeHtml(formatDateIST(paidAt))), row('Amount', escapeHtml(amountLabel)),
+      row('Mentor', safeText(mentorName, 'Your mentor')), row('Session', safeText(serviceName, 'Mentoring session')),
+      ...(startTime ? [row('Session date', escapeHtml(formatDateIST(startTime)))] : []), row('Status', status('Paid'), true),
+    ])}
+    ${button(sessionPath('MENTEE'), 'View booking')}
+    <p style="margin:14px 0 0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">Booking ID: ${safeText(bookingId)}</p>`,
+  });
   return {
-    subject: `Payment Receipt — ₹${amount} for session with ${mentorName}`,
-    html: layout('Payment Receipt', body),
+    subject: `Receipt: ${amountLabel} paid to PeerSupport`,
+    html: layout({ title: 'Payment receipt', preheader: `Your payment of ${amountLabel} was received.`, content: body }),
+    text: `Payment received: ${amountLabel}. Payment ID: ${paymentId || 'Not available'}. Your invoice is attached. View booking: ${safeUrl(sessionPath('MENTEE'))}`,
   };
 }

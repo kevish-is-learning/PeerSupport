@@ -27,6 +27,22 @@ const getErrorMessage = (error) => {
   if (paths.some((path) => path.startsWith('professionalExperience'))) {
     return 'Please complete your work experience details.';
   }
+  if (paths.includes('profilePhotoUrl')) {
+    return 'Please upload a valid profile picture.';
+  }
+  if (paths.includes('fullName')) {
+    return 'Please enter your full name.';
+  }
+  if (paths.includes('bio')) {
+    return 'Please add a short bio of at least 10 characters.';
+  }
+  const mentoringIssues = error.issues?.filter((issue) => issue.path?.join('.').startsWith('mentoringQA')) || [];
+  if (mentoringIssues.some((issue) => issue.code === 'too_small')) {
+    return 'Each mentoring response must be at least 30 characters.';
+  }
+  if (mentoringIssues.length) {
+    return 'Please complete all mentoring questions.';
+  }
   return 'Please review the required profile fields and try again.';
 };
 

@@ -7,10 +7,10 @@ export const MENTOR_NAV_ITEMS = [
   { label: "Analytics", href: "/mentor/analytics", icon: BarChart3, requiresApproval: true },
   { label: "Payouts", href: "/mentor/payments", icon: Wallet, requiresApproval: true },
   { label: "Profile", href: "/mentor/profile", icon: User, requiresApproval: false },
-  { label: "Availability", href: "/mentor/availability", icon: CalendarDays, requiresApproval: false },
+  { label: "Availability", href: "/mentor/availability", icon: CalendarDays, requiresApproval: true },
 ];
 
-export const MENTOR_ALLOWED_UNAPPROVED_ROUTES = ["/mentor/profile", "/mentor/help-center", "/mentor/availability"];
+export const MENTOR_ALLOWED_UNAPPROVED_ROUTES = ["/mentor/profile", "/mentor/help-center"];
 
 export const normalizeMentorPath = (path) => {
   if (!path) {

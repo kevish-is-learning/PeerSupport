@@ -123,7 +123,6 @@ export default function MentorSidebarShell({ children }) {
         <nav className="mt-6 px-4 flex flex-col gap-1.5 grow overflow-y-auto">
           {MENTOR_NAV_ITEMS.map((item) => {
             const isActive = normalizeMentorPath(item.href) === normalizedPath;
-            {console.log("-----------", item.requiresApproval && !approved)}
             const isLocked = item.requiresApproval && !approved;
             const Icon = item.icon;
 

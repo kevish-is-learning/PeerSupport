@@ -1,5 +1,5 @@
 import { prisma } from '../config/database.js';
-import { destroyAsset } from '../config/cloudinary.js';
+import { destroyAsset, isSameCloudinaryAsset } from '../config/cloudinary.js';
 import {
   createMentorProfileSchema,
   updateMentorProfileSchema,
@@ -183,10 +183,6 @@ class MentorProfileService {
       select: {
         id: true,
         approvalStatus: true,
-        education: true,
-        professionalExperience: true,
-        linkedInUrl: true,
-        mentoringQA: true,
         collegeDocumentUrl: true,
         user: { select: { profilePicture: true } }
       },
@@ -199,15 +195,10 @@ class MentorProfileService {
     const nextProfilePhotoUrl = profilePhotoUrl ?? existingProfile.user?.profilePicture;
     const nextCollegeDocumentUrl = restData.collegeDocumentUrl ?? existingProfile.collegeDocumentUrl;
 
-    const materiallyChanged = [
-      ['education', restData.education],
-      ['professionalExperience', restData.professionalExperience],
-      ['linkedInUrl', restData.linkedInUrl],
-      ['mentoringQA', mentoringQA],
-      ['collegeDocumentUrl', restData.collegeDocumentUrl],
-    ].some(([key, value]) => value !== undefined && JSON.stringify(value) !== JSON.stringify(existingProfile[key]));
-    const mustResubmit = existingProfile.approvalStatus === 'REJECTED' ||
-      (existingProfile.approvalStatus === 'APPROVED' && materiallyChanged);
+    // An approval is an administrative decision, not a side effect of normal
+    // profile edits. A rejected mentor may update and resubmit their profile,
+    // but an approved mentor must remain approved until an admin changes it.
+    const mustResubmit = existingProfile.approvalStatus === 'REJECTED';
 
     const updatedProfile = await prisma.$transaction(async (tx) => {
       if (fullName || profilePhotoUrl) {
@@ -229,14 +220,20 @@ class MentorProfileService {
       });
     });
 
-    if (profilePhotoUrl && existingProfile.user?.profilePicture && profilePhotoUrl !== existingProfile.user.profilePicture) {
+    if (
+      profilePhotoUrl
+      && existingProfile.user?.profilePicture
+      && profilePhotoUrl !== existingProfile.user.profilePicture
+      && !isSameCloudinaryAsset(profilePhotoUrl, existingProfile.user.profilePicture)
+    ) {
       await removeUploadedAsset(existingProfile.user.profilePicture);
     }
 
     if (
       restData.collegeDocumentUrl &&
       existingProfile.collegeDocumentUrl &&
-      restData.collegeDocumentUrl !== existingProfile.collegeDocumentUrl
+      restData.collegeDocumentUrl !== existingProfile.collegeDocumentUrl &&
+      !isSameCloudinaryAsset(restData.collegeDocumentUrl, existingProfile.collegeDocumentUrl)
     ) {
       await removeUploadedAsset(existingProfile.collegeDocumentUrl);
     }

@@ -1,4 +1,5 @@
 import multer from 'multer';
+import { randomUUID } from 'node:crypto';
 import cloudinary, { getFolder } from '../config/cloudinary.js';
 import { prisma } from '../config/database.js';
 
@@ -144,24 +145,24 @@ const mentorProfileUpload = (req, res, next) => {
 
       if (profilePhoto) {
         // e.g. mentor_john_doe_avatar
-        const publicId = `${prefix}_${displayName}_avatar`;
+        // A replacement needs a distinct ID. Reusing one would make cleanup
+        // of the previous URL delete the newly uploaded avatar.
+        const publicId = `${prefix}_${displayName}_avatar_${randomUUID()}`;
         uploads.profilePhotoUrl = await uploadToCloudinary(profilePhoto.buffer, {
           folder: getFolder(folderName, 'avatar'),
           public_id: publicId,
           resource_type: 'image',
           format: 'webp',
-          overwrite: true,
         });
       }
 
       if (collegeDocument) {
         // e.g. mentor_john_doe_college_doc
-        const publicId = `${prefix}_${displayName}_college_doc`;
+        const publicId = `${prefix}_${displayName}_college_doc_${randomUUID()}`;
         uploads.collegeDocumentUrl = await uploadToCloudinary(collegeDocument.buffer, {
           folder: getFolder(folderName, 'pdfs'),
           public_id: publicId,
           resource_type: 'image',
-          overwrite: true,
         });
       }
 
@@ -204,13 +205,12 @@ const menteeProfileUpload = (req, res, next) => {
 
       if (profilePhoto) {
         // e.g. mentee_jane_doe_avatar
-        const publicId = `${prefix}_${displayName}_avatar`;
+        const publicId = `${prefix}_${displayName}_avatar_${randomUUID()}`;
         uploads.profilePhotoUrl = await uploadToCloudinary(profilePhoto.buffer, {
           folder: getFolder(folderName, 'avatar'),
           public_id: publicId,
           resource_type: 'image',
           format: 'webp',
-          overwrite: true,
         });
       }
 
@@ -218,7 +218,7 @@ const menteeProfileUpload = (req, res, next) => {
         // e.g. mentee_jane_doe_resume
         // PDFs must be uploaded as resource_type 'image' on Cloudinary — this enables
         // visual processing, thumbnail generation, and proper Content-Type handling.
-        const publicId = `${prefix}_${displayName}_resume`;
+        const publicId = `${prefix}_${displayName}_resume_${randomUUID()}`;
 
         console.log('[Upload] Uploading resume →', {
           folder: getFolder(folderName, 'pdfs'),
@@ -232,7 +232,6 @@ const menteeProfileUpload = (req, res, next) => {
           folder: getFolder(folderName, 'pdfs'),
           public_id: publicId,
           resource_type: 'image',
-          overwrite: true,
         });
 
         console.log('[Upload] Resume uploaded successfully →', uploads.resumeUrl);

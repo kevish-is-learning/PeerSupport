@@ -118,6 +118,22 @@ const mentoringQASchema = parseJsonField(z.object({
   q3: z.string().trim().min(30).max(1500),
 }));
 
+const isApplicationManagedUploadUrl = (value) =>
+  value.startsWith('/uploads/') || /^https:\/\/res\.cloudinary\.com\//i.test(value);
+
+const isAllowedProfileImageUrl = (value) => {
+  if (isApplicationManagedUploadUrl(value)) return true;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:'
+      && (url.hostname === 'lh3.googleusercontent.com'
+        || url.hostname.endsWith('.googleusercontent.com'));
+  } catch {
+    return false;
+  }
+};
+
 const optionalUrlSchema = z
   .union([z.string().trim(), z.null()])
   .optional()
@@ -126,8 +142,16 @@ const optionalUrlSchema = z
       return true;
     }
 
-    return value.startsWith("/uploads/") || /^https:\/\/res\.cloudinary\.com\//i.test(value);
+    return isApplicationManagedUploadUrl(value);
   }, "Must reference an application-managed upload");
+
+const optionalProfileImageUrlSchema = z
+  .union([z.string().trim(), z.null()])
+  .optional()
+  .refine((value) => {
+    if (typeof value === 'undefined' || value === null) return true;
+    return isAllowedProfileImageUrl(value);
+  }, 'Please upload a valid profile picture');
 
 
 /**
@@ -144,7 +168,7 @@ export const createMentorProfileSchema = z.object({
   pgProfile: normalizeOptionalText,
   workExperience: normalizeOptionalText,
   certifications: normalizeOptionalText,
-  profilePhotoUrl: optionalUrlSchema.refine((value) => Boolean(value), 'Profile photo is required'),
+  profilePhotoUrl: optionalProfileImageUrlSchema.refine((value) => Boolean(value), 'Profile photo is required'),
   collegeDocumentUrl: optionalUrlSchema,
   education: educationSchema,
   professionalExperience: professionalExperienceSchema,

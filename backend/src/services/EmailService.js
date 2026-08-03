@@ -25,27 +25,34 @@ class EmailService {
    * Internal send helper — wraps Resend API call with error handling.
    * Never throws; logs errors and continues.
    */
-  async _send(to, { subject, html, attachments }) {
+  async _send(to, { subject, html, text, attachments }) {
+    const recipient = typeof to === 'string' ? to.trim() : '';
+    if (!recipient) {
+      console.warn(`📧 [EmailService] Skipping "${subject}" — recipient email is missing`);
+      return null;
+    }
+
     if (!resend) {
-      console.log(`📧 [EmailService] Resend not configured — skipping email to ${to}: "${subject}"`);
+      console.log(`📧 [EmailService] Resend not configured — skipping email to ${recipient}: "${subject}"`);
       return null;
     }
 
     try {
       const { data, error } = await resend.emails.send({
         from: FROM_EMAIL,
-        to,
+        to: recipient,
         subject,
         html,
+        text,
         attachments,
       });
 
       if (error) {
-        console.error(`📧 [EmailService] Failed to send email to ${to}:`, error);
+        console.error(`📧 [EmailService] Failed to send email to ${recipient}:`, error);
         return null;
       }
 
-      console.log(`📧 [EmailService] Email sent to ${to}: "${subject}" (id: ${data?.id})`);
+      console.log(`📧 [EmailService] Email sent to ${recipient}: "${subject}" (id: ${data?.id})`);
       return data;
     } catch (err) {
       console.error(`📧 [EmailService] Unexpected error sending email to ${to}:`, err.message);
@@ -140,6 +147,7 @@ class EmailService {
     // Email to mentee
     const menteeTemplate = bookingCancelledEmail({
       recipientName: menteeName,
+      recipientRole: 'MENTEE',
       cancelledByRole,
       mentorName,
       menteeName,
@@ -153,6 +161,7 @@ class EmailService {
     // Email to mentor
     const mentorTemplate = bookingCancelledEmail({
       recipientName: mentorName,
+      recipientRole: 'MENTOR',
       cancelledByRole,
       mentorName,
       menteeName,

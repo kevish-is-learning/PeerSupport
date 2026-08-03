@@ -172,6 +172,7 @@ export default function MentorOnboardingWizard({
         }
         setFiles((prev) => ({ ...prev, profilePhoto: file }));
         setPhotoPreviewUrl(URL.createObjectURL(file));
+        setFormData((prev) => ({ ...prev, profilePhotoUrl: "" }));
       } else {
         setFiles((prev) => ({ ...prev, [name]: file }));
       }
@@ -298,16 +299,13 @@ export default function MentorOnboardingWizard({
       toast.error("Select at least one area of expertise.");
       return;
     }
-    if (!formData.mentoringQ1.trim()) {
-      toast.error("Please answer: What inspired you to start mentoring?");
+    const mentoringAnswers = [formData.mentoringQ1, formData.mentoringQ2, formData.mentoringQ3];
+    if (mentoringAnswers.some((answer) => !answer.trim())) {
+      toast.error("Please complete all mentoring questions.");
       return;
     }
-    if (!formData.mentoringQ2.trim()) {
-      toast.error("Please answer: What challenges do you feel equipped to help with?");
-      return;
-    }
-    if (!formData.mentoringQ3.trim()) {
-      toast.error("Please answer: What defining experience would you share?");
+    if (mentoringAnswers.some((answer) => answer.trim().length < 30)) {
+      toast.error("Please write at least 30 characters for each mentoring response.");
       return;
     }
     setIsSubmitting(true);
@@ -435,6 +433,11 @@ export default function MentorOnboardingWizard({
                       <Upload className="w-4 h-4 mr-2" />
                       {files.profilePhoto ? "Change Photo" : "Upload Photo"}
                     </label>
+                    {files.profilePhoto && (
+                      <p className="mt-2 max-w-48 truncate text-xs font-medium text-emerald-700">
+                        Selected: {files.profilePhoto.name}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
