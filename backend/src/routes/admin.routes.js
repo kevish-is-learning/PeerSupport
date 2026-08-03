@@ -15,56 +15,56 @@ const router = Router();
 router.use(authenticateJWT, authorizeRoles('ADMIN'));
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
-router.get('/dashboard/stats', (req, res) => adminController.getDashboardStats(req, res));
+router.get('/dashboard/stats', adminController.getDashboardStats);
 
 // ─── Users ────────────────────────────────────────────────────────────────────
-router.get('/users', (req, res) => adminController.listUsers(req, res));
-router.get('/users/:userId', (req, res) => adminController.getUserDetail(req, res));
-router.patch('/users/:userId', (req, res) => adminController.toggleUserActive(req, res));
+router.get('/users', adminController.listUsers);
+router.get('/users/:userId', adminController.getUserDetail);
+router.patch('/users/:userId', adminController.toggleUserActive);
 
 // ─── Mentors ──────────────────────────────────────────────────────────────────
 // Existing waitlist endpoints (preserved)
-router.get('/mentor-waitlist', (req, res) => adminController.listWaitlist(req, res));
-router.patch('/mentor-waitlist/:profileId', (req, res) => adminController.updateApproval(req, res));
+router.get('/mentor-waitlist', adminController.listWaitlist);
+router.patch('/mentor-waitlist/:profileId', adminController.updateApproval);
 
 // Enhanced mentor management
-router.get('/mentors', (req, res) => adminController.listMentors(req, res));
-router.get('/mentors/:profileId', (req, res) => adminController.getMentorDetail(req, res));
-router.patch('/mentors/:profileId/suspend', (req, res) => adminController.suspendMentor(req, res));
-router.patch('/mentors/:profileId/unsuspend', (req, res) => adminController.unsuspendMentor(req, res));
+router.get('/mentors', adminController.listMentors);
+router.get('/mentors/:profileId', adminController.getMentorDetail);
+router.patch('/mentors/:profileId/suspend', adminController.suspendMentor);
+router.patch('/mentors/:profileId/unsuspend', adminController.unsuspendMentor);
 
 // ─── Bookings ─────────────────────────────────────────────────────────────────
-router.get('/bookings', (req, res) => adminController.listBookings(req, res));
-router.get('/bookings/:bookingId', (req, res) => adminController.getBookingDetail(req, res));
-router.patch('/bookings/:bookingId/status', (req, res) => adminController.overrideBookingStatus(req, res));
-router.patch('/bookings/:bookingId/cancel', (req, res) => adminController.adminCancelBooking(req, res));
+router.get('/bookings', adminController.listBookings);
+router.get('/bookings/:bookingId', adminController.getBookingDetail);
+router.patch('/bookings/:bookingId/status', adminController.overrideBookingStatus);
+router.patch('/bookings/:bookingId/cancel', adminController.adminCancelBooking);
 
 // ─── Payments ─────────────────────────────────────────────────────────────────
-router.get('/payments', (req, res) => adminController.listPayments(req, res));
-router.get('/payments/summary', (req, res) => adminController.getRevenueSummary(req, res));
-router.post('/payments/:paymentId/refund', (req, res) => adminController.adminRefund(req, res));
+router.get('/payments', adminController.listPayments);
+router.get('/payments/summary', adminController.getRevenueSummary);
+router.post('/payments/:paymentId/refund', adminController.adminRefund);
 
 // ─── Reviews & Feedback ──────────────────────────────────────────────────────
-router.get('/reviews', (req, res) => adminController.listReviews(req, res));
-router.delete('/reviews/:reviewId', (req, res) => adminController.deleteReview(req, res));
-router.get('/feedback', (req, res) => adminController.listFeedback(req, res));
+router.get('/reviews', adminController.listReviews);
+router.delete('/reviews/:reviewId', adminController.deleteReview);
+router.get('/feedback', adminController.listFeedback);
 
 // ─── Wallet Adjustments ──────────────────────────────────────────────────────
-router.post('/wallet/:mentorProfileId/adjust', (req, res) => adminController.adjustWallet(req, res));
+router.post('/wallet/:mentorProfileId/adjust', adminController.adjustWallet);
 
 // ─── Payouts ──────────────────────────────────────────────────────────────────
-router.get('/payouts', (req, res) => adminController.listPayouts(req, res));
-router.patch('/payouts/:payoutId/approve', (req, res) => adminController.approvePayout(req, res));
-router.patch('/payouts/:payoutId/complete', (req, res) => adminController.completePayout(req, res));
-router.patch('/payouts/:payoutId/fail', (req, res) => adminController.failPayout(req, res));
+router.get('/payouts', adminController.listPayouts);
+router.patch('/payouts/:payoutId/approve', adminController.approvePayout);
+router.patch('/payouts/:payoutId/complete', adminController.completePayout);
+router.patch('/payouts/:payoutId/fail', adminController.failPayout);
 
 // ─── Mentor Verification Calls ────────────────────────────────────────────────
-router.post('/mentor-verification/schedule', (req, res) => adminController.scheduleVerificationCall(req, res));
-router.patch('/mentor-verification/:callId/reschedule', (req, res) => adminController.rescheduleVerificationCall(req, res));
-router.patch('/mentor-verification/:callId/cancel', (req, res) => adminController.cancelVerificationCall(req, res));
-router.patch('/mentor-verification/:callId/complete', (req, res) => adminController.completeVerificationCall(req, res));
-router.patch('/mentor-verification/:callId/no-show', (req, res) => adminController.markVerificationNoShow(req, res));
-router.get('/mentor-verification/:callId', (req, res) => adminController.getVerificationCall(req, res));
-router.get('/mentor-verification/mentor/:mentorProfileId', (req, res) => adminController.getVerificationCallsForMentor(req, res));
+router.post('/mentor-verification/schedule', adminController.scheduleVerificationCall);
+router.patch('/mentor-verification/:callId/reschedule', adminController.rescheduleVerificationCall);
+router.patch('/mentor-verification/:callId/cancel', adminController.cancelVerificationCall);
+router.patch('/mentor-verification/:callId/complete', adminController.completeVerificationCall);
+router.patch('/mentor-verification/:callId/no-show', adminController.markVerificationNoShow);
+router.get('/mentor-verification/:callId', adminController.getVerificationCall);
+router.get('/mentor-verification/mentor/:mentorProfileId', adminController.getVerificationCallsForMentor);
 
 export default router;

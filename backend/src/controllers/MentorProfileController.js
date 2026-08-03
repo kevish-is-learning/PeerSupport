@@ -18,6 +18,18 @@ const getStatusCode = (error) => {
   return 500;
 };
 
+const getErrorMessage = (error) => {
+  if (error?.name !== 'ZodError') return error.message || 'Unable to save mentor profile';
+  const paths = error.issues?.map((issue) => issue.path?.join('.')) || [];
+  if (paths.some((path) => path.startsWith('education'))) {
+    return 'Please complete your education details and enter valid graduation years.';
+  }
+  if (paths.some((path) => path.startsWith('professionalExperience'))) {
+    return 'Please complete your work experience details.';
+  }
+  return 'Please review the required profile fields and try again.';
+};
+
 class MentorProfileController {
   async getMyProfile(req, res) {
     try {
@@ -30,7 +42,6 @@ class MentorProfileController {
           }),
         );
     } catch (error) {
-      await cleanupNewUploads(req.uploadedFiles);
       const statusCode = getStatusCode(error);
       return res.status(statusCode).json({
         success: false,
@@ -81,7 +92,7 @@ class MentorProfileController {
       const statusCode = getStatusCode(error);
       return res.status(statusCode).json({
         success: false,
-        message: error.message || "Failed to create mentor profile",
+        message: getErrorMessage(error),
       });
     }
   }
@@ -124,10 +135,11 @@ class MentorProfileController {
           }),
         );
     } catch (error) {
+      await cleanupNewUploads(req.uploadedFiles);
       const statusCode = getStatusCode(error);
       return res.status(statusCode).json({
         success: false,
-        message: error.message || "Failed to update mentor profile",
+        message: getErrorMessage(error),
       });
     }
   }

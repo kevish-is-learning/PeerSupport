@@ -37,6 +37,7 @@ prisma/migrations/*
 dist/
 build/
 .next/
+src/generated/
 
 # Uploads (user-generated content)
 uploads/

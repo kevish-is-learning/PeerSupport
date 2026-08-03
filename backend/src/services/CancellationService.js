@@ -177,7 +177,7 @@ class CancellationService {
     });
 
     // Fire-and-forget: cancellation emails
-    this._sendCancellationEmails(booking, isMentor, reason, refundResult);
+    this._sendCancellationEmails(booking, isMentor, reason);
 
     return {
       bookingId: result.id,
@@ -253,37 +253,24 @@ class CancellationService {
   /**
    * Send cancellation notification emails (fire-and-forget).
    */
-  async _sendCancellationEmails(booking, isMentor, reason, refundResult) {
+  async _sendCancellationEmails(booking, isMentor, reason) {
     try {
       const mentorName = booking.mentorProfile?.user?.name || 'Mentor';
       const menteeName = booking.mentee?.name || 'Mentee';
       const serviceName = booking.mentorService?.title || 'Session';
 
-      // Email content depends on who cancelled
-      const cancelledByLabel = isMentor ? mentorName : menteeName;
-      const subject = `Session Cancelled by ${cancelledByLabel}`;
-
-      const emailData = {
-        subject,
-        cancelledBy: cancelledByLabel,
-        mentorName,
+      await emailService.sendBookingCancelledEmails({
+        menteeEmail: booking.mentee.email,
         menteeName,
+        mentorEmail: booking.mentorProfile.user.email,
+        mentorName,
         serviceName,
-        sessionDate: booking.startTime,
-        reason: reason || 'No reason provided',
-        refundPercentage: refundResult.refundPercentage,
-        refundAmount: refundResult.refundAmount,
-      };
-
-      // Notify mentee
-      if (booking.mentee?.email) {
-        await emailService.sendCancellationEmail?.(booking.mentee.email, emailData);
-      }
-
-      // Notify mentor
-      if (booking.mentorProfile?.user?.email) {
-        await emailService.sendCancellationEmail?.(booking.mentorProfile.user.email, emailData);
-      }
+        startTime: booking.startTime,
+        endTime: booking.endTime,
+        cancelledReason: reason,
+        cancelledByRole: isMentor ? 'MENTOR' : 'MENTEE',
+        bookingId: booking.id,
+      });
     } catch (err) {
       console.error('[CancellationService] Failed to send cancellation email:', err.message);
     }

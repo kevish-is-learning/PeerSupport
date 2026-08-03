@@ -79,9 +79,26 @@ const parseJsonField = (schema) => z.preprocess((value) => {
   try { return JSON.parse(value); } catch { return value; }
 }, schema);
 
+const requiredEducationText = z.string().trim().min(2, 'Please complete your education details').max(120);
+const graduationYearSchema = z.preprocess(
+  (value) => typeof value === 'string' ? Number(value) : value,
+  z.number({ required_error: 'Please enter a graduation year' })
+    .int('Graduation year must be a whole number')
+    .min(1950, 'Please enter a valid graduation year')
+    .max(new Date().getFullYear() + 10, 'Please enter a valid graduation year'),
+);
 const educationSchema = parseJsonField(z.object({
-  mba: z.object({ college: z.string().trim().min(2).max(120), specialization: z.string().trim().max(120).optional().default(''), graduationYear: z.coerce.number().int().min(1950).max(new Date().getFullYear() + 10) }),
-  undergraduate: z.object({ college: z.string().trim().min(2).max(120), degree: z.string().trim().min(2).max(120), specialization: z.string().trim().max(120).optional().default(''), graduationYear: z.coerce.number().int().min(1950).max(new Date().getFullYear() + 10) }),
+  mba: z.object({
+    college: requiredEducationText,
+    specialization: z.string().trim().max(120).optional().default(''),
+    graduationYear: graduationYearSchema,
+  }),
+  undergraduate: z.object({
+    college: requiredEducationText,
+    degree: requiredEducationText,
+    specialization: z.string().trim().max(120).optional().default(''),
+    graduationYear: graduationYearSchema,
+  }),
 }));
 
 const professionalExperienceSchema = parseJsonField(z.object({

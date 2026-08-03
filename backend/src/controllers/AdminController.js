@@ -1,16 +1,3 @@
-/**
- * Unified Admin Controller
- *
- * Handles all admin API endpoints:
- * - Dashboard stats
- * - User management
- * - Mentor management (enhanced)
- * - Booking management
- * - Payment management
- * - Review moderation
- * - Wallet adjustments
- */
-
 import adminDashboardService from '../services/AdminDashboardService.js';
 import adminUserService from '../services/AdminUserService.js';
 import adminMentorService from '../services/AdminMentorService.js';
@@ -24,383 +11,249 @@ import {
   scheduleCallSchema,
   rescheduleCallSchema,
   callIdParamSchema,
-  mentorIdParamSchema
+  mentorIdParamSchema,
 } from '../validators/mentorVerification.validator.js';
+import { respondJson } from '../utils/controllerResponse.js';
 
-const handleError = (res, err) => {
-  const statusCode = err.statusCode || 500;
-  return res.status(statusCode).json({
-    success: false,
-    message: err.message || 'Internal server error',
-  });
-};
+const pagination = (query) => ({
+  page: query.page ? Number.parseInt(query.page, 10) : 1,
+  limit: query.limit ? Number.parseInt(query.limit, 10) : 20,
+});
 
 class AdminController {
-  // ─── Dashboard ─────────────────────────────────────────────────────────────
-
-  async getDashboardStats(req, res) {
-    try {
-      const stats = await adminDashboardService.getStats();
-      res.json({ success: true, data: stats });
-    } catch (err) {
-      handleError(res, err);
-    }
+  getDashboardStats(_req, res) {
+    return respondJson(res, { action: () => adminDashboardService.getStats() });
   }
 
-  // ─── Users ─────────────────────────────────────────────────────────────────
-
-  async listUsers(req, res) {
-    try {
-      const { page, limit, search, role, isActive, provider } = req.query;
-      const result = await adminUserService.listUsers({
-        page: page ? parseInt(page) : 1,
-        limit: limit ? parseInt(limit) : 20,
+  listUsers(req, res) {
+    const { search, role, isActive, provider } = req.query;
+    return respondJson(res, {
+      action: () => adminUserService.listUsers({
+        ...pagination(req.query),
         search: search || undefined,
         role: role || undefined,
         isActive: isActive === 'true' ? true : isActive === 'false' ? false : undefined,
         provider: provider || undefined,
-      });
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+      }),
+    });
   }
 
-  async getUserDetail(req, res) {
-    try {
-      const result = await adminUserService.getUserDetail(req.params.userId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  getUserDetail(req, res) {
+    return respondJson(res, { action: () => adminUserService.getUserDetail(req.params.userId) });
   }
 
-  async toggleUserActive(req, res) {
-    try {
-      const result = await adminUserService.toggleUserActive(req.params.userId, req.body);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  toggleUserActive(req, res) {
+    return respondJson(res, {
+      action: () => adminUserService.toggleUserActive(req.params.userId, req.body),
+    });
   }
 
-  // ─── Mentors ───────────────────────────────────────────────────────────────
-
-  async listWaitlist(req, res) {
-    try {
-      const profiles = await mentorProfileService.listWaitlist();
-      res.json({ success: true, data: { profiles } });
-    } catch (err) {
-      handleError(res, err);
-    }
+  listWaitlist(_req, res) {
+    return respondJson(res, {
+      action: () => mentorProfileService.listWaitlist(),
+      data: (profiles) => ({ success: true, data: { profiles } }),
+    });
   }
 
-  async updateApproval(req, res) {
-    try {
-      const profile = await mentorProfileService.updateApproval(req.params.profileId, req.body);
-      res.json({ success: true, message: 'Mentor approval status updated', data: { profile } });
-    } catch (err) {
-      handleError(res, err);
-    }
+  updateApproval(req, res) {
+    return respondJson(res, {
+      action: () => mentorProfileService.updateApproval(req.params.profileId, req.body),
+      data: (profile) => ({
+        success: true,
+        message: 'Mentor approval status updated',
+        data: { profile },
+      }),
+    });
   }
 
-  async listMentors(req, res) {
-    try {
-      const { page, limit, search, approvalStatus } = req.query;
-      const result = await adminMentorService.listMentors({
-        page: page ? parseInt(page) : 1,
-        limit: limit ? parseInt(limit) : 20,
+  listMentors(req, res) {
+    const { search, approvalStatus } = req.query;
+    return respondJson(res, {
+      action: () => adminMentorService.listMentors({
+        ...pagination(req.query),
         search: search || undefined,
         approvalStatus: approvalStatus || undefined,
-      });
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+      }),
+    });
   }
 
-  async getMentorDetail(req, res) {
-    try {
-      const result = await adminMentorService.getMentorDetail(req.params.profileId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  getMentorDetail(req, res) {
+    return respondJson(res, { action: () => adminMentorService.getMentorDetail(req.params.profileId) });
   }
 
-  async suspendMentor(req, res) {
-    try {
-      const result = await adminMentorService.suspendMentor(req.params.profileId, req.body);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  suspendMentor(req, res) {
+    return respondJson(res, {
+      action: () => adminMentorService.suspendMentor(req.params.profileId, req.body),
+    });
   }
 
-  async unsuspendMentor(req, res) {
-    try {
-      const result = await adminMentorService.unsuspendMentor(req.params.profileId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  unsuspendMentor(req, res) {
+    return respondJson(res, { action: () => adminMentorService.unsuspendMentor(req.params.profileId) });
   }
 
-  // ─── Bookings ──────────────────────────────────────────────────────────────
-
-  async listBookings(req, res) {
-    try {
-      const { page, limit, status, mentorProfileId, menteeId, from, to, search } = req.query;
-      const result = await adminBookingService.listBookings({
-        page: page ? parseInt(page) : 1,
-        limit: limit ? parseInt(limit) : 20,
+  listBookings(req, res) {
+    const { status, mentorProfileId, menteeId, from, to, search } = req.query;
+    return respondJson(res, {
+      action: () => adminBookingService.listBookings({
+        ...pagination(req.query),
         status: status || undefined,
         mentorProfileId: mentorProfileId || undefined,
         menteeId: menteeId || undefined,
         from: from || undefined,
         to: to || undefined,
         search: search || undefined,
-      });
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+      }),
+    });
   }
 
-  async getBookingDetail(req, res) {
-    try {
-      const result = await adminBookingService.getBookingDetail(req.params.bookingId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  getBookingDetail(req, res) {
+    return respondJson(res, { action: () => adminBookingService.getBookingDetail(req.params.bookingId) });
   }
 
-  async overrideBookingStatus(req, res) {
-    try {
-      const result = await adminBookingService.overrideStatus(req.params.bookingId, req.body);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  overrideBookingStatus(req, res) {
+    return respondJson(res, {
+      action: () => adminBookingService.overrideStatus(req.params.bookingId, req.body),
+    });
   }
 
-  async adminCancelBooking(req, res) {
-    try {
-      const result = await adminBookingService.adminCancel(req.params.bookingId, req.body);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  adminCancelBooking(req, res) {
+    return respondJson(res, {
+      action: () => adminBookingService.adminCancel(req.params.bookingId, req.body),
+    });
   }
 
-  // ─── Payments ──────────────────────────────────────────────────────────────
-
-  async listPayments(req, res) {
-    try {
-      const { page, limit, status, from, to } = req.query;
-      const result = await adminPaymentService.listPayments({
-        page: page ? parseInt(page) : 1,
-        limit: limit ? parseInt(limit) : 20,
+  listPayments(req, res) {
+    const { status, from, to } = req.query;
+    return respondJson(res, {
+      action: () => adminPaymentService.listPayments({
+        ...pagination(req.query),
         status: status || undefined,
         from: from || undefined,
         to: to || undefined,
-      });
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+      }),
+    });
   }
 
-  async getRevenueSummary(req, res) {
-    try {
-      const result = await adminPaymentService.getRevenueSummary();
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  getRevenueSummary(_req, res) {
+    return respondJson(res, { action: () => adminPaymentService.getRevenueSummary() });
   }
 
-  async adminRefund(req, res) {
-    try {
-      const result = await adminPaymentService.adminRefund(req.params.paymentId, req.body);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  adminRefund(req, res) {
+    return respondJson(res, {
+      action: () => adminPaymentService.adminRefund(req.params.paymentId, req.body),
+    });
   }
 
-  // ─── Reviews ───────────────────────────────────────────────────────────────
-
-  async listReviews(req, res) {
-    try {
-      const { page, limit, mentorProfileId, minRating, maxRating } = req.query;
-      const result = await adminReviewService.listReviews({
-        page: page ? parseInt(page) : 1,
-        limit: limit ? parseInt(limit) : 20,
+  listReviews(req, res) {
+    const { mentorProfileId, minRating, maxRating } = req.query;
+    return respondJson(res, {
+      action: () => adminReviewService.listReviews({
+        ...pagination(req.query),
         mentorProfileId: mentorProfileId || undefined,
         minRating: minRating || undefined,
         maxRating: maxRating || undefined,
-      });
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+      }),
+    });
   }
 
-  async deleteReview(req, res) {
-    try {
-      const result = await adminReviewService.deleteReview(req.params.reviewId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  deleteReview(req, res) {
+    return respondJson(res, { action: () => adminReviewService.deleteReview(req.params.reviewId) });
   }
 
-  async listFeedback(req, res) {
-    try {
-      const { page, limit } = req.query;
-      const result = await adminReviewService.listFeedback({
-        page: page ? parseInt(page) : 1,
-        limit: limit ? parseInt(limit) : 20,
-      });
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  listFeedback(req, res) {
+    return respondJson(res, {
+      action: () => adminReviewService.listFeedback(pagination(req.query)),
+    });
   }
 
-  // ─── Wallet Adjustments ────────────────────────────────────────────────────
-
-  async adjustWallet(req, res) {
-    try {
-      const result = await adminReviewService.adjustWallet(req.params.mentorProfileId, req.body);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  adjustWallet(req, res) {
+    return respondJson(res, {
+      action: () => adminReviewService.adjustWallet(req.params.mentorProfileId, req.body),
+    });
   }
 
-  // ─── Payouts (delegates to existing PayoutService) ─────────────────────────
-
-  async listPayouts(req, res) {
-    try {
-      const { status, page, limit } = req.query;
-      const result = await payoutService.getAllPayouts({
+  listPayouts(req, res) {
+    const { status } = req.query;
+    return respondJson(res, {
+      action: () => payoutService.getAllPayouts({
+        ...pagination(req.query),
         status: status || undefined,
-        page: page ? parseInt(page) : 1,
-        limit: limit ? parseInt(limit) : 20,
-      });
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+      }),
+    });
   }
 
-  async approvePayout(req, res) {
-    try {
-      const result = await payoutService.approvePayout(req.params.payoutId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  approvePayout(req, res) {
+    return respondJson(res, { action: () => payoutService.approvePayout(req.params.payoutId) });
   }
 
-  async completePayout(req, res) {
-    try {
-      const result = await payoutService.completePayout(req.params.payoutId, req.body);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  completePayout(req, res) {
+    return respondJson(res, {
+      action: () => payoutService.completePayout(req.params.payoutId, req.body),
+    });
   }
 
-  async failPayout(req, res) {
-    try {
-      const result = await payoutService.failPayout(req.params.payoutId, req.body);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  failPayout(req, res) {
+    return respondJson(res, {
+      action: () => payoutService.failPayout(req.params.payoutId, req.body),
+    });
   }
 
-  // ─── Mentor Verification Calls ─────────────────────────────────────────────
-
-  async scheduleVerificationCall(req, res) {
-    try {
-      const validatedData = scheduleCallSchema.parse(req.body);
-      const result = await mentorVerificationService.scheduleCall({
-        ...validatedData,
+  scheduleVerificationCall(req, res) {
+    return respondJson(res, {
+      action: () => mentorVerificationService.scheduleCall({
+        ...scheduleCallSchema.parse(req.body),
         scheduledById: req.user.id,
-      });
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+      }),
+    });
   }
 
-  async rescheduleVerificationCall(req, res) {
-    try {
-      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
-      const validatedData = rescheduleCallSchema.parse({
-        callId,
-        ...req.body,
-      });
-      const result = await mentorVerificationService.rescheduleCall(validatedData);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  rescheduleVerificationCall(req, res) {
+    return respondJson(res, {
+      action: () => {
+        const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
+        return mentorVerificationService.rescheduleCall(rescheduleCallSchema.parse({ callId, ...req.body }));
+      },
+    });
   }
 
-  async cancelVerificationCall(req, res) {
-    try {
-      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
-      const result = await mentorVerificationService.cancelCall(callId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  cancelVerificationCall(req, res) {
+    return respondJson(res, {
+      action: () => mentorVerificationService.cancelCall(
+        callIdParamSchema.parse({ callId: req.params.callId }).callId,
+      ),
+    });
   }
 
-  async completeVerificationCall(req, res) {
-    try {
-      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
-      const result = await mentorVerificationService.completeCall(callId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  completeVerificationCall(req, res) {
+    return respondJson(res, {
+      action: () => mentorVerificationService.completeCall(
+        callIdParamSchema.parse({ callId: req.params.callId }).callId,
+      ),
+    });
   }
 
-  async markVerificationNoShow(req, res) {
-    try {
-      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
-      const result = await mentorVerificationService.markNoShow(callId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  markVerificationNoShow(req, res) {
+    return respondJson(res, {
+      action: () => mentorVerificationService.markNoShow(
+        callIdParamSchema.parse({ callId: req.params.callId }).callId,
+      ),
+    });
   }
 
-  async getVerificationCall(req, res) {
-    try {
-      const { callId } = callIdParamSchema.parse({ callId: req.params.callId });
-      const result = await mentorVerificationService.getCallById(callId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  getVerificationCall(req, res) {
+    return respondJson(res, {
+      action: () => mentorVerificationService.getCallById(
+        callIdParamSchema.parse({ callId: req.params.callId }).callId,
+      ),
+    });
   }
 
-  async getVerificationCallsForMentor(req, res) {
-    try {
-      const { mentorProfileId } = mentorIdParamSchema.parse({ mentorProfileId: req.params.mentorProfileId });
-      const result = await mentorVerificationService.getCallsForMentor(mentorProfileId);
-      res.json({ success: true, data: result });
-    } catch (err) {
-      handleError(res, err);
-    }
+  getVerificationCallsForMentor(req, res) {
+    return respondJson(res, {
+      action: () => mentorVerificationService.getCallsForMentor(
+        mentorIdParamSchema.parse({ mentorProfileId: req.params.mentorProfileId }).mentorProfileId,
+      ),
+    });
   }
 }
 

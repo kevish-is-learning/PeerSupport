@@ -206,17 +206,6 @@ export default function MentorOnboardingWizard({
     }
 
     // Validation for Step 3
-    if (currentStep === 2) {
-      if (!formData.mbaCollege || !formData.mbaYear || !formData.ugCollege || !formData.ugDegree || !formData.ugYear) {
-        toast.error("Please complete your MBA and undergraduate education details.");
-        return;
-      }
-      if (!files.collegeDocument && !existingProfile?.collegeDocumentUrl) {
-        toast.error("Please upload a college document for verification.");
-        return;
-      }
-    }
-
     if (currentStep === 3) {
       if (formData.linkedInUrl.trim()) {
         try {
@@ -232,6 +221,20 @@ export default function MentorOnboardingWizard({
       }
       if (hasWorkExperience && (!formData.workExperienceYears || !formData.company.trim() || !formData.role.trim())) {
         toast.error("Please provide your years of experience, company, and role.");
+        return;
+      }
+    }
+
+    if (currentStep === 2) {
+      const currentYear = new Date().getFullYear();
+      const mbaYear = Number(formData.mbaYear);
+      const ugYear = Number(formData.ugYear);
+      if (!formData.mbaCollege.trim() || !formData.ugCollege.trim() || !formData.ugDegree.trim()) {
+        toast.error("Please complete your MBA and undergraduate education details.");
+        return;
+      }
+      if (!Number.isInteger(mbaYear) || mbaYear < 1950 || mbaYear > currentYear + 10 || !Number.isInteger(ugYear) || ugYear < 1950 || ugYear > currentYear + 10) {
+        toast.error("Please enter valid graduation years.");
         return;
       }
     }
@@ -510,9 +513,6 @@ export default function MentorOnboardingWizard({
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-600">
                       MBA College/B-School{" "}
-                      <span className="text-xs font-normal text-gray-400">
-                        (optional)
-                      </span>
                     </label>
                     <select
                       name="mbaCollege"
@@ -532,9 +532,7 @@ export default function MentorOnboardingWizard({
                     <div>
                       <label className="block text-sm font-medium mb-1 text-gray-600">
                         Specialization{" "}
-                        <span className="text-xs font-normal text-gray-400">
-                          (optional)
-                        </span>
+                        <span className="text-xs font-normal text-gray-400">(optional)</span>
                       </label>
                       <input
                         type="text"
@@ -548,9 +546,6 @@ export default function MentorOnboardingWizard({
                     <div>
                       <label className="block text-sm font-medium mb-1 text-gray-600">
                         Graduation Year{" "}
-                        <span className="text-xs font-normal text-gray-400">
-                          (optional)
-                        </span>
                       </label>
                       <input
                         type="number"
@@ -568,7 +563,7 @@ export default function MentorOnboardingWizard({
               </div>
 
               <div className="rounded-xl border border-dashed border-gray-300 bg-white p-4">
-                <label className="block text-sm font-semibold text-gray-700">College document for verification</label>
+                <label className="block text-sm font-semibold text-gray-700">College document for verification <span className="font-normal text-gray-400">(optional)</span></label>
                 <p className="mt-1 text-xs text-gray-500">Upload a student ID, degree, or marksheet (JPG, PNG, WEBP, HEIC).</p>
                 <input
                   type="file"
@@ -590,9 +585,6 @@ export default function MentorOnboardingWizard({
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-600">
                       College/University{" "}
-                      <span className="text-xs font-normal text-gray-400">
-                        (optional)
-                      </span>
                     </label>
                     <input
                       type="text"
@@ -607,9 +599,6 @@ export default function MentorOnboardingWizard({
                     <div>
                       <label className="block text-sm font-medium mb-1 text-gray-600">
                         Degree{" "}
-                        <span className="text-xs font-normal text-gray-400">
-                          (optional)
-                        </span>
                       </label>
                       <input
                         type="text"
@@ -623,9 +612,7 @@ export default function MentorOnboardingWizard({
                     <div>
                       <label className="block text-sm font-medium mb-1 text-gray-600">
                         Specialization{" "}
-                        <span className="text-xs font-normal text-gray-400">
-                          (optional)
-                        </span>
+                        <span className="text-xs font-normal text-gray-400">(optional)</span>
                       </label>
                       <input
                         type="text"
@@ -639,9 +626,6 @@ export default function MentorOnboardingWizard({
                     <div>
                       <label className="block text-sm font-medium mb-1 text-gray-600">
                         Year{" "}
-                        <span className="text-xs font-normal text-gray-400">
-                          (optional)
-                        </span>
                       </label>
                       <input
                         type="number"

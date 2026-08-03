@@ -74,19 +74,6 @@ export const authApi = {
   },
 };
 
-export const uploadApi = {
-  uploadFile(file, folder = 'general') {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('folder', folder);
-    
-    return apiRequest("/upload", { 
-      method: "POST", 
-      body: formData 
-    });
-  }
-};
-
 export const menteeProfileApi = {
   getMine() {
     return apiRequest('/mentee-profile');
@@ -189,33 +176,6 @@ export const mentorServiceApi = {
 
 // ─── Mentor Availability (dedicated endpoints) ───────────────────────────────
 
-export const mentorAvailabilityApi = {
-  /** Fetch current mentor's weekly availability with slots + services */
-  getMine() {
-    return apiRequest('/mentor-availability');
-  },
-  /** Bulk upsert weekly availability (days + slots + service mappings) */
-  upsert(availability) {
-    return apiRequest('/mentor-availability', { method: 'PUT', body: { availability } });
-  },
-  /** Add a single slot to a day */
-  addSlot(dayId, data) {
-    return apiRequest(`/mentor-availability/${dayId}/slots`, { method: 'POST', body: data });
-  },
-  /** Update a slot */
-  updateSlot(slotId, data) {
-    return apiRequest(`/mentor-availability/slots/${slotId}`, { method: 'PUT', body: data });
-  },
-  /** Delete a single slot */
-  deleteSlot(slotId) {
-    return apiRequest(`/mentor-availability/slots/${slotId}`, { method: 'DELETE' });
-  },
-  /** Delete all availability for a specific day */
-  removeDay(dayOfWeek) {
-    return apiRequest(`/mentor-availability/${dayOfWeek}`, { method: 'DELETE' });
-  },
-};
-
 // ─── Booking APIs ────────────────────────────────────────────────────────────
 
 export const bookingApi = {
@@ -251,18 +211,6 @@ export const paymentApi = {
   /** Handle payment failure — immediately releases the slot */
   handleFailure(data) {
     return apiRequest('/payments/failure', { method: 'POST', body: data });
-  },
-};
-
-export const adminMentorApi = {
-  getWaitlist() {
-    return apiRequest('/admin/mentor-waitlist');
-  },
-  updateApproval(profileId, data) {
-    return apiRequest(`/admin/mentor-waitlist/${profileId}`, {
-      method: 'PATCH',
-      body: data,
-    });
   },
 };
 
@@ -367,13 +315,6 @@ export const v2Api = {
 };
 
 // ─── Cancellation APIs ────────────────────────────────────────────────────────
-
-export const cancellationApi = {
-  /** Cancel a booking with refund processing */
-  cancel(bookingId, data = {}) {
-    return apiRequest(`/cancellations/${bookingId}`, { method: 'POST', body: data });
-  },
-};
 
 // ─── Meeting APIs (Agora Video) ──────────────────────────────────────────────
 
@@ -610,4 +551,3 @@ export { API_BASE_URL };
 
 // Alias for components that import v2BookingApi
 export { v2Api as v2BookingApi };
-
