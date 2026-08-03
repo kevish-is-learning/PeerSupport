@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import mentorServiceController from '../controllers/MentorServiceController.js';
-import { authenticateJWT, authorizeRoles } from '../middleware/auth.js';
+import { authenticateJWT, authorizeRoles, requireApprovedMentor } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -9,7 +9,7 @@ const router = Router();
 router.get('/types', mentorServiceController.getServiceTypes);
 
 // Protected: mentor-only CRUD
-router.use(authenticateJWT, authorizeRoles('MENTOR'));
+router.use(authenticateJWT, authorizeRoles('MENTOR'), requireApprovedMentor);
 
 router.get('/', mentorServiceController.getMyServices);
 router.post('/', mentorServiceController.createService);

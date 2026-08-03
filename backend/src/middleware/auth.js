@@ -183,4 +183,14 @@ const adminOnly = (req, res, next) => {
   next();
 };
 
-export { authenticateJWT, optionalAuth, authorizeRoles, adminOnly };
+const requireApprovedMentor = (req, res, next) => {
+  if (req.user?.role !== 'MENTOR') {
+    return res.status(403).json(new ApiError(403, 'Access denied', 'Mentor access is required'));
+  }
+  if (req.user.mentorApprovalStatus !== 'APPROVED' || !req.user.mentorIsVerified) {
+    return res.status(403).json(new ApiError(403, 'Mentor approval pending', 'This action is available after your mentor application is approved'));
+  }
+  next();
+};
+
+export { authenticateJWT, optionalAuth, authorizeRoles, adminOnly, requireApprovedMentor };

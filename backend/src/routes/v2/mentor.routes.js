@@ -12,7 +12,7 @@
 
 import { Router } from 'express';
 import mentorController from '../../controllers/v2/MentorController.js';
-import { authenticateJWT, authorizeRoles } from '../../middleware/auth.js';
+import { authenticateJWT, authorizeRoles, requireApprovedMentor } from '../../middleware/auth.js';
 
 const router = Router();
 
@@ -28,6 +28,7 @@ router.get(
   '/mentor/services',
   authenticateJWT,
   authorizeRoles('MENTOR'),
+  requireApprovedMentor,
   mentorController.getMentorServices
 );
 
@@ -35,6 +36,7 @@ router.put(
   '/mentor/services',
   authenticateJWT,
   authorizeRoles('MENTOR'),
+  requireApprovedMentor,
   mentorController.upsertMentorServices
 );
 
@@ -43,6 +45,7 @@ router.get(
   '/mentor/availability',
   authenticateJWT,
   authorizeRoles('MENTOR'),
+  requireApprovedMentor,
   mentorController.getAvailability
 );
 
@@ -50,6 +53,7 @@ router.put(
   '/mentor/availability',
   authenticateJWT,
   authorizeRoles('MENTOR'),
+  requireApprovedMentor,
   mentorController.upsertAvailability
 );
 
@@ -57,6 +61,7 @@ router.put(
   '/mentor/availability/dates/:date',
   authenticateJWT,
   authorizeRoles('MENTOR'),
+  requireApprovedMentor,
   mentorController.replaceAvailabilityForDate
 );
 
@@ -65,6 +70,7 @@ router.post(
   '/mentor/availability/windows',
   authenticateJWT,
   authorizeRoles('MENTOR'),
+  requireApprovedMentor,
   mentorController.createAvailabilityWindow
 );
 
@@ -72,6 +78,7 @@ router.patch(
   '/mentor/availability/windows/:id',
   authenticateJWT,
   authorizeRoles('MENTOR'),
+  requireApprovedMentor,
   mentorController.updateAvailabilityWindow
 );
 
@@ -79,6 +86,7 @@ router.delete(
   '/mentor/availability/windows/:id',
   authenticateJWT,
   authorizeRoles('MENTOR'),
+  requireApprovedMentor,
   mentorController.deleteAvailabilityWindow
 );
 

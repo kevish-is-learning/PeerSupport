@@ -18,7 +18,7 @@ import {
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "../../../store/useAuthStore";
-import { mentorProfileApi, authApi, resolveUploadUrl } from "../../../lib/api";
+import { mentorProfileApi, resolveUploadUrl } from "../../../lib/api";
 import { toast } from "sonner";
 
 const EXPERTISE_OPTIONS = [
@@ -51,6 +51,20 @@ const IIM_SCHOOLS = [
   "Other",
 ];
 
+const parseLegacyProfile = (value, keys) => Object.fromEntries(
+  keys.map((key, index) => [key, (value || "").split("|")[index] || ""]),
+);
+
+const getEducation = (profile) => profile?.education || {
+  mba: parseLegacyProfile(profile?.pgProfile, ["college", "specialization", "graduationYear"]),
+  undergraduate: parseLegacyProfile(profile?.ugCollegeProfile, ["college", "degree", "specialization", "graduationYear"]),
+};
+
+const getProfessionalExperience = (profile) => profile?.professionalExperience || (() => {
+  const legacy = parseLegacyProfile(profile?.workExperience, ["years", "company", "role"]);
+  return { hasExperience: Boolean(legacy.years || legacy.company || legacy.role), ...legacy };
+})();
+
 export default function MentorProfilePage() {
   const { user } = useAuthStore();
   const router = useRouter();
@@ -82,24 +96,23 @@ export default function MentorProfilePage() {
       const p = res.data?.profile;
       if (p) {
         setProfile(p);
-        const pg = (p.pgProfile || "").split("|");
-        const we = (p.workExperience || "").split("|");
-        const ug = (p.ugCollegeProfile || "").split("|");
+        const education = getEducation(p);
+        const workExperience = getProfessionalExperience(p);
         setForm({
           fullName: p.name || "",
           contactNumber: p.contactNumber || "",
-          bSchool: pg[0] || "",
-          bSchoolSpecialization: pg[1] || "",
-          bSchoolYear: pg[2] || "",
+          bSchool: education.mba?.college || "",
+          bSchoolSpecialization: education.mba?.specialization || "",
+          bSchoolYear: education.mba?.graduationYear || "",
           expertiseTagsArr: p.expertiseTags || [],
           bio: p.bio || "",
-          workExpYears: we[0] || "",
-          workExpCompany: we[1] || "",
-          workExpRole: we[2] || "",
-          ugCollege: ug[0] || "",
-          ugDegree: ug[1] || "",
-          ugSpecialization: ug[2] || "",
-          ugYear: ug[3] || "",
+          workExpYears: workExperience.years || "",
+          workExpCompany: workExperience.company || "",
+          workExpRole: workExperience.role || "",
+          ugCollege: education.undergraduate?.college || "",
+          ugDegree: education.undergraduate?.degree || "",
+          ugSpecialization: education.undergraduate?.specialization || "",
+          ugYear: education.undergraduate?.graduationYear || "",
         });
       }
     } catch {
@@ -115,24 +128,23 @@ export default function MentorProfilePage() {
 
   const handleCancel = () => {
     if (!profile) return;
-    const pg = (profile.pgProfile || "").split("|");
-    const we = (profile.workExperience || "").split("|");
-    const ug = (profile.ugCollegeProfile || "").split("|");
+    const education = getEducation(profile);
+    const workExperience = getProfessionalExperience(profile);
     setForm({
       fullName: profile.name || "",
       contactNumber: profile.contactNumber || "",
-      bSchool: pg[0] || "",
-      bSchoolSpecialization: pg[1] || "",
-      bSchoolYear: pg[2] || "",
+      bSchool: education.mba?.college || "",
+      bSchoolSpecialization: education.mba?.specialization || "",
+      bSchoolYear: education.mba?.graduationYear || "",
       expertiseTagsArr: profile.expertiseTags || [],
       bio: profile.bio || "",
-      workExpYears: we[0] || "",
-      workExpCompany: we[1] || "",
-      workExpRole: we[2] || "",
-      ugCollege: ug[0] || "",
-      ugDegree: ug[1] || "",
-      ugSpecialization: ug[2] || "",
-      ugYear: ug[3] || "",
+      workExpYears: workExperience.years || "",
+      workExpCompany: workExperience.company || "",
+      workExpRole: workExperience.role || "",
+      ugCollege: education.undergraduate?.college || "",
+      ugDegree: education.undergraduate?.degree || "",
+      ugSpecialization: education.undergraduate?.specialization || "",
+      ugYear: education.undergraduate?.graduationYear || "",
     });
     setIsEditing(false);
   };
@@ -140,26 +152,22 @@ export default function MentorProfilePage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      if (form.fullName && form.fullName !== profile?.name) {
-        try {
-          await authApi.updateProfile({ name: form.fullName });
-        } catch (_) {}
-      }
-      const pgParts = profile?.pgProfile?.split("|") || ["", "", ""];
-      const newPgProfile = `${form.bSchool}|${form.bSchoolSpecialization}|${form.bSchoolYear}`;
-      const newWorkExperience = `${form.workExpYears}|${form.workExpCompany}|${form.workExpRole}`;
-      const newUgProfile = `${form.ugCollege}|${form.ugDegree}|${form.ugSpecialization}|${form.ugYear}`;
       const res = await mentorProfileApi.update({
+        fullName: form.fullName,
         contactNumber: form.contactNumber,
         bio: form.bio,
         expertiseTags: form.expertiseTagsArr,
-        pgProfile: newPgProfile,
-        workExperience: newWorkExperience,
-        ugCollegeProfile: newUgProfile,
+        education: {
+          mba: { college: form.bSchool, specialization: form.bSchoolSpecialization, graduationYear: Number(form.bSchoolYear) },
+          undergraduate: { college: form.ugCollege, degree: form.ugDegree, specialization: form.ugSpecialization, graduationYear: Number(form.ugYear) },
+        },
+        professionalExperience: {
+          hasExperience: Boolean(form.workExpYears || form.workExpCompany || form.workExpRole),
+          ...(form.workExpYears || form.workExpCompany || form.workExpRole ? { years: Number(form.workExpYears), company: form.workExpCompany, role: form.workExpRole } : {}),
+        },
       });
-      const updated = { ...res.data?.profile, name: form.fullName };
-      setProfile(updated);
-      toast.success("Profile saved!");
+      setProfile(res.data?.profile);
+      toast.success(res.data?.profile?.approvalStatus === "PENDING" ? "Profile saved and submitted for review." : "Profile saved!");
       setIsEditing(false);
     } catch (e) {
       toast.error(e.message || "Save failed.");
@@ -199,11 +207,13 @@ export default function MentorProfilePage() {
 
   // Derived display values
   const displayName = profile?.name || user?.name || "Mentor";
-  const pgParts = (profile?.pgProfile || "").split("|");
-  const ugParts = (profile?.ugCollegeProfile || "").split("|");
-  const schoolName = pgParts[0] || "";
-  const batchYear = pgParts[2] || "";
-  const weParts = (profile?.workExperience || "").split("|");
+  const education = getEducation(profile);
+  const pgParts = [education.mba?.college || "", education.mba?.specialization || "", education.mba?.graduationYear || ""];
+  const ugParts = [education.undergraduate?.college || "", education.undergraduate?.degree || "", education.undergraduate?.specialization || "", education.undergraduate?.graduationYear || ""];
+  const schoolName = pgParts[0];
+  const batchYear = pgParts[2];
+  const experience = getProfessionalExperience(profile);
+  const weParts = [experience.years || "", experience.company || "", experience.role || ""];
   const workExpDisplay = (() => {
     const yrs = weParts[0] ? `${weParts[0]} years` : "";
     const company = weParts[1] ? ` at ${weParts[1]}` : "";
@@ -391,6 +401,13 @@ export default function MentorProfilePage() {
               </button>
             )}
           </div>
+
+          {profile?.approvalStatus !== "APPROVED" && (
+            <div className={`rounded-2xl border-2 p-4 text-sm font-medium ${profile?.approvalStatus === "REJECTED" ? "border-red-300 bg-red-50 text-red-800" : "border-amber-300 bg-amber-50 text-amber-900"}`}>
+              <p className="font-black">{profile?.approvalStatus === "REJECTED" ? "Your application needs changes" : "Your mentor application is under review"}</p>
+              <p className="mt-1">{profile?.adminReviewNotes || (profile?.approvalStatus === "REJECTED" ? "Update the requested details and save your profile to resubmit." : "You’ll be able to configure services after approval.")}</p>
+            </div>
+          )}
 
           {/* Basic Information Card */}
           <div className="rounded-[28px] border-2 border-black bg-white overflow-hidden p-6 sm:p-8" style={{ boxShadow: "4px 4px 0 0 #7C3AED" }}>

@@ -30,6 +30,8 @@ Thumbs.db
 prisma/migrations/*
 !prisma/migrations/20260719000000_booking_integrity/
 !prisma/migrations/20260719000000_booking_integrity/migration.sql
+!prisma/migrations/20260803000000_mentor_onboarding_quality/
+!prisma/migrations/20260803000000_mentor_onboarding_quality/migration.sql
 
 # Build
 dist/

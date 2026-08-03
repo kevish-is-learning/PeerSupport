@@ -20,14 +20,14 @@ A real-time booking and availability management system for peer-to-peer mentorin
 ### Prerequisites
 
 - Node.js 18+
-- PostgreSQL (or Neon serverless)
+- Docker Desktop (for the local PostgreSQL database)
 
 ### Environment Variables
 
 **Backend** (`backend/.env`):
 
 ```env
-DATABASE_URL=postgresql://user:password@host:5432/dbname
+DATABASE_URL=postgresql://peersupport:peersupport_dev_password@localhost:5432/peersupport?schema=public
 PORT=8080
 FRONTEND_URL=http://localhost:3000
 JWT_SECRET=your_jwt_secret
@@ -47,10 +47,13 @@ NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_xxx
 ### Installation
 
 ```bash
-# Backend
+# Start the local PostgreSQL database
 cd backend
+npm run db:up
+
+# Backend API runs directly on your machine
 npm install
-npx prisma db push
+npx prisma migrate deploy
 npm run db:seed    # Seeds the 6 fixed services
 npm run dev
 
@@ -58,6 +61,16 @@ npm run dev
 cd frontend
 npm install
 npm run dev
+```
+
+The API is intentionally not Dockerized. It connects to the PostgreSQL
+container through `localhost:5432`; Docker is used only for the local database.
+
+Useful database commands:
+
+```bash
+npm run db:logs    # Follow PostgreSQL logs
+npm run db:down    # Stop the database; data remains in the Docker volume
 ```
 
 ### Running Tests

@@ -4859,6 +4859,8 @@ export namespace Prisma {
     certifications: string | null
     collegeDocumentUrl: string | null
     approvalStatus: $Enums.MentorApprovalStatus | null
+    adminReviewNotes: string | null
+    reviewedAt: Date | null
     isVerified: boolean | null
     totalSessions: number | null
     totalEarnings: number | null
@@ -4881,6 +4883,8 @@ export namespace Prisma {
     certifications: string | null
     collegeDocumentUrl: string | null
     approvalStatus: $Enums.MentorApprovalStatus | null
+    adminReviewNotes: string | null
+    reviewedAt: Date | null
     isVerified: boolean | null
     totalSessions: number | null
     totalEarnings: number | null
@@ -4903,8 +4907,12 @@ export namespace Prisma {
     workExperience: number
     certifications: number
     collegeDocumentUrl: number
+    education: number
+    professionalExperience: number
     mentoringQA: number
     approvalStatus: number
+    adminReviewNotes: number
+    reviewedAt: number
     isVerified: number
     totalSessions: number
     totalEarnings: number
@@ -4941,6 +4949,8 @@ export namespace Prisma {
     certifications?: true
     collegeDocumentUrl?: true
     approvalStatus?: true
+    adminReviewNotes?: true
+    reviewedAt?: true
     isVerified?: true
     totalSessions?: true
     totalEarnings?: true
@@ -4963,6 +4973,8 @@ export namespace Prisma {
     certifications?: true
     collegeDocumentUrl?: true
     approvalStatus?: true
+    adminReviewNotes?: true
+    reviewedAt?: true
     isVerified?: true
     totalSessions?: true
     totalEarnings?: true
@@ -4985,8 +4997,12 @@ export namespace Prisma {
     workExperience?: true
     certifications?: true
     collegeDocumentUrl?: true
+    education?: true
+    professionalExperience?: true
     mentoringQA?: true
     approvalStatus?: true
+    adminReviewNotes?: true
+    reviewedAt?: true
     isVerified?: true
     totalSessions?: true
     totalEarnings?: true
@@ -5096,8 +5112,12 @@ export namespace Prisma {
     workExperience: string | null
     certifications: string | null
     collegeDocumentUrl: string | null
+    education: JsonValue | null
+    professionalExperience: JsonValue | null
     mentoringQA: JsonValue | null
     approvalStatus: $Enums.MentorApprovalStatus
+    adminReviewNotes: string | null
+    reviewedAt: Date | null
     isVerified: boolean
     totalSessions: number
     totalEarnings: number
@@ -5139,8 +5159,12 @@ export namespace Prisma {
     workExperience?: boolean
     certifications?: boolean
     collegeDocumentUrl?: boolean
+    education?: boolean
+    professionalExperience?: boolean
     mentoringQA?: boolean
     approvalStatus?: boolean
+    adminReviewNotes?: boolean
+    reviewedAt?: boolean
     isVerified?: boolean
     totalSessions?: boolean
     totalEarnings?: boolean
@@ -5174,8 +5198,12 @@ export namespace Prisma {
     workExperience?: boolean
     certifications?: boolean
     collegeDocumentUrl?: boolean
+    education?: boolean
+    professionalExperience?: boolean
     mentoringQA?: boolean
     approvalStatus?: boolean
+    adminReviewNotes?: boolean
+    reviewedAt?: boolean
     isVerified?: boolean
     totalSessions?: boolean
     totalEarnings?: boolean
@@ -5199,8 +5227,12 @@ export namespace Prisma {
     workExperience?: boolean
     certifications?: boolean
     collegeDocumentUrl?: boolean
+    education?: boolean
+    professionalExperience?: boolean
     mentoringQA?: boolean
     approvalStatus?: boolean
+    adminReviewNotes?: boolean
+    reviewedAt?: boolean
     isVerified?: boolean
     totalSessions?: boolean
     totalEarnings?: boolean
@@ -5255,10 +5287,17 @@ export namespace Prisma {
       certifications: string | null
       collegeDocumentUrl: string | null
       /**
+       * Structured application data; legacy text fields are retained for existing profiles.
+       */
+      education: Prisma.JsonValue | null
+      professionalExperience: Prisma.JsonValue | null
+      /**
        * JSON blob storing "Why I Want to Mentor" Q&A answers
        */
       mentoringQA: Prisma.JsonValue | null
       approvalStatus: $Enums.MentorApprovalStatus
+      adminReviewNotes: string | null
+      reviewedAt: Date | null
       isVerified: boolean
       totalSessions: number
       totalEarnings: number
@@ -5681,8 +5720,12 @@ export namespace Prisma {
     readonly workExperience: FieldRef<"MentorProfile", 'String'>
     readonly certifications: FieldRef<"MentorProfile", 'String'>
     readonly collegeDocumentUrl: FieldRef<"MentorProfile", 'String'>
+    readonly education: FieldRef<"MentorProfile", 'Json'>
+    readonly professionalExperience: FieldRef<"MentorProfile", 'Json'>
     readonly mentoringQA: FieldRef<"MentorProfile", 'Json'>
     readonly approvalStatus: FieldRef<"MentorProfile", 'MentorApprovalStatus'>
+    readonly adminReviewNotes: FieldRef<"MentorProfile", 'String'>
+    readonly reviewedAt: FieldRef<"MentorProfile", 'DateTime'>
     readonly isVerified: FieldRef<"MentorProfile", 'Boolean'>
     readonly totalSessions: FieldRef<"MentorProfile", 'Int'>
     readonly totalEarnings: FieldRef<"MentorProfile", 'Float'>
@@ -20958,8 +21001,12 @@ export namespace Prisma {
     workExperience: 'workExperience',
     certifications: 'certifications',
     collegeDocumentUrl: 'collegeDocumentUrl',
+    education: 'education',
+    professionalExperience: 'professionalExperience',
     mentoringQA: 'mentoringQA',
     approvalStatus: 'approvalStatus',
+    adminReviewNotes: 'adminReviewNotes',
+    reviewedAt: 'reviewedAt',
     isVerified: 'isVerified',
     totalSessions: 'totalSessions',
     totalEarnings: 'totalEarnings',
@@ -21691,8 +21738,12 @@ export namespace Prisma {
     workExperience?: StringNullableFilter<"MentorProfile"> | string | null
     certifications?: StringNullableFilter<"MentorProfile"> | string | null
     collegeDocumentUrl?: StringNullableFilter<"MentorProfile"> | string | null
+    education?: JsonNullableFilter<"MentorProfile">
+    professionalExperience?: JsonNullableFilter<"MentorProfile">
     mentoringQA?: JsonNullableFilter<"MentorProfile">
     approvalStatus?: EnumMentorApprovalStatusFilter<"MentorProfile"> | $Enums.MentorApprovalStatus
+    adminReviewNotes?: StringNullableFilter<"MentorProfile"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"MentorProfile"> | Date | string | null
     isVerified?: BoolFilter<"MentorProfile"> | boolean
     totalSessions?: IntFilter<"MentorProfile"> | number
     totalEarnings?: FloatFilter<"MentorProfile"> | number
@@ -21725,8 +21776,12 @@ export namespace Prisma {
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     collegeDocumentUrl?: SortOrderInput | SortOrder
+    education?: SortOrderInput | SortOrder
+    professionalExperience?: SortOrderInput | SortOrder
     mentoringQA?: SortOrderInput | SortOrder
     approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
     isVerified?: SortOrder
     totalSessions?: SortOrder
     totalEarnings?: SortOrder
@@ -21762,8 +21817,12 @@ export namespace Prisma {
     workExperience?: StringNullableFilter<"MentorProfile"> | string | null
     certifications?: StringNullableFilter<"MentorProfile"> | string | null
     collegeDocumentUrl?: StringNullableFilter<"MentorProfile"> | string | null
+    education?: JsonNullableFilter<"MentorProfile">
+    professionalExperience?: JsonNullableFilter<"MentorProfile">
     mentoringQA?: JsonNullableFilter<"MentorProfile">
     approvalStatus?: EnumMentorApprovalStatusFilter<"MentorProfile"> | $Enums.MentorApprovalStatus
+    adminReviewNotes?: StringNullableFilter<"MentorProfile"> | string | null
+    reviewedAt?: DateTimeNullableFilter<"MentorProfile"> | Date | string | null
     isVerified?: BoolFilter<"MentorProfile"> | boolean
     totalSessions?: IntFilter<"MentorProfile"> | number
     totalEarnings?: FloatFilter<"MentorProfile"> | number
@@ -21796,8 +21855,12 @@ export namespace Prisma {
     workExperience?: SortOrderInput | SortOrder
     certifications?: SortOrderInput | SortOrder
     collegeDocumentUrl?: SortOrderInput | SortOrder
+    education?: SortOrderInput | SortOrder
+    professionalExperience?: SortOrderInput | SortOrder
     mentoringQA?: SortOrderInput | SortOrder
     approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrderInput | SortOrder
+    reviewedAt?: SortOrderInput | SortOrder
     isVerified?: SortOrder
     totalSessions?: SortOrder
     totalEarnings?: SortOrder
@@ -21828,8 +21891,12 @@ export namespace Prisma {
     workExperience?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     certifications?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
     collegeDocumentUrl?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    education?: JsonNullableWithAggregatesFilter<"MentorProfile">
+    professionalExperience?: JsonNullableWithAggregatesFilter<"MentorProfile">
     mentoringQA?: JsonNullableWithAggregatesFilter<"MentorProfile">
     approvalStatus?: EnumMentorApprovalStatusWithAggregatesFilter<"MentorProfile"> | $Enums.MentorApprovalStatus
+    adminReviewNotes?: StringNullableWithAggregatesFilter<"MentorProfile"> | string | null
+    reviewedAt?: DateTimeNullableWithAggregatesFilter<"MentorProfile"> | Date | string | null
     isVerified?: BoolWithAggregatesFilter<"MentorProfile"> | boolean
     totalSessions?: IntWithAggregatesFilter<"MentorProfile"> | number
     totalEarnings?: FloatWithAggregatesFilter<"MentorProfile"> | number
@@ -23338,8 +23405,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -23372,8 +23443,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -23404,8 +23479,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -23438,8 +23517,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -23471,8 +23554,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -23494,8 +23581,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -23518,8 +23609,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -25363,8 +25458,12 @@ export namespace Prisma {
     workExperience?: SortOrder
     certifications?: SortOrder
     collegeDocumentUrl?: SortOrder
+    education?: SortOrder
+    professionalExperience?: SortOrder
     mentoringQA?: SortOrder
     approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrder
+    reviewedAt?: SortOrder
     isVerified?: SortOrder
     totalSessions?: SortOrder
     totalEarnings?: SortOrder
@@ -25393,6 +25492,8 @@ export namespace Prisma {
     certifications?: SortOrder
     collegeDocumentUrl?: SortOrder
     approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrder
+    reviewedAt?: SortOrder
     isVerified?: SortOrder
     totalSessions?: SortOrder
     totalEarnings?: SortOrder
@@ -25415,6 +25516,8 @@ export namespace Prisma {
     certifications?: SortOrder
     collegeDocumentUrl?: SortOrder
     approvalStatus?: SortOrder
+    adminReviewNotes?: SortOrder
+    reviewedAt?: SortOrder
     isVerified?: SortOrder
     totalSessions?: SortOrder
     totalEarnings?: SortOrder
@@ -28162,8 +28265,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -28194,8 +28301,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -28419,8 +28530,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -28451,8 +28566,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -29344,8 +29463,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -29377,8 +29500,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -29512,8 +29639,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -29545,8 +29676,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -29618,8 +29753,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -29651,8 +29790,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -29720,8 +29863,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -29753,8 +29900,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -29983,8 +30134,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -30016,8 +30171,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -30408,8 +30567,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -30441,8 +30604,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -31075,8 +31242,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -31108,8 +31279,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -31222,8 +31397,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -31255,8 +31434,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -31347,8 +31530,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -31380,8 +31567,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -31541,8 +31732,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -31574,8 +31769,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -31786,8 +31985,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -31819,8 +32022,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -31900,8 +32107,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -31933,8 +32144,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -32052,8 +32267,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -32085,8 +32304,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -32132,8 +32355,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -32165,8 +32392,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -32196,8 +32427,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -32229,8 +32464,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -32276,8 +32515,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -32309,8 +32552,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -32340,8 +32587,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -32373,8 +32624,12 @@ export namespace Prisma {
     workExperience?: string | null
     certifications?: string | null
     collegeDocumentUrl?: string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: $Enums.MentorApprovalStatus
+    adminReviewNotes?: string | null
+    reviewedAt?: Date | string | null
     isVerified?: boolean
     totalSessions?: number
     totalEarnings?: number
@@ -32467,8 +32722,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number
@@ -32500,8 +32759,12 @@ export namespace Prisma {
     workExperience?: NullableStringFieldUpdateOperationsInput | string | null
     certifications?: NullableStringFieldUpdateOperationsInput | string | null
     collegeDocumentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    education?: NullableJsonNullValueInput | InputJsonValue
+    professionalExperience?: NullableJsonNullValueInput | InputJsonValue
     mentoringQA?: NullableJsonNullValueInput | InputJsonValue
     approvalStatus?: EnumMentorApprovalStatusFieldUpdateOperationsInput | $Enums.MentorApprovalStatus
+    adminReviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     totalSessions?: IntFieldUpdateOperationsInput | number
     totalEarnings?: FloatFieldUpdateOperationsInput | number

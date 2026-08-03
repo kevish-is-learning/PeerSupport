@@ -6,7 +6,9 @@ export const uploadSingleFile = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
-    const { folder = 'general' } = req.body;
+    const requestedFolder = req.body.folder;
+    const allowedFolders = new Set(['avatar', 'general']);
+    const folder = allowedFolders.has(requestedFolder) ? requestedFolder : 'general';
     const userId = req.user.id;
     const shortId = userId.substring(0, 8);
     const uniqueId = `file_${Date.now()}`;

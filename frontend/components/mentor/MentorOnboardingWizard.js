@@ -19,8 +19,6 @@ import useAuthStore from "../../store/useAuthStore";
 import {
   mentorProfileApi,
   resolveUploadUrl,
-  authApi,
-  uploadApi,
 } from "../../lib/api";
 import PillButton from "../ui/PillButton";
 import UniversalButton from "../ui/universalButton";
@@ -56,8 +54,8 @@ export default function MentorOnboardingWizard({
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const stepsContainerRef = useRef(null);
+  const draftKey = user?.id ? `mentor-onboarding-draft:${user.id}` : null;
 
   useEffect(() => {
     const container = stepsContainerRef.current;
@@ -113,7 +111,28 @@ export default function MentorOnboardingWizard({
 
   const [files, setFiles] = useState({
     profilePhoto: null,
+    collegeDocument: null,
   });
+
+  const [photoPreviewUrl, setPhotoPreviewUrl] = useState("");
+
+  useEffect(() => {
+    if (!draftKey || existingProfile) return;
+    const draft = window.localStorage.getItem(draftKey);
+    if (!draft) return;
+    try {
+      const parsed = JSON.parse(draft);
+      if (parsed.formData) setFormData((current) => ({ ...current, ...parsed.formData, profilePhotoUrl: "" }));
+      if (Number.isInteger(parsed.currentStep)) setCurrentStep(Math.min(4, Math.max(1, parsed.currentStep)));
+    } catch {
+      window.localStorage.removeItem(draftKey);
+    }
+  }, [draftKey, existingProfile]);
+
+  useEffect(() => {
+    if (!draftKey || existingProfile) return;
+    window.localStorage.setItem(draftKey, JSON.stringify({ formData: { ...formData, profilePhotoUrl: "" }, currentStep }));
+  }, [draftKey, existingProfile, formData, currentStep]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -142,22 +161,17 @@ export default function MentorOnboardingWizard({
 
 
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (files?.[0]) {
       const file = files[0];
       if (name === "profilePhoto") {
-        setIsUploadingPhoto(true);
-        try {
-          const res = await uploadApi.uploadFile(file, 'avatar');
-          setFormData((prev) => ({ ...prev, profilePhotoUrl: res.url }));
-          setFiles((prev) => ({ ...prev, profilePhoto: null }));
-          toast.success("Profile photo uploaded!");
-        } catch (err) {
-          toast.error("Failed to upload photo to Cloudinary");
-        } finally {
-          setIsUploadingPhoto(false);
+        if (!file.type.startsWith("image/")) {
+          toast.error("Please choose an image file.");
+          return;
         }
+        setFiles((prev) => ({ ...prev, profilePhoto: file }));
+        setPhotoPreviewUrl(URL.createObjectURL(file));
       } else {
         setFiles((prev) => ({ ...prev, [name]: file }));
       }
@@ -192,6 +206,17 @@ export default function MentorOnboardingWizard({
     }
 
     // Validation for Step 3
+    if (currentStep === 2) {
+      if (!formData.mbaCollege || !formData.mbaYear || !formData.ugCollege || !formData.ugDegree || !formData.ugYear) {
+        toast.error("Please complete your MBA and undergraduate education details.");
+        return;
+      }
+      if (!files.collegeDocument && !existingProfile?.collegeDocumentUrl) {
+        toast.error("Please upload a college document for verification.");
+        return;
+      }
+    }
+
     if (currentStep === 3) {
       if (formData.linkedInUrl.trim()) {
         try {
@@ -205,6 +230,10 @@ export default function MentorOnboardingWizard({
           return;
         }
       }
+      if (hasWorkExperience && (!formData.workExperienceYears || !formData.company.trim() || !formData.role.trim())) {
+        toast.error("Please provide your years of experience, company, and role.");
+        return;
+      }
     }
 
     if (currentStep < 4) setCurrentStep((prev) => prev + 1);
@@ -217,36 +246,19 @@ export default function MentorOnboardingWizard({
   const buildPayload = () => {
     const payload = new FormData();
 
-    const pgProfile = [
-      formData.mbaCollege,
-      formData.mbaSpecialization,
-      formData.mbaYear,
-    ].some(Boolean)
-      ? `${formData.mbaCollege}|${formData.mbaSpecialization}|${formData.mbaYear}`
-      : "";
-    const ugCollegeProfile = [
-      formData.ugCollege,
-      formData.ugDegree,
-      formData.ugSpecialization,
-      formData.ugYear,
-    ].some(Boolean)
-      ? `${formData.ugCollege}|${formData.ugDegree}|${formData.ugSpecialization}|${formData.ugYear}`
-      : "";
-    const workExp =
-      hasWorkExperience &&
-      [formData.workExperienceYears, formData.company, formData.role].some(
-        Boolean,
-      )
-        ? `${formData.workExperienceYears}|${formData.company}|${formData.role}`
-        : "";
-
+    payload.append("fullName", formData.fullName.trim());
     payload.append("contactNumber", formData.contactNumber.replace(/\s/g, ""));
     payload.append("bio", formData.bio);
     payload.append("expertiseTags", JSON.stringify(formData.expertiseTags));
-    payload.append("ugCollegeProfile", ugCollegeProfile);
-    payload.append("pgProfile", pgProfile);
-    payload.append("workExperience", workExp);
     payload.append("linkedInUrl", formData.linkedInUrl || "");
+    payload.append("education", JSON.stringify({
+      mba: { college: formData.mbaCollege, specialization: formData.mbaSpecialization, graduationYear: Number(formData.mbaYear) },
+      undergraduate: { college: formData.ugCollege, degree: formData.ugDegree, specialization: formData.ugSpecialization, graduationYear: Number(formData.ugYear) },
+    }));
+    payload.append("professionalExperience", JSON.stringify({
+      hasExperience: hasWorkExperience,
+      ...(hasWorkExperience ? { years: Number(formData.workExperienceYears), company: formData.company, role: formData.role } : {}),
+    }));
     payload.append("mentoringQA", JSON.stringify({
       q1: formData.mentoringQ1,
       q2: formData.mentoringQ2,
@@ -258,24 +270,18 @@ export default function MentorOnboardingWizard({
     } else if (formData.profilePhotoUrl) {
       payload.append("profilePhotoUrl", formData.profilePhotoUrl);
     }
+    if (files.collegeDocument) payload.append("collegeDocument", files.collegeDocument);
 
     return payload;
   };
 
   const submitProfile = async (payload) => {
-    try {
-      if (typeof authApi.updateProfile === "function") {
-        await authApi.updateProfile({ name: formData.fullName });
-      }
-    } catch (_) {
-      // Silently ignore
-    }
-
     const result = existingProfile
       ? await mentorProfileApi.update(payload)
       : await mentorProfileApi.create(payload);
 
     await fetchCurrentUser();
+    if (draftKey) window.localStorage.removeItem(draftKey);
     toast.success(result?.message || "Mentor profile saved");
     onComplete?.();
   };
@@ -283,6 +289,10 @@ export default function MentorOnboardingWizard({
   const handleSubmit = async () => {
     if (!formData.bio.trim()) {
       toast.error("Bio is required.");
+      return;
+    }
+    if (formData.expertiseTags.length === 0) {
+      toast.error("Select at least one area of expertise.");
       return;
     }
     if (!formData.mentoringQ1.trim()) {
@@ -396,11 +406,9 @@ export default function MentorOnboardingWizard({
                 </label>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <div className="w-20 h-20 shrink-0 rounded-full border border-dashed border-gray-400 flex items-center justify-center bg-gray-50 overflow-hidden">
-                    {isUploadingPhoto ? (
-                      <div className="text-gray-400 text-xs animate-pulse">Uploading…</div>
-                    ) : formData.profilePhotoUrl ? (
+                    {photoPreviewUrl || formData.profilePhotoUrl ? (
                       <img
-                        src={resolveUploadUrl(formData.profilePhotoUrl)}
+                        src={photoPreviewUrl || resolveUploadUrl(formData.profilePhotoUrl)}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
@@ -419,10 +427,10 @@ export default function MentorOnboardingWizard({
                     />
                     <label
                       htmlFor="profilePhoto"
-                      className={`cursor-pointer inline-flex items-center bg-[#ffc20f] border-2 border-black px-4 py-2 rounded-xl text-sm hover:bg-[#e6ae0d] transition-colors shadow-[2px_2px_0_rgba(0,0,0,1)] ${isUploadingPhoto ? "opacity-50 cursor-not-allowed" : ""}`}
+                      className="cursor-pointer inline-flex items-center bg-[#ffc20f] border-2 border-black px-4 py-2 rounded-xl text-sm hover:bg-[#e6ae0d] transition-colors shadow-[2px_2px_0_rgba(0,0,0,1)]"
                     >
                       <Upload className="w-4 h-4 mr-2" />
-                      {isUploadingPhoto ? "Uploading..." : "Upload Photo"}
+                      {files.profilePhoto ? "Change Photo" : "Upload Photo"}
                     </label>
                   </div>
                 </div>
@@ -557,6 +565,21 @@ export default function MentorOnboardingWizard({
                     </div>
                   </div>
                 </div>
+              </div>
+
+              <div className="rounded-xl border border-dashed border-gray-300 bg-white p-4">
+                <label className="block text-sm font-semibold text-gray-700">College document for verification</label>
+                <p className="mt-1 text-xs text-gray-500">Upload a student ID, degree, or marksheet (JPG, PNG, WEBP, HEIC).</p>
+                <input
+                  type="file"
+                  name="collegeDocument"
+                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                  onChange={handleFileChange}
+                  className="mt-3 block w-full text-sm"
+                />
+                {(files.collegeDocument || existingProfile?.collegeDocumentUrl) && (
+                  <p className="mt-2 text-xs font-medium text-emerald-600">Document ready for review.</p>
+                )}
               </div>
 
               <div className="bg-[#fff5f2] border border-gray-200 rounded-xl p-4">

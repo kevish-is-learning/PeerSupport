@@ -1,5 +1,10 @@
 import mentorProfileService from "../services/MentorProfileService.js";
 import { ApiResponse } from "../utils/apiResponse.js";
+import { destroyAsset } from "../config/cloudinary.js";
+
+const cleanupNewUploads = async (uploadedFiles = {}) => {
+  await Promise.allSettled(Object.values(uploadedFiles).filter(Boolean).map(destroyAsset));
+};
 
 const getStatusCode = (error) => {
   if (error?.statusCode) {
@@ -25,6 +30,7 @@ class MentorProfileController {
           }),
         );
     } catch (error) {
+      await cleanupNewUploads(req.uploadedFiles);
       const statusCode = getStatusCode(error);
       return res.status(statusCode).json({
         success: false,
@@ -71,6 +77,7 @@ class MentorProfileController {
           }),
         );
     } catch (error) {
+      await cleanupNewUploads(req.uploadedFiles);
       const statusCode = getStatusCode(error);
       return res.status(statusCode).json({
         success: false,

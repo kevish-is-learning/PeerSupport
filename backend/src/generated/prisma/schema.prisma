@@ -200,10 +200,17 @@ model MentorProfile {
 
   collegeDocumentUrl String?
 
+  /// Structured application data; legacy text fields are retained for existing profiles.
+  education              Json?
+  professionalExperience Json?
+
   /// JSON blob storing "Why I Want to Mentor" Q&A answers
   mentoringQA Json?
 
   approvalStatus MentorApprovalStatus @default(PENDING)
+
+  adminReviewNotes String?
+  reviewedAt       DateTime?
 
   isVerified Boolean @default(false)
 

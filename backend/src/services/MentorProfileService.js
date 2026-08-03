@@ -88,9 +88,13 @@ const mapProfile = (profile) => ({
   certifications: profile.certifications,
   profilePhotoUrl: profile.user?.profilePicture,
   collegeDocumentUrl: profile.collegeDocumentUrl,
+  education: profile.education,
+  professionalExperience: profile.professionalExperience,
   mentoringQA: profile.mentoringQA || null,
   isVerified: profile.isVerified,
   approvalStatus: profile.approvalStatus,
+  adminReviewNotes: profile.adminReviewNotes,
+  reviewedAt: profile.reviewedAt,
   createdAt: profile.createdAt,
   updatedAt: profile.updatedAt,
 });
@@ -134,7 +138,7 @@ class MentorProfileService {
     const parsedData = createMentorProfileSchema.parse(payload);
     
     // Extract fields that don't match MentorProfile model directly
-    const { profilePhotoUrl, pgProfile, mentoringQA, ...restData } = parsedData;
+    const { fullName, profilePhotoUrl, pgProfile, mentoringQA, ...restData } = parsedData;
 
     const existingProfile = await prisma.mentorProfile.findUnique({
       where: { userId },
@@ -146,40 +150,43 @@ class MentorProfileService {
     }
 
     // Default username if not provided (Prisma requires it to be unique)
-    const baseUsername = `mentor_${userId.substring(0, 8)}`;
+    const baseUsername = `mentor_${userId}`;
 
-    const createdProfile = await prisma.mentorProfile.create({
-      data: {
-        userId,
-        username: baseUsername,
-        ...restData,
-        pgCollegeProfile: pgProfile,
-        mentoringQA: mentoringQA || undefined,
-        isVerified: false,
-        approvalStatus: 'PENDING',
-      },
-      include: profileInclude,
-    });
-
-    if (profilePhotoUrl) {
-      await prisma.user.update({
+    const createdProfile = await prisma.$transaction(async (tx) => {
+      await tx.user.update({
         where: { id: userId },
-        data: { profilePicture: profilePhotoUrl }
+        data: { name: fullName, profilePicture: profilePhotoUrl },
       });
-      createdProfile.user.profilePicture = profilePhotoUrl;
-    }
+      return tx.mentorProfile.create({
+        data: {
+          userId,
+          username: baseUsername,
+          ...restData,
+          pgCollegeProfile: pgProfile,
+          mentoringQA,
+          isVerified: false,
+          approvalStatus: 'PENDING',
+        },
+        include: profileInclude,
+      });
+    });
 
     return mapProfile(createdProfile);
   }
 
   async update(userId, payload) {
     const parsedData = updateMentorProfileSchema.parse(payload);
-    const { profilePhotoUrl, pgProfile, mentoringQA, ...restData } = parsedData;
+    const { fullName, profilePhotoUrl, pgProfile, mentoringQA, ...restData } = parsedData;
 
     const existingProfile = await prisma.mentorProfile.findUnique({
       where: { userId },
       select: {
         id: true,
+        approvalStatus: true,
+        education: true,
+        professionalExperience: true,
+        linkedInUrl: true,
+        mentoringQA: true,
         collegeDocumentUrl: true,
         user: { select: { profilePicture: true } }
       },
@@ -192,24 +199,35 @@ class MentorProfileService {
     const nextProfilePhotoUrl = profilePhotoUrl ?? existingProfile.user?.profilePicture;
     const nextCollegeDocumentUrl = restData.collegeDocumentUrl ?? existingProfile.collegeDocumentUrl;
 
-    const updatedProfile = await prisma.mentorProfile.update({
-      where: { userId },
-      data: {
-        ...restData,
-        pgCollegeProfile: pgProfile,
-        mentoringQA: mentoringQA || undefined,
-        collegeDocumentUrl: nextCollegeDocumentUrl,
-      },
-      include: profileInclude,
-    });
+    const materiallyChanged = [
+      ['education', restData.education],
+      ['professionalExperience', restData.professionalExperience],
+      ['linkedInUrl', restData.linkedInUrl],
+      ['mentoringQA', mentoringQA],
+      ['collegeDocumentUrl', restData.collegeDocumentUrl],
+    ].some(([key, value]) => value !== undefined && JSON.stringify(value) !== JSON.stringify(existingProfile[key]));
+    const mustResubmit = existingProfile.approvalStatus === 'REJECTED' ||
+      (existingProfile.approvalStatus === 'APPROVED' && materiallyChanged);
 
-    if (profilePhotoUrl) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { profilePicture: nextProfilePhotoUrl }
+    const updatedProfile = await prisma.$transaction(async (tx) => {
+      if (fullName || profilePhotoUrl) {
+        await tx.user.update({
+          where: { id: userId },
+          data: { ...(fullName ? { name: fullName } : {}), ...(profilePhotoUrl ? { profilePicture: nextProfilePhotoUrl } : {}) },
+        });
+      }
+      return tx.mentorProfile.update({
+        where: { userId },
+        data: {
+          ...restData,
+          ...(pgProfile !== undefined ? { pgCollegeProfile: pgProfile } : {}),
+          ...(mentoringQA !== undefined ? { mentoringQA } : {}),
+          collegeDocumentUrl: nextCollegeDocumentUrl,
+          ...(mustResubmit ? { approvalStatus: 'PENDING', isVerified: false, adminReviewNotes: null, reviewedAt: null } : {}),
+        },
+        include: profileInclude,
       });
-      updatedProfile.user.profilePicture = nextProfilePhotoUrl;
-    }
+    });
 
     if (profilePhotoUrl && existingProfile.user?.profilePicture && profilePhotoUrl !== existingProfile.user.profilePicture) {
       await removeUploadedAsset(existingProfile.user.profilePicture);
@@ -277,6 +295,8 @@ class MentorProfileService {
       data: {
         approvalStatus: parsedData.approvalStatus,
         isVerified: parsedData.approvalStatus === 'APPROVED',
+        adminReviewNotes: parsedData.adminReviewNotes || null,
+        reviewedAt: new Date(),
       },
       include: profileInclude,
     });

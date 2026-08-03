@@ -72,6 +72,35 @@ const makeTagsArraySchema = (itemErrorMsg) =>
 
 const expertiseTagsSchema = makeTagsArraySchema("Expertise tag cannot be empty");
 
+const fullNameSchema = z.string().trim().min(2, "Full name must be at least 2 characters").max(100);
+
+const parseJsonField = (schema) => z.preprocess((value) => {
+  if (typeof value !== 'string') return value;
+  try { return JSON.parse(value); } catch { return value; }
+}, schema);
+
+const educationSchema = parseJsonField(z.object({
+  mba: z.object({ college: z.string().trim().min(2).max(120), specialization: z.string().trim().max(120).optional().default(''), graduationYear: z.coerce.number().int().min(1950).max(new Date().getFullYear() + 10) }),
+  undergraduate: z.object({ college: z.string().trim().min(2).max(120), degree: z.string().trim().min(2).max(120), specialization: z.string().trim().max(120).optional().default(''), graduationYear: z.coerce.number().int().min(1950).max(new Date().getFullYear() + 10) }),
+}));
+
+const professionalExperienceSchema = parseJsonField(z.object({
+  hasExperience: z.boolean(),
+  years: z.coerce.number().min(0).max(60).optional(),
+  company: z.string().trim().max(120).optional(),
+  role: z.string().trim().max(120).optional(),
+}).superRefine((value, ctx) => {
+  if (value.hasExperience && (!value.years || !value.company || !value.role)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Years, company, and role are required when work experience is selected' });
+  }
+}));
+
+const mentoringQASchema = parseJsonField(z.object({
+  q1: z.string().trim().min(30).max(1500),
+  q2: z.string().trim().min(30).max(1500),
+  q3: z.string().trim().min(30).max(1500),
+}));
+
 const optionalUrlSchema = z
   .union([z.string().trim(), z.null()])
   .optional()
@@ -80,8 +109,8 @@ const optionalUrlSchema = z
       return true;
     }
 
-    return value.startsWith("/uploads/") || /^https?:\/\//i.test(value);
-  }, "Must be a valid URL or uploaded file path");
+    return value.startsWith("/uploads/") || /^https:\/\/res\.cloudinary\.com\//i.test(value);
+  }, "Must reference an application-managed upload");
 
 
 /**
@@ -89,31 +118,27 @@ const optionalUrlSchema = z
  * dedicated endpoints now, so they are NOT part of this schema.
  */
 export const createMentorProfileSchema = z.object({
+  fullName: fullNameSchema,
   linkedInUrl: linkedInUrlSchema,
   contactNumber: contactNumberSchema,
   bio: bioSchema,
-  expertiseTags: expertiseTagsSchema,
+  expertiseTags: expertiseTagsSchema.refine((tags) => tags.length > 0, 'Select at least one area of expertise'),
   ugCollegeProfile: normalizeOptionalText,
   pgProfile: normalizeOptionalText,
   workExperience: normalizeOptionalText,
   certifications: normalizeOptionalText,
-  profilePhotoUrl: optionalUrlSchema,
+  profilePhotoUrl: optionalUrlSchema.refine((value) => Boolean(value), 'Profile photo is required'),
   collegeDocumentUrl: optionalUrlSchema,
-  mentoringQA: z.preprocess(
-    (value) => {
-      if (typeof value === 'string') {
-        try { return JSON.parse(value); } catch (_) { return value; }
-      }
-      return value;
-    },
-    z.record(z.string(), z.string()).optional().nullable(),
-  ),
+  education: educationSchema,
+  professionalExperience: professionalExperienceSchema,
+  mentoringQA: mentoringQASchema,
 });
 
-export const updateMentorProfileSchema = createMentorProfileSchema;
+export const updateMentorProfileSchema = createMentorProfileSchema.partial();
 
 export const updateMentorApprovalSchema = z.object({
   approvalStatus: z.enum(["APPROVED", "REJECTED"]),
+  adminReviewNotes: z.string().trim().max(2000).optional().nullable(),
 });
 
 export default {
