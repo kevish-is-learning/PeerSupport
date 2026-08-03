@@ -115,7 +115,7 @@ export default function FooterSection() {
             </Link>
 
             <p className="mt-6 max-w-md text-sm leading-relaxed text-gray-400">
-              India&apos;s leading mentorship marketplace connecting MBA aspirants with experienced professionals
+              A mentorship marketplace connecting MBA aspirants with experienced professionals
               from IIMs, FMS, and other premier business schools.
             </p>
 

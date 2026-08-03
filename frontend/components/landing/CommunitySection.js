@@ -120,7 +120,7 @@ export default function CommunitySection() {
 
       <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
         <div className="max-w-xl lg:max-w-none">
-          <HighlightPill text="5000+ Active Members" variant="secondary" icon={<Users size={16} />} />
+          <HighlightPill text="Peer Support Community" variant="secondary" icon={<Users size={16} />} />
 
           <h2 className="mt-6 text-3xl font-extrabold leading-[1.2] tracking-[-0.03em] text-white sm:text-4xl lg:text-[2.65rem]">
             Join Our Thriving{" "}

@@ -268,6 +268,7 @@ export default function MentorProfilePage() {
   const remainingTagsCount = expertiseTags.length - 3;
   const profilePhotoUrl = profile?.profilePhotoUrl || user?.profilePicture || "";
   const profilePhotoSrc = resolveUploadUrl(profilePhotoUrl);
+  const averageRating = Number(profile?.averageRating) || 0;
 
   return (
     <div className="w-full h-full overflow-y-auto bg-[#FAF9F6] p-4 sm:p-8 lg:p-12">
@@ -324,13 +325,20 @@ export default function MentorProfilePage() {
               </div>
             )}
 
-            {/* Stars */}
-            <div className="flex items-center gap-1 mt-3">
-               {[1, 2, 3, 4, 5].map(i => (
-                 <Star key={i} size={16} className="fill-[#F59E0B] text-[#F59E0B]" />
-               ))}
-               <span className="text-black font-black text-sm ml-1">5</span>
-            </div>
+            {averageRating > 0 ? (
+              <div className="flex items-center gap-1 mt-3" aria-label={`${averageRating.toFixed(1)} out of 5 rating`}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    size={16}
+                    className={star <= Math.round(averageRating) ? "fill-[#F59E0B] text-[#F59E0B]" : "text-gray-300"}
+                  />
+                ))}
+                <span className="text-black font-black text-sm ml-1">{averageRating.toFixed(1)}</span>
+              </div>
+            ) : (
+              <p className="mt-3 text-xs font-semibold text-gray-500">No ratings yet</p>
+            )}
 
             {/* Expertise chips */}
             {expertiseTags.length > 0 && (

@@ -13,13 +13,6 @@ const navItems = [
   { label: "About", href: "#about" },
 ];
 
-const stats = [
-  { value: "400+", label: "Happy Mentees" },
-  { value: "50+", label: "B-Schools" },
-  { value: "1000+", label: "Hrs of sessions" },
-  { value: "4.8", label: "Rating on Google" },
-];
-
 const BRAND_BG = "#FDF5F3";
 
 function BrandMark() {
@@ -85,17 +78,6 @@ function MentorCardIllustration() {
           </div>
         </div>
 
-        <HighlightPill
-          text="⚡️ 2000+ Students"
-          variant="secondary"
-          className="absolute -top-20 left-5 z-10"
-        />
-
-        <HighlightPill
-          text="🎯 85% Success Rate"
-          variant="primary"
-          className="absolute bottom-0 -left-35 z-10"
-        />
       </div>
     </div>
   );
@@ -148,7 +130,7 @@ export default function HeroSection() {
           <div className="flex flex-col items-start">
             {/* Badge */}
             <HighlightPill
-              text="India's #1 MBA Mentorship Platform"
+              text="MBA Mentorship Platform"
               variant="primary"
               icon={<Sparkles size={18} />}
             />
@@ -184,24 +166,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* ── STATS ─────────────────────────────────────────── */}
-      <div className="">
-        <div
-          className="mx-auto grid w-full max-w-5xl grid-cols-2 gap-y-4 sm:gap-y-5 sm:grid-cols-2 px-4 py-10 text-center sm:px-6 md:grid-cols-4 md:gap-y-7 lg:px-8"
-          aria-label="Platform highlights"
-        >
-          {stats.map((stat) => (
-            <div key={stat.label}>
-              <p className="text-[2.2rem] font-extrabold leading-none tracking-[-0.04em] text-[#0d0d0f] sm:text-[2.8rem]">
-                {stat.value}
-              </p>
-              <p className="mt-2 text-sm text-[#5c5f69] sm:text-base">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

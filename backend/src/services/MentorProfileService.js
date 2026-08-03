@@ -91,6 +91,8 @@ const mapProfile = (profile) => ({
   education: profile.education,
   professionalExperience: profile.professionalExperience,
   mentoringQA: profile.mentoringQA || null,
+  averageRating: profile.averageRating,
+  totalSessions: profile.totalSessions,
   isVerified: profile.isVerified,
   approvalStatus: profile.approvalStatus,
   adminReviewNotes: profile.adminReviewNotes,

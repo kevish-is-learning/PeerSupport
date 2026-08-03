@@ -16,6 +16,7 @@ class PublicMentorController {
           user: {
             select: { name: true, email: true, profilePicture: true },
           },
+          education: true,
           mentorServices: {
             where: { isActive: true },
                         orderBy: { price: 'asc' },
@@ -47,6 +48,9 @@ class PublicMentorController {
                 },
               },
             },
+          },
+          _count: {
+            select: { reviews: true },
           },
         },
       });
@@ -107,14 +111,14 @@ class PublicMentorController {
         profilePicture: mentor.user.profilePicture,
         bio: mentor.bio,
         expertiseTags: mentor.expertiseTags,
-        pgCollege: mentor.pgCollegeProfile,
+        pgCollege: mentor.education?.mba?.college || mentor.pgCollegeProfile,
         ugCollege: mentor.ugCollegeProfile,
         workExperience: mentor.workExperience,
         certifications: mentor.certifications,
         linkedInUrl: mentor.linkedInUrl,
         totalSessions: mentor.totalSessions,
         averageRating: mentor.averageRating,
-        totalReviews: mentor.reviews.length,
+        totalReviews: mentor._count.reviews,
         startingPrice: cheapest?.price ?? null,
         services,
         availability,
@@ -207,6 +211,7 @@ class PublicMentorController {
             expertiseTags: true,
             pgCollegeProfile: true,
             ugCollegeProfile: true,
+            education: true,
             workExperience: true,
             averageRating: true,
             totalSessions: true,
@@ -219,6 +224,9 @@ class PublicMentorController {
               take: 1,
               select: { price: true },
             },
+            _count: {
+              select: { reviews: true },
+            },
           },
         }),
         prisma.mentorProfile.count({ where }),
@@ -228,7 +236,7 @@ class PublicMentorController {
         id: m.id,
         name: m.user.name,
         profilePicture: m.user.profilePicture,
-        pgCollege: m.pgCollegeProfile,
+        pgCollege: m.education?.mba?.college || m.pgCollegeProfile,
         ugCollege: m.ugCollegeProfile,
         expertiseTags: m.expertiseTags,
         bio: m.bio,
@@ -237,7 +245,7 @@ class PublicMentorController {
         startingPrice: m.mentorServices[0]?.price ?? null,
         nextAvailableDate: null,
         workExperience: m.workExperience,
-        totalReviews: 0,
+        totalReviews: m._count.reviews,
       }));
 
       return res.status(200).json(
