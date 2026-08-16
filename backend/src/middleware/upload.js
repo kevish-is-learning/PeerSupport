@@ -101,7 +101,7 @@ const resolveUserInfo = async (userId, role) => {
       select: { username: true },
     });
     return {
-      folderName: profile?.username || `mentor_${userId.substring(0, 8)}`,
+      folderName: profile?.username || `mentor_${userId}`,
       displayName,
       prefix: 'mentor',
     };
@@ -112,7 +112,7 @@ const resolveUserInfo = async (userId, role) => {
     select: { username: true },
   });
   return {
-    folderName: profile?.username || `mentee_${userId.substring(0, 8)}`,
+    folderName: profile?.username || `mentee_${userId}`,
     displayName,
     prefix: 'mentee',
   };

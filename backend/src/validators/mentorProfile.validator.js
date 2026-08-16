@@ -107,7 +107,7 @@ const professionalExperienceSchema = parseJsonField(z.object({
   company: z.string().trim().max(120).optional(),
   role: z.string().trim().max(120).optional(),
 }).superRefine((value, ctx) => {
-  if (value.hasExperience && (!value.years || !value.company || !value.role)) {
+  if (value.hasExperience && (value.years === undefined || value.years === null || Number.isNaN(value.years) || !value.company || !value.role)) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Years, company, and role are required when work experience is selected' });
   }
 }));
@@ -126,9 +126,7 @@ const isAllowedProfileImageUrl = (value) => {
 
   try {
     const url = new URL(value);
-    return url.protocol === 'https:'
-      && (url.hostname === 'lh3.googleusercontent.com'
-        || url.hostname.endsWith('.googleusercontent.com'));
+    return url.protocol === 'https:' || url.protocol === 'http:';
   } catch {
     return false;
   }

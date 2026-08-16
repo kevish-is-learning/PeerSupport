@@ -77,7 +77,7 @@ class AuthService {
     }
 
     if (user.role === 'MENTOR') {
-      return '/mentor/dashboard';
+      return user.mentorProfile?.isVerified ? '/mentor/dashboard' : '/mentor/profile';
     }
 
     if (user.role === 'MENTEE') {

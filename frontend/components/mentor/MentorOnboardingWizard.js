@@ -45,6 +45,23 @@ const EXPERTISE_OPTIONS = [
   "Networking Tips",
 ];
 
+const parseLegacyProfile = (value, keys) => Object.fromEntries(
+  keys.map((key, index) => [key, (value || "").split("|")[index] || ""]),
+);
+
+const getEducationData = (profile) => profile?.education || {
+  mba: parseLegacyProfile(profile?.pgProfile, ["college", "specialization", "graduationYear"]),
+  undergraduate: parseLegacyProfile(profile?.ugCollegeProfile, ["college", "degree", "specialization", "graduationYear"]),
+};
+
+const getExperienceData = (profile) => profile?.professionalExperience || (() => {
+  const legacy = parseLegacyProfile(profile?.workExperience, ["years", "company", "role"]);
+  return {
+    hasExperience: Boolean(legacy.years || legacy.company || legacy.role),
+    ...legacy,
+  };
+})();
+
 export default function MentorOnboardingWizard({
   existingProfile,
   onComplete,
@@ -77,8 +94,13 @@ export default function MentorOnboardingWizard({
     }
   }, [currentStep]);
 
+  const initialEducation = getEducationData(existingProfile);
+  const initialExperience = getExperienceData(existingProfile);
+
   const [hasWorkExperience, setHasWorkExperience] = useState(
-    existingProfile?.workExperience ? true : false,
+    existingProfile?.professionalExperience?.hasExperience !== undefined
+      ? Boolean(existingProfile.professionalExperience.hasExperience)
+      : Boolean(existingProfile?.workExperience)
   );
 
   const [formData, setFormData] = useState({
@@ -87,19 +109,19 @@ export default function MentorOnboardingWizard({
     email: user?.email || "",
     contactNumber: existingProfile?.contactNumber || "",
 
-    mbaCollege: existingProfile?.pgProfile?.split("|")[0] || "",
-    mbaSpecialization: existingProfile?.pgProfile?.split("|")[1] || "",
-    mbaYear: existingProfile?.pgProfile?.split("|")[2] || "",
+    mbaCollege: initialEducation.mba?.college || "",
+    mbaSpecialization: initialEducation.mba?.specialization || "",
+    mbaYear: initialEducation.mba?.graduationYear ? String(initialEducation.mba.graduationYear) : "",
 
-    ugCollege: existingProfile?.ugCollegeProfile?.split("|")[0] || "",
-    ugDegree: existingProfile?.ugCollegeProfile?.split("|")[1] || "",
-    ugSpecialization: existingProfile?.ugCollegeProfile?.split("|")[2] || "",
-    ugYear: existingProfile?.ugCollegeProfile?.split("|")[3] || "",
+    ugCollege: initialEducation.undergraduate?.college || "",
+    ugDegree: initialEducation.undergraduate?.degree || "",
+    ugSpecialization: initialEducation.undergraduate?.specialization || "",
+    ugYear: initialEducation.undergraduate?.graduationYear ? String(initialEducation.undergraduate.graduationYear) : "",
 
     linkedInUrl: existingProfile?.linkedInUrl || "",
-    workExperienceYears: existingProfile?.workExperience?.split("|")[0] || "",
-    company: existingProfile?.workExperience?.split("|")[1] || "",
-    role: existingProfile?.workExperience?.split("|")[2] || "",
+    workExperienceYears: initialExperience.years !== undefined && initialExperience.years !== null ? String(initialExperience.years) : "",
+    company: initialExperience.company || "",
+    role: initialExperience.role || "",
 
     expertiseTags: existingProfile?.expertiseTags || [],
     bio: existingProfile?.bio || "",
@@ -122,26 +144,42 @@ export default function MentorOnboardingWizard({
     if (!draft) return;
     try {
       const parsed = JSON.parse(draft);
-      if (parsed.formData) setFormData((current) => ({ ...current, ...parsed.formData, profilePhotoUrl: "" }));
+      if (parsed.formData) {
+        setFormData((current) => ({
+          ...current,
+          ...parsed.formData,
+          profilePhotoUrl: parsed.formData.profilePhotoUrl || current.profilePhotoUrl || user?.profilePicture || "",
+        }));
+      }
+      if (typeof parsed.hasWorkExperience === "boolean") {
+        setHasWorkExperience(parsed.hasWorkExperience);
+      }
       if (Number.isInteger(parsed.currentStep)) setCurrentStep(Math.min(4, Math.max(1, parsed.currentStep)));
     } catch {
       window.localStorage.removeItem(draftKey);
     }
-  }, [draftKey, existingProfile]);
+  }, [draftKey, existingProfile, user?.profilePicture]);
 
   useEffect(() => {
     if (!draftKey || existingProfile) return;
-    window.localStorage.setItem(draftKey, JSON.stringify({ formData: { ...formData, profilePhotoUrl: "" }, currentStep }));
-  }, [draftKey, existingProfile, formData, currentStep]);
+    window.localStorage.setItem(
+      draftKey,
+      JSON.stringify({
+        formData: {
+          ...formData,
+          profilePhotoUrl: formData.profilePhotoUrl?.startsWith("blob:") ? "" : formData.profilePhotoUrl,
+        },
+        hasWorkExperience,
+        currentStep,
+      })
+    );
+  }, [draftKey, existingProfile, formData, hasWorkExperience, currentStep]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "contactNumber") {
-      let numericValue = value.replace(/\D/g, "").slice(0, 10);
-      if (numericValue.length > 5) {
-        numericValue = `${numericValue.slice(0, 5)} ${numericValue.slice(5)}`;
-      }
-      setFormData((prev) => ({ ...prev, [name]: numericValue }));
+      const cleaned = value.replace(/[^\d+()\-\s]/g, "").slice(0, 16);
+      setFormData((prev) => ({ ...prev, [name]: cleaned }));
       return;
     }
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -199,29 +237,9 @@ export default function MentorOnboardingWizard({
         return;
       }
 
-      const cleanNumber = formData.contactNumber.replace(/\s/g, "");
-      if (cleanNumber.length !== 10) {
-        toast.error("Contact number must be exactly 10 digits.");
-        return;
-      }
-    }
-
-    // Validation for Step 3
-    if (currentStep === 3) {
-      if (formData.linkedInUrl.trim()) {
-        try {
-          new URL(formData.linkedInUrl);
-          if (!formData.linkedInUrl.toLowerCase().includes("linkedin.com")) {
-            toast.error("Please provide a valid LinkedIn URL.");
-            return;
-          }
-        } catch (_) {
-          toast.error("Please enter a valid URL including http/https.");
-          return;
-        }
-      }
-      if (hasWorkExperience && (!formData.workExperienceYears || !formData.company.trim() || !formData.role.trim())) {
-        toast.error("Please provide your years of experience, company, and role.");
+      const digitsOnly = formData.contactNumber.replace(/\D/g, "");
+      if (digitsOnly.length < 7 || digitsOnly.length > 15) {
+        toast.error("Please enter a valid contact number (7-15 digits).");
         return;
       }
     }
@@ -240,6 +258,35 @@ export default function MentorOnboardingWizard({
       }
     }
 
+    // Validation for Step 3
+    if (currentStep === 3) {
+      if (formData.linkedInUrl.trim()) {
+        try {
+          new URL(formData.linkedInUrl);
+          if (!formData.linkedInUrl.toLowerCase().includes("linkedin.com")) {
+            toast.error("Please provide a valid LinkedIn URL.");
+            return;
+          }
+        } catch (_) {
+          toast.error("Please enter a valid URL including http/https.");
+          return;
+        }
+      }
+      if (hasWorkExperience) {
+        const yearsNum = Number(formData.workExperienceYears);
+        if (
+          formData.workExperienceYears === "" ||
+          Number.isNaN(yearsNum) ||
+          yearsNum < 0 ||
+          !formData.company.trim() ||
+          !formData.role.trim()
+        ) {
+          toast.error("Please provide your years of experience, company, and role.");
+          return;
+        }
+      }
+    }
+
     if (currentStep < 4) setCurrentStep((prev) => prev + 1);
   };
 
@@ -251,7 +298,7 @@ export default function MentorOnboardingWizard({
     const payload = new FormData();
 
     payload.append("fullName", formData.fullName.trim());
-    payload.append("contactNumber", formData.contactNumber.replace(/\s/g, ""));
+    payload.append("contactNumber", formData.contactNumber.trim());
     payload.append("bio", formData.bio);
     payload.append("expertiseTags", JSON.stringify(formData.expertiseTags));
     payload.append("linkedInUrl", formData.linkedInUrl || "");
@@ -497,8 +544,8 @@ export default function MentorOnboardingWizard({
                     name="contactNumber"
                     value={formData.contactNumber}
                     onChange={handleChange}
-                    maxLength="11"
-                    placeholder="9876543210"
+                    maxLength="16"
+                    placeholder="+91 98765 43210"
                     className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] pr-4 py-3 pl-8 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                   />
                 </div>
@@ -709,10 +756,7 @@ export default function MentorOnboardingWizard({
                 <>
                   <div>
                     <label className="block text-sm font-semibold mb-2">
-                      Years of Work Experience{" "}
-                      <span className="text-xs font-normal text-gray-400">
-                        (optional)
-                      </span>
+                      Years of Work Experience
                     </label>
                     <input
                       type="number"
@@ -727,10 +771,7 @@ export default function MentorOnboardingWizard({
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2">
-                      Current/Previous Company{" "}
-                      <span className="text-xs font-normal text-gray-400">
-                        (optional)
-                      </span>
+                      Current/Previous Company
                     </label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-400">
@@ -748,10 +789,7 @@ export default function MentorOnboardingWizard({
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2">
-                      Current/Previous Role{" "}
-                      <span className="text-xs font-normal text-gray-400">
-                        (optional)
-                      </span>
+                      Current/Previous Role
                     </label>
                     <input
                       type="text"
