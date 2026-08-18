@@ -459,6 +459,7 @@ export default function MentorOnboardingWizard({
                         src={photoPreviewUrl || resolveUploadUrl(formData.profilePhotoUrl)}
                         alt="Profile"
                         className="w-full h-full object-cover"
+                        referrerPolicy="no-referrer"
                       />
                     ) : (
                       <div className="text-gray-400">👤</div>
