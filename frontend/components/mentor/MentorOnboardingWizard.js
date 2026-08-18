@@ -238,8 +238,8 @@ export default function MentorOnboardingWizard({
       }
 
       const digitsOnly = formData.contactNumber.replace(/\D/g, "");
-      if (digitsOnly.length < 7 || digitsOnly.length > 15) {
-        toast.error("Please enter a valid contact number (7-15 digits).");
+      if (digitsOnly.length !== 10) {
+        toast.error("Please enter a valid 10-digit contact number.");
         return;
       }
     }
@@ -450,7 +450,7 @@ export default function MentorOnboardingWizard({
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-semibold mb-2">
-                  Profile Picture
+                  Profile Picture <span className="text-red-500">*</span>
                 </label>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <div className="w-20 h-20 shrink-0 rounded-full border border-dashed border-gray-400 flex items-center justify-center bg-gray-50 overflow-hidden">
@@ -492,7 +492,7 @@ export default function MentorOnboardingWizard({
 
               <div>
                 <label className="block text-sm font-semibold mb-2">
-                  Full Name
+                  Full Name <span className="text-red-500">*</span>
                 </label>
                 {/* have a user icon inside the input */}
                 <div className="relative flex items-center">
@@ -513,7 +513,7 @@ export default function MentorOnboardingWizard({
 
               <div>
                 <label className="block text-sm font-semibold mb-2">
-                  Email Address
+                  Email Address <span className="text-red-500">*</span>
                 </label>
                 <div className="relative flex items-center">
                   <Mail
@@ -533,7 +533,7 @@ export default function MentorOnboardingWizard({
 
               <div>
                 <label className="block text-sm font-semibold mb-2">
-                  Contact Number
+                  Contact Number <span className="text-red-500">*</span>
                 </label>
                 <div className="relative flex items-center">
                   <Phone
@@ -563,7 +563,7 @@ export default function MentorOnboardingWizard({
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-600">
-                      MBA College/B-School{" "}
+                      MBA College/B-School <span className="text-red-500">*</span>{" "}
                     </label>
                     <select
                       name="mbaCollege"
@@ -596,7 +596,7 @@ export default function MentorOnboardingWizard({
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1 text-gray-600">
-                        Graduation Year{" "}
+                        Graduation Year <span className="text-red-500">*</span>{" "}
                       </label>
                       <input
                         type="number"
@@ -635,7 +635,7 @@ export default function MentorOnboardingWizard({
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-600">
-                      College/University{" "}
+                      College/University <span className="text-red-500">*</span>{" "}
                     </label>
                     <input
                       type="text"
@@ -649,7 +649,7 @@ export default function MentorOnboardingWizard({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1 text-gray-600">
-                        Degree{" "}
+                        Degree <span className="text-red-500">*</span>{" "}
                       </label>
                       <input
                         type="text"
@@ -676,7 +676,7 @@ export default function MentorOnboardingWizard({
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1 text-gray-600">
-                        Year{" "}
+                        Year <span className="text-red-500">*</span>{" "}
                       </label>
                       <input
                         type="number"
@@ -757,7 +757,7 @@ export default function MentorOnboardingWizard({
                 <>
                   <div>
                     <label className="block text-sm font-semibold mb-2">
-                      Years of Work Experience
+                      Years of Work Experience <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="number"
@@ -772,7 +772,7 @@ export default function MentorOnboardingWizard({
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2">
-                      Current/Previous Company
+                      Current/Previous Company <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-400">
@@ -790,7 +790,7 @@ export default function MentorOnboardingWizard({
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2">
-                      Current/Previous Role
+                      Current/Previous Role <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -810,7 +810,7 @@ export default function MentorOnboardingWizard({
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-semibold mb-3">
-                  Areas of Expertise (Select all that apply)
+                  Areas of Expertise (Select all that apply) <span className="text-red-500">*</span>
                 </label>
                 <div className="flex flex-wrap gap-2 sm:gap-3">
                   {EXPERTISE_OPTIONS.map((opt) => {
@@ -897,7 +897,7 @@ export default function MentorOnboardingWizard({
 
               <div>
                 <label className="block text-sm font-semibold mb-2">
-                  Bio/About Yourself
+                  Bio/About Yourself <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <textarea
