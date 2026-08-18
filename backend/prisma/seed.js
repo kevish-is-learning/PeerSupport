@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../src/config/database.js';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
 
 // Data arrays for generation
 const firstNames = ['Aarav', 'Vivaan', 'Aditya', 'Vihaan', 'Arjun', 'Sai', 'Reyansh', 'Ayaan', 'Krishna', 'Ishaan', 'Diya', 'Myra', 'Ananya', 'Aaradhya', 'Pari', 'Anika', 'Navya', 'Avni', 'Saanvi', 'Kavya'];

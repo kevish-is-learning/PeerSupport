@@ -2,10 +2,8 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import bcrypt from 'bcryptjs';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './database.js';
 import emailService from '../services/EmailService.js';
-
-const prisma = new PrismaClient();
 
 // Serialize user for session
 passport.serializeUser((user, done) => {
