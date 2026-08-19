@@ -129,6 +129,8 @@ export default function MentorOnboardingWizard({
     mentoringQ1: existingProfile?.mentoringQA?.q1 || "",
     mentoringQ2: existingProfile?.mentoringQA?.q2 || "",
     mentoringQ3: existingProfile?.mentoringQA?.q3 || "",
+    mentoringQ4: existingProfile?.mentoringQA?.q4 || "",
+    mentoringQ5: existingProfile?.mentoringQA?.q5 || "",
   });
 
   const [files, setFiles] = useState({
@@ -314,6 +316,8 @@ export default function MentorOnboardingWizard({
       q1: formData.mentoringQ1,
       q2: formData.mentoringQ2,
       q3: formData.mentoringQ3,
+      q4: formData.mentoringQ4,
+      q5: formData.mentoringQ5,
     }));
 
     if (files.profilePhoto) {
@@ -346,7 +350,13 @@ export default function MentorOnboardingWizard({
       toast.error("Select at least one area of expertise.");
       return;
     }
-    const mentoringAnswers = [formData.mentoringQ1, formData.mentoringQ2, formData.mentoringQ3];
+    const mentoringAnswers = [
+      formData.mentoringQ1,
+      formData.mentoringQ2,
+      formData.mentoringQ3,
+      formData.mentoringQ4,
+      formData.mentoringQ5,
+    ];
     if (mentoringAnswers.some((answer) => !answer.trim())) {
       toast.error("Please complete all mentoring questions.");
       return;
@@ -832,15 +842,15 @@ export default function MentorOnboardingWizard({
                 </div>
               </div>
 
-              {/* ── Why I Want to Mentor ─────────────────────────────── */}
+              {/* ── B-School & Mentoring Insights ─────────────────────────────── */}
               <div className="border-2 border-indigo-200 rounded-2xl p-5 sm:p-6 bg-gradient-to-b from-indigo-50/40 to-white shadow-[0_4px_20px_rgba(95,108,243,0.10)]">
                 <div className="flex items-center gap-3 mb-1">
                   <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shrink-0">
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-gray-900">Why I Want to Mentor</h3>
-                    <p className="text-xs text-gray-500">Help students understand your journey and what drives you to PeerSupport</p>
+                    <h3 className="text-base font-bold text-gray-900">B-School &amp; Mentoring Insights</h3>
+                    <p className="text-xs text-gray-500">Share your institute selection process and interview insights to help aspirants</p>
                   </div>
                 </div>
 
@@ -849,14 +859,14 @@ export default function MentorOnboardingWizard({
                   <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
                     <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold shrink-0 mt-0.5">1</span>
-                      What inspired you to start mentoring MBA aspirants?
+                      Describe the entire post entrance test (CAT, XAT, SNAP, etc.) process in 5 steps for your institute
                     </label>
                     <textarea
                       name="mentoringQ1"
                       value={formData.mentoringQ1}
                       onChange={handleChange}
                       rows={3}
-                      placeholder="Share the moment or experience that made you want to give back and help students on their MBA journey..."
+                      placeholder="Detail the 5 steps of your institute's selection process (e.g., Shortlist criteria, WAT, GD/GE, Personal Interview, Final Composite Score &amp; Merit list)..."
                       className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
                     />
                   </div>
@@ -865,14 +875,14 @@ export default function MentorOnboardingWizard({
                   <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
                     <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-400 text-white text-[10px] font-bold shrink-0 mt-0.5">2</span>
-                      What specific challenges in the MBA journey do you feel most equipped to help students navigate?
+                      Do you find any similarity in the pattern for the type of questions being asked to Freshers and Workex aspirants?
                     </label>
                     <textarea
                       name="mentoringQ2"
                       value={formData.mentoringQ2}
                       onChange={handleChange}
                       rows={3}
-                      placeholder="e.g., mock interviews, SOP writing, college shortlisting, managing work-study balance..."
+                      placeholder="Explain common trends, overlapping questions, or key differences you observed between fresher and work-experience candidates..."
                       className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
                     />
                   </div>
@@ -881,14 +891,46 @@ export default function MentorOnboardingWizard({
                   <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
                     <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
                       <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pink-400 text-white text-[10px] font-bold shrink-0 mt-0.5">3</span>
-                      What has been your most defining experience during your MBA or career that you&apos;d like to share with mentees?
+                      What will be the 3 differentiators of your B-school that you would want to showcase as compared to other B-schools? Similarly what would be the 3- pointers you would suggest the aspirants to be noted
                     </label>
                     <textarea
                       name="mentoringQ3"
                       value={formData.mentoringQ3}
                       onChange={handleChange}
                       rows={3}
-                      placeholder="A failure, a turning point, or a lesson learned that shaped who you are today..."
+                      placeholder="Share 3 key differentiators / USPs of your B-school and 3 important pointers or takeaways aspirants must note..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                    />
+                  </div>
+
+                  {/* Q4 */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
+                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-bold shrink-0 mt-0.5">4</span>
+                      If you are asked to sum up 3 best things and 2 worst things according to you in your campus life-list them.
+                    </label>
+                    <textarea
+                      name="mentoringQ4"
+                      value={formData.mentoringQ4}
+                      onChange={handleChange}
+                      rows={3}
+                      placeholder="List 3 best highlights (e.g. peer network, campus events, learning) and 2 challenging or worst aspects of campus life..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                    />
+                  </div>
+
+                  {/* Q5 */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
+                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-500 text-white text-[10px] font-bold shrink-0 mt-0.5">5</span>
+                      Suggest 3 pointers which you feel (with your experience or having discussion with your friends) can help turn the interview decision in your favor and why so?
+                    </label>
+                    <textarea
+                      name="mentoringQ5"
+                      value={formData.mentoringQ5}
+                      onChange={handleChange}
+                      rows={3}
+                      placeholder="Share 3 proven tips or strategies that tip the interview in the candidate's favor and why they make a difference..."
                       className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
                     />
                   </div>

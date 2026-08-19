@@ -372,26 +372,38 @@ export default function AdminMentorsPage() {
                     )}
 
                     {/* Row 6: Onboarding Q&A */}
-                    {(qa.q1 || qa.q2 || qa.q3) && (
+                    {(qa.q1 || qa.q2 || qa.q3 || qa.q4 || qa.q5) && (
                       <div className="rounded-xl border border-indigo-900/40 bg-indigo-950/10 p-5">
-                        <h4 className="text-[10px] font-semibold uppercase tracking-wider text-indigo-400 mb-4">📝 Onboarding Answers — "Why I Want to Mentor"</h4>
+                        <h4 className="text-[10px] font-semibold uppercase tracking-wider text-indigo-400 mb-4">📝 Onboarding Answers — "B-School &amp; Mentoring Insights"</h4>
                         <div className="space-y-4">
                           {qa.q1 && (
                             <div>
-                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q1: What inspired you to start mentoring MBA aspirants?</p>
+                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q1: Post entrance test (CAT, XAT, SNAP, etc.) process in 5 steps</p>
                               <p className="text-sm text-zinc-200 leading-relaxed">{qa.q1}</p>
                             </div>
                           )}
                           {qa.q2 && (
                             <div>
-                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q2: What specific challenges do you feel most equipped to help students navigate?</p>
+                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q2: Similarity/patterns in questions asked to Freshers vs Workex aspirants</p>
                               <p className="text-sm text-zinc-200 leading-relaxed">{qa.q2}</p>
                             </div>
                           )}
                           {qa.q3 && (
                             <div>
-                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q3: What has been your most defining experience during your MBA or career?</p>
+                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q3: 3 B-School differentiators &amp; 3 pointers for aspirants</p>
                               <p className="text-sm text-zinc-200 leading-relaxed">{qa.q3}</p>
+                            </div>
+                          )}
+                          {qa.q4 && (
+                            <div>
+                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q4: 3 best things and 2 worst things in campus life</p>
+                              <p className="text-sm text-zinc-200 leading-relaxed">{qa.q4}</p>
+                            </div>
+                          )}
+                          {qa.q5 && (
+                            <div>
+                              <p className="text-xs font-semibold text-zinc-400 mb-1">Q5: 3 pointers to turn interview decision in candidate&apos;s favor</p>
+                              <p className="text-sm text-zinc-200 leading-relaxed">{qa.q5}</p>
                             </div>
                           )}
                         </div>

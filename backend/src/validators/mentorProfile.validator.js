@@ -116,6 +116,8 @@ const mentoringQASchema = parseJsonField(z.object({
   q1: z.string().trim().min(30).max(1500),
   q2: z.string().trim().min(30).max(1500),
   q3: z.string().trim().min(30).max(1500),
+  q4: z.string().trim().min(30).max(1500),
+  q5: z.string().trim().min(30).max(1500),
 }));
 
 const isApplicationManagedUploadUrl = (value) =>
