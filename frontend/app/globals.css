@@ -2,6 +2,8 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -34,4 +36,77 @@
 
 button {
   cursor: pointer;
+}
+
+/* ── Admin Theming Variables & Classes ─────────────────────────────────────── */
+
+.admin-shell.theme-dark {
+  --admin-bg: #09090b;
+  --admin-surface: #0f0f12;
+  --admin-card: #141417;
+  --admin-card-inner: #1a1a1f;
+  --admin-border: #27272a;
+  --admin-border-subtle: #1f1f23;
+  --admin-text-primary: #f4f4f5;
+  --admin-text-secondary: #a1a1aa;
+  --admin-text-muted: #71717a;
+  --admin-nav-bg: #0c0c0e;
+  --admin-nav-pill: #18181b;
+  --admin-nav-pill-active: #27272a;
+  --admin-input-bg: #141417;
+  --admin-badge-bg: rgba(39, 39, 42, 0.6);
+  --admin-hover-bg: rgba(39, 39, 42, 0.5);
+  --admin-accent: #6366f1;
+}
+
+.admin-shell.theme-light {
+  --admin-bg: #f8fafc;
+  --admin-surface: #ffffff;
+  --admin-card: #ffffff;
+  --admin-card-inner: #f8fafc;
+  --admin-border: #e2e8f0;
+  --admin-border-subtle: #cbd5e1;
+  --admin-text-primary: #0f172a;
+  --admin-text-secondary: #475569;
+  --admin-text-muted: #64748b;
+  --admin-nav-bg: #ffffff;
+  --admin-nav-pill: #f1f5f9;
+  --admin-nav-pill-active: #e2e8f0;
+  --admin-input-bg: #ffffff;
+  --admin-badge-bg: #f1f5f9;
+  --admin-hover-bg: rgba(241, 245, 249, 0.9);
+  --admin-accent: #4f46e5;
+}
+
+.admin-bg-base {
+  background-color: var(--admin-bg);
+}
+.admin-bg-surface {
+  background-color: var(--admin-surface);
+}
+.admin-bg-card {
+  background-color: var(--admin-card);
+}
+.admin-bg-inner {
+  background-color: var(--admin-card-inner);
+}
+.admin-border-base {
+  border-color: var(--admin-border);
+}
+.admin-border-subtle {
+  border-color: var(--admin-border-subtle);
+}
+.admin-text-base {
+  color: var(--admin-text-primary);
+}
+.admin-text-secondary {
+  color: var(--admin-text-secondary);
+}
+.admin-text-muted {
+  color: var(--admin-text-muted);
+}
+.admin-input-base {
+  background-color: var(--admin-input-bg);
+  border-color: var(--admin-border);
+  color: var(--admin-text-primary);
 }

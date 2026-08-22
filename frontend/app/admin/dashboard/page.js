@@ -30,16 +30,16 @@ const STATUS_COLORS = {
 
 function StatCard({ label, value, sub }) {
   return (
-    <article className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-500">{label}</p>
-      <p className="mt-3 text-3xl font-medium tracking-tight text-white">{value}</p>
-      {sub && <p className="mt-2 text-xs text-zinc-500">{sub}</p>}
+    <article className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] p-5 shadow-xs transition-colors">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-500 dark:text-zinc-400">{label}</p>
+      <p className="mt-3 text-3xl font-medium tracking-tight text-zinc-900 dark:text-white">{value}</p>
+      {sub && <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">{sub}</p>}
     </article>
   );
 }
 
 function StatusBadge({ status }) {
-  const color = STATUS_COLORS[status] || "border-zinc-800 text-zinc-400 bg-zinc-900/50";
+  const color = STATUS_COLORS[status] || "border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900/50";
   return (
     <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${color}`}>
       {status?.replace(/_/g, " ")}
@@ -67,7 +67,7 @@ export default function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-[3px] border-zinc-800 border-t-white" />
+        <div className="h-6 w-6 animate-spin rounded-full border-[3px] border-zinc-300 dark:border-zinc-800 border-t-indigo-600 dark:border-t-white" />
       </div>
     );
   }
@@ -78,8 +78,8 @@ export default function AdminDashboardPage() {
     <div className="mx-auto max-w-6xl space-y-8">
       {/* Header */}
       <header>
-        <h1 className="text-3xl font-light tracking-tight text-white">Dashboard Overview</h1>
-        <p className="mt-2 text-sm text-zinc-400">Platform metrics and recent activity across PeerSupport.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Dashboard Overview</h1>
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Platform metrics and recent activity across PeerSupport.</p>
       </header>
 
       {/* Key Metrics */}
@@ -98,17 +98,17 @@ export default function AdminDashboardPage() {
       </section>
 
       {/* Booking Status Breakdown */}
-      <section className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-6">
-        <h2 className="text-sm font-medium text-white">Booking Breakdown</h2>
+      <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] p-6 shadow-xs transition-colors">
+        <h2 className="text-sm font-semibold text-zinc-900 dark:text-white">Booking Breakdown</h2>
         <div className="mt-5 flex flex-wrap gap-3">
           {Object.entries(stats.bookings.byStatus || {}).map(([status, count]) => (
-            <div key={status} className="flex items-center gap-3 rounded-full border border-zinc-800 bg-black pl-1 pr-4 py-1">
+            <div key={status} className="flex items-center gap-3 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black pl-1 pr-4 py-1">
               <StatusBadge status={status} />
-              <span className="text-sm font-medium text-white">{count}</span>
+              <span className="text-sm font-medium text-zinc-900 dark:text-white">{count}</span>
             </div>
           ))}
           {Object.keys(stats.bookings.byStatus || {}).length === 0 && (
-            <p className="text-sm text-zinc-500">No bookings yet</p>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">No bookings yet</p>
           )}
         </div>
       </section>
@@ -116,49 +116,49 @@ export default function AdminDashboardPage() {
       {/* Two-column: Recent Bookings + Mentor Applications */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Bookings */}
-        <section className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] overflow-hidden">
-          <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
-            <h2 className="text-sm font-medium text-white">Recent Bookings</h2>
-            <Link href="/admin/bookings" className="text-[11px] font-medium uppercase tracking-wider text-zinc-400 hover:text-white transition-colors">
+        <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] overflow-hidden shadow-xs transition-colors">
+          <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-6 py-4">
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-white">Recent Bookings</h2>
+            <Link href="/admin/bookings" className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-white transition-colors">
               View All
             </Link>
           </div>
-          <div className="divide-y divide-zinc-800/50">
+          <div className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
             {(stats.recentBookings || []).map((b) => (
-              <div key={b.id} className="flex items-center justify-between px-6 py-4 hover:bg-zinc-900/20 transition-colors">
+              <div key={b.id} className="flex items-center justify-between px-6 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/20 transition-colors">
                 <div>
-                  <p className="text-sm font-medium text-white">{b.menteeName} <span className="text-zinc-600 mx-1">→</span> {b.mentorName}</p>
-                  <p className="mt-1 text-[11px] text-zinc-500">{b.serviceName} · {formatDateTime(b.startTime)}</p>
+                  <p className="text-sm font-medium text-zinc-900 dark:text-white">{b.menteeName} <span className="text-zinc-400 dark:text-zinc-600 mx-1">→</span> {b.mentorName}</p>
+                  <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">{b.serviceName} · {formatDateTime(b.startTime)}</p>
                 </div>
                 <StatusBadge status={b.status} />
               </div>
             ))}
             {(stats.recentBookings || []).length === 0 && (
-              <div className="px-6 py-8 text-center text-sm text-zinc-500">No recent bookings</div>
+              <div className="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">No recent bookings</div>
             )}
           </div>
         </section>
 
         {/* Pending Mentor Applications */}
-        <section className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] overflow-hidden">
-          <div className="flex items-center justify-between border-b border-zinc-800 px-6 py-4">
-            <h2 className="text-sm font-medium text-white">Pending Mentor Applications</h2>
-            <Link href="/admin/mentors" className="text-[11px] font-medium uppercase tracking-wider text-zinc-400 hover:text-white transition-colors">
+        <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] overflow-hidden shadow-xs transition-colors">
+          <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-6 py-4">
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-white">Pending Mentor Applications</h2>
+            <Link href="/admin/mentors" className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-white transition-colors">
               View All
             </Link>
           </div>
-          <div className="divide-y divide-zinc-800/50">
+          <div className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
             {(stats.recentApplications || []).map((a) => (
-              <div key={a.id} className="flex items-center justify-between px-6 py-4 hover:bg-zinc-900/20 transition-colors">
+              <div key={a.id} className="flex items-center justify-between px-6 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/20 transition-colors">
                 <div>
-                  <p className="text-sm font-medium text-white">{a.name}</p>
-                  <p className="mt-1 text-[11px] text-zinc-500">{a.email}</p>
+                  <p className="text-sm font-medium text-zinc-900 dark:text-white">{a.name}</p>
+                  <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">{a.email}</p>
                 </div>
-                <span className="text-[11px] text-zinc-600">{formatDate(a.createdAt)}</span>
+                <span className="text-[11px] text-zinc-400 dark:text-zinc-600">{formatDate(a.createdAt)}</span>
               </div>
             ))}
             {(stats.recentApplications || []).length === 0 && (
-              <div className="px-6 py-8 text-center text-sm text-zinc-500">No pending applications</div>
+              <div className="px-6 py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">No pending applications</div>
             )}
           </div>
         </section>

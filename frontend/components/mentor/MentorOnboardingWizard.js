@@ -273,59 +273,69 @@ export default function MentorOnboardingWizard({
     }
   };
 
-  const handleNext = () => {
-    // Validation for Step 1
-    if (currentStep === 1) {
+  const validateStep = (stepNumber, showError = true) => {
+    // Validation for Step 1: Basic Information
+    if (stepNumber === 1) {
       if (!files.profilePhoto && !formData.profilePhotoUrl) {
-        toast.error("Profile picture is required.");
-        return;
+        if (showError) toast.error("Profile picture is required.");
+        return false;
       }
       if (!formData.fullName.trim()) {
-        toast.error("Full name is required.");
-        return;
+        if (showError) toast.error("Full name is required.");
+        return false;
       }
       if (!formData.email.trim()) {
-        toast.error("Email is required.");
-        return;
+        if (showError) toast.error("Email is required.");
+        return false;
       }
       if (!formData.contactNumber.trim()) {
-        toast.error("Contact number is required.");
-        return;
+        if (showError) toast.error("Contact number is required.");
+        return false;
       }
 
       const digitsOnly = formData.contactNumber.replace(/\D/g, "");
       if (digitsOnly.length < 7 || digitsOnly.length > 15) {
-        toast.error("Please enter a valid contact number (7-15 digits).");
-        return;
+        if (showError) toast.error("Please enter a valid contact number (7-15 digits).");
+        return false;
       }
+      return true;
     }
 
-    if (currentStep === 2) {
+    // Validation for Step 2: Education Details
+    if (stepNumber === 2) {
       const currentYear = new Date().getFullYear();
       const mbaYear = Number(formData.mbaYear);
       const ugYear = Number(formData.ugYear);
       if (!formData.mbaCollege.trim() || !formData.ugCollege.trim() || !formData.ugDegree.trim()) {
-        toast.error("Please complete your MBA and undergraduate education details.");
-        return;
+        if (showError) toast.error("Please complete your MBA and undergraduate education details.");
+        return false;
       }
-      if (!Number.isInteger(mbaYear) || mbaYear < 1950 || mbaYear > currentYear + 10 || !Number.isInteger(ugYear) || ugYear < 1950 || ugYear > currentYear + 10) {
-        toast.error("Please enter valid graduation years.");
-        return;
+      if (
+        !Number.isInteger(mbaYear) ||
+        mbaYear < 1950 ||
+        mbaYear > currentYear + 10 ||
+        !Number.isInteger(ugYear) ||
+        ugYear < 1950 ||
+        ugYear > currentYear + 10
+      ) {
+        if (showError) toast.error("Please enter valid graduation years.");
+        return false;
       }
+      return true;
     }
 
-    // Validation for Step 3
-    if (currentStep === 3) {
-      if (formData.linkedInUrl.trim()) {
+    // Validation for Step 3: Professional Background
+    if (stepNumber === 3) {
+      if (formData.linkedInUrl && formData.linkedInUrl.trim()) {
         try {
           new URL(formData.linkedInUrl);
           if (!formData.linkedInUrl.toLowerCase().includes("linkedin.com")) {
-            toast.error("Please provide a valid LinkedIn URL.");
-            return;
+            if (showError) toast.error("Please provide a valid LinkedIn URL.");
+            return false;
           }
         } catch (_) {
-          toast.error("Please enter a valid URL including http/https.");
-          return;
+          if (showError) toast.error("Please enter a valid URL including http/https.");
+          return false;
         }
       }
       if (hasWorkExperience) {
@@ -337,13 +347,74 @@ export default function MentorOnboardingWizard({
           !formData.company.trim() ||
           !formData.role.trim()
         ) {
-          toast.error("Please provide your years of experience, company, and role.");
-          return;
+          if (showError) toast.error("Please provide your years of experience, company, and role.");
+          return false;
         }
+      }
+      return true;
+    }
+
+    // Validation for Step 4: Expertise & Profile
+    if (stepNumber === 4) {
+      if (!formData.bio.trim()) {
+        if (showError) toast.error("Bio is required.");
+        return false;
+      }
+      if (formData.expertiseTags.length === 0) {
+        if (showError) toast.error("Select at least one area of expertise.");
+        return false;
+      }
+      const mentoringAnswers = [
+        formData.mentoringQ1,
+        formData.mentoringQ2,
+        formData.mentoringQ3,
+        formData.mentoringQ4,
+        formData.mentoringQ5,
+      ];
+      if (mentoringAnswers.some((answer) => !answer || !answer.trim())) {
+        if (showError) toast.error("Please complete all mentoring questions.");
+        return false;
+      }
+      if (mentoringAnswers.some((answer) => answer.trim().length < 30)) {
+        if (showError) toast.error("Please write at least 30 characters for each mentoring response.");
+        return false;
+      }
+      return true;
+    }
+
+    return true;
+  };
+
+  const handleStepClick = (targetStep) => {
+    if (isSubmitting) return;
+    if (targetStep === currentStep) return;
+
+    // Moving backwards is always allowed directly
+    if (targetStep < currentStep) {
+      setCurrentStep(targetStep);
+      return;
+    }
+
+    // Moving forwards: validate current step and all intermediate steps sequentially
+    for (let s = currentStep; s < targetStep; s++) {
+      const isValid = validateStep(s, true);
+      if (!isValid) {
+        // If an intermediate step is invalid, advance user to that step to complete it
+        if (s !== currentStep) {
+          setCurrentStep(s);
+        }
+        return;
       }
     }
 
-    if (currentStep < 4) setCurrentStep((prev) => prev + 1);
+    setCurrentStep(targetStep);
+  };
+
+  const handleNext = () => {
+    if (currentStep >= 4) return;
+    if (validateStep(currentStep, true)) {
+      setCurrentStep((prev) => prev + 1);
+    }
   };
 
   const handlePrevious = () => {
@@ -398,29 +469,8 @@ export default function MentorOnboardingWizard({
   };
 
   const handleSubmit = async () => {
-    if (!formData.bio.trim()) {
-      toast.error("Bio is required.");
-      return;
-    }
-    if (formData.expertiseTags.length === 0) {
-      toast.error("Select at least one area of expertise.");
-      return;
-    }
-    const mentoringAnswers = [
-      formData.mentoringQ1,
-      formData.mentoringQ2,
-      formData.mentoringQ3,
-      formData.mentoringQ4,
-      formData.mentoringQ5,
-    ];
-    if (mentoringAnswers.some((answer) => !answer.trim())) {
-      toast.error("Please complete all mentoring questions.");
-      return;
-    }
-    if (mentoringAnswers.some((answer) => answer.trim().length < 30)) {
-      toast.error("Please write at least 30 characters for each mentoring response.");
-      return;
-    }
+    if (!validateStep(4, true)) return;
+
     setIsSubmitting(true);
     try {
       await submitProfile(buildPayload());
@@ -459,22 +509,30 @@ export default function MentorOnboardingWizard({
         >
           <div className="flex w-full items-center justify-between min-w-[600px] sm:min-w-full px-2 py-1">
             {STEPS.map((step, idx) => {
-              const isCompleted = step.id < currentStep;
               const isActive = step.id === currentStep;
+              const isCompleted = !isActive && (step.id < currentStep || validateStep(step.id, false));
 
               return (
                 <React.Fragment key={step.id}>
-                  <div
+                  <button
+                    type="button"
+                    onClick={() => handleStepClick(step.id)}
+                    disabled={isSubmitting}
                     data-active={isActive ? "true" : undefined}
-                    className="flex flex-col items-center z-10 bg-white px-2 sm:px-4 shrink-0 transition-transform duration-300 w-20 sm:w-28"
+                    aria-current={isActive ? "step" : undefined}
+                    aria-label={`Step ${step.id}: ${step.title}${isActive ? " (Current)" : isCompleted ? " (Completed)" : ""}`}
+                    title={isActive ? `Current Step: ${step.title}` : isCompleted ? `Go to ${step.title} (Completed)` : `Go to ${step.title}`}
+                    className={`flex flex-col items-center z-10 bg-transparent px-2 sm:px-4 shrink-0 transition-transform duration-200 w-20 sm:w-28 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 rounded-xl group ${
+                      isSubmitting ? "opacity-60 cursor-not-allowed" : "hover:scale-105 active:scale-95"
+                    }`}
                   >
                     <div
                       className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center mb-2 transition-all shrink-0 ${
-                        isCompleted
-                          ? "border-yellow-400 bg-yellow-400 text-black"
-                          : isActive
-                            ? "border-yellow-400 bg-yellow-400 text-black"
-                            : "border-gray-200 text-gray-400"
+                        isActive
+                          ? "border-yellow-400 bg-yellow-400 text-black scale-105 shadow-md ring-2 ring-yellow-200"
+                          : isCompleted
+                            ? "border-yellow-400 bg-yellow-400 text-black group-hover:shadow-md"
+                            : "border-gray-200 text-gray-400 bg-white group-hover:border-gray-300 group-hover:text-gray-600"
                       }`}
                     >
                       {isCompleted ? (
@@ -484,17 +542,21 @@ export default function MentorOnboardingWizard({
                       )}
                     </div>
                     <span
-                      className={`text-[9px] leading-tight sm:text-xs font-bold text-center wrap-break-word mt-1 ${
-                        isActive || isCompleted ? "text-black" : "text-gray-400"
+                      className={`text-[9px] leading-tight sm:text-xs font-bold text-center wrap-break-word mt-1 transition-colors ${
+                        isActive || isCompleted ? "text-black" : "text-gray-400 group-hover:text-gray-600"
                       }`}
                     >
                       {step.title}
                     </span>
-                  </div>
+                  </button>
                   {idx < STEPS.length - 1 && (
                     <div className="flex-1 h-[2px] mx-1 md:mx-2 relative top-[-10px] sm:top-[-16px] min-w-[12px]">
                       <div
-                        className={`h-full w-full ${isCompleted ? "bg-yellow-400" : "bg-gray-200"}`}
+                        className={`h-full w-full transition-colors duration-300 ${
+                          step.id < currentStep || validateStep(step.id, false)
+                            ? "bg-yellow-400"
+                            : "bg-gray-200"
+                        }`}
                       />
                     </div>
                   )}

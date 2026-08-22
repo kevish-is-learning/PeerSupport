@@ -111,8 +111,8 @@ export default function AdminPayoutsPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-8">
       <header>
-        <h1 className="text-3xl font-light tracking-tight text-white">Payouts</h1>
-        <p className="mt-2 text-sm text-zinc-400">Manage mentor withdrawal requests and process disbursements.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Payouts</h1>
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Manage mentor withdrawal requests and process disbursements.</p>
       </header>
 
       {/* Tabs */}
@@ -121,10 +121,10 @@ export default function AdminPayoutsPage() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-colors ${
+            className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
               tab === t.key
-                ? "border-zinc-500 bg-white text-black"
-                : "border-zinc-800 bg-black text-zinc-400 hover:border-zinc-600 hover:text-white"
+                ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-black shadow-xs"
+                : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:bg-black dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-white"
             }`}
           >
             {t.label}
@@ -132,7 +132,7 @@ export default function AdminPayoutsPage() {
         ))}
       </div>
 
-      <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
         {pagination.total} payout requests
       </div>
 
@@ -140,43 +140,43 @@ export default function AdminPayoutsPage() {
       <section className="space-y-4">
         {loading ? (
           <div className="flex h-48 items-center justify-center">
-            <div className="h-6 w-6 animate-spin rounded-full border-[3px] border-zinc-800 border-t-white" />
+            <div className="h-6 w-6 animate-spin rounded-full border-[3px] border-zinc-300 dark:border-zinc-800 border-t-indigo-600 dark:border-t-white" />
           </div>
         ) : payouts.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-12 text-center">
-            <p className="text-sm text-zinc-500">No payout requests found</p>
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] p-12 text-center shadow-xs">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">No payout requests found</p>
           </div>
         ) : (
           payouts.map((p) => (
-            <article key={p.id} className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] overflow-hidden">
+            <article key={p.id} className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] overflow-hidden shadow-xs transition-colors">
               <div className="p-6">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3">
-                      <p className="text-base font-medium text-white">{formatCurrency(p.netAmount)}</p>
-                      <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${STATUS_COLORS[p.status] || "border-zinc-800 text-zinc-400 bg-zinc-900/50"}`}>
+                      <p className="text-base font-semibold text-zinc-900 dark:text-white">{formatCurrency(p.netAmount)}</p>
+                      <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${STATUS_COLORS[p.status] || "border-zinc-300 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900/50"}`}>
                         {p.status}
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-zinc-500">Gross: {formatCurrency(p.amount)} · Fee: {formatCurrency(p.platformFee)}</p>
-                    <p className="mt-2 text-sm text-white">Mentor ID: <span className="font-mono text-xs text-zinc-400">{p.mentorProfileId}</span></p>
+                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">Gross: {formatCurrency(p.amount)} · Fee: {formatCurrency(p.platformFee)}</p>
+                    <p className="mt-2 text-sm font-medium text-zinc-900 dark:text-white">Mentor ID: <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">{p.mentorProfileId}</span></p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Requested</p>
-                    <p className="mt-1 text-xs text-zinc-400">{formatDateTime(p.requestedAt)}</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Requested</p>
+                    <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">{formatDateTime(p.requestedAt)}</p>
                     {p.transactionRef && (
-                      <p className="mt-2 text-xs text-zinc-500">Ref: {p.transactionRef}</p>
+                      <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Ref: {p.transactionRef}</p>
                     )}
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-zinc-800 pt-4">
+                <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-zinc-200 dark:border-zinc-800 pt-4">
                   {p.status === "REQUESTED" && (
                     <button
                       onClick={() => handleApprove(p.id)}
                       disabled={!!mutatingId}
-                      className="rounded-lg border border-amber-900/50 bg-amber-950/30 px-4 py-1.5 text-xs font-medium text-amber-400 hover:bg-amber-900/50 transition-colors disabled:opacity-50"
+                      className="rounded-lg border border-amber-900/50 bg-amber-950/30 px-4 py-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-900/50 transition-colors disabled:opacity-50 cursor-pointer"
                     >
                       {mutatingId === p.id ? "..." : "Approve Payout"}
                     </button>
@@ -184,64 +184,64 @@ export default function AdminPayoutsPage() {
                   {["APPROVED", "PROCESSING"].includes(p.status) && (
                     <button
                       onClick={() => setExpandedId(expandedId === p.id ? "" : p.id)}
-                      className="rounded-lg border border-zinc-800 bg-black px-4 py-1.5 text-xs font-medium text-zinc-400 hover:text-white hover:border-zinc-700 transition-colors"
+                      className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black px-4 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors cursor-pointer"
                     >
                       {expandedId === p.id ? "Cancel" : "Process Disbursement"}
                     </button>
                   )}
                   {p.status === "FAILED" && (
-                    <span className="text-xs text-red-400">Failed Reason: {p.failedReason}</span>
+                    <span className="text-xs text-red-500">Failed Reason: {p.failedReason}</span>
                   )}
                 </div>
 
                 {/* Expanded Action Panel */}
                 {expandedId === p.id && (
-                  <div className="mt-4 rounded-xl border border-zinc-800 bg-black p-4 space-y-4">
+                  <div className="mt-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black p-4 space-y-4">
                     <div className="grid gap-6 sm:grid-cols-2">
                       {/* Complete */}
                       <div className="space-y-3">
-                        <h4 className="text-[10px] font-medium uppercase tracking-wider text-emerald-500">Mark as Completed</h4>
+                        <h4 className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-500">Mark as Completed</h4>
                         <div className="flex gap-2">
                           <input
                             type="text"
                             placeholder="Method (e.g. upi, bank)..."
                             value={payoutMethod}
                             onChange={(e) => setPayoutMethod(e.target.value)}
-                            className="w-1/3 rounded-lg border border-zinc-800 bg-[#0a0a0a] px-3 py-2 text-xs text-white outline-none focus:border-zinc-600 transition-colors"
+                            className="w-1/3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-indigo-500 transition-colors"
                           />
                           <input
                             type="text"
                             placeholder="Transaction Reference..."
                             value={transactionRef}
                             onChange={(e) => setTransactionRef(e.target.value)}
-                            className="flex-1 rounded-lg border border-zinc-800 bg-[#0a0a0a] px-3 py-2 text-xs text-white outline-none focus:border-zinc-600 transition-colors"
+                            className="flex-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-indigo-500 transition-colors"
                           />
                         </div>
                         <button
                           onClick={() => handleComplete(p.id)}
                           disabled={!payoutMethod || !transactionRef || mutatingId === p.id}
-                          className="w-full rounded-lg border border-emerald-900/50 bg-emerald-950/30 px-4 py-2 text-xs font-medium text-emerald-400 hover:bg-emerald-900/50 transition-colors disabled:opacity-50"
+                          className="w-full rounded-lg border border-emerald-900/50 bg-emerald-950/30 px-4 py-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-900/50 transition-colors disabled:opacity-50 cursor-pointer"
                         >
                           Complete Payout
                         </button>
                       </div>
 
                       {/* Fail */}
-                      <div className="space-y-3 pl-0 sm:pl-6 sm:border-l border-zinc-800">
-                        <h4 className="text-[10px] font-medium uppercase tracking-wider text-red-500">Mark as Failed</h4>
+                      <div className="space-y-3 pl-0 sm:pl-6 sm:border-l border-zinc-200 dark:border-zinc-800">
+                        <h4 className="text-[10px] font-bold uppercase tracking-wider text-red-500">Mark as Failed</h4>
                         <input
                           type="text"
                           placeholder="Reason for failure..."
                           value={failedReason}
                           onChange={(e) => setFailedReason(e.target.value)}
-                          className="w-full rounded-lg border border-zinc-800 bg-[#0a0a0a] px-3 py-2 text-xs text-white outline-none focus:border-zinc-600 transition-colors"
+                          className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-indigo-500 transition-colors"
                         />
                         <button
                           onClick={() => handleFail(p.id)}
                           disabled={!failedReason || mutatingId === p.id}
-                          className="w-full rounded-lg border border-red-900/50 bg-red-950/30 px-4 py-2 text-xs font-medium text-red-400 hover:bg-red-900/50 transition-colors disabled:opacity-50"
+                          className="w-full rounded-lg border border-red-900/50 bg-red-950/30 px-4 py-2 text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-900/50 transition-colors disabled:opacity-50 cursor-pointer"
                         >
-                          Fail Payout & Return Funds
+                          Fail Payout &amp; Return Funds
                         </button>
                       </div>
                     </div>
@@ -255,18 +255,18 @@ export default function AdminPayoutsPage() {
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-zinc-800 pt-6">
+        <div className="flex items-center justify-between border-t border-zinc-200 dark:border-zinc-800 pt-6">
           <button
             onClick={() => loadPayouts(pagination.page - 1)}
             disabled={pagination.page <= 1}
-            className="rounded-lg border border-zinc-800 bg-black px-4 py-2 text-xs font-medium text-white hover:bg-zinc-900 transition-colors disabled:opacity-40"
+            className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black px-4 py-2 text-xs font-semibold text-zinc-800 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
           >
             Previous
           </button>
           <button
             onClick={() => loadPayouts(pagination.page + 1)}
             disabled={pagination.page >= pagination.totalPages}
-            className="rounded-lg border border-zinc-800 bg-black px-4 py-2 text-xs font-medium text-white hover:bg-zinc-900 transition-colors disabled:opacity-40"
+            className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black px-4 py-2 text-xs font-semibold text-zinc-800 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
           >
             Next
           </button>

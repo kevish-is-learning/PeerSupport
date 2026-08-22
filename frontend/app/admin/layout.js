@@ -1,89 +1,150 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
-import {
-  LayoutDashboard,
-  Users,
-  GraduationCap,
-  Calendar,
-  CreditCard,
-  Banknote,
-  Star,
-  LogOut
-} from "lucide-react";
-import useAuthStore from "../../store/useAuthStore";
-
-const NAV_ITEMS = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/mentors", label: "Mentors", icon: GraduationCap },
-  { href: "/admin/bookings", label: "Bookings", icon: Calendar },
-  { href: "/admin/payments", label: "Payments", icon: CreditCard },
-  { href: "/admin/payouts", label: "Payouts", icon: Banknote },
-  { href: "/admin/reviews", label: "Reviews", icon: Star },
-];
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import useAdminTheme from "../../store/useAdminTheme";
+import AdminThemeToggle from "../../components/admin/AdminThemeToggle";
+import AdminFloatingNav from "../../components/admin/AdminFloatingNav";
+import AdminCommandPalette from "../../components/admin/AdminCommandPalette";
+import AdminShortcutsModal from "../../components/admin/AdminShortcutsModal";
 
 export default function AdminLayout({ children }) {
-  const pathname = usePathname();
   const router = useRouter();
-  const { logout } = useAuthStore();
+  const { theme, initializeTheme, toggleTheme } = useAdminTheme();
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      router.replace("/auth?mode=login");
-    } catch (_error) {
-      // Error handled in store
-    }
-  };
+  // Key tracking for sequential shortcuts (e.g. 'g' then 'm')
+  const lastKeyRef = useRef({ key: null, time: 0 });
+
+  useEffect(() => {
+    initializeTheme();
+  }, [initializeTheme]);
+
+  // Global Keyboard Shortcuts Listener
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ignore if typing inside an editable field
+      const activeElement = document.activeElement;
+      const isInput =
+        activeElement &&
+        (activeElement.tagName === "INPUT" ||
+          activeElement.tagName === "TEXTAREA" ||
+          activeElement.isContentEditable);
+
+      // 1. Command Palette: Cmd+K or Ctrl+K
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+        return;
+      }
+
+      if (isInput) return;
+
+      // 2. Search shortcut: '/'
+      if (e.key === "/") {
+        e.preventDefault();
+        setIsCommandPaletteOpen(true);
+        return;
+      }
+
+      // 3. Theme toggle: 't' or 'T'
+      if (e.key.toLowerCase() === "t" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        toggleTheme();
+        return;
+      }
+
+      // 4. Shortcuts helper: '?'
+      if (e.key === "?") {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
+        return;
+      }
+
+      // 5. Sequential Navigation shortcuts: 'g' then key
+      const now = Date.now();
+      const last = lastKeyRef.current;
+      const isSequence = last.key === "g" && now - last.time < 1200;
+
+      if (e.key.toLowerCase() === "g" && !isSequence) {
+        lastKeyRef.current = { key: "g", time: now };
+        return;
+      }
+
+      if (isSequence) {
+        lastKeyRef.current = { key: null, time: 0 };
+        const key = e.key.toLowerCase();
+        switch (key) {
+          case "d":
+            e.preventDefault();
+            router.push("/admin/dashboard");
+            break;
+          case "m":
+            e.preventDefault();
+            router.push("/admin/mentors");
+            break;
+          case "u":
+            e.preventDefault();
+            router.push("/admin/users");
+            break;
+          case "b":
+            e.preventDefault();
+            router.push("/admin/bookings");
+            break;
+          case "p":
+            e.preventDefault();
+            router.push("/admin/payments");
+            break;
+          case "o":
+            e.preventDefault();
+            router.push("/admin/payouts");
+            break;
+          case "r":
+            e.preventDefault();
+            router.push("/admin/reviews");
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [router, toggleTheme]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-zinc-100 font-sans selection:bg-zinc-800">
-      <main className="flex-1 pb-32 pt-8 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto w-full">
+    <div
+      className={`admin-shell min-h-screen flex flex-col font-sans transition-colors duration-200 ${
+        theme === "dark" ? "theme-dark dark bg-[#09090b] text-zinc-100" : "theme-light bg-[#f8fafc] text-zinc-900"
+      }`}
+    >
+      {/* Top Right Theme Toggle Only */}
+      <AdminThemeToggle />
+
+      {/* Main Content Area */}
+      <main className="flex-1 pb-36 pt-10 sm:pt-12 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto w-full">
         {children}
       </main>
 
-      {/* Floating Pill Navigation */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-[95vw] sm:max-w-max overflow-x-auto no-scrollbar">
-        <nav className="flex items-center gap-1 sm:gap-1.5 rounded-[2.5rem] bg-[#0a0a0a] p-2 sm:p-2.5 border border-zinc-800/60 shadow-[0_0_40px_-10px_rgba(0,0,0,0.5)] w-max mx-auto">
-          {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href || pathname?.startsWith(item.href + "/");
-            const Icon = item.icon;
-            
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`group flex items-center justify-center transition-all duration-300 ease-in-out ${
-                  isActive 
-                    ? "bg-zinc-800/80 text-white rounded-full px-4 sm:px-5 py-2.5 sm:py-3 gap-2 sm:gap-3 shadow-inner border border-zinc-700/30" 
-                    : "text-zinc-500 hover:text-zinc-200 hover:bg-zinc-900/40 rounded-full w-[46px] h-[46px] sm:w-[50px] sm:h-[50px] border border-transparent"
-                }`}
-              >
-                <Icon strokeWidth={isActive ? 2.5 : 2} className={`shrink-0 ${isActive ? "w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]" : "w-5 h-5 sm:w-[22px] sm:h-[22px]"} transition-all`} />
-                {isActive && (
-                  <span className="text-[13px] sm:text-sm font-semibold tracking-wide whitespace-nowrap">
-                    {item.label}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+      {/* Bottom Floating Navigation Dock */}
+      <AdminFloatingNav />
 
-          {/* Divider */}
-          <div className="mx-1 h-6 w-px bg-zinc-700/50" />
+      {/* Global Command Palette */}
+      <AdminCommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onOpenShortcuts={() => setIsShortcutsOpen(true)}
+      />
 
-          {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            title="Logout"
-            className="flex items-center justify-center text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-full w-[46px] h-[46px] sm:w-[50px] sm:h-[50px] border border-transparent transition-all duration-300 ease-in-out"
-          >
-            <LogOut strokeWidth={2} className="w-5 h-5 sm:w-[22px] sm:h-[22px] transition-all" />
-          </button>
-        </nav>
-      </div>
+      {/* Keyboard Shortcuts Cheat Sheet Modal */}
+      <AdminShortcutsModal
+        isOpen={isShortcutsOpen}
+        onClose={() => setIsShortcutsOpen(false)}
+      />
     </div>
   );
 }
+
+

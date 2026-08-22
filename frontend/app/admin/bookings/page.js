@@ -97,8 +97,8 @@ export default function AdminBookingsPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-8">
       <header>
-        <h1 className="text-3xl font-light tracking-tight text-white">Bookings</h1>
-        <p className="mt-2 text-sm text-zinc-400">Monitor all sessions, override statuses, and manage disputes.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Bookings</h1>
+        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Monitor all sessions, override statuses, and manage disputes.</p>
       </header>
 
       {/* Filters */}
@@ -108,19 +108,19 @@ export default function AdminBookingsPage() {
           placeholder="Search by ID, mentor, or mentee..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="min-w-[240px] flex-1 rounded-xl border border-zinc-800 bg-[#0a0a0a] px-4 py-2.5 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-zinc-600 transition-colors"
+          className="min-w-[240px] flex-1 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-4 py-2.5 text-sm text-zinc-900 dark:text-white outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:border-indigo-500 transition-colors shadow-xs"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-xl border border-zinc-800 bg-[#0a0a0a] px-4 py-2.5 text-sm text-white outline-none focus:border-zinc-600 transition-colors"
+          className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-4 py-2.5 text-sm text-zinc-900 dark:text-white outline-none focus:border-indigo-500 transition-colors shadow-xs cursor-pointer"
         >
           <option value="">All Statuses</option>
           {Object.keys(STATUS_COLORS).map((s) => (
             <option key={s} value={s}>{s.replace(/_/g, " ")}</option>
           ))}
         </select>
-        <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 pl-2">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 pl-2">
           {pagination.total} bookings
         </div>
       </section>
@@ -129,28 +129,28 @@ export default function AdminBookingsPage() {
       <section className="space-y-4">
         {loading ? (
           <div className="flex h-48 items-center justify-center">
-            <div className="h-6 w-6 animate-spin rounded-full border-[3px] border-zinc-800 border-t-white" />
+            <div className="h-6 w-6 animate-spin rounded-full border-[3px] border-zinc-300 dark:border-zinc-800 border-t-indigo-600 dark:border-t-white" />
           </div>
         ) : bookings.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-12 text-center">
-            <p className="text-sm text-zinc-500">No bookings found</p>
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] p-12 text-center shadow-xs">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">No bookings found</p>
           </div>
         ) : (
           bookings.map((b) => (
-            <article key={b.id} className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] overflow-hidden">
+            <article key={b.id} className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] overflow-hidden shadow-xs transition-colors">
               <div className="p-6">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <p className="text-sm font-medium text-white">
-                      {b.mentee?.name || "Unknown"} <span className="text-zinc-600 mx-2">→</span> {b.mentor?.name || "Unknown"}
+                    <p className="text-sm font-semibold text-zinc-900 dark:text-white">
+                      {b.mentee?.name || "Unknown"} <span className="text-zinc-400 dark:text-zinc-600 mx-2">→</span> {b.mentor?.name || "Unknown"}
                     </p>
-                    <p className="mt-1 text-xs text-zinc-500">{b.service?.title} · {formatDateTime(b.startTime)}</p>
+                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{b.service?.title} · {formatDateTime(b.startTime)}</p>
                   </div>
                   <div className="text-right">
-                    <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${STATUS_COLORS[b.status] || "border-zinc-800 text-zinc-400 bg-zinc-900/50"}`}>
+                    <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${STATUS_COLORS[b.status] || "border-zinc-300 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900/50"}`}>
                       {b.status?.replace(/_/g, " ")}
                     </span>
-                    <p className="mt-2 font-mono text-[10px] text-zinc-600">ID: {b.id}</p>
+                    <p className="mt-2 font-mono text-[10px] text-zinc-400 dark:text-zinc-600">ID: {b.id}</p>
                   </div>
                 </div>
 
@@ -166,45 +166,45 @@ export default function AdminBookingsPage() {
                         setAdminNote("");
                       }
                     }}
-                    className="rounded-lg border border-zinc-800 bg-black px-4 py-1.5 text-xs font-medium text-zinc-400 hover:text-white hover:border-zinc-700 transition-colors"
+                    className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black px-4 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors cursor-pointer"
                   >
                     {expandedId === b.id ? "Close Actions" : "Manage Booking"}
                   </button>
                   {b.payment && (
-                    <span className="text-xs text-zinc-500">
-                      Payment: <span className="font-medium text-white">{formatCurrency(b.payment.amount)}</span> ({b.payment.status})
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Payment: <span className="font-semibold text-zinc-900 dark:text-white">{formatCurrency(b.payment.amount)}</span> ({b.payment.status})
                     </span>
                   )}
                 </div>
 
                 {/* Expanded Detail & Admin Actions */}
                 {expandedId === b.id && (
-                  <div className="mt-6 border-t border-zinc-800 pt-6">
+                  <div className="mt-6 border-t border-zinc-200 dark:border-zinc-800 pt-6">
                     <div className="grid gap-6 sm:grid-cols-2">
                       {/* Info Panel */}
-                      <div className="space-y-4 rounded-xl bg-black p-4 border border-zinc-800/50">
-                        <h4 className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">Booking Info</h4>
+                      <div className="space-y-4 rounded-xl bg-zinc-50 dark:bg-black p-4 border border-zinc-200 dark:border-zinc-800/50">
+                        <h4 className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Booking Info</h4>
                         {b.purposeOfCall && (
                           <div>
-                            <span className="text-xs text-zinc-500 block mb-1">Purpose</span>
-                            <span className="text-sm text-white">{b.purposeOfCall}</span>
+                            <span className="text-xs text-zinc-500 dark:text-zinc-400 block mb-1">Purpose</span>
+                            <span className="text-sm font-medium text-zinc-900 dark:text-white">{b.purposeOfCall}</span>
                           </div>
                         )}
                         {b.cancelledReason && (
                           <div>
-                            <span className="text-xs text-zinc-500 block mb-1">Cancel Reason</span>
-                            <span className="text-sm text-red-400">{b.cancelledReason}</span>
+                            <span className="text-xs text-zinc-500 dark:text-zinc-400 block mb-1">Cancel Reason</span>
+                            <span className="text-sm text-red-500 font-medium">{b.cancelledReason}</span>
                           </div>
                         )}
                         {b.payment && (
                           <div className="flex flex-wrap gap-4 pt-2">
                             <div>
-                              <span className="text-xs text-zinc-500 block mb-1">Platform Fee</span>
-                              <span className="text-sm text-white">{formatCurrency(b.payment.platformFee)}</span>
+                              <span className="text-xs text-zinc-500 dark:text-zinc-400 block mb-1">Platform Fee</span>
+                              <span className="text-sm font-semibold text-zinc-900 dark:text-white">{formatCurrency(b.payment.platformFee)}</span>
                             </div>
                             <div>
-                              <span className="text-xs text-zinc-500 block mb-1">Mentor Earned</span>
-                              <span className="text-sm text-white">{formatCurrency(b.payment.mentorAmount)}</span>
+                              <span className="text-xs text-zinc-500 dark:text-zinc-400 block mb-1">Mentor Earned</span>
+                              <span className="text-sm font-semibold text-zinc-900 dark:text-white">{formatCurrency(b.payment.mentorAmount)}</span>
                             </div>
                           </div>
                         )}
@@ -212,7 +212,7 @@ export default function AdminBookingsPage() {
 
                       {/* Admin Actions Panel */}
                       <div className="space-y-4">
-                        <h4 className="text-[10px] font-medium uppercase tracking-wider text-red-500">Danger Zone</h4>
+                        <h4 className="text-[10px] font-bold uppercase tracking-wider text-red-500">Danger Zone</h4>
                         
                         <div className="space-y-3">
                           <input
@@ -220,14 +220,14 @@ export default function AdminBookingsPage() {
                             placeholder="Admin note (required for actions)..."
                             value={adminNote}
                             onChange={(e) => setAdminNote(e.target.value)}
-                            className="w-full rounded-lg border border-zinc-800 bg-black px-3 py-2 text-xs text-white outline-none focus:border-zinc-600 transition-colors"
+                            className="w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-indigo-500 transition-colors"
                           />
                           
                           <div className="flex gap-2">
                             <select
                               value={overrideStatus}
                               onChange={(e) => setOverrideStatus(e.target.value)}
-                              className="flex-1 rounded-lg border border-zinc-800 bg-black px-3 py-2 text-xs text-white outline-none focus:border-zinc-600"
+                              className="flex-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black px-3 py-2 text-xs text-zinc-900 dark:text-white outline-none focus:border-indigo-500 cursor-pointer"
                             >
                               <option value="">Select status override...</option>
                               {OVERRIDE_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -235,7 +235,7 @@ export default function AdminBookingsPage() {
                             <button
                               onClick={() => handleOverrideStatus(b.id)}
                               disabled={!overrideStatus || mutatingId === b.id}
-                              className="rounded-lg bg-zinc-800 px-4 py-2 text-xs font-medium text-white hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                              className="rounded-lg bg-zinc-900 dark:bg-zinc-800 px-4 py-2 text-xs font-semibold text-white hover:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors disabled:opacity-50 cursor-pointer"
                             >
                               {mutatingId === b.id ? "..." : "Override"}
                             </button>
@@ -245,9 +245,9 @@ export default function AdminBookingsPage() {
                             <button
                               onClick={() => handleAdminCancel(b.id)}
                               disabled={mutatingId === b.id}
-                              className="w-full rounded-lg border border-red-900/50 bg-red-950/30 px-4 py-2 text-xs font-medium text-red-400 hover:bg-red-900/50 transition-colors disabled:opacity-50"
+                              className="w-full rounded-lg border border-red-900/50 bg-red-950/30 px-4 py-2 text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-900/50 transition-colors disabled:opacity-50 cursor-pointer"
                             >
-                              Force Cancel & Refund
+                              Force Cancel &amp; Refund
                             </button>
                           )}
                         </div>
@@ -263,18 +263,18 @@ export default function AdminBookingsPage() {
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-zinc-800 pt-6">
+        <div className="flex items-center justify-between border-t border-zinc-200 dark:border-zinc-800 pt-6">
           <button
             onClick={() => loadBookings(pagination.page - 1)}
             disabled={pagination.page <= 1}
-            className="rounded-lg border border-zinc-800 bg-black px-4 py-2 text-xs font-medium text-white hover:bg-zinc-900 transition-colors disabled:opacity-40"
+            className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black px-4 py-2 text-xs font-semibold text-zinc-800 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
           >
             Previous
           </button>
           <button
             onClick={() => loadBookings(pagination.page + 1)}
             disabled={pagination.page >= pagination.totalPages}
-            className="rounded-lg border border-zinc-800 bg-black px-4 py-2 text-xs font-medium text-white hover:bg-zinc-900 transition-colors disabled:opacity-40"
+            className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-black px-4 py-2 text-xs font-semibold text-zinc-800 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors disabled:opacity-40 cursor-pointer"
           >
             Next
           </button>
