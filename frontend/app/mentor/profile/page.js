@@ -223,11 +223,16 @@ export default function MentorProfilePage() {
   const batchYear = pgParts[2];
   const experience = getProfessionalExperience(profile);
   const weParts = [experience.years || "", experience.company || "", experience.role || ""];
+  const hasWorkExp = Boolean(
+    (experience?.hasExperience && (weParts[0] || weParts[1] || weParts[2])) ||
+    (weParts[0] || weParts[1] || weParts[2])
+  );
   const workExpDisplay = (() => {
+    if (!hasWorkExp) return "";
     const yrs = weParts[0] ? `${weParts[0]} years` : "";
     const company = weParts[1] ? ` at ${weParts[1]}` : "";
     const role = weParts[2] ? ` as ${weParts[2]}` : "";
-    return `${yrs}${company}${role}`;
+    return `${yrs}${company}${role}`.trim();
   })();
 
   if (isLoading) {
@@ -555,206 +560,225 @@ export default function MentorProfilePage() {
 
 
           {/* Undergraduate Education Card */}
-          <div className="rounded-[28px] border-2 border-black bg-white overflow-hidden p-6 sm:p-8" style={{ boxShadow: "4px 4px 0 0 #F59E0B" }}>
-             <div className="flex items-center gap-3 mb-6">
-                <div className="bg-[#F59E0B]/10 p-2.5 rounded-xl border-2 border-transparent">
-                    <Book size={20} className="text-[#F59E0B]" strokeWidth={2.5} />
-                </div>
-                <h2 className="text-xl font-black text-black">Undergraduate Education</h2>
-             </div>
-             
-             {isEditing ? (
-               <div className="grid gap-6 sm:grid-cols-2">
-                  <div className="flex flex-col gap-2">
-                    <label className="text-xs font-black uppercase tracking-wider text-gray-400">College/University</label>
-                    <input
-                      value={form.ugCollege}
-                      onChange={(e) => setForm((f) => ({ ...f, ugCollege: e.target.value }))}
-                      className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#F59E0B]/20"
-                    />
+          {(isEditing || Boolean(ugParts[0] || ugParts[1] || ugParts[2] || ugParts[3])) && (
+            <div className="rounded-[28px] border-2 border-black bg-white overflow-hidden p-6 sm:p-8" style={{ boxShadow: "4px 4px 0 0 #F59E0B" }}>
+               <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-[#F59E0B]/10 p-2.5 rounded-xl border-2 border-transparent">
+                      <Book size={20} className="text-[#F59E0B]" strokeWidth={2.5} />
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-xs font-black uppercase tracking-wider text-gray-400">Degree</label>
-                    <input
-                      value={form.ugDegree}
-                      onChange={(e) => setForm((f) => ({ ...f, ugDegree: e.target.value }))}
-                      className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#F59E0B]/20"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-xs font-black uppercase tracking-wider text-gray-400">Specialization</label>
-                    <input
-                      value={form.ugSpecialization}
-                      onChange={(e) => setForm((f) => ({ ...f, ugSpecialization: e.target.value }))}
-                      className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#F59E0B]/20"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-xs font-black uppercase tracking-wider text-gray-400">Graduation Year</label>
-                    <input
-                      type="number"
-                      min="1990"
-                      max={new Date().getFullYear() + 10}
-                      value={form.ugYear}
-                      onChange={(e) => setForm((f) => ({ ...f, ugYear: e.target.value }))}
-                      className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#F59E0B]/20"
-                    />
-                  </div>
+                  <h2 className="text-xl font-black text-black">Undergraduate Education</h2>
                </div>
-             ) : (
-               <div className="grid gap-6 sm:grid-cols-2">
-                 <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">College/University</span>
-                    <span className="text-base font-bold text-black">{ugParts[0] || "—"}</span>
+               
+               {isEditing ? (
+                 <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-black uppercase tracking-wider text-gray-400">College/University</label>
+                      <input
+                        value={form.ugCollege}
+                        onChange={(e) => setForm((f) => ({ ...f, ugCollege: e.target.value }))}
+                        className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#F59E0B]/20"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-black uppercase tracking-wider text-gray-400">Degree</label>
+                      <input
+                        value={form.ugDegree}
+                        onChange={(e) => setForm((f) => ({ ...f, ugDegree: e.target.value }))}
+                        className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#F59E0B]/20"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-black uppercase tracking-wider text-gray-400">Specialization</label>
+                      <input
+                        value={form.ugSpecialization}
+                        onChange={(e) => setForm((f) => ({ ...f, ugSpecialization: e.target.value }))}
+                        className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#F59E0B]/20"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-black uppercase tracking-wider text-gray-400">Graduation Year</label>
+                      <input
+                        type="number"
+                        min="1990"
+                        max={new Date().getFullYear() + 10}
+                        value={form.ugYear}
+                        onChange={(e) => setForm((f) => ({ ...f, ugYear: e.target.value }))}
+                        className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#F59E0B]/20"
+                      />
+                    </div>
                  </div>
-                 <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Degree</span>
-                    <span className="text-base font-bold text-black">{ugParts[1] || "—"}</span>
+               ) : (
+                 <div className="grid gap-6 sm:grid-cols-2">
+                   {ugParts[0] && (
+                     <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">College/University</span>
+                        <span className="text-base font-bold text-black">{ugParts[0]}</span>
+                     </div>
+                   )}
+                   {ugParts[1] && (
+                     <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Degree</span>
+                        <span className="text-base font-bold text-black">{ugParts[1]}</span>
+                     </div>
+                   )}
+                   {ugParts[2] && (
+                     <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Specialization</span>
+                        <span className="text-base font-bold text-black">{ugParts[2]}</span>
+                     </div>
+                   )}
+                   {ugParts[3] && (
+                     <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Graduation Year</span>
+                        <span className="text-base font-bold text-black">{ugParts[3]}</span>
+                     </div>
+                   )}
                  </div>
-                 <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Specialization</span>
-                    <span className="text-base font-bold text-black">{ugParts[2] || "—"}</span>
-                 </div>
-                 <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Graduation Year</span>
-                    <span className="text-base font-bold text-black">{ugParts[3] || "—"}</span>
-                 </div>
-               </div>
-             )}
-          </div>
+               )}
+            </div>
+          )}
 
           {/* Professional Background Card */}
-
-          <div className="rounded-[28px] border-2 border-black bg-white overflow-hidden p-6 sm:p-8" style={{ boxShadow: "4px 4px 0 0 #06B6D4" }}>
-             <div className="flex items-center gap-3 mb-6">
-                <div className="bg-[#06B6D4]/10 p-2.5 rounded-xl border-2 border-transparent">
-                    <Briefcase size={20} className="text-[#06B6D4]" strokeWidth={2.5} />
-                </div>
-                <h2 className="text-xl font-black text-black">Professional Background</h2>
-             </div>
-             
-             {isEditing ? (
-               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                 <div className="flex flex-col gap-2">
-                   <label className="text-xs font-black uppercase tracking-wider text-gray-400">Years of Exp</label>
-                   <input
-                     type="number"
-                     min="0"
-                     placeholder="e.g., 5"
-                     value={form.workExpYears}
-                     onChange={(e) => setForm((f) => ({ ...f, workExpYears: e.target.value }))}
-                     className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/20"
-                   />
-                 </div>
-                 <div className="flex flex-col gap-2">
-                   <label className="text-xs font-black uppercase tracking-wider text-gray-400">Company</label>
-                   <input
-                     placeholder="e.g., Google"
-                     value={form.workExpCompany}
-                     onChange={(e) => setForm((f) => ({ ...f, workExpCompany: e.target.value }))}
-                     className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/20"
-                   />
-                 </div>
-                 <div className="flex flex-col gap-2">
-                   <label className="text-xs font-black uppercase tracking-wider text-gray-400">Role</label>
-                   <input
-                     placeholder="e.g., Senior PM"
-                     value={form.workExpRole}
-                     onChange={(e) => setForm((f) => ({ ...f, workExpRole: e.target.value }))}
-                     className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/20"
-                   />
-                 </div>
+          {(isEditing || hasWorkExp) && (
+            <div className="rounded-[28px] border-2 border-black bg-white overflow-hidden p-6 sm:p-8" style={{ boxShadow: "4px 4px 0 0 #06B6D4" }}>
+               <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-[#06B6D4]/10 p-2.5 rounded-xl border-2 border-transparent">
+                      <Briefcase size={20} className="text-[#06B6D4]" strokeWidth={2.5} />
+                  </div>
+                  <h2 className="text-xl font-black text-black">Professional Background</h2>
                </div>
-             ) : (
-               <div className="grid gap-6 sm:grid-cols-2">
-                 <div className="flex flex-col gap-1 sm:col-span-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Years of Work Experience</span>
-                    <span className="text-base font-bold text-black">{weParts[0] ? `${weParts[0]} years` : "—"}</span>
+               
+               {isEditing ? (
+                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                   <div className="flex flex-col gap-2">
+                     <label className="text-xs font-black uppercase tracking-wider text-gray-400">Years of Exp</label>
+                     <input
+                       type="number"
+                       min="0"
+                       placeholder="e.g., 5"
+                       value={form.workExpYears}
+                       onChange={(e) => setForm((f) => ({ ...f, workExpYears: e.target.value }))}
+                       className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/20"
+                     />
+                   </div>
+                   <div className="flex flex-col gap-2">
+                     <label className="text-xs font-black uppercase tracking-wider text-gray-400">Company</label>
+                     <input
+                       placeholder="e.g., Google"
+                       value={form.workExpCompany}
+                       onChange={(e) => setForm((f) => ({ ...f, workExpCompany: e.target.value }))}
+                       className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/20"
+                     />
+                   </div>
+                   <div className="flex flex-col gap-2">
+                     <label className="text-xs font-black uppercase tracking-wider text-gray-400">Role</label>
+                     <input
+                       placeholder="e.g., Senior PM"
+                       value={form.workExpRole}
+                       onChange={(e) => setForm((f) => ({ ...f, workExpRole: e.target.value }))}
+                       className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/20"
+                     />
+                   </div>
                  </div>
-                 <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Company</span>
-                    <span className="text-base font-bold text-black">{weParts[1] || "—"}</span>
+               ) : (
+                 <div className="grid gap-6 sm:grid-cols-2">
+                   {weParts[0] && (
+                     <div className="flex flex-col gap-1 sm:col-span-2">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Years of Work Experience</span>
+                        <span className="text-base font-bold text-black">{weParts[0]} years</span>
+                     </div>
+                   )}
+                   {weParts[1] && (
+                     <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Company</span>
+                        <span className="text-base font-bold text-black">{weParts[1]}</span>
+                     </div>
+                   )}
+                   {weParts[2] && (
+                     <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Role</span>
+                        <span className="text-base font-bold text-black">{weParts[2]}</span>
+                     </div>
+                   )}
                  </div>
-                 <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Role</span>
-                    <span className="text-base font-bold text-black">{weParts[2] || "—"}</span>
-                 </div>
-               </div>
-             )}
-          </div>
+               )}
+            </div>
+          )}
 
           {/* Areas of Expertise Card */}
-          <div className="rounded-[28px] border-2 border-black bg-white overflow-hidden p-6 sm:p-8" style={{ boxShadow: "4px 4px 0 0 #F97316" }}>
-             <div className="flex items-center gap-3 mb-6">
-                <div className="bg-[#F97316]/10 p-2.5 rounded-xl border-2 border-transparent">
-                    <Award size={20} className="text-[#F97316]" strokeWidth={2.5} />
-                </div>
-                <h2 className="text-xl font-black text-black">Areas of Expertise</h2>
-             </div>
-             
-             {isEditing ? (
-                <div className="flex flex-wrap gap-2.5">
-                  {EXPERTISE_OPTIONS.map((opt) => {
-                    const sel = form.expertiseTagsArr.includes(opt);
-                    return (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() =>
-                          setForm((f) => ({
-                            ...f,
-                            expertiseTagsArr: sel
-                              ? f.expertiseTagsArr.filter((t) => t !== opt)
-                              : [...f.expertiseTagsArr, opt],
-                          }))
-                        }
-                        className={`px-4 py-2 rounded-xl border-2 text-sm font-black transition-all ${
-                          sel
-                            ? "bg-[#F97316] text-white border-black shadow-[2px_2px_0_0_#000]"
-                            : "bg-white text-gray-500 border-gray-200 hover:border-black hover:text-black"
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    );
-                  })}
-                </div>
-             ) : (
-                <div className="flex flex-wrap gap-3">
-                   {expertiseTags.length > 0 ? expertiseTags.map(tag => (
-                       <span key={tag} className="px-4 py-2 rounded-xl border-2 border-black bg-[#F97316] text-white text-sm font-bold shadow-[2px_2px_0_0_#000]">
-                           {tag}
-                       </span>
-                   )) : (
-                       <span className="text-sm font-bold text-gray-400">—</span>
-                   )}
-                </div>
-             )}
-          </div>
+          {(isEditing || expertiseTags.length > 0) && (
+            <div className="rounded-[28px] border-2 border-black bg-white overflow-hidden p-6 sm:p-8" style={{ boxShadow: "4px 4px 0 0 #F97316" }}>
+               <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-[#F97316]/10 p-2.5 rounded-xl border-2 border-transparent">
+                      <Award size={20} className="text-[#F97316]" strokeWidth={2.5} />
+                  </div>
+                  <h2 className="text-xl font-black text-black">Areas of Expertise</h2>
+               </div>
+               
+               {isEditing ? (
+                  <div className="flex flex-wrap gap-2.5">
+                    {EXPERTISE_OPTIONS.map((opt) => {
+                      const sel = form.expertiseTagsArr.includes(opt);
+                      return (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() =>
+                            setForm((f) => ({
+                              ...f,
+                              expertiseTagsArr: sel
+                                ? f.expertiseTagsArr.filter((t) => t !== opt)
+                                : [...f.expertiseTagsArr, opt],
+                            }))
+                          }
+                          className={`px-4 py-2 rounded-xl border-2 text-sm font-black transition-all ${
+                            sel
+                              ? "bg-[#F97316] text-white border-black shadow-[2px_2px_0_0_#000]"
+                              : "bg-white text-gray-500 border-gray-200 hover:border-black hover:text-black"
+                          }`}
+                        >
+                          {opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+               ) : (
+                  <div className="flex flex-wrap gap-3">
+                     {expertiseTags.map((tag) => (
+                         <span key={tag} className="px-4 py-2 rounded-xl border-2 border-black bg-[#F97316] text-white text-sm font-bold shadow-[2px_2px_0_0_#000]">
+                             {tag}
+                         </span>
+                     ))}
+                  </div>
+               )}
+            </div>
+          )}
 
           {/* About Me Card */}
-          <div className="rounded-[28px] border-2 border-black bg-white overflow-hidden p-6 sm:p-8" style={{ boxShadow: "4px 4px 0 0 #10B981" }}>
-             <div className="flex items-center gap-3 mb-6">
-                <div className="bg-[#10B981]/10 p-2.5 rounded-xl border-2 border-transparent">
-                    <User size={20} className="text-[#10B981]" strokeWidth={2.5} />
-                </div>
-                <h2 className="text-xl font-black text-black">About Me</h2>
-             </div>
-             
-             {isEditing ? (
-                 <textarea
-                   rows={4}
-                   value={form.bio}
-                   placeholder="Write something about yourself..."
-                   onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
-                   className="w-full rounded-xl border border-black px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[#10B981]/20"
-                 />
-             ) : (
-                 <p className="text-sm font-medium text-gray-600 leading-relaxed whitespace-pre-wrap break-words overflow-hidden max-w-full">
-                     {profile?.bio || "—"}
-                 </p>
-             )}
-          </div>
+          {(isEditing || Boolean(profile?.bio?.trim())) && (
+            <div className="rounded-[28px] border-2 border-black bg-white overflow-hidden p-6 sm:p-8" style={{ boxShadow: "4px 4px 0 0 #10B981" }}>
+               <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-[#10B981]/10 p-2.5 rounded-xl border-2 border-transparent">
+                      <User size={20} className="text-[#10B981]" strokeWidth={2.5} />
+                  </div>
+                  <h2 className="text-xl font-black text-black">About Me</h2>
+               </div>
+               
+               {isEditing ? (
+                   <textarea
+                     rows={4}
+                     value={form.bio}
+                     placeholder="Write something about yourself..."
+                     onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
+                     className="w-full rounded-xl border border-black px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[#10B981]/20"
+                   />
+               ) : (
+                   <p className="text-sm font-medium text-gray-600 leading-relaxed whitespace-pre-wrap break-words overflow-hidden max-w-full">
+                       {profile?.bio}
+                   </p>
+               )}
+            </div>
+          )}
 
         </div>
 

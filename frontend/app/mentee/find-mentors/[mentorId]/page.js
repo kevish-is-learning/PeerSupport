@@ -12,16 +12,35 @@ import MentorBookingPage from "../../../../components/mentee/v2/MentorBookingPag
 
 function parseWorkExp(raw) {
   if (!raw) return null;
-  const parts = raw.split("|");
-  if (parts.length === 3) return `${parts[0]} years at ${parts[1]}`;
-  return raw;
+  if (typeof raw === "object") {
+    if (!raw.hasExperience && !raw.years && !raw.company && !raw.role) return null;
+    const yrs = raw.years ? `${raw.years} yrs` : "";
+    const comp = raw.company ? ` at ${raw.company}` : "";
+    const role = raw.role ? ` as ${raw.role}` : "";
+    const text = `${yrs}${comp}${role}`.trim();
+    return text || null;
+  }
+  const parts = String(raw).split("|");
+  if (parts.length === 3) {
+    const yrs = parts[0]?.trim() ? `${parts[0].trim()} yrs` : "";
+    const comp = parts[1]?.trim() ? ` at ${parts[1].trim()}` : "";
+    const role = parts[2]?.trim() ? ` as ${parts[2].trim()}` : "";
+    const text = `${yrs}${comp}${role}`.trim();
+    return text || null;
+  }
+  const trimmed = String(raw).trim();
+  return trimmed === "—" || trimmed === "null" || trimmed === "undefined" || !trimmed ? null : trimmed;
 }
 
 function parseCollege(raw) {
   if (!raw) return null;
-  const parts = raw.split("||");
-  if (parts.length === 2) return `${parts[0]} (${parts[1]})`;
-  return raw;
+  const parts = String(raw).split("||");
+  if (parts.length === 2) {
+    if (!parts[0]?.trim() && !parts[1]?.trim()) return null;
+    return parts[1]?.trim() ? `${parts[0].trim()} (${parts[1].trim()})` : parts[0].trim();
+  }
+  const trimmed = String(raw).trim();
+  return trimmed === "—" || trimmed === "null" || trimmed === "undefined" || !trimmed ? null : trimmed;
 }
 
 function formatSlotTime(iso) {
@@ -192,16 +211,18 @@ export default function MentorProfilePage() {
             </button>
           </div>
 
-          {/* Divider */}
-          <div className="mx-4 sm:mx-6 border-t border-gray-100" />
-
           {/* About */}
-          <div className="px-4 sm:px-6 py-3.5 sm:py-4">
-            <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-400">About</h3>
-            <p className="text-xs sm:text-sm leading-relaxed text-gray-600 break-words whitespace-pre-line max-w-full">
-              {mentor.bio || "No bio provided."}
-            </p>
-          </div>
+          {mentor.bio?.trim() && (
+            <>
+              <div className="mx-4 sm:mx-6 border-t border-gray-100" />
+              <div className="px-4 sm:px-6 py-3.5 sm:py-4">
+                <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-400">About</h3>
+                <p className="text-xs sm:text-sm leading-relaxed text-gray-600 break-words whitespace-pre-line max-w-full">
+                  {mentor.bio}
+                </p>
+              </div>
+            </>
+          )}
 
           {/* Divider */}
           {mentor.expertiseTags?.length > 0 && <div className="mx-4 sm:mx-6 border-t border-gray-100" />}

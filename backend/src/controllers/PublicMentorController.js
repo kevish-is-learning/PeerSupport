@@ -1,6 +1,31 @@
 import { prisma } from '../config/database.js';
 import { ApiResponse } from '../utils/apiResponse.js';
 
+const formatWorkExp = (raw, professionalExp) => {
+  if (professionalExp) {
+    if (!professionalExp.hasExperience && !professionalExp.years && !professionalExp.company && !professionalExp.role) {
+      return null;
+    }
+    const yrs = professionalExp.years ? `${professionalExp.years} yrs` : '';
+    const comp = professionalExp.company ? ` at ${professionalExp.company}` : '';
+    const role = professionalExp.role ? ` as ${professionalExp.role}` : '';
+    const text = `${yrs}${comp}${role}`.trim();
+    return text || null;
+  }
+  if (!raw) return null;
+  const parts = String(raw).split('|');
+  if (parts.length === 3) {
+    if (!parts[0]?.trim() && !parts[1]?.trim() && !parts[2]?.trim()) return null;
+    const yrs = parts[0]?.trim() ? `${parts[0].trim()} yrs` : '';
+    const comp = parts[1]?.trim() ? ` at ${parts[1].trim()}` : '';
+    const role = parts[2]?.trim() ? ` as ${parts[2].trim()}` : '';
+    const text = `${yrs}${comp}${role}`.trim();
+    return text || null;
+  }
+  const trimmed = String(raw).trim();
+  return trimmed === '—' || trimmed === 'null' || trimmed === 'undefined' || !trimmed ? null : trimmed;
+};
+
 class PublicMentorController {
   /**
    * GET /api/mentors/:mentorId
@@ -17,6 +42,7 @@ class PublicMentorController {
             select: { name: true, email: true, profilePicture: true },
           },
           education: true,
+          professionalExperience: true,
           mentorServices: {
             where: { isActive: true },
                         orderBy: { price: 'asc' },
@@ -113,7 +139,8 @@ class PublicMentorController {
         expertiseTags: mentor.expertiseTags,
         pgCollege: mentor.education?.mba?.college || mentor.pgCollegeProfile,
         ugCollege: mentor.ugCollegeProfile,
-        workExperience: mentor.workExperience,
+        workExperience: formatWorkExp(mentor.workExperience, mentor.professionalExperience),
+        professionalExperience: mentor.professionalExperience,
         certifications: mentor.certifications,
         linkedInUrl: mentor.linkedInUrl,
         totalSessions: mentor.totalSessions,
@@ -136,66 +163,51 @@ class PublicMentorController {
     }
   }
 
+  /**
+   * GET /api/mentors
+   * Public — list mentors with search, filtering, and pagination.
+   */
   async listMentors(req, res) {
     try {
       const {
-        search = '',
-        college = '',
-        specialization = '',
-        minRating = 0,
-        maxPrice,
-        page = 1,
-        limit = 20,
+        search,
+        targetColleges,
+        tags,
         sort = 'rating',
+        page = 1,
+        limit = 10,
       } = req.query;
 
-      const where = {
-        approvalStatus: 'APPROVED',
-      };
+      const where = { approvalStatus: 'APPROVED' };
 
-      // College filter
-      if (college && college !== 'all') {
-        where.OR = [
-          { pgCollegeProfile: { contains: college, mode: 'insensitive' } },
-          { ugCollegeProfile: { contains: college, mode: 'insensitive' } },
-        ];
-      }
-
-      // Search filter
       if (search) {
-        const searchConditions = [
+        where.OR = [
           { user: { name: { contains: search, mode: 'insensitive' } } },
-          { pgCollegeProfile: { contains: search, mode: 'insensitive' } },
-          { ugCollegeProfile: { contains: search, mode: 'insensitive' } },
           { bio: { contains: search, mode: 'insensitive' } },
-          { expertiseTags: { has: search } },
+          { pgCollegeProfile: { contains: search, mode: 'insensitive' } },
         ];
-        if (where.OR) {
-          where.AND = [{ OR: where.OR }, { OR: searchConditions }];
-          delete where.OR;
-        } else {
-          where.OR = searchConditions;
-        }
       }
 
-      if (specialization && specialization !== 'all') {
-        where.expertiseTags = { has: specialization };
+      if (targetColleges) {
+        const colleges = Array.isArray(targetColleges)
+          ? targetColleges
+          : targetColleges.split(',');
+        where.pgCollegeProfile = { in: colleges };
       }
 
-      if (minRating && Number(minRating) > 0) {
-        where.averageRating = { gte: Number(minRating) };
+      if (tags) {
+        const tagList = Array.isArray(tags) ? tags : tags.split(',');
+        where.expertiseTags = { hasSome: tagList };
       }
 
-      // If filtering by maxPrice, push it into the where clause
-      // so mentors without affordable services are excluded at the DB level
-      if (maxPrice) {
-        where.mentorServices = {
-          some: { isActive: true, price: { lte: Number(maxPrice) } },
-        };
+      let orderBy = {};
+      if (sort === 'rating') {
+        orderBy = { averageRating: 'desc' };
+      } else if (sort === 'sessions') {
+        orderBy = { totalSessions: 'desc' };
+      } else if (sort === 'newest') {
+        orderBy = { createdAt: 'desc' };
       }
-
-      let orderBy = { averageRating: 'desc' };
-      if (sort === 'sessions') orderBy = { totalSessions: 'desc' };
 
       const skip = (Number(page) - 1) * Number(limit);
 
@@ -213,6 +225,7 @@ class PublicMentorController {
             ugCollegeProfile: true,
             education: true,
             workExperience: true,
+            professionalExperience: true,
             averageRating: true,
             totalSessions: true,
             user: {
@@ -244,7 +257,8 @@ class PublicMentorController {
         totalSessions: m.totalSessions,
         startingPrice: m.mentorServices[0]?.price ?? null,
         nextAvailableDate: null,
-        workExperience: m.workExperience,
+        workExperience: formatWorkExp(m.workExperience, m.professionalExperience),
+        professionalExperience: m.professionalExperience,
         totalReviews: m._count.reviews,
       }));
 

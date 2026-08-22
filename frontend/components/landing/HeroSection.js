@@ -1,10 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import HeaderAuthButton from "../auth/HeaderAuthButton";
 import BecomeMentorHeroButton from "./BecomeMentorHeroButton";
 import HighlightPill from "../ui/HighlightPill";
 import PillButton from "../ui/PillButton";
 
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Menu, X } from "lucide-react";
 
 const navItems = [
   { label: "Find Mentors", href: "/mentee/find-mentors" },
@@ -84,6 +87,8 @@ function MentorCardIllustration() {
 }
 
 export default function HeroSection() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <section
       className="flex min-h-screen flex-col"
@@ -91,19 +96,24 @@ export default function HeroSection() {
     >
       {/* ── HEADER ───────────────────────────────────────── */}
       <header
-        className="w-full border-b border-black px-4 py-3.5 sm:px-6 lg:px-10"
+        className="relative z-50 w-full border-b border-black px-4 py-3.5 sm:px-6 lg:px-10"
         style={{ backgroundColor: BRAND_BG }}
       >
-        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-y-4 md:flex-nowrap md:gap-x-8 md:gap-y-0">
-          <Link href="/" className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-80">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between">
+          <Link
+            href="/"
+            className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-80"
+            onClick={() => setMobileMenuOpen(false)}
+          >
             <BrandMark />
             <div className="flex flex-col text-[1.35rem] font-bold leading-[0.95] tracking-[-0.04em] text-[#0d0d0f] sm:text-[1.5rem]">
               <span>Peer Support</span>
             </div>
           </Link>
 
+          {/* Desktop Navigation */}
           <nav
-            className="flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[0.9rem] font-semibold text-black sm:gap-x-7 sm:text-[0.95rem] md:order-0 md:w-auto md:flex-1"
+            className="hidden items-center justify-center gap-x-6 lg:gap-x-8 text-[0.9rem] font-semibold text-black md:flex"
             aria-label="Primary"
           >
             {navItems.map((item) => (
@@ -117,10 +127,45 @@ export default function HeroSection() {
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center justify-end gap-3 md:w-auto">
+          {/* Desktop Auth */}
+          <div className="hidden md:flex shrink-0 items-center justify-end gap-3">
             <HeaderAuthButton />
           </div>
+
+          {/* Mobile Hamburger Button */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-black bg-white text-black shadow-[2px_2px_0px_0px_#1a1a1a] transition-all hover:bg-neutral-50 active:translate-x-px active:translate-y-px active:shadow-none cursor-pointer"
+            >
+              {mobileMenuOpen ? <X size={18} strokeWidth={2.5} /> : <Menu size={18} strokeWidth={2.5} />}
+            </button>
+          </div>
         </div>
+
+        {/* ── COMPACT MOBILE DROPDOWN ─────────────────────── */}
+        {mobileMenuOpen && (
+          <div className="absolute left-0 top-full w-full border-b-2 border-black bg-[#FDF5F3] px-5 py-4 shadow-lg md:hidden animate-in fade-in slide-in-from-top-2 duration-150">
+            <nav className="flex flex-col gap-1 pb-3 border-b border-black/10">
+              {navItems.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-lg px-3 py-2 text-sm font-bold text-gray-900 transition-colors hover:bg-black/5"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="pt-3" onClick={() => setMobileMenuOpen(false)}>
+              <HeaderAuthButton />
+            </div>
+          </div>
+        )}
       </header>
 
       {/* ── HERO BODY ─────────────────────────────────────── */}

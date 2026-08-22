@@ -141,6 +141,7 @@ const mentorProfileUpload = (req, res, next) => {
     try {
       const { folderName, displayName, prefix } = await resolveUserInfo(req.user.id, 'MENTOR');
 
+      const uploads = {};
       const uploadPromises = [];
 
       if (profilePhoto) {

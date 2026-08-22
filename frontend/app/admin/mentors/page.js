@@ -2,8 +2,55 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
+import {
+  ExternalLink,
+  FileText,
+  GraduationCap,
+  Briefcase,
+  Award,
+  Calendar,
+  Phone,
+  Mail,
+  CheckCircle2,
+} from "lucide-react";
 import { adminApi, resolveUploadUrl } from "../../../lib/api";
 import MentorVerificationCall from "../../../components/admin/MentorVerificationCall";
+
+function LinkedInIcon({ className = "h-4 w-4" }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.64 1.64 0 1 0 0 3.28 1.64 1.64 0 0 0 0-3.28" />
+    </svg>
+  );
+}
+
+const parseLegacyProfile = (value, keys) =>
+  Object.fromEntries(
+    keys.map((key, index) => [key, (value || "").split("|")[index]?.trim() || ""]),
+  );
+
+const getMentorEducation = (m) => {
+  const mba = m.education?.mba || parseLegacyProfile(m.pgProfile, ["college", "specialization", "graduationYear"]);
+  const undergraduate = m.education?.undergraduate || parseLegacyProfile(m.ugCollegeProfile, ["college", "degree", "specialization", "graduationYear"]);
+  return { mba, undergraduate };
+};
+
+const getMentorExperience = (m) => {
+  if (m.professionalExperience && typeof m.professionalExperience === "object") {
+    const p = m.professionalExperience;
+    return {
+      hasExperience: Boolean(p.hasExperience ?? (p.years || p.company || p.role)),
+      years: p.years ? String(p.years) : "",
+      company: p.company || "",
+      role: p.role || "",
+    };
+  }
+  const legacy = parseLegacyProfile(m.workExperience, ["years", "company", "role"]);
+  return {
+    hasExperience: Boolean(legacy.years || legacy.company || legacy.role),
+    ...legacy,
+  };
+};
 
 const formatDate = (v) => {
   if (!v) return "-";
@@ -255,9 +302,8 @@ export default function AdminMentorsPage() {
 
                 {/* Expanded Detail */}
                 {expandedId === m.id && (() => {
-                  const pg = (m.pgProfile || "").split("|");
-                  const ug = (m.ugCollegeProfile || "").split("|");
-                  const we = (m.workExperience || "").split("|");
+                  const edu = getMentorEducation(m);
+                  const exp = getMentorExperience(m);
                   const qa = m.mentoringQA || {};
                   return (
                   <div className="mt-6 border-t border-zinc-200 dark:border-zinc-800 pt-6 space-y-6">
@@ -274,14 +320,41 @@ export default function AdminMentorsPage() {
                       <div>
                         <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">LinkedIn</p>
                         {m.linkedInUrl ? (
-                          <a href={m.linkedInUrl} target="_blank" rel="noopener noreferrer" className="mt-1 text-sm text-indigo-600 dark:text-blue-400 hover:underline block truncate">{m.linkedInUrl.replace(/https?:\/\/(www\.)?/, "")}</a>
+                          <div className="mt-1">
+                            <a
+                              href={m.linkedInUrl.startsWith("http") ? m.linkedInUrl : `https://${m.linkedInUrl}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Open LinkedIn Profile"
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-950/30 px-3 py-1.5 text-xs font-semibold text-[#0077B5] dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors shadow-2xs group cursor-pointer"
+                            >
+                              <LinkedInIcon className="h-4 w-4 fill-current shrink-0" />
+                              <span>LinkedIn</span>
+                              <ExternalLink size={12} className="opacity-70 group-hover:opacity-100" />
+                            </a>
+                          </div>
                         ) : (
                           <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">—</p>
                         )}
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Services</p>
-                        <p className="mt-1 text-sm font-medium text-zinc-900 dark:text-white">{m.totalServices}</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Verification Document</p>
+                        {m.collegeDocumentUrl ? (
+                          <div className="mt-1">
+                            <a
+                              href={resolveUploadUrl(m.collegeDocumentUrl)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors shadow-2xs group cursor-pointer"
+                            >
+                              <FileText size={14} className="shrink-0" />
+                              <span>View Proof</span>
+                              <ExternalLink size={12} className="opacity-70 group-hover:opacity-100" />
+                            </a>
+                          </div>
+                        ) : (
+                          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Not uploaded</p>
+                        )}
                       </div>
                     </div>
 
@@ -289,42 +362,48 @@ export default function AdminMentorsPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* MBA Education */}
                       <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-4">
-                        <h4 className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-blue-400 mb-3">🎓 MBA / PG Education</h4>
+                        <div className="flex items-center gap-2 mb-3">
+                          <GraduationCap size={16} className="text-indigo-600 dark:text-blue-400" />
+                          <h4 className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-blue-400">MBA / PG Education</h4>
+                        </div>
                         <div className="grid grid-cols-3 gap-4">
                           <div>
                             <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">B-School</p>
-                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{pg[0] || "—"}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{edu.mba?.college || "—"}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Specialization</p>
-                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{pg[1] || "—"}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{edu.mba?.specialization || "—"}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Year</p>
-                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{pg[2] || "—"}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{edu.mba?.graduationYear || "—"}</p>
                           </div>
                         </div>
                       </div>
 
                       {/* UG Education */}
                       <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-4">
-                        <h4 className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-3">🏫 Undergraduate Education</h4>
+                        <div className="flex items-center gap-2 mb-3">
+                          <GraduationCap size={16} className="text-amber-600 dark:text-amber-400" />
+                          <h4 className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">Undergraduate Education</h4>
+                        </div>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                           <div>
                             <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">College</p>
-                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{ug[0] || "—"}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{edu.undergraduate?.college || "—"}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Degree</p>
-                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{ug[1] || "—"}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{edu.undergraduate?.degree || "—"}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Specialization</p>
-                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{ug[2] || "—"}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{edu.undergraduate?.specialization || "—"}</p>
                           </div>
                           <div>
                             <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Year</p>
-                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{ug[3] || "—"}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{edu.undergraduate?.graduationYear || "—"}</p>
                           </div>
                         </div>
                       </div>
@@ -332,30 +411,44 @@ export default function AdminMentorsPage() {
 
                     {/* Row 3: Work Experience */}
                     <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-4">
-                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-3">💼 Work Experience</h4>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Years</p>
-                          <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{we[0] ? `${we[0]} years` : "—"}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Company</p>
-                          <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{we[1] || "—"}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Role</p>
-                          <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{we[2] || "—"}</p>
-                        </div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Briefcase size={16} className="text-cyan-600 dark:text-cyan-400" />
+                        <h4 className="text-[10px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">Work Experience</h4>
                       </div>
+                      {!exp.hasExperience && !exp.years && !exp.company && !exp.role ? (
+                        <div className="flex items-center gap-2">
+                          <span className="inline-block rounded-md border border-cyan-300/60 dark:border-cyan-800 bg-cyan-50 dark:bg-cyan-950/30 px-3 py-1.5 text-xs font-semibold text-cyan-800 dark:text-cyan-300">
+                            Fresher (No Prior Work Experience)
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Years of Exp</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{exp.years ? `${exp.years} years` : "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Company</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{exp.company || "—"}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Role</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-white mt-0.5">{exp.role || "—"}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Row 4: Expertise Tags */}
                     {m.expertiseTags && m.expertiseTags.length > 0 && (
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">Expertise</p>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Award size={16} className="text-indigo-600 dark:text-indigo-400" />
+                          <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Areas of Expertise</p>
+                        </div>
                         <div className="flex flex-wrap gap-2">
                           {m.expertiseTags.map((tag) => (
-                            <span key={tag} className="inline-block rounded-full border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-950/30 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+                            <span key={tag} className="inline-block rounded-full border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-950/30 px-2.5 py-1 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
                               {tag}
                             </span>
                           ))}
@@ -366,7 +459,7 @@ export default function AdminMentorsPage() {
                     {/* Row 5: Bio */}
                     {m.bio && (
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">Bio</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2">About / Bio</p>
                         <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-line break-words overflow-hidden max-w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800 p-4">{m.bio}</p>
                       </div>
                     )}

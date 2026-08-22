@@ -103,21 +103,8 @@ export default function MentorSidebarShell({ children }) {
         {/* Logo & Role Badge */}
         <div className="p-6 pb-2 flex items-start justify-between">
           <div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#5061E4] text-white font-bold text-sm">
-                P
-              </div>
-              <span className="font-extrabold text-[#111] text-lg">Peer Support</span>
-            </div>
-            <div className="mt-3">
-              <span className="inline-block rounded-md bg-[#F59E0B] px-3 py-1 text-xs font-bold text-white">
-                Mentor
-              </span>
-            </div>
+            <span className="font-extrabold text-[#111] text-lg">Peer Support</span>
           </div>
-          <button onClick={() => setIsOpen(false)} className="md:hidden p-1 text-gray-500 hover:text-black">
-            <X size={24} />
-          </button>
         </div>
 
         <nav className="mt-6 px-4 flex flex-col gap-1.5 grow overflow-y-auto">
