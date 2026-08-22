@@ -13,6 +13,7 @@ const useAuthStore = create((set) => ({
   statusMessage: "",
 
   clearError: () => set({ error: null }),
+  setUser: (user) => set({ user, hasCheckedSession: true, isLoading: false }),
 
   checkBackendHealth: async () => {
     set({ isLoading: true, error: null });

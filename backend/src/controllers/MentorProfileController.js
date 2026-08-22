@@ -1,4 +1,6 @@
 import mentorProfileService from "../services/MentorProfileService.js";
+import authService, { mapUserWithOnboardingState } from "../services/AuthService.js";
+import { prisma } from "../config/database.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { destroyAsset } from "../config/cloudinary.js";
 
@@ -74,8 +76,6 @@ class MentorProfileController {
       });
 
       // Refresh token to update onboarding state
-      const { prisma } = await import("../config/database.js");
-      const authServiceModule = await import("../services/AuthService.js");
       const updatedUser = await prisma.user.findUnique({
         where: { id: req.user.id },
         include: {
@@ -85,9 +85,8 @@ class MentorProfileController {
           menteeProfile: { select: { id: true } },
         },
       });
-      const mappedUser =
-        authServiceModule.mapUserWithOnboardingState(updatedUser);
-      const token = authServiceModule.default.generateToken(mappedUser);
+      const mappedUser = mapUserWithOnboardingState(updatedUser);
+      const token = authService.generateToken(mappedUser);
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -121,8 +120,6 @@ class MentorProfileController {
       });
 
       // Refresh token to update onboarding state
-      const { prisma } = await import("../config/database.js");
-      const authServiceModule = await import("../services/AuthService.js");
       const updatedUser = await prisma.user.findUnique({
         where: { id: req.user.id },
         include: {
@@ -132,9 +129,8 @@ class MentorProfileController {
           menteeProfile: { select: { id: true } },
         },
       });
-      const mappedUser =
-        authServiceModule.mapUserWithOnboardingState(updatedUser);
-      const token = authServiceModule.default.generateToken(mappedUser);
+      const mappedUser = mapUserWithOnboardingState(updatedUser);
+      const token = authService.generateToken(mappedUser);
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",

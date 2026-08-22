@@ -62,11 +62,65 @@ const getExperienceData = (profile) => profile?.professionalExperience || (() =>
   };
 })();
 
+const compressImage = async (file, maxWidth = 800, maxHeight = 800, quality = 0.85) => {
+  if (!file || !file.type.startsWith("image/")) return file;
+  if (typeof window === "undefined" || !window.FileReader) return file;
+
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(file);
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob || blob.size >= file.size) {
+              resolve(file);
+            } else {
+              const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".webp"), {
+                type: "image/webp",
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            }
+          },
+          "image/webp",
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+};
+
 export default function MentorOnboardingWizard({
   existingProfile,
   onComplete,
 }) {
-  const { user, fetchCurrentUser } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -199,20 +253,20 @@ export default function MentorOnboardingWizard({
     });
   };
 
-
-
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    if (files?.[0]) {
-      const file = files[0];
+  const handleFileChange = async (e) => {
+    const { name, files: selectedFiles } = e.target;
+    if (selectedFiles?.[0]) {
+      const file = selectedFiles[0];
       if (name === "profilePhoto") {
         if (!file.type.startsWith("image/")) {
           toast.error("Please choose an image file.");
           return;
         }
-        setFiles((prev) => ({ ...prev, profilePhoto: file }));
         setPhotoPreviewUrl(URL.createObjectURL(file));
         setFormData((prev) => ({ ...prev, profilePhotoUrl: "" }));
+        // Compress image in background to speed up upload by ~90%
+        const compressed = await compressImage(file, 800, 800, 0.85);
+        setFiles((prev) => ({ ...prev, profilePhoto: compressed }));
       } else {
         setFiles((prev) => ({ ...prev, [name]: file }));
       }
@@ -240,8 +294,8 @@ export default function MentorOnboardingWizard({
       }
 
       const digitsOnly = formData.contactNumber.replace(/\D/g, "");
-      if (digitsOnly.length !== 10) {
-        toast.error("Please enter a valid 10-digit contact number.");
+      if (digitsOnly.length < 7 || digitsOnly.length > 15) {
+        toast.error("Please enter a valid contact number (7-15 digits).");
         return;
       }
     }
@@ -335,7 +389,9 @@ export default function MentorOnboardingWizard({
       ? await mentorProfileApi.update(payload)
       : await mentorProfileApi.create(payload);
 
-    await fetchCurrentUser();
+    if (result?.data?.user) {
+      setUser(result.data.user);
+    }
     if (draftKey) window.localStorage.removeItem(draftKey);
     toast.success(result?.message || "Mentor profile saved");
     onComplete?.();

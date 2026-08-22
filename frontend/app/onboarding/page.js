@@ -30,14 +30,24 @@ export default function OnboardingPage() {
          return;
        }
 
+       const hasExistingProfile =
+         (user.role === 'MENTEE' && Boolean(user.menteeProfileId)) ||
+         (user.role === 'MENTOR' && Boolean(user.mentorProfileId));
+
+       if (!hasExistingProfile) {
+         setProfileData(null);
+         setIsFetching(false);
+         return;
+       }
+
        try {
          setIsFetching(true);
          if (user.role === 'MENTEE') {
             const result = await menteeProfileApi.getMine();
-            setProfileData(result.data.profile);
+            setProfileData(result.data?.profile || null);
          } else if (user.role === 'MENTOR') {
             const result = await mentorProfileApi.getMine();
-            setProfileData(result.data.profile);
+            setProfileData(result.data?.profile || null);
          }
        } catch (err) {
          setProfileData(null);
@@ -68,16 +78,14 @@ export default function OnboardingPage() {
       {user.role === 'MENTEE' ? (
         <MenteeOnboardingWizard 
            existingProfile={profileData} 
-           onComplete={async () => {
-             await fetchCurrentUser();
+           onComplete={() => {
              router.replace("/mentee/profile");
            }}
         />
       ) : (
         <MentorOnboardingWizard 
            existingProfile={profileData} 
-           onComplete={async () => {
-             await fetchCurrentUser();
+           onComplete={() => {
              router.replace("/mentor/profile");
            }}
         />

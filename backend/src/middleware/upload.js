@@ -141,30 +141,40 @@ const mentorProfileUpload = (req, res, next) => {
     try {
       const { folderName, displayName, prefix } = await resolveUserInfo(req.user.id, 'MENTOR');
 
-      const uploads = {};
+      const uploadPromises = [];
 
       if (profilePhoto) {
         // e.g. mentor_john_doe_avatar
         // A replacement needs a distinct ID. Reusing one would make cleanup
         // of the previous URL delete the newly uploaded avatar.
         const publicId = `${prefix}_${displayName}_avatar_${randomUUID()}`;
-        uploads.profilePhotoUrl = await uploadToCloudinary(profilePhoto.buffer, {
-          folder: getFolder(folderName, 'avatar'),
-          public_id: publicId,
-          resource_type: 'image',
-          format: 'webp',
-        });
+        uploadPromises.push(
+          uploadToCloudinary(profilePhoto.buffer, {
+            folder: getFolder(folderName, 'avatar'),
+            public_id: publicId,
+            resource_type: 'image',
+            format: 'webp',
+          }).then((url) => {
+            uploads.profilePhotoUrl = url;
+          })
+        );
       }
 
       if (collegeDocument) {
         // e.g. mentor_john_doe_college_doc
         const publicId = `${prefix}_${displayName}_college_doc_${randomUUID()}`;
-        uploads.collegeDocumentUrl = await uploadToCloudinary(collegeDocument.buffer, {
-          folder: getFolder(folderName, 'pdfs'),
-          public_id: publicId,
-          resource_type: 'image',
-        });
+        uploadPromises.push(
+          uploadToCloudinary(collegeDocument.buffer, {
+            folder: getFolder(folderName, 'pdfs'),
+            public_id: publicId,
+            resource_type: 'image',
+          }).then((url) => {
+            uploads.collegeDocumentUrl = url;
+          })
+        );
       }
+
+      await Promise.all(uploadPromises);
 
       req.uploadedFiles = uploads;
       next();
@@ -202,16 +212,21 @@ const menteeProfileUpload = (req, res, next) => {
       const { folderName, displayName, prefix } = await resolveUserInfo(req.user.id, 'MENTEE');
 
       const uploads = {};
+      const uploadPromises = [];
 
       if (profilePhoto) {
         // e.g. mentee_jane_doe_avatar
         const publicId = `${prefix}_${displayName}_avatar_${randomUUID()}`;
-        uploads.profilePhotoUrl = await uploadToCloudinary(profilePhoto.buffer, {
-          folder: getFolder(folderName, 'avatar'),
-          public_id: publicId,
-          resource_type: 'image',
-          format: 'webp',
-        });
+        uploadPromises.push(
+          uploadToCloudinary(profilePhoto.buffer, {
+            folder: getFolder(folderName, 'avatar'),
+            public_id: publicId,
+            resource_type: 'image',
+            format: 'webp',
+          }).then((url) => {
+            uploads.profilePhotoUrl = url;
+          })
+        );
       }
 
       if (resume) {
@@ -228,14 +243,19 @@ const menteeProfileUpload = (req, res, next) => {
           size: resume.size,
         });
 
-        uploads.resumeUrl = await uploadToCloudinary(resume.buffer, {
-          folder: getFolder(folderName, 'pdfs'),
-          public_id: publicId,
-          resource_type: 'image',
-        });
-
-        console.log('[Upload] Resume uploaded successfully →', uploads.resumeUrl);
+        uploadPromises.push(
+          uploadToCloudinary(resume.buffer, {
+            folder: getFolder(folderName, 'pdfs'),
+            public_id: publicId,
+            resource_type: 'image',
+          }).then((url) => {
+            uploads.resumeUrl = url;
+            console.log('[Upload] Resume uploaded successfully →', url);
+          })
+        );
       }
+
+      await Promise.all(uploadPromises);
 
       req.uploadedFiles = uploads;
       next();
