@@ -28,11 +28,14 @@ import http from 'http';
 import { URL } from 'url';
 import fs from 'fs';
 import { exec } from 'child_process';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = 'http://localhost:3939/callback';
-const TOKEN_FILE = './google-calendar-token.json';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const TOKEN_FILE = path.resolve(__dirname, '../google-calendar-token.json');
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
   console.error('❌ GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set in .env');

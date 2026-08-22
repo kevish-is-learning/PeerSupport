@@ -19,8 +19,10 @@
 import { google } from 'googleapis';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const TOKEN_FILE = path.resolve('google-calendar-token.json');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const TOKEN_FILE = path.resolve(__dirname, '../../google-calendar-token.json');
 
 let calendarClient = null;
 let isConfigured = false;
