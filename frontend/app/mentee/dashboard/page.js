@@ -91,9 +91,15 @@ const RecommendedMentorCard = ({ mentor }) => (
       </div>
     </div>
     
-    <div className="mt-3 text-xs text-gray-600 line-clamp-1">
+    <div className="mt-3 text-xs text-gray-600 line-clamp-1 break-words">
        {mentor.expertise?.join(", ")}
     </div>
+
+    {mentor.bio && (
+      <p className="mt-1.5 text-xs text-gray-500 line-clamp-2 break-words overflow-hidden leading-relaxed">
+        {mentor.bio}
+      </p>
+    )}
     
     <div className="mt-2 flex items-center gap-2 text-xs font-bold text-gray-500">
       <span className="flex items-center text-[#F59E0B]">

@@ -1,6 +1,6 @@
 import HighlightPill from "../ui/HighlightPill";
 import CircularFeatureCard from "../ui/CircularFeatureCard";
-import { CircleDot, Clock, Map, XCircle, CheckCircle2, Sparkles, Trophy, Rocket, Target } from "lucide-react";
+import { CircleDot, Clock, Map, XCircle, CheckCircle2, Sparkles, Trophy, Rocket, Target, ArrowDown } from "lucide-react";
 
 const problems = [
   {
@@ -105,6 +105,75 @@ function JourneyRing() {
   );
 }
 
+function MobileJourneyList() {
+  return (
+    <div className="w-full flex flex-col gap-6 py-2">
+      {/* Problems Header */}
+      <div className="flex items-center justify-center">
+        <HighlightPill text="Common Challenges" variant="orange" className="border-2 border-[#1f2937] font-extrabold shadow-[3px_3px_0_0_#1f2937]" />
+      </div>
+
+      {/* Problems Grid */}
+      <div className="grid grid-cols-1 gap-3.5">
+        {problems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <div
+              key={item.title}
+              className="flex items-center gap-3.5 rounded-2xl border-2 border-[#1f2937] bg-white p-4 shadow-[3px_3px_0_0_#F59E0B]"
+            >
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#1f2937] bg-[#F59E0B] text-white">
+                <Icon size={20} strokeWidth={2.5} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm font-extrabold text-[#1f2937]">{item.title}</h3>
+                <p className="text-xs text-[#6b7280] leading-snug mt-0.5">{item.description}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Central Connector */}
+      <div className="flex flex-col items-center justify-center py-2">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#1f2937] bg-white shadow-[3px_3px_0_0_#FFB800]">
+          <Rocket className="text-[#5061E4]" size={24} strokeWidth={2.5} />
+        </div>
+        <div className="mt-1 flex items-center gap-1 text-xs font-black uppercase tracking-wider text-[#5061E4]">
+          <span>Our Solution</span>
+          <ArrowDown size={14} />
+        </div>
+      </div>
+
+      {/* Solutions Header */}
+      <div className="flex items-center justify-center">
+        <HighlightPill text="How We Help You" variant="blue" className="border-2 border-[#1f2937] font-extrabold shadow-[3px_3px_0_0_#1f2937]" />
+      </div>
+
+      {/* Solutions Grid */}
+      <div className="grid grid-cols-1 gap-3.5">
+        {solutions.map((item) => {
+          const Icon = item.icon;
+          return (
+            <div
+              key={item.title}
+              className="flex items-center gap-3.5 rounded-2xl border-2 border-[#1f2937] bg-white p-4 shadow-[3px_3px_0_0_#5061E4]"
+            >
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#1f2937] bg-[#5061E4] text-white">
+                <Icon size={20} strokeWidth={2.5} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm font-extrabold text-[#1f2937]">{item.title}</h3>
+                <p className="text-xs text-[#6b7280] leading-snug mt-0.5">{item.description}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function BackgroundCream() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
@@ -116,33 +185,35 @@ function BackgroundCream() {
 
 export default function ProblemsSolutionsSection() {
   return (
-    <section className="relative overflow-hidden bg-[#FFF8F4] px-4 pb-0 pt-16 sm:px-6 sm:pt-20 lg:px-10">
+    <section className="relative overflow-hidden bg-[#FFF8F4] px-4 pb-12 pt-12 sm:px-6 sm:pt-20 sm:pb-16 lg:px-10">
       <BackgroundCream />
 
-      <div className="relative mx-auto max-w-5xl pb-14">
+      <div className="relative mx-auto max-w-5xl">
         <div className="flex flex-col items-center text-center">
-          <HighlightPill text="About Us" variant="primary" icon={<Target />}>
-          </HighlightPill>
+          <HighlightPill text="About Us" variant="primary" icon={<Target size={16} />} />
 
-          <h2 className="mt-6 max-w-3xl text-3xl font-extrabold leading-[1.15] tracking-[-0.03em] text-[#1f2937] sm:text-4xl lg:text-[2.5rem]">
+          <h2 className="mt-4 sm:mt-6 max-w-3xl text-2xl xs:text-3xl sm:text-4xl lg:text-[2.5rem] font-extrabold leading-[1.15] tracking-[-0.03em] text-[#1f2937] break-words">
             From Problems to{" "}
-            <span className="">Solutions</span>
+            <span className="text-[#5061E4]">Solutions</span>
           </h2>
 
-          <p className="mx-auto mt-4 max-w-2xl text-[0.95rem] leading-relaxed text-[#6b7280] sm:text-[1.05rem]">
+          <p className="mx-auto mt-3 sm:mt-4 max-w-2xl text-xs xs:text-sm sm:text-base leading-relaxed text-[#6b7280]">
             We identified the challenges MBA aspirants face and built a platform to solve them.
           </p>
         </div>
 
-        <div className="mt-12 flex flex-col items-center gap-8">
-          <HighlightPill text="Problems" variant="orange" className="border-[#1f2937] font-bold shadow-[4px_4px_0_0_#1f2937]" />
-
+        {/* Desktop Circular Ring */}
+        <div className="mt-12 hidden md:flex flex-col items-center gap-8">
+          <HighlightPill text="Problems" variant="orange" className="border-2 border-[#1f2937] font-bold shadow-[4px_4px_0_0_#1f2937]" />
           <JourneyRing />
+          <HighlightPill text="Solutions" variant="blue" className="border-2 border-[#1f2937] font-bold shadow-[4px_4px_0_0_#1f2937]" />
+        </div>
 
-          <HighlightPill text="Solutions" variant="blue" className="border-[#1f2937] font-bold shadow-[4px_4px_0_0_#1f2937]" />
+        {/* Mobile Responsive Stacked Cards */}
+        <div className="mt-8 block md:hidden">
+          <MobileJourneyList />
         </div>
       </div>
-
     </section>
   );
 }

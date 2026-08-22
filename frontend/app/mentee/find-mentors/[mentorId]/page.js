@@ -197,7 +197,9 @@ export default function MentorProfilePage() {
           {/* About */}
           <div className="px-6 py-4">
             <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">About</h3>
-            <p className="text-sm leading-relaxed text-gray-600">{mentor.bio || "No bio provided."}</p>
+            <p className="text-sm leading-relaxed text-gray-600 break-words whitespace-pre-line max-w-full overflow-hidden">
+              {mentor.bio || "No bio provided."}
+            </p>
           </div>
 
           {/* Divider */}

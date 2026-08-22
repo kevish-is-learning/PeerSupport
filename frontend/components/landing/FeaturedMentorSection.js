@@ -22,31 +22,43 @@ function MentorCard({ mentor, index }) {
   const imageUrl = resolveUploadUrl(mentor.profilePicture);
 
   return (
-    <article className="flex flex-col rounded-[22px] border-4 bg-white shadow-[5px_5px_0_0_#1a1a1a]">
-      <div className="relative m-3 mb-0 flex aspect-4/3.5 items-center justify-center overflow-hidden rounded-xl border-t-8 bg-gray-100" style={{ borderColor: style.accent }}>
+    <article className="flex flex-col rounded-[22px] border-2 sm:border-4 border-black bg-white shadow-[4px_4px_0_0_#1a1a1a] sm:shadow-[5px_5px_0_0_#1a1a1a] overflow-hidden w-full max-w-full min-w-0 transition-transform duration-200 hover:-translate-y-0.5">
+      <div
+        className="relative m-2.5 sm:m-3 mb-0 flex aspect-4/3 sm:aspect-4/3.5 items-center justify-center overflow-hidden rounded-xl border-t-6 sm:border-t-8 bg-gray-100"
+        style={{ borderColor: style.accent }}
+      >
         {imageUrl ? (
-          <img src={imageUrl} alt={mentor.name} className="h-full w-full object-cover object-top" loading="lazy" />
+          <img
+            src={imageUrl}
+            alt={mentor.name}
+            className="h-full w-full object-cover object-top"
+            loading="lazy"
+          />
         ) : (
-          <UserRound size={44} className="text-gray-400" aria-label="No profile photo" />
+          <UserRound size={40} className="text-gray-400" aria-label="No profile photo" />
         )}
       </div>
 
-      <div className="flex flex-1 flex-col px-4 pb-4 pt-4">
-        <h3 className="text-xl font-extrabold tracking-[-0.02em] text-[#0d0d0f]">{mentor.name}</h3>
+      <div className="flex flex-1 flex-col p-4 sm:p-5 pt-3 sm:pt-4 min-w-0">
+        <h3 className="text-lg sm:text-xl font-extrabold tracking-[-0.02em] text-[#0d0d0f] truncate">
+          {mentor.name}
+        </h3>
 
-        <span className="mt-1.5 inline-flex w-fit items-center gap-1.5 rounded-full border border-black/15 bg-[#f5f5f5] px-3 py-1 text-xs font-semibold text-[#0d0d0f]">
-          <GraduationCap size={16} color="#5763E6" />
-          {getCollegeName(mentor)}
-        </span>
+        <div className="mt-1.5 flex max-w-full">
+          <span className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-black/15 bg-[#f5f5f5] px-2.5 py-0.5 sm:px-3 sm:py-1 text-xs font-semibold text-[#0d0d0f] min-w-0">
+            <GraduationCap size={15} color="#5763E6" className="shrink-0" />
+            <span className="truncate">{getCollegeName(mentor)}</span>
+          </span>
+        </div>
 
-        <p className="mt-3 flex-1 text-[0.82rem] leading-[1.6] text-[#5c5f69]">
+        <p className="mt-3 flex-1 text-[0.82rem] leading-[1.6] text-[#5c5f69] line-clamp-3 break-words overflow-hidden min-h-[3.8rem]">
           {mentor.bio || "No bio added yet."}
         </p>
 
-        <div className="mt-3 flex items-center gap-4 text-sm font-bold text-[#0d0d0f]">
+        <div className="mt-3.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-bold text-[#0d0d0f]">
           {rating > 0 ? (
             <span className="flex items-center gap-1">
-              <Star size={16} className="fill-[#FFB705] text-[#FFB705]" />
+              <Star size={15} className="fill-[#FFB705] text-[#FFB705]" />
               {rating.toFixed(1)}
             </span>
           ) : (
@@ -54,7 +66,7 @@ function MentorCard({ mentor, index }) {
           )}
           {sessions > 0 && (
             <span className="flex items-center gap-1 text-[#000000]">
-              <Clock size={16} color="#5763E6" />
+              <Clock size={15} color="#5763E6" />
               {sessions} {sessions === 1 ? "session" : "sessions"}
             </span>
           )}
@@ -62,7 +74,7 @@ function MentorCard({ mentor, index }) {
 
         <Link
           href={`/mentee/find-mentors/${mentor.id}`}
-          className={`mt-4 flex items-center justify-center gap-2 rounded-full border-[2.5px] border-[#1a1a1a] px-5 py-2.5 text-sm font-bold shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#1a1a1a] ${style.ctaColor}`}
+          className={`mt-4 flex w-full items-center justify-center gap-2 rounded-full border-2 border-[#1a1a1a] px-4 py-2.5 text-xs sm:text-sm font-bold shadow-[2px_2px_0_0_#1a1a1a] sm:shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#1a1a1a] ${style.ctaColor}`}
         >
           View Mentor
           <ArrowRight size={16} />
@@ -92,37 +104,37 @@ export default function FeaturedMentorSection() {
   }, []);
 
   return (
-    <section id="how-it-works" className="relative mx-auto w-full scroll-mt-24 overflow-hidden px-4 py-20 sm:px-6 lg:px-10">
-      <div className="absolute left-6 top-8 h-14 w-14 rotate-16 border-2 bg-[#FBECE6] sm:left-10 sm:h-16 sm:w-16" aria-hidden="true" />
-      <div className="absolute bottom-8 right-6 h-14 w-14 rounded-full border-[3px] border-black bg-[#FDF5F3] sm:right-10 sm:h-20 sm:w-20" aria-hidden="true" />
+    <section id="how-it-works" className="relative mx-auto w-full scroll-mt-24 overflow-hidden px-4 py-12 sm:px-6 sm:py-20 lg:px-10">
+      <div className="hidden sm:block absolute left-6 top-8 h-14 w-14 rotate-16 border-2 bg-[#FBECE6] sm:left-10 sm:h-16 sm:w-16 pointer-events-none" aria-hidden="true" />
+      <div className="hidden sm:block absolute bottom-8 right-6 h-14 w-14 rounded-full border-[3px] border-black bg-[#FDF5F3] sm:right-10 sm:h-20 sm:w-20 pointer-events-none" aria-hidden="true" />
 
       <div className="relative mx-auto max-w-6xl">
         <div className="flex justify-center">
           <HighlightPill text="Mentors" variant="secondary" icon={<Sparkles size={16} />} />
         </div>
 
-        <h2 className="mt-5 text-center text-[2.2rem] font-extrabold leading-[1.15] tracking-[-0.03em] text-[#0d0d0f] sm:text-[2.8rem]">
+        <h2 className="mt-4 sm:mt-5 text-center text-2xl xs:text-3xl sm:text-4xl lg:text-[2.8rem] font-extrabold leading-[1.15] tracking-[-0.03em] text-[#0d0d0f] break-words">
           Meet Our Mentors
         </h2>
-        <p className="mx-auto mt-4 max-w-lg text-center text-[0.95rem] leading-relaxed text-[#5c5f69]">
+        <p className="mx-auto mt-3 sm:mt-4 max-w-lg text-center text-xs xs:text-sm sm:text-[0.95rem] leading-relaxed text-[#5c5f69] px-2">
           Browse approved mentors currently available on Peer Support.
         </p>
 
         {isLoading ? (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 sm:mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="h-[390px] animate-pulse rounded-[22px] border-4 border-gray-200 bg-gray-100" />
+              <div key={index} className="h-[360px] sm:h-[390px] animate-pulse rounded-[22px] border-2 sm:border-4 border-gray-200 bg-gray-100" />
             ))}
           </div>
         ) : mentors.length ? (
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 sm:mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {mentors.map((mentor, index) => <MentorCard key={mentor.id} mentor={mentor} index={index} />)}
           </div>
         ) : (
           <p className="mt-12 text-center text-sm font-semibold text-[#5c5f69]">Mentors will appear here once they are approved.</p>
         )}
 
-        <div className="mt-12 flex justify-center">
+        <div className="mt-8 sm:mt-12 flex justify-center">
           <PillButton href="/mentee/find-mentors" variant="accent">
             Explore all mentors
             <span aria-hidden="true" className="text-lg">→</span>

@@ -5,7 +5,7 @@ import useAuthStore from "../../store/useAuthStore";
 import PillButton from "../ui/PillButton";
 import { ArrowRight } from "lucide-react";
 
-export default function BecomeMentorHeroButton() {
+export default function BecomeMentorHeroButton({ className = "" }) {
   const { user, hasCheckedSession, fetchCurrentUser } = useAuthStore();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function BecomeMentorHeroButton() {
   if (!hasCheckedSession) {
     return (
       <span
-        className="inline-flex h-11 min-w-41.25 animate-pulse rounded-full border-2 border-black/20 bg-[#f3f0ee]/60"
+        className="inline-flex h-10 sm:h-11 min-w-32 animate-pulse rounded-full border-2 border-black/20 bg-[#f3f0ee]/60"
         aria-hidden="true"
       />
     );
@@ -26,9 +26,9 @@ export default function BecomeMentorHeroButton() {
   const href = user ? "/mentor/dashboard" : "/auth?mode=register&role=MENTOR";
 
   return (
-    <PillButton href={href} variant="primary">
+    <PillButton href={href} variant="primary" className={`justify-center text-center ${className}`}>
       Become a Mentor
-      <ArrowRight size={16} className="ml-2"/>
+      <ArrowRight size={16} className="ml-2" />
     </PillButton>
   );
 }

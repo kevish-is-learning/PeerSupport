@@ -360,7 +360,7 @@ export default function MentorProfilePage() {
             )}
 
             {/* Bio */}
-            <p className="text-sm text-gray-500 font-medium leading-relaxed mt-6 mb-4 line-clamp-3 px-2">
+            <p className="text-sm text-gray-500 font-medium leading-relaxed mt-6 mb-4 line-clamp-3 px-2 break-words overflow-hidden max-w-full">
               {profile?.bio || "No bio added yet. Edit your profile to add a short bio."}
             </p>
 
@@ -733,7 +733,7 @@ export default function MentorProfilePage() {
                    className="w-full rounded-xl border border-black px-4 py-3 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[#10B981]/20"
                  />
              ) : (
-                 <p className="text-sm font-medium text-gray-600 leading-relaxed whitespace-pre-wrap">
+                 <p className="text-sm font-medium text-gray-600 leading-relaxed whitespace-pre-wrap break-words overflow-hidden max-w-full">
                      {profile?.bio || "—"}
                  </p>
              )}

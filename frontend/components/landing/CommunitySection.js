@@ -4,7 +4,6 @@ import {
   MessageCircle,
   Zap,
   ArrowRight,
-  Music,
   Target,
   Rocket,
   Calendar
@@ -37,7 +36,7 @@ function BackgroundDecor() {
       <div className="absolute left-[20%] top-[40%] h-8 w-8 rotate-45 rounded-sm border-2 border-purple-300/25" />
       <div className="absolute right-[25%] bottom-[35%] h-6 w-6 rotate-12 rounded-md border-2 border-purple-300/20" />
       <Rocket
-        className="absolute right-[22%] top-[8%] h-14 w-14 text-white/12"
+        className="hidden sm:block absolute right-[22%] top-[8%] h-14 w-14 text-white/12"
         strokeWidth={1.5}
         aria-hidden
       />
@@ -47,16 +46,16 @@ function BackgroundDecor() {
 
 function StackedCommunityCards() {
   return (
-    <div className="relative mx-auto flex w-full max-w-[340px] justify-center py-6 lg:mx-0 lg:max-w-none lg:justify-end lg:py-2">
-      <div className="relative h-[300px] w-[280px] sm:h-[320px] sm:w-[300px]">
+    <div className="relative mx-auto flex w-full max-w-full justify-center py-4 sm:py-6 lg:mx-0 lg:max-w-none lg:justify-end lg:py-2 overflow-visible">
+      <div className="relative h-[280px] w-[260px] xs:h-[300px] xs:w-[280px] sm:h-[320px] sm:w-[300px]">
         {/* Back — blue */}
         <div
-          className="absolute left-[52px] top-[28px] h-[248px] w-[200px] rotate-10 rounded-[22px] border-[3px] border-[#1f2937] bg-white shadow-[5px_5px_0_0_#1f2937]"
+          className="absolute left-[40px] xs:left-[52px] top-[24px] xs:top-[28px] h-[230px] xs:h-[248px] w-[185px] xs:w-[200px] rotate-10 rounded-[22px] border-2 sm:border-[3px] border-[#1f2937] bg-white shadow-[4px_4px_0_0_#1f2937] sm:shadow-[5px_5px_0_0_#1f2937]"
           style={{ zIndex: 1 }}
         >
-          <div className="p-5">
-            <div className="h-12 w-12 rounded-full border-[2.5px] border-[#1f2937] bg-[#5061E4]" />
-            <div className="mt-5 space-y-2">
+          <div className="p-4 xs:p-5">
+            <div className="h-10 w-10 xs:h-12 xs:w-12 rounded-full border-2 border-[#1f2937] bg-[#5061E4]" />
+            <div className="mt-4 xs:mt-5 space-y-2">
               <div className="h-2 rounded-full bg-neutral-200" />
               <div className="h-2 w-[88%] rounded-full bg-neutral-200" />
               <div className="h-2 w-[72%] rounded-full bg-neutral-200" />
@@ -66,12 +65,12 @@ function StackedCommunityCards() {
 
         {/* Middle — orange */}
         <div
-          className="absolute left-[28px] top-[14px] h-[248px] w-[200px] rotate-[5deg] rounded-[22px] border-[3px] border-[#1f2937] bg-white shadow-[5px_5px_0_0_#1f2937]"
+          className="absolute left-[20px] xs:left-[28px] top-[12px] xs:top-[14px] h-[230px] xs:h-[248px] w-[185px] xs:w-[200px] rotate-[5deg] rounded-[22px] border-2 sm:border-[3px] border-[#1f2937] bg-white shadow-[4px_4px_0_0_#1f2937] sm:shadow-[5px_5px_0_0_#1f2937]"
           style={{ zIndex: 2 }}
         >
-          <div className="p-5">
-            <div className="h-12 w-12 rounded-full border-[2.5px] border-[#1f2937] bg-[#F59E0B]" />
-            <div className="mt-5 space-y-2">
+          <div className="p-4 xs:p-5">
+            <div className="h-10 w-10 xs:h-12 xs:w-12 rounded-full border-2 border-[#1f2937] bg-[#F59E0B]" />
+            <div className="mt-4 xs:mt-5 space-y-2">
               <div className="h-2 rounded-full bg-neutral-200" />
               <div className="h-2 w-[85%] rounded-full bg-neutral-200" />
               <div className="h-2 w-[68%] rounded-full bg-neutral-200" />
@@ -81,30 +80,29 @@ function StackedCommunityCards() {
 
         {/* Front — red */}
         <div
-          className="absolute left-0 top-0 flex h-[248px] w-[200px] flex-col rounded-[22px] border-[3px] border-[#1f2937] bg-white p-5 shadow-[6px_6px_0_0_#1f2937]"
+          className="absolute left-0 top-0 flex h-[230px] xs:h-[248px] w-[185px] xs:w-[200px] flex-col rounded-[22px] border-2 sm:border-[3px] border-[#1f2937] bg-white p-4 xs:p-5 shadow-[4px_4px_0_0_#1f2937] sm:shadow-[6px_6px_0_0_#1f2937]"
           style={{ zIndex: 3 }}
         >
           <div className="relative">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full border-[2.5px] border-[#1f2937] bg-[#E53E3E]">
-              <Target className="h-6 w-6 text-white" strokeWidth={2.5} />
+            <div className="flex h-10 w-10 xs:h-12 xs:w-12 items-center justify-center rounded-full border-2 border-[#1f2937] bg-[#E53E3E]">
+              <Target className="h-5 w-5 xs:h-6 xs:w-6 text-white" strokeWidth={2.5} />
             </div>
           </div>
-          <div className="mt-5 flex-1 space-y-2">
+          <div className="mt-4 xs:mt-5 flex-1 space-y-2">
             <div className="h-2 rounded-full bg-neutral-200" />
             <div className="h-2 w-[90%] rounded-full bg-neutral-200" />
             <div className="h-2 w-[70%] rounded-full bg-neutral-200" />
             <div className="h-2 w-[55%] rounded-full bg-neutral-100" />
           </div>
-          <div className="mt-auto flex flex-wrap gap-2 pt-3">
-            <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#FFB800] px-2 py-0.5 text-[10px] font-extrabold text-[#1f2937] shadow-[2px_2px_0_0_#1f2937]">
+          <div className="mt-auto flex flex-wrap gap-1.5 xs:gap-2 pt-2 xs:pt-3">
+            <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#FFB800] px-2 py-0.5 text-[9px] xs:text-[10px] font-extrabold text-[#1f2937] shadow-[2px_2px_0_0_#1f2937]">
               👍24
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#E53E3E] px-2 py-0.5 text-[10px] font-extrabold text-white shadow-[2px_2px_0_0_#1f2937]">
+            <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#E53E3E] px-2 py-0.5 text-[9px] xs:text-[10px] font-extrabold text-white shadow-[2px_2px_0_0_#1f2937]">
               💬12
             </span>
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -113,16 +111,16 @@ function StackedCommunityCards() {
 export default function CommunitySection() {
   return (
     <section
-      className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-20 lg:px-10"
+      className="relative overflow-hidden px-4 py-12 sm:px-6 sm:py-20 lg:px-10"
       style={{ backgroundColor: "#5061E4" }}
     >
       <BackgroundDecor />
 
-      <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-        <div className="max-w-xl lg:max-w-none">
+      <div className="relative mx-auto grid max-w-6xl gap-8 sm:gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+        <div className="max-w-xl lg:max-w-none min-w-0">
           <HighlightPill text="Peer Support Community" variant="secondary" icon={<Users size={16} />} />
 
-          <h2 className="mt-6 text-3xl font-extrabold leading-[1.2] tracking-[-0.03em] text-white sm:text-4xl lg:text-[2.65rem]">
+          <h2 className="mt-4 sm:mt-6 text-2xl xs:text-3xl sm:text-4xl lg:text-[2.65rem] font-extrabold leading-[1.2] tracking-[-0.03em] text-white break-words">
             Join Our Thriving{" "}
             <span className="relative inline-block">
               <span className="relative z-10">Community</span>
@@ -130,26 +128,26 @@ export default function CommunitySection() {
             🚀
           </h2>
 
-          <p className="mt-6 text-base font-medium leading-relaxed text-white/95 sm:text-[1.05rem]">
+          <p className="mt-4 sm:mt-6 text-xs xs:text-sm sm:text-base font-medium leading-relaxed text-white/95">
             Connect with like-minded MBA aspirants, share experiences, get daily tips, and stay motivated
             with our vibrant community of mentors and mentees.
           </p>
 
-          <ul className="mt-8 space-y-4">
+          <ul className="mt-6 sm:mt-8 space-y-3.5 sm:space-y-4">
             {features.map(({ icon: Icon, label }) => (
               <li key={label} className="flex items-start gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-[3px] border-[#1f2937] bg-[#F59E0B] shadow-[3px_3px_0_0_#1f2937]">
-                  <Icon size={18} className="text-white" strokeWidth={2.5} aria-hidden />
+                <span className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg border-2 sm:border-[3px] border-[#1f2937] bg-[#F59E0B] shadow-[2px_2px_0_0_#1f2937] sm:shadow-[3px_3px_0_0_#1f2937]">
+                  <Icon size={16} className="text-white" strokeWidth={2.5} aria-hidden />
                 </span>
-                <span className="pt-1.5 text-[0.95rem] font-semibold leading-snug text-white">{label}</span>
+                <span className="pt-1 text-xs xs:text-sm sm:text-[0.95rem] font-semibold leading-snug text-white">{label}</span>
               </li>
             ))}
           </ul>
 
-          <div className="mt-10">
-           <PillButton href="/mentee/find-mentors" variant="yellow">
-            Join the Community
-            <ArrowRight size={16} strokeWidth={2.5} aria-hidden />
+          <div className="mt-8 sm:mt-10">
+            <PillButton href="/mentee/find-mentors" variant="yellow">
+              Join the Community
+              <ArrowRight size={16} strokeWidth={2.5} aria-hidden />
             </PillButton>
           </div>
         </div>
