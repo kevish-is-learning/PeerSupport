@@ -14,23 +14,19 @@ import {
   CheckCircle,
   Mail,
   Phone,
+  Sparkles,
+  HelpCircle,
 } from "lucide-react";
 import useAuthStore from "../../store/useAuthStore";
-import {
-  mentorProfileApi,
-  resolveUploadUrl,
-} from "../../lib/api";
-import PillButton from "../ui/PillButton";
+import { mentorProfileApi, resolveUploadUrl } from "../../lib/api";
 import UniversalButton from "../ui/universalButton";
 
 const STEPS = [
-  { id: 1, title: "Basic Information", icon: User },
-  { id: 2, title: "Education Details", icon: GraduationCap },
-  { id: 3, title: "Professional Background", icon: Briefcase },
-  { id: 4, title: "Expertise & Profile", icon: BookOpen },
+  { id: 1, title: "Basic Info", fullTitle: "Basic Information", icon: User },
+  { id: 2, title: "Education", fullTitle: "Education Details", icon: GraduationCap },
+  { id: 3, title: "Background", fullTitle: "Professional Background", icon: Briefcase },
+  { id: 4, title: "Expertise", fullTitle: "Expertise & Profile", icon: BookOpen },
 ];
-
-// Services are configured later from the mentor dashboard — not during onboarding.
 
 const EXPERTISE_OPTIONS = [
   "Interview Preparation",
@@ -45,22 +41,39 @@ const EXPERTISE_OPTIONS = [
   "Networking Tips",
 ];
 
-const parseLegacyProfile = (value, keys) => Object.fromEntries(
-  keys.map((key, index) => [key, (value || "").split("|")[index] || ""]),
-);
+const parseLegacyProfile = (value, keys) =>
+  Object.fromEntries(
+    keys.map((key, index) => [key, (value || "").split("|")[index] || ""])
+  );
 
-const getEducationData = (profile) => profile?.education || {
-  mba: parseLegacyProfile(profile?.pgProfile, ["college", "specialization", "graduationYear"]),
-  undergraduate: parseLegacyProfile(profile?.ugCollegeProfile, ["college", "degree", "specialization", "graduationYear"]),
-};
-
-const getExperienceData = (profile) => profile?.professionalExperience || (() => {
-  const legacy = parseLegacyProfile(profile?.workExperience, ["years", "company", "role"]);
-  return {
-    hasExperience: Boolean(legacy.years || legacy.company || legacy.role),
-    ...legacy,
+const getEducationData = (profile) =>
+  profile?.education || {
+    mba: parseLegacyProfile(profile?.pgProfile, [
+      "college",
+      "specialization",
+      "graduationYear",
+    ]),
+    undergraduate: parseLegacyProfile(profile?.ugCollegeProfile, [
+      "college",
+      "degree",
+      "specialization",
+      "graduationYear",
+    ]),
   };
-})();
+
+const getExperienceData = (profile) =>
+  profile?.professionalExperience ||
+  (() => {
+    const legacy = parseLegacyProfile(profile?.workExperience, [
+      "years",
+      "company",
+      "role",
+    ]);
+    return {
+      hasExperience: Boolean(legacy.years || legacy.company || legacy.role),
+      ...legacy,
+    };
+  })();
 
 const compressImage = async (file, maxWidth = 800, maxHeight = 800, quality = 0.85) => {
   if (!file || !file.type.startsWith("image/")) return file;
@@ -97,10 +110,14 @@ const compressImage = async (file, maxWidth = 800, maxHeight = 800, quality = 0.
             if (!blob || blob.size >= file.size) {
               resolve(file);
             } else {
-              const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".webp"), {
-                type: "image/webp",
-                lastModified: Date.now(),
-              });
+              const compressedFile = new File(
+                [blob],
+                file.name.replace(/\.[^/.]+$/, ".webp"),
+                {
+                  type: "image/webp",
+                  lastModified: Date.now(),
+                }
+              );
               resolve(compressedFile);
             }
           },
@@ -125,28 +142,7 @@ export default function MentorOnboardingWizard({
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const stepsContainerRef = useRef(null);
   const draftKey = user?.id ? `mentor-onboarding-draft:${user.id}` : null;
-
-  useEffect(() => {
-    const container = stepsContainerRef.current;
-    if (!container) return;
-
-    // Find the active step container element
-    const activeStepElement = container.querySelector('[data-active="true"]');
-    if (activeStepElement) {
-      const containerWidth = container.offsetWidth;
-      const elementOffset = activeStepElement.offsetLeft;
-      const elementWidth = activeStepElement.offsetWidth;
-      // Calculate scroll position to put item in center
-      const scrollPos = elementOffset - containerWidth / 2 + elementWidth / 2;
-
-      container.scrollTo({
-        left: scrollPos,
-        behavior: "smooth",
-      });
-    }
-  }, [currentStep]);
 
   const initialEducation = getEducationData(existingProfile);
   const initialExperience = getExperienceData(existingProfile);
@@ -158,22 +154,30 @@ export default function MentorOnboardingWizard({
   );
 
   const [formData, setFormData] = useState({
-    profilePhotoUrl: existingProfile?.profilePhotoUrl || user?.profilePicture || "",
+    profilePhotoUrl:
+      existingProfile?.profilePhotoUrl || user?.profilePicture || "",
     fullName: user?.name || "",
     email: user?.email || "",
     contactNumber: existingProfile?.contactNumber || "",
 
     mbaCollege: initialEducation.mba?.college || "",
     mbaSpecialization: initialEducation.mba?.specialization || "",
-    mbaYear: initialEducation.mba?.graduationYear ? String(initialEducation.mba.graduationYear) : "",
+    mbaYear: initialEducation.mba?.graduationYear
+      ? String(initialEducation.mba.graduationYear)
+      : "",
 
     ugCollege: initialEducation.undergraduate?.college || "",
     ugDegree: initialEducation.undergraduate?.degree || "",
     ugSpecialization: initialEducation.undergraduate?.specialization || "",
-    ugYear: initialEducation.undergraduate?.graduationYear ? String(initialEducation.undergraduate.graduationYear) : "",
+    ugYear: initialEducation.undergraduate?.graduationYear
+      ? String(initialEducation.undergraduate.graduationYear)
+      : "",
 
     linkedInUrl: existingProfile?.linkedInUrl || "",
-    workExperienceYears: initialExperience.years !== undefined && initialExperience.years !== null ? String(initialExperience.years) : "",
+    workExperienceYears:
+      initialExperience.years !== undefined && initialExperience.years !== null
+        ? String(initialExperience.years)
+        : "",
     company: initialExperience.company || "",
     role: initialExperience.role || "",
 
@@ -204,13 +208,18 @@ export default function MentorOnboardingWizard({
         setFormData((current) => ({
           ...current,
           ...parsed.formData,
-          profilePhotoUrl: parsed.formData.profilePhotoUrl || current.profilePhotoUrl || user?.profilePicture || "",
+          profilePhotoUrl:
+            parsed.formData.profilePhotoUrl ||
+            current.profilePhotoUrl ||
+            user?.profilePicture ||
+            "",
         }));
       }
       if (typeof parsed.hasWorkExperience === "boolean") {
         setHasWorkExperience(parsed.hasWorkExperience);
       }
-      if (Number.isInteger(parsed.currentStep)) setCurrentStep(Math.min(4, Math.max(1, parsed.currentStep)));
+      if (Number.isInteger(parsed.currentStep))
+        setCurrentStep(Math.min(4, Math.max(1, parsed.currentStep)));
     } catch {
       window.localStorage.removeItem(draftKey);
     }
@@ -223,7 +232,9 @@ export default function MentorOnboardingWizard({
       JSON.stringify({
         formData: {
           ...formData,
-          profilePhotoUrl: formData.profilePhotoUrl?.startsWith("blob:") ? "" : formData.profilePhotoUrl,
+          profilePhotoUrl: formData.profilePhotoUrl?.startsWith("blob:")
+            ? ""
+            : formData.profilePhotoUrl,
         },
         hasWorkExperience,
         currentStep,
@@ -234,7 +245,7 @@ export default function MentorOnboardingWizard({
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "contactNumber") {
-      const cleaned = value.replace(/[^\d+()\-\s]/g, "").slice(0, 16);
+      const cleaned = value.replace(/\D/g, "").slice(0, 10);
       setFormData((prev) => ({ ...prev, [name]: cleaned }));
       return;
     }
@@ -264,7 +275,6 @@ export default function MentorOnboardingWizard({
         }
         setPhotoPreviewUrl(URL.createObjectURL(file));
         setFormData((prev) => ({ ...prev, profilePhotoUrl: "" }));
-        // Compress image in background to speed up upload by ~90%
         const compressed = await compressImage(file, 800, 800, 0.85);
         setFiles((prev) => ({ ...prev, profilePhoto: compressed }));
       } else {
@@ -274,7 +284,7 @@ export default function MentorOnboardingWizard({
   };
 
   const validateStep = (stepNumber, showError = true) => {
-    // Validation for Step 1: Basic Information
+    // Step 1: Basic Information
     if (stepNumber === 1) {
       if (!files.profilePhoto && !formData.profilePhotoUrl) {
         if (showError) toast.error("Profile picture is required.");
@@ -294,14 +304,14 @@ export default function MentorOnboardingWizard({
       }
 
       const digitsOnly = formData.contactNumber.replace(/\D/g, "");
-      if (digitsOnly.length < 7 || digitsOnly.length > 15) {
-        if (showError) toast.error("Please enter a valid contact number (7-15 digits).");
+      if (digitsOnly.length !== 10) {
+        if (showError) toast.error("Contact number must be exactly 10 digits.");
         return false;
       }
       return true;
     }
 
-    // Validation for Step 2: Education Details
+    // Step 2: Education Details
     if (stepNumber === 2) {
       const currentYear = new Date().getFullYear();
       const mbaYear = Number(formData.mbaYear);
@@ -324,7 +334,7 @@ export default function MentorOnboardingWizard({
       return true;
     }
 
-    // Validation for Step 3: Professional Background
+    // Step 3: Professional Background
     if (stepNumber === 3) {
       if (formData.linkedInUrl && formData.linkedInUrl.trim()) {
         try {
@@ -354,7 +364,7 @@ export default function MentorOnboardingWizard({
       return true;
     }
 
-    // Validation for Step 4: Expertise & Profile
+    // Step 4: Expertise & Profile
     if (stepNumber === 4) {
       if (!formData.bio.trim()) {
         if (showError) toast.error("Bio is required.");
@@ -399,7 +409,6 @@ export default function MentorOnboardingWizard({
     for (let s = currentStep; s < targetStep; s++) {
       const isValid = validateStep(s, true);
       if (!isValid) {
-        // If an intermediate step is invalid, advance user to that step to complete it
         if (s !== currentStep) {
           setCurrentStep(s);
         }
@@ -429,28 +438,53 @@ export default function MentorOnboardingWizard({
     payload.append("bio", formData.bio);
     payload.append("expertiseTags", JSON.stringify(formData.expertiseTags));
     payload.append("linkedInUrl", formData.linkedInUrl || "");
-    payload.append("education", JSON.stringify({
-      mba: { college: formData.mbaCollege, specialization: formData.mbaSpecialization, graduationYear: Number(formData.mbaYear) },
-      undergraduate: { college: formData.ugCollege, degree: formData.ugDegree, specialization: formData.ugSpecialization, graduationYear: Number(formData.ugYear) },
-    }));
-    payload.append("professionalExperience", JSON.stringify({
-      hasExperience: hasWorkExperience,
-      ...(hasWorkExperience ? { years: Number(formData.workExperienceYears), company: formData.company, role: formData.role } : {}),
-    }));
-    payload.append("mentoringQA", JSON.stringify({
-      q1: formData.mentoringQ1,
-      q2: formData.mentoringQ2,
-      q3: formData.mentoringQ3,
-      q4: formData.mentoringQ4,
-      q5: formData.mentoringQ5,
-    }));
+    payload.append(
+      "education",
+      JSON.stringify({
+        mba: {
+          college: formData.mbaCollege,
+          specialization: formData.mbaSpecialization,
+          graduationYear: Number(formData.mbaYear),
+        },
+        undergraduate: {
+          college: formData.ugCollege,
+          degree: formData.ugDegree,
+          specialization: formData.ugSpecialization,
+          graduationYear: Number(formData.ugYear),
+        },
+      })
+    );
+    payload.append(
+      "professionalExperience",
+      JSON.stringify({
+        hasExperience: hasWorkExperience,
+        ...(hasWorkExperience
+          ? {
+              years: Number(formData.workExperienceYears),
+              company: formData.company,
+              role: formData.role,
+            }
+          : {}),
+      })
+    );
+    payload.append(
+      "mentoringQA",
+      JSON.stringify({
+        q1: formData.mentoringQ1,
+        q2: formData.mentoringQ2,
+        q3: formData.mentoringQ3,
+        q4: formData.mentoringQ4,
+        q5: formData.mentoringQ5,
+      })
+    );
 
     if (files.profilePhoto) {
       payload.append("profilePhoto", files.profilePhoto);
     } else if (formData.profilePhotoUrl) {
       payload.append("profilePhotoUrl", formData.profilePhotoUrl);
     }
-    if (files.collegeDocument) payload.append("collegeDocument", files.collegeDocument);
+    if (files.collegeDocument)
+      payload.append("collegeDocument", files.collegeDocument);
 
     return payload;
   };
@@ -482,118 +516,129 @@ export default function MentorOnboardingWizard({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-6">
+    <div className="w-full max-w-3xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
+      {/* Back Button */}
       <button
         onClick={() => router.push("/")}
-        className="flex items-center text-sm text-gray-600 hover:text-black mb-6 font-medium transition-colors cursor-pointer"
+        className="inline-flex items-center text-xs sm:text-sm text-gray-600 hover:text-black mb-4 font-semibold transition-colors cursor-pointer"
       >
-        <ArrowLeft className="w-4 h-4 mr-1" />
+        <ArrowLeft className="w-3.5 h-3.5 mr-1" />
         Back to Home
       </button>
 
-      <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+      {/* Header */}
+      <div className="mb-5 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-gray-900 leading-tight">
           Complete Your Mentor Profile
         </h1>
-        <p className="text-sm sm:text-base text-gray-500">
+        <p className="text-xs sm:text-sm text-gray-500 mt-1">
           Help us know you better to connect you with the right mentees
         </p>
       </div>
 
-      {/* Stepper Header */}
-      <div className="bg-white border-2 border-black rounded-2xl p-2 sm:p-6 mb-6 shadow-[6px_6px_0_#FFB705] relative overflow-hidden">
-        <div
-          ref={stepsContainerRef}
-          className="flex w-full items-center overflow-x-auto no-scrollbar scroll-smooth [&::-webkit-scrollbar]:hidden"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          <div className="flex w-full items-center justify-between min-w-[600px] sm:min-w-full px-2 py-1">
-            {STEPS.map((step, idx) => {
-              const isActive = step.id === currentStep;
-              const isCompleted = !isActive && (step.id < currentStep || validateStep(step.id, false));
+      {/* ── Stepper Header (Minimal & Fully Responsive) ── */}
+      <div className="bg-white border-2 border-black rounded-xl sm:rounded-2xl p-3 sm:p-5 mb-5 shadow-[3px_3px_0_#FFB705] sm:shadow-[5px_5px_0_#FFB705]">
+        <div className="flex w-full items-center justify-between">
+          {STEPS.map((step, idx) => {
+            const isActive = step.id === currentStep;
+            const isCompleted =
+              !isActive && (step.id < currentStep || validateStep(step.id, false));
 
-              return (
-                <React.Fragment key={step.id}>
-                  <button
-                    type="button"
-                    onClick={() => handleStepClick(step.id)}
-                    disabled={isSubmitting}
-                    data-active={isActive ? "true" : undefined}
-                    aria-current={isActive ? "step" : undefined}
-                    aria-label={`Step ${step.id}: ${step.title}${isActive ? " (Current)" : isCompleted ? " (Completed)" : ""}`}
-                    title={isActive ? `Current Step: ${step.title}` : isCompleted ? `Go to ${step.title} (Completed)` : `Go to ${step.title}`}
-                    className={`flex flex-col items-center z-10 bg-transparent px-2 sm:px-4 shrink-0 transition-transform duration-200 w-20 sm:w-28 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 rounded-xl group ${
-                      isSubmitting ? "opacity-60 cursor-not-allowed" : "hover:scale-105 active:scale-95"
+            return (
+              <React.Fragment key={step.id}>
+                <button
+                  type="button"
+                  onClick={() => handleStepClick(step.id)}
+                  disabled={isSubmitting}
+                  aria-current={isActive ? "step" : undefined}
+                  aria-label={`Step ${step.id}: ${step.fullTitle}${isActive ? " (Current)" : isCompleted ? " (Completed)" : ""}`}
+                  title={isActive ? `Current Step: ${step.fullTitle}` : isCompleted ? `Go to ${step.fullTitle} (Completed)` : `Go to ${step.fullTitle}`}
+                  className={`flex flex-col items-center shrink-0 transition-transform duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-lg group ${
+                    isSubmitting ? "opacity-60 cursor-not-allowed" : "hover:scale-105 active:scale-95"
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 xs:w-9 xs:h-9 sm:w-11 sm:h-11 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
+                      isActive
+                        ? "border-black bg-[#FFB705] text-black shadow-sm ring-2 ring-[#FFB705]/40"
+                        : isCompleted
+                          ? "border-black bg-[#FFB705] text-black"
+                          : "border-gray-200 text-gray-400 bg-white group-hover:border-gray-300 group-hover:text-gray-600"
                     }`}
                   >
+                    {isCompleted ? (
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-black" />
+                    ) : (
+                      <step.icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                    )}
+                  </div>
+                  <span
+                    className={`text-[10px] sm:text-xs font-bold text-center mt-1 transition-colors leading-tight max-w-[64px] sm:max-w-none truncate ${
+                      isActive || isCompleted
+                        ? "text-gray-900"
+                        : "text-gray-400 group-hover:text-gray-600"
+                    }`}
+                  >
+                    <span className="hidden sm:inline">{step.fullTitle}</span>
+                    <span className="sm:hidden">{step.title}</span>
+                  </span>
+                </button>
+
+                {idx < STEPS.length - 1 && (
+                  <div className="flex-1 h-[2px] mx-1 xs:mx-1.5 sm:mx-3 relative top-[-10px] sm:top-[-12px] min-w-[6px]">
                     <div
-                      className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center mb-2 transition-all shrink-0 ${
-                        isActive
-                          ? "border-yellow-400 bg-yellow-400 text-black scale-105 shadow-md ring-2 ring-yellow-200"
-                          : isCompleted
-                            ? "border-yellow-400 bg-yellow-400 text-black group-hover:shadow-md"
-                            : "border-gray-200 text-gray-400 bg-white group-hover:border-gray-300 group-hover:text-gray-600"
+                      className={`h-full w-full transition-colors duration-300 ${
+                        step.id < currentStep || validateStep(step.id, false)
+                          ? "bg-black"
+                          : "bg-gray-200"
                       }`}
-                    >
-                      {isCompleted ? (
-                        <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6" />
-                      ) : (
-                        <step.icon className="w-5 h-5 sm:w-6 sm:h-6" />
-                      )}
-                    </div>
-                    <span
-                      className={`text-[9px] leading-tight sm:text-xs font-bold text-center wrap-break-word mt-1 transition-colors ${
-                        isActive || isCompleted ? "text-black" : "text-gray-400 group-hover:text-gray-600"
-                      }`}
-                    >
-                      {step.title}
-                    </span>
-                  </button>
-                  {idx < STEPS.length - 1 && (
-                    <div className="flex-1 h-[2px] mx-1 md:mx-2 relative top-[-10px] sm:top-[-16px] min-w-[12px]">
-                      <div
-                        className={`h-full w-full transition-colors duration-300 ${
-                          step.id < currentStep || validateStep(step.id, false)
-                            ? "bg-yellow-400"
-                            : "bg-gray-200"
-                        }`}
-                      />
-                    </div>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </div>
+                    />
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
 
-      {/* Form Content Area */}
-      <div className="bg-white border-2 border-black rounded-2xl p-4 sm:p-6 shadow-[8px_8px_0_rgba(79,70,229,0.8)] min-h-[400px] flex flex-col justify-between">
+      {/* ── Form Content Card ── */}
+      <div className="bg-white border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-7 shadow-[4px_4px_0_#4f46e5] sm:shadow-[6px_6px_0_rgba(79,70,229,0.8)] min-h-[380px] flex flex-col justify-between">
         <div>
-          <h2 className="text-xl font-bold mb-6">
-            {STEPS[currentStep - 1].title}
-          </h2>
+          {/* Step Title Header */}
+          <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-gray-100">
+            <h2 className="text-base sm:text-lg font-black text-gray-900">
+              {STEPS[currentStep - 1].fullTitle}
+            </h2>
+            <span className="text-xs font-bold text-[#5f6cf3] bg-[#5f6cf3]/10 px-2.5 py-0.5 rounded-full">
+              Step {currentStep} of 4
+            </span>
+          </div>
 
+          {/* ══════════ STEP 1: BASIC INFORMATION ══════════ */}
           {currentStep === 1 && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-5">
+              {/* Profile Photo */}
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label className="block text-xs sm:text-sm font-bold text-gray-800 mb-2">
                   Profile Picture <span className="text-red-500">*</span>
                 </label>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  <div className="w-20 h-20 shrink-0 rounded-full border border-dashed border-gray-400 flex items-center justify-center bg-gray-50 overflow-hidden">
+                <div className="flex items-center gap-3.5 sm:gap-4">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50 overflow-hidden shadow-xs">
                     {photoPreviewUrl || formData.profilePhotoUrl ? (
                       <img
-                        src={photoPreviewUrl || resolveUploadUrl(formData.profilePhotoUrl)}
+                        src={
+                          photoPreviewUrl ||
+                          resolveUploadUrl(formData.profilePhotoUrl)
+                        }
                         alt="Profile"
                         className="w-full h-full object-cover"
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <div className="text-gray-400">👤</div>
+                      <span className="text-2xl text-gray-300">👤</span>
                     )}
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <input
                       type="file"
                       id="profilePhoto"
@@ -604,29 +649,29 @@ export default function MentorOnboardingWizard({
                     />
                     <label
                       htmlFor="profilePhoto"
-                      className="cursor-pointer inline-flex items-center bg-[#ffc20f] border-2 border-black px-4 py-2 rounded-xl text-sm hover:bg-[#e6ae0d] transition-colors shadow-[2px_2px_0_rgba(0,0,0,1)]"
+                      className="cursor-pointer inline-flex items-center bg-[#FFB705] border-2 border-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-black hover:bg-[#e6a504] transition-colors shadow-[2px_2px_0_#1a1a1a]"
                     >
-                      <Upload className="w-4 h-4 mr-2" />
+                      <Upload className="w-3.5 h-3.5 mr-1.5" />
                       {files.profilePhoto ? "Change Photo" : "Upload Photo"}
                     </label>
                     {files.profilePhoto && (
-                      <p className="mt-2 max-w-48 truncate text-xs font-medium text-emerald-700">
-                        Selected: {files.profilePhoto.name}
+                      <p className="mt-1.5 text-xs font-semibold text-emerald-700 truncate max-w-full">
+                        ✓ {files.profilePhoto.name}
                       </p>
                     )}
                   </div>
                 </div>
               </div>
 
+              {/* Full Name */}
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label className="block text-xs sm:text-sm font-bold text-gray-800 mb-1.5">
                   Full Name <span className="text-red-500">*</span>
                 </label>
-                {/* have a user icon inside the input */}
                 <div className="relative flex items-center">
                   <User
-                    size={18}
-                    className="absolute left-2 font-bold text-orange-400"
+                    size={16}
+                    className="absolute left-3 text-orange-400 font-bold"
                   />
                   <input
                     type="text"
@@ -634,19 +679,20 @@ export default function MentorOnboardingWizard({
                     value={formData.fullName}
                     onChange={handleChange}
                     placeholder="Enter your full name"
-                    className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 pl-8 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                    className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-[#fff5f2] px-3 pl-9 text-xs sm:text-sm outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                   />
                 </div>
               </div>
 
+              {/* Email Address */}
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label className="block text-xs sm:text-sm font-bold text-gray-800 mb-1.5">
                   Email Address <span className="text-red-500">*</span>
                 </label>
                 <div className="relative flex items-center">
                   <Mail
-                    size={18}
-                    className="absolute left-2 font-bold text-orange-400"
+                    size={16}
+                    className="absolute left-3 text-orange-400 font-bold"
                   />
                   <input
                     type="email"
@@ -654,64 +700,79 @@ export default function MentorOnboardingWizard({
                     value={formData.email}
                     disabled
                     placeholder="your.email@example.com"
-                    className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 pl-8 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all text-gray-500"
+                    className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-[#fff5f2] px-3 pl-9 text-xs sm:text-sm outline-none text-gray-500 cursor-not-allowed"
                   />
                 </div>
               </div>
 
+              {/* Contact Number */}
               <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Contact Number <span className="text-red-500">*</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs sm:text-sm font-bold text-gray-800">
+                    Contact Number <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[11px] text-gray-400 font-medium">
+                    {formData.contactNumber.length}/10 digits
+                  </span>
+                </div>
                 <div className="relative flex items-center">
                   <Phone
-                    size={18}
-                    className="absolute left-2 font-bold text-orange-400"
+                    size={16}
+                    className="absolute left-3 text-orange-400 font-bold"
                   />
                   <input
                     type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     name="contactNumber"
                     value={formData.contactNumber}
                     onChange={handleChange}
-                    maxLength="16"
-                    placeholder="+91 98765 43210"
-                    className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] pr-4 py-3 pl-8 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                    maxLength={10}
+                    placeholder="Enter 10-digit mobile number"
+                    className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-[#fff5f2] px-3 pl-9 text-xs sm:text-sm outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                   />
                 </div>
               </div>
             </div>
           )}
 
+          {/* ══════════ STEP 2: EDUCATION DETAILS ══════════ */}
           {currentStep === 2 && (
-            <div className="space-y-6">
-              <div className="bg-[#fff5f2] border border-gray-200 rounded-xl p-4">
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center">
-                  <span className="mr-2">🎓</span> MBA Details
+            <div className="space-y-4 sm:space-y-5">
+              {/* MBA Details Card */}
+              <div className="bg-[#fff5f2] border border-gray-200 rounded-xl p-3.5 sm:p-5">
+                <h3 className="text-xs sm:text-sm font-bold text-gray-800 mb-3 flex items-center gap-1.5">
+                  <span>🎓</span> MBA Details
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-600">
-                      MBA College/B-School <span className="text-red-500">*</span>{" "}
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      MBA College/B-School <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="mbaCollege"
                       value={formData.mbaCollege}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black transition-all"
+                      className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all cursor-pointer"
                     >
                       <option value="">Select your B-School</option>
                       <option value="IIM Ahmedabad">IIM Ahmedabad</option>
                       <option value="IIM Bangalore">IIM Bangalore</option>
                       <option value="IIM Calcutta">IIM Calcutta</option>
-                      <option value="ISB">ISB</option>
+                      <option value="IIM Lucknow">IIM Lucknow</option>
+                      <option value="IIM Kozhikode">IIM Kozhikode</option>
+                      <option value="FMS Delhi">FMS Delhi</option>
+                      <option value="XLRI Jamshedpur">XLRI Jamshedpur</option>
+                      <option value="SPJIMR Mumbai">SPJIMR Mumbai</option>
+                      <option value="ISB Hyderabad">ISB Hyderabad</option>
                       <option value="Other">Other</option>
                     </select>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">
-                        Specialization{" "}
-                        <span className="text-xs font-normal text-gray-400">(optional)</span>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Specialization <span className="text-gray-400 font-normal">(optional)</span>
                       </label>
                       <input
                         type="text"
@@ -719,12 +780,12 @@ export default function MentorOnboardingWizard({
                         value={formData.mbaSpecialization}
                         onChange={handleChange}
                         placeholder="e.g., Finance, Marketing"
-                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black transition-all"
+                        className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">
-                        Graduation Year <span className="text-red-500">*</span>{" "}
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Graduation Year <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="number"
@@ -734,50 +795,59 @@ export default function MentorOnboardingWizard({
                         value={formData.mbaYear}
                         onChange={handleChange}
                         placeholder="e.g., 2024"
-                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black transition-all"
+                        className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all"
                       />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-dashed border-gray-300 bg-white p-4">
-                <label className="block text-sm font-semibold text-gray-700">College document for verification <span className="font-normal text-gray-400">(optional)</span></label>
-                <p className="mt-1 text-xs text-gray-500">Upload a student ID, degree, or marksheet (JPG, PNG, WEBP, HEIC).</p>
+              {/* College Document Upload */}
+              <div className="rounded-xl border border-dashed border-gray-300 bg-white p-3.5 sm:p-4">
+                <label className="block text-xs sm:text-sm font-bold text-gray-700">
+                  College document for verification <span className="font-normal text-gray-400">(optional)</span>
+                </label>
+                <p className="mt-0.5 text-[11px] text-gray-500">
+                  Upload student ID, degree, or marksheet (JPG, PNG, WEBP).
+                </p>
                 <input
                   type="file"
                   name="collegeDocument"
                   accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
                   onChange={handleFileChange}
-                  className="mt-3 block w-full text-sm"
+                  className="mt-2 block w-full text-xs"
                 />
                 {(files.collegeDocument || existingProfile?.collegeDocumentUrl) && (
-                  <p className="mt-2 text-xs font-medium text-emerald-600">Document ready for review.</p>
+                  <p className="mt-1.5 text-xs font-semibold text-emerald-600">
+                    ✓ Document ready for review.
+                  </p>
                 )}
               </div>
 
-              <div className="bg-[#fff5f2] border border-gray-200 rounded-xl p-4">
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center">
-                  <span className="mr-2">🏫</span> Undergraduate Details
+              {/* Undergraduate Details Card */}
+              <div className="bg-[#fff5f2] border border-gray-200 rounded-xl p-3.5 sm:p-5">
+                <h3 className="text-xs sm:text-sm font-bold text-gray-800 mb-3 flex items-center gap-1.5">
+                  <span>🏫</span> Undergraduate Details
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-600">
-                      College/University <span className="text-red-500">*</span>{" "}
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      College/University <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       name="ugCollege"
                       value={formData.ugCollege}
                       onChange={handleChange}
-                      placeholder="Enter your college name"
-                      className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black transition-all"
+                      placeholder="Enter your undergraduate college name"
+                      className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all"
                     />
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">
-                        Degree <span className="text-red-500">*</span>{" "}
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Degree <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -785,13 +855,12 @@ export default function MentorOnboardingWizard({
                         value={formData.ugDegree}
                         onChange={handleChange}
                         placeholder="B.Tech, B.Com"
-                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black transition-all"
+                        className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">
-                        Specialization{" "}
-                        <span className="text-xs font-normal text-gray-400">(optional)</span>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Specialization <span className="text-gray-400 font-normal">(optional)</span>
                       </label>
                       <input
                         type="text"
@@ -799,12 +868,12 @@ export default function MentorOnboardingWizard({
                         value={formData.ugSpecialization}
                         onChange={handleChange}
                         placeholder="CS, ECE, etc."
-                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black transition-all"
+                        className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-600">
-                        Year <span className="text-red-500">*</span>{" "}
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Year <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="number"
@@ -814,7 +883,7 @@ export default function MentorOnboardingWizard({
                         value={formData.ugYear}
                         onChange={handleChange}
                         placeholder="e.g., 2020"
-                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-black transition-all"
+                        className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all"
                       />
                     </div>
                   </div>
@@ -823,17 +892,15 @@ export default function MentorOnboardingWizard({
             </div>
           )}
 
+          {/* ══════════ STEP 3: PROFESSIONAL BACKGROUND ══════════ */}
           {currentStep === 3 && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-5">
               <div>
-                <label className="block text-sm font-semibold mb-2">
-                  LinkedIn Profile URL{" "}
-                  <span className="text-xs font-normal text-gray-400">
-                    (optional)
-                  </span>
+                <label className="block text-xs sm:text-sm font-bold text-gray-800 mb-1.5">
+                  LinkedIn Profile URL <span className="text-xs font-normal text-gray-400">(optional)</span>
                 </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-600 font-bold">
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 font-bold text-blue-600 text-xs">
                     in
                   </span>
                   <input
@@ -842,26 +909,27 @@ export default function MentorOnboardingWizard({
                     value={formData.linkedInUrl}
                     onChange={handleChange}
                     placeholder="https://linkedin.com/in/your-profile"
-                    className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] pl-10 pr-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                    className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-[#fff5f2] pl-9 pr-3 text-xs sm:text-sm outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
                   />
                 </div>
               </div>
+
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label className="block text-xs sm:text-sm font-bold text-gray-800 mb-2">
                   Do you have work experience?
                 </label>
-                <div className="flex items-center space-x-6">
-                  <label className="flex items-center space-x-2 cursor-pointer">
+                <div className="flex items-center gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs sm:text-sm font-semibold text-gray-800">
                     <input
                       type="radio"
                       name="hasWorkExperience"
                       checked={hasWorkExperience}
                       onChange={() => setHasWorkExperience(true)}
-                      className="accent-black w-4 h-4"
+                      className="accent-[#5f6cf3] w-4 h-4 cursor-pointer"
                     />
-                    <span className="text-sm font-medium">Yes</span>
+                    <span>Yes</span>
                   </label>
-                  <label className="flex items-center space-x-2 cursor-pointer">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs sm:text-sm font-semibold text-gray-800">
                     <input
                       type="radio"
                       name="hasWorkExperience"
@@ -875,16 +943,17 @@ export default function MentorOnboardingWizard({
                           role: "",
                         }));
                       }}
-                      className="accent-black w-4 h-4"
+                      className="accent-[#5f6cf3] w-4 h-4 cursor-pointer"
                     />
-                    <span className="text-sm font-medium">No (Fresher)</span>
+                    <span>No (Fresher)</span>
                   </label>
                 </div>
               </div>
+
               {hasWorkExperience && (
-                <>
+                <div className="bg-[#fff5f2] border border-gray-200 rounded-xl p-3.5 sm:p-5 space-y-3.5">
                   <div>
-                    <label className="block text-sm font-semibold mb-2">
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
                       Years of Work Experience <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -895,62 +964,63 @@ export default function MentorOnboardingWizard({
                       value={formData.workExperienceYears}
                       onChange={handleChange}
                       placeholder="e.g., 3"
-                      className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                      className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Current/Previous Company <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-400">
-                        🏢
-                      </span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Current/Previous Company <span className="text-red-500">*</span>
+                      </label>
                       <input
                         type="text"
                         name="company"
                         value={formData.company}
                         onChange={handleChange}
                         placeholder="Company name"
-                        className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] pl-10 pr-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
+                        className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Current/Previous Role <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="role"
+                        value={formData.role}
+                        onChange={handleChange}
+                        placeholder="e.g., Product Manager, Consultant"
+                        className="w-full h-10 sm:h-11 rounded-xl border border-gray-300 bg-white px-3 text-xs sm:text-sm outline-none focus:border-black transition-all"
                       />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold mb-2">
-                      Current/Previous Role <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="role"
-                      value={formData.role}
-                      onChange={handleChange}
-                      placeholder="e.g., Product Manager, Consultant"
-                      className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
-                    />
-                  </div>{" "}
-                </>
-              )}{" "}
+                </div>
+              )}
             </div>
           )}
 
+          {/* ══════════ STEP 4: EXPERTISE & PROFILE ══════════ */}
           {currentStep === 4 && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-5">
+              {/* Expertise Tags */}
               <div>
-                <label className="block text-sm font-semibold mb-3">
+                <label className="block text-xs sm:text-sm font-bold text-gray-800 mb-2">
                   Areas of Expertise (Select all that apply) <span className="text-red-500">*</span>
                 </label>
-                <div className="flex flex-wrap gap-2 sm:gap-3">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {EXPERTISE_OPTIONS.map((opt) => {
                     const isSelected = formData.expertiseTags.includes(opt);
                     return (
                       <button
+                        type="button"
                         key={opt}
                         onClick={() => handleExpertiseToggle(opt)}
-                        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold border-2 transition-colors ${
+                        className={`px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold border-2 transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-[#5f6cf3] text-white border-[#5f6cf3]"
-                            : "bg-white text-gray-700 border-gray-300 hover:border-black"
+                            ? "bg-[#5f6cf3] text-white border-black shadow-[2px_2px_0_#1a1a1a]"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-black"
                         }`}
                       >
                         {opt}
@@ -960,152 +1030,172 @@ export default function MentorOnboardingWizard({
                 </div>
               </div>
 
-              {/* ── B-School & Mentoring Insights ─────────────────────────────── */}
-              <div className="border-2 border-indigo-200 rounded-2xl p-5 sm:p-6 bg-gradient-to-b from-indigo-50/40 to-white shadow-[0_4px_20px_rgba(95,108,243,0.10)]">
-                <div className="flex items-center gap-3 mb-1">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shrink-0">
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  </div>
+              {/* Bio */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs sm:text-sm font-bold text-gray-800">
+                    Bio / About Yourself <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[11px] text-gray-400 font-medium">
+                    {formData.bio.length} chars
+                  </span>
+                </div>
+                <textarea
+                  name="bio"
+                  value={formData.bio}
+                  onChange={handleChange}
+                  rows={3}
+                  placeholder="Tell mentees about yourself, your MBA journey, and how you can help them succeed..."
+                  className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] p-3 text-xs sm:text-sm outline-none focus:border-black focus:ring-1 focus:ring-black transition-all resize-none"
+                />
+              </div>
+
+              {/* B-School Insights Q&A */}
+              <div className="border border-indigo-200 rounded-xl p-3.5 sm:p-5 bg-indigo-50/30 space-y-3.5">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-600 text-white text-xs">
+                    <Sparkles size={13} />
+                  </span>
                   <div>
-                    <h3 className="text-base font-bold text-gray-900">B-School &amp; Mentoring Insights</h3>
-                    <p className="text-xs text-gray-500">Share your institute selection process and interview insights to help aspirants</p>
+                    <h3 className="text-xs sm:text-sm font-bold text-gray-900">
+                      B-School &amp; Mentoring Insights <span className="text-red-500">*</span>
+                    </h3>
+                    <p className="text-[11px] text-gray-500">
+                      Minimum 30 characters for each question
+                    </p>
                   </div>
                 </div>
 
-                <div className="space-y-5 mt-5">
+                <div className="space-y-3">
                   {/* Q1 */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
-                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold shrink-0 mt-0.5">1</span>
-                      Describe the entire post entrance test (CAT, XAT, SNAP, etc.) process in 5 steps for your institute
+                  <div className="bg-white rounded-lg border border-gray-200 p-3">
+                    <label className="block text-xs font-bold text-gray-800 mb-1.5 leading-snug">
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-indigo-600 text-white text-[9px] font-bold mr-1.5">1</span>
+                      Describe your institute's selection process (WAT, GD, PI, etc.)
                     </label>
                     <textarea
                       name="mentoringQ1"
                       value={formData.mentoringQ1}
                       onChange={handleChange}
-                      rows={3}
-                      placeholder="Detail the 5 steps of your institute's selection process (e.g., Shortlist criteria, WAT, GD/GE, Personal Interview, Final Composite Score &amp; Merit list)..."
-                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                      rows={2}
+                      placeholder="Detail the steps of your institute's selection process..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 p-2.5 text-xs outline-none focus:border-indigo-400 focus:bg-white transition-all resize-none"
                     />
+                    <div className="text-[10px] text-right text-gray-400 mt-0.5">
+                      {formData.mentoringQ1.trim().length}/30 min chars
+                    </div>
                   </div>
 
                   {/* Q2 */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
-                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-400 text-white text-[10px] font-bold shrink-0 mt-0.5">2</span>
-                      Do you find any similarity in the pattern for the type of questions being asked to Freshers and Workex aspirants?
+                  <div className="bg-white rounded-lg border border-gray-200 p-3">
+                    <label className="block text-xs font-bold text-gray-800 mb-1.5 leading-snug">
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-orange-500 text-white text-[9px] font-bold mr-1.5">2</span>
+                      Pattern differences/similarities for Freshers vs Work-Ex candidates?
                     </label>
                     <textarea
                       name="mentoringQ2"
                       value={formData.mentoringQ2}
                       onChange={handleChange}
-                      rows={3}
-                      placeholder="Explain common trends, overlapping questions, or key differences you observed between fresher and work-experience candidates..."
-                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                      rows={2}
+                      placeholder="Explain trends or question patterns you observed..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 p-2.5 text-xs outline-none focus:border-indigo-400 focus:bg-white transition-all resize-none"
                     />
+                    <div className="text-[10px] text-right text-gray-400 mt-0.5">
+                      {formData.mentoringQ2.trim().length}/30 min chars
+                    </div>
                   </div>
 
                   {/* Q3 */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
-                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pink-400 text-white text-[10px] font-bold shrink-0 mt-0.5">3</span>
-                      What will be the 3 differentiators of your B-school that you would want to showcase as compared to other B-schools? Similarly what would be the 3- pointers you would suggest the aspirants to be noted
+                  <div className="bg-white rounded-lg border border-gray-200 p-3">
+                    <label className="block text-xs font-bold text-gray-800 mb-1.5 leading-snug">
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-pink-500 text-white text-[9px] font-bold mr-1.5">3</span>
+                      Top differentiators/pointers of your B-School aspirants should note?
                     </label>
                     <textarea
                       name="mentoringQ3"
                       value={formData.mentoringQ3}
                       onChange={handleChange}
-                      rows={3}
-                      placeholder="Share 3 key differentiators / USPs of your B-school and 3 important pointers or takeaways aspirants must note..."
-                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                      rows={2}
+                      placeholder="Share 3 key differentiators and pointers..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 p-2.5 text-xs outline-none focus:border-indigo-400 focus:bg-white transition-all resize-none"
                     />
+                    <div className="text-[10px] text-right text-gray-400 mt-0.5">
+                      {formData.mentoringQ3.trim().length}/30 min chars
+                    </div>
                   </div>
 
                   {/* Q4 */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
-                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-bold shrink-0 mt-0.5">4</span>
-                      If you are asked to sum up 3 best things and 2 worst things according to you in your campus life-list them.
+                  <div className="bg-white rounded-lg border border-gray-200 p-3">
+                    <label className="block text-xs font-bold text-gray-800 mb-1.5 leading-snug">
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] font-bold mr-1.5">4</span>
+                      Highlights and challenging aspects of campus life?
                     </label>
                     <textarea
                       name="mentoringQ4"
                       value={formData.mentoringQ4}
                       onChange={handleChange}
-                      rows={3}
-                      placeholder="List 3 best highlights (e.g. peer network, campus events, learning) and 2 challenging or worst aspects of campus life..."
-                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                      rows={2}
+                      placeholder="List key highlights and challenges of campus life..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 p-2.5 text-xs outline-none focus:border-indigo-400 focus:bg-white transition-all resize-none"
                     />
+                    <div className="text-[10px] text-right text-gray-400 mt-0.5">
+                      {formData.mentoringQ4.trim().length}/30 min chars
+                    </div>
                   </div>
 
                   {/* Q5 */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 transition-colors">
-                    <label className="flex items-start gap-2 text-sm font-semibold text-gray-800 mb-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-500 text-white text-[10px] font-bold shrink-0 mt-0.5">5</span>
-                      Suggest 3 pointers which you feel (with your experience or having discussion with your friends) can help turn the interview decision in your favor and why so?
+                  <div className="bg-white rounded-lg border border-gray-200 p-3">
+                    <label className="block text-xs font-bold text-gray-800 mb-1.5 leading-snug">
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-purple-600 text-white text-[9px] font-bold mr-1.5">5</span>
+                      3 key pointers that tip the interview in the candidate's favor?
                     </label>
                     <textarea
                       name="mentoringQ5"
                       value={formData.mentoringQ5}
                       onChange={handleChange}
-                      rows={3}
-                      placeholder="Share 3 proven tips or strategies that tip the interview in the candidate's favor and why they make a difference..."
-                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition-all resize-none"
+                      rows={2}
+                      placeholder="Share proven tips that help turn interview decisions in favor..."
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 p-2.5 text-xs outline-none focus:border-indigo-400 focus:bg-white transition-all resize-none"
                     />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Bio/About Yourself <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <textarea
-                    name="bio"
-                    value={formData.bio}
-                    onChange={handleChange}
-                    rows={5}
-                    placeholder="Tell mentees about yourself, your journey, and how you can help them..."
-                    className="w-full rounded-xl border border-gray-300 bg-[#fff5f2] px-4 py-3 outline-none focus:border-black focus:ring-1 focus:ring-black transition-all"
-                  ></textarea>
-                  <div className="text-xs text-gray-400 mt-1">
-                    {formData.bio.length} characters
+                    <div className="text-[10px] text-right text-gray-400 mt-0.5">
+                      {formData.mentoringQ5.trim().length}/30 min chars
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           )}
-
-
         </div>
 
-        {/* Footer Actions */}
-        <div className="mt-8 flex flex-row items-center justify-between pt-6 border-t border-gray-100">
+        {/* ── Footer Navigation Buttons (Flexible & Responsive) ── */}
+        <div className="mt-6 sm:mt-8 flex items-center justify-between gap-3 pt-4 sm:pt-5 border-t border-gray-100">
           <UniversalButton
             onClick={handlePrevious}
             disabled={currentStep === 1 || isSubmitting}
-            className={`px-2 sm:px-6 py-2 sm:py-2.5 rounded-full border sm:border-2 border-black font-bold text-xs sm:text-base transition-all ${
-              currentStep === 1 || isSubmitting
-                ? "bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
+            variant="secondary"
+            className="flex-1 sm:flex-initial"
           >
-            &larr; Previous
+            ← Previous
           </UniversalButton>
 
           {currentStep < 4 ? (
-            <UniversalButton onClick={handleNext} className="cursor-pointer">
-              Next &rarr;
+            <UniversalButton
+              onClick={handleNext}
+              disabled={isSubmitting}
+              variant="yellow"
+              className="flex-1 sm:flex-initial"
+            >
+              Next →
             </UniversalButton>
           ) : (
             <UniversalButton
               onClick={handleSubmit}
               disabled={isSubmitting}
+              variant="primary"
+              className="flex-1 sm:flex-initial"
             >
               {isSubmitting ? "Saving..." : "Complete Profile"}
-              {!isSubmitting && (
-                <Check className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" /> 
-              )}
+              {!isSubmitting && <Check className="w-4 h-4 ml-1.5" />}
             </UniversalButton>
           )}
         </div>

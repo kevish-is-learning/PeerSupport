@@ -25,12 +25,7 @@ const linkedInUrlSchema = z.preprocess(
 const contactNumberSchema = z
   .string({ required_error: "Contact number is required" })
   .trim()
-  .min(7, "Contact number must be at least 7 characters long")
-  .max(20, "Contact number must be at most 20 characters long")
-  .refine(
-    (value) => /^[+0-9()\-\s]+$/.test(value),
-    "Contact number can only include digits and +()- characters",
-  );
+  .regex(/^\d{10}$/, "Contact number must be exactly 10 digits");
 
 const bioSchema = z
   .string({ required_error: "Bio is required" })

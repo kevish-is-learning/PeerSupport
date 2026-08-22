@@ -150,11 +150,20 @@ export default function MentorProfilePage() {
   };
 
   const handleSave = async () => {
+    if (!form.fullName.trim()) {
+      toast.error("Full name is required.");
+      return;
+    }
+    const digitsOnly = (form.contactNumber || "").replace(/\D/g, "");
+    if (digitsOnly.length !== 10) {
+      toast.error("Contact number must be exactly 10 digits.");
+      return;
+    }
     setSaving(true);
     try {
       const res = await mentorProfileApi.update({
         fullName: form.fullName,
-        contactNumber: form.contactNumber,
+        contactNumber: digitsOnly,
         bio: form.bio,
         expertiseTags: form.expertiseTagsArr,
         education: {
@@ -440,10 +449,18 @@ export default function MentorProfilePage() {
                     />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-xs font-black uppercase tracking-wider text-gray-400">Phone Number</label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-black uppercase tracking-wider text-gray-400">Phone Number</label>
+                      <span className="text-[10px] text-gray-400 font-medium">{form.contactNumber?.length || 0}/10 digits</span>
+                    </div>
                     <input
+                      type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={10}
                       value={form.contactNumber}
-                      onChange={(e) => setForm((f) => ({ ...f, contactNumber: e.target.value }))}
+                      onChange={(e) => setForm((f) => ({ ...f, contactNumber: e.target.value.replace(/\D/g, "").slice(0, 10) }))}
+                      placeholder="10-digit mobile number"
                       className="rounded-xl border border-black px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[#7C3AED]/20"
                     />
                   </div>
