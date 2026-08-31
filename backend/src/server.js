@@ -89,7 +89,7 @@ const startServer = async () => {
     initSocket(httpServer);
 
     // Start HTTP server (Express + Socket.io)
-    httpServer.listen(PORT, () => {
+    httpServer.listen(PORT, '127.0.0.1', () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📍 API available at http://localhost:${PORT}`);
       console.log(`🔌 Socket.io ready`);
