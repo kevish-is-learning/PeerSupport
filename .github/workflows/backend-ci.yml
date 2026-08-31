@@ -31,6 +31,11 @@ jobs:
       run:
         working-directory: backend
 
+    # prisma.config.js resolves env('DATABASE_URL') at load time (npm ci -> postinstall
+    # -> prisma generate). generate/validate never connect, so a placeholder is enough.
+    env:
+      DATABASE_URL: "postgresql://placeholder:placeholder@localhost:5432/placeholder"
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -38,7 +43,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: backend/package-lock.json
 
