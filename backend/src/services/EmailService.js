@@ -1,14 +1,14 @@
 /**
  * Email Service
  *
- * Central dispatch for all transactional emails via Resend.
+ * Central dispatch for all transactional emails via SMTP (Nodemailer).
  * Each method is fire-and-forget (non-blocking) to avoid
  * slowing down API responses.
  *
- * If Resend is not configured (no API key), methods silently no-op.
+ * If SMTP is not configured, methods silently no-op.
  */
 
-import { resend, FROM_EMAIL } from '../config/resend.js';
+import { transporter, FROM_EMAIL } from '../config/mailer.js';
 import {
   welcomeEmail,
   bookingConfirmedMenteeEmail,
@@ -22,7 +22,7 @@ import { generateInvoiceBuffer } from '../utils/invoiceGenerator.js';
 
 class EmailService {
   /**
-   * Internal send helper — wraps Resend API call with error handling.
+   * Internal send helper — wraps the SMTP transport call with error handling.
    * Never throws; logs errors and continues.
    */
   async _send(to, { subject, html, text, attachments }) {
@@ -32,13 +32,13 @@ class EmailService {
       return null;
     }
 
-    if (!resend) {
-      console.log(`📧 [EmailService] Resend not configured — skipping email to ${recipient}: "${subject}"`);
+    if (!transporter) {
+      console.log(`📧 [EmailService] SMTP not configured — skipping email to ${recipient}: "${subject}"`);
       return null;
     }
 
     try {
-      const { data, error } = await resend.emails.send({
+      const info = await transporter.sendMail({
         from: FROM_EMAIL,
         to: recipient,
         subject,
@@ -47,13 +47,8 @@ class EmailService {
         attachments,
       });
 
-      if (error) {
-        console.error(`📧 [EmailService] Failed to send email to ${recipient}:`, error);
-        return null;
-      }
-
-      console.log(`📧 [EmailService] Email sent to ${recipient}: "${subject}" (id: ${data?.id})`);
-      return data;
+      console.log(`📧 [EmailService] Email sent to ${recipient}: "${subject}" (id: ${info?.messageId})`);
+      return info;
     } catch (err) {
       console.error(`📧 [EmailService] Unexpected error sending email to ${to}:`, err.message);
       return null;
