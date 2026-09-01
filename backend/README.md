@@ -169,5 +169,3 @@ frontend/
     ├── mentor/availability/   # Mentor dashboard
     └── mentee/book/[id]/      # Mentee booking flow
 ```
-
-Deployment check
