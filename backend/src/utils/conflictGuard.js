@@ -90,6 +90,10 @@ export async function createBookingWithGuard(params) {
     menteeEmail,
     discussionTopic,
     specificQuestions,
+    packagePurchaseId,
+    sharedDocumentIds,
+    sharedFeedbackBookingId,
+    status = 'PAYMENT_PENDING',
   } = params;
 
   return prisma.$transaction(async (tx) => {
@@ -116,13 +120,23 @@ export async function createBookingWithGuard(params) {
         mentorServiceId,
         startTime,
         endTime,
-        status: 'PAYMENT_PENDING',
+        status,
         purposeOfCall,
         notes,
         menteePhone,
         menteeEmail,
         discussionTopic,
         specificQuestions,
+        packagePurchaseId: packagePurchaseId ?? null,
+        shareProfile: (sharedDocumentIds?.length ?? 0) > 0,
+        sharedFeedbackBookingId: sharedFeedbackBookingId ?? null,
+        ...(sharedDocumentIds?.length
+          ? {
+              sharedDocuments: {
+                create: sharedDocumentIds.map((documentId) => ({ documentId })),
+              },
+            }
+          : {}),
       },
     });
 

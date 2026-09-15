@@ -390,6 +390,167 @@ export const feedbackApi = {
   },
 };
 
+// ─── Content: Blog, FAQ, Testimonials ────────────────────────────────────────
+
+const qs = (params = {}) => {
+  const clean = Object.entries(params).filter(
+    ([, v]) => v !== "" && v !== null && v !== undefined
+  );
+  const s = new URLSearchParams(Object.fromEntries(clean)).toString();
+  return s ? `?${s}` : "";
+};
+
+export const contentApi = {
+  listPosts(params = {}) {
+    return apiRequest(`/content/posts${qs(params)}`);
+  },
+  getPost(slug) {
+    return apiRequest(`/content/posts/${slug}`);
+  },
+  listTags() {
+    return apiRequest("/content/posts/tags");
+  },
+  listFaqs() {
+    return apiRequest("/content/faqs");
+  },
+  listTestimonials() {
+    return apiRequest("/content/testimonials");
+  },
+};
+
+// ─── Support Tickets ─────────────────────────────────────────────────────────
+
+export const supportApi = {
+  create(data) {
+    return apiRequest("/content/support/tickets", { method: "POST", body: data });
+  },
+  listMine() {
+    return apiRequest("/content/support/tickets");
+  },
+  get(id) {
+    return apiRequest(`/content/support/tickets/${id}`);
+  },
+  reply(id, body) {
+    return apiRequest(`/content/support/tickets/${id}/reply`, {
+      method: "POST",
+      body: { body },
+    });
+  },
+};
+
+// ─── Webinars ────────────────────────────────────────────────────────────────
+
+export const webinarApi = {
+  list(params = {}) {
+    return apiRequest(`/webinars${qs(params)}`);
+  },
+  get(idOrSlug) {
+    return apiRequest(`/webinars/${idOrSlug}`);
+  },
+  listMine() {
+    return apiRequest("/webinars/mine");
+  },
+  register(id) {
+    return apiRequest(`/webinars/${id}/register`, { method: "POST" });
+  },
+  verifyPayment(data) {
+    return apiRequest("/webinars/verify-payment", { method: "POST", body: data });
+  },
+  cancelRegistration(id) {
+    return apiRequest(`/webinars/${id}/register`, { method: "DELETE" });
+  },
+  getRoomToken(id) {
+    return apiRequest(`/webinars/${id}/room-token`);
+  },
+};
+
+// ─── Group Discussions ───────────────────────────────────────────────────────
+
+export const groupDiscussionApi = {
+  list(params = {}) {
+    return apiRequest(`/group-discussions${qs(params)}`);
+  },
+  get(id) {
+    return apiRequest(`/group-discussions/${id}`);
+  },
+  listMine() {
+    return apiRequest("/group-discussions/mine");
+  },
+  register(id, data = {}) {
+    return apiRequest(`/group-discussions/${id}/register`, { method: "POST", body: data });
+  },
+  verifyPayment(data) {
+    return apiRequest("/group-discussions/verify-payment", { method: "POST", body: data });
+  },
+  cancelRegistration(id) {
+    return apiRequest(`/group-discussions/${id}/register`, { method: "DELETE" });
+  },
+  listParticipants(id) {
+    return apiRequest(`/group-discussions/${id}/participants`);
+  },
+  getRoomToken(id) {
+    return apiRequest(`/group-discussions/${id}/room-token`);
+  },
+};
+
+// ─── Session Packages ────────────────────────────────────────────────────────
+
+export const packageApi = {
+  listForMentor(mentorProfileId) {
+    return apiRequest(`/packages/mentor/${mentorProfileId}`);
+  },
+  listMine() {
+    return apiRequest("/packages/mine");
+  },
+  create(data) {
+    return apiRequest("/packages", { method: "POST", body: data });
+  },
+  update(id, data) {
+    return apiRequest(`/packages/${id}`, { method: "PATCH", body: data });
+  },
+  remove(id) {
+    return apiRequest(`/packages/${id}`, { method: "DELETE" });
+  },
+  purchase(id) {
+    return apiRequest(`/packages/${id}/purchase`, { method: "POST" });
+  },
+  verifyPayment(data) {
+    return apiRequest("/packages/verify-payment", { method: "POST", body: data });
+  },
+  listMyPurchases() {
+    return apiRequest("/packages/purchases/mine");
+  },
+  listRedeemable(params = {}) {
+    return apiRequest(`/packages/purchases/redeemable${qs(params)}`);
+  },
+};
+
+// ─── Mentee Documents & Profile Sharing ──────────────────────────────────────
+
+export const menteeDocumentApi = {
+  list() {
+    return apiRequest("/mentee-documents");
+  },
+  add(data) {
+    return apiRequest("/mentee-documents", { method: "POST", body: data });
+  },
+  remove(id) {
+    return apiRequest(`/mentee-documents/${id}`, { method: "DELETE" });
+  },
+  getShared(bookingId) {
+    return apiRequest(`/mentee-documents/bookings/${bookingId}/shared`);
+  },
+  setShared(bookingId, documentIds) {
+    return apiRequest(`/mentee-documents/bookings/${bookingId}/shared`, {
+      method: "PUT",
+      body: { documentIds },
+    });
+  },
+  getPreviousFeedback(mentorProfileId) {
+    return apiRequest(`/mentee-documents/previous-feedback/${mentorProfileId}`);
+  },
+};
+
 // ─── Wallet APIs (Mentor) ────────────────────────────────────────────────────
 
 export const walletApi = {
@@ -569,6 +730,90 @@ export const adminApi = {
   // Wallet Adjustments
   adjustWallet(mentorProfileId, data) {
     return apiRequest(`/admin/wallet/${mentorProfileId}/adjust`, { method: 'POST', body: data });
+  },
+
+  // Content — Blog
+  listPosts(params = {}) {
+    return apiRequest(`/admin/content/posts${qs(params)}`);
+  },
+  createPost(data) {
+    return apiRequest('/admin/content/posts', { method: 'POST', body: data });
+  },
+  updatePost(id, data) {
+    return apiRequest(`/admin/content/posts/${id}`, { method: 'PATCH', body: data });
+  },
+  deletePost(id) {
+    return apiRequest(`/admin/content/posts/${id}`, { method: 'DELETE' });
+  },
+
+  // Content — FAQ
+  listFaqs() {
+    return apiRequest('/admin/content/faqs');
+  },
+  createFaq(data) {
+    return apiRequest('/admin/content/faqs', { method: 'POST', body: data });
+  },
+  updateFaq(id, data) {
+    return apiRequest(`/admin/content/faqs/${id}`, { method: 'PATCH', body: data });
+  },
+  deleteFaq(id) {
+    return apiRequest(`/admin/content/faqs/${id}`, { method: 'DELETE' });
+  },
+
+  // Content — Testimonials
+  listTestimonials() {
+    return apiRequest('/admin/content/testimonials');
+  },
+  createTestimonial(data) {
+    return apiRequest('/admin/content/testimonials', { method: 'POST', body: data });
+  },
+  updateTestimonial(id, data) {
+    return apiRequest(`/admin/content/testimonials/${id}`, { method: 'PATCH', body: data });
+  },
+  deleteTestimonial(id) {
+    return apiRequest(`/admin/content/testimonials/${id}`, { method: 'DELETE' });
+  },
+
+  // Support
+  listTickets(params = {}) {
+    return apiRequest(`/admin/support/tickets${qs(params)}`);
+  },
+  getTicket(id) {
+    return apiRequest(`/admin/support/tickets/${id}`);
+  },
+  replyToTicket(id, body) {
+    return apiRequest(`/admin/support/tickets/${id}/reply`, { method: 'POST', body: { body } });
+  },
+  updateTicketStatus(id, status) {
+    return apiRequest(`/admin/support/tickets/${id}/status`, { method: 'PATCH', body: { status } });
+  },
+
+  // Webinars
+  listWebinars() {
+    return apiRequest('/admin/webinars');
+  },
+  createWebinar(data) {
+    return apiRequest('/admin/webinars', { method: 'POST', body: data });
+  },
+  updateWebinar(id, data) {
+    return apiRequest(`/admin/webinars/${id}`, { method: 'PATCH', body: data });
+  },
+  deleteWebinar(id) {
+    return apiRequest(`/admin/webinars/${id}`, { method: 'DELETE' });
+  },
+
+  // Group discussions
+  listDiscussions() {
+    return apiRequest('/admin/group-discussions');
+  },
+  createDiscussion(data) {
+    return apiRequest('/admin/group-discussions', { method: 'POST', body: data });
+  },
+  updateDiscussion(id, data) {
+    return apiRequest(`/admin/group-discussions/${id}`, { method: 'PATCH', body: data });
+  },
+  deleteDiscussion(id) {
+    return apiRequest(`/admin/group-discussions/${id}`, { method: 'DELETE' });
   },
 
   // Verification Calls

@@ -144,6 +144,12 @@ export const createBookingSchema = z.object({
   menteeEmail: z.string().email('Invalid email address').optional(),
   discussionTopic: z.string().min(10, 'Please describe what you want to discuss (min 10 characters)').max(1000).optional(),
   specificQuestions: z.string().max(2000).optional(),
+  /// Redeem a session from a purchased bundle instead of paying at checkout
+  packagePurchaseId: z.string().uuid('Invalid package ID').optional(),
+  /// Resumes/SOPs the mentee attached for the mentor to read beforehand
+  sharedDocumentIds: z.array(z.string().uuid()).max(10).optional(),
+  /// Earlier session whose feedback the mentee chose to resurface
+  sharedFeedbackBookingId: z.string().uuid('Invalid booking ID').optional(),
 });
 
 // ─── PATCH /bookings/:id/reschedule ──────────────────────────────────────────

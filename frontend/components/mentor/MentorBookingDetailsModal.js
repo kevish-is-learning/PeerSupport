@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { X, Calendar as CalendarIcon, Clock, Mail, Phone, FileText } from "lucide-react";
+import { useEffect, useState } from "react";
+import { X, Calendar as CalendarIcon, Clock, Mail, Phone, FileText, ExternalLink, History } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { v2BookingApi } from "../../lib/api";
+import { v2BookingApi, menteeDocumentApi } from "../../lib/api";
 import RescheduleModal from "../shared/RescheduleModal";
 import SessionFeedbackModal from "../shared/SessionFeedbackModal";
+import InteractionHistory from "../shared/InteractionHistory";
 
 export default function MentorBookingDetailsModal({ session, mentee, onClose, onSessionUpdated }) {
   if (!session) return null;
@@ -14,6 +15,22 @@ export default function MentorBookingDetailsModal({ session, mentee, onClose, on
   const [cancelling, setCancelling] = useState(false);
   const [showReschedule, setShowReschedule] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [sharedDocs, setSharedDocs] = useState([]);
+
+  // Documents the mentee chose to share when booking.
+  useEffect(() => {
+    let cancelled = false;
+    menteeDocumentApi
+      .getShared(session.id)
+      .then((res) => {
+        if (!cancelled) setSharedDocs(res.data?.documents || []);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [session.id]);
 
   const canCancel = ["PAYMENT_PENDING", "CONFIRMED"].includes(session.status);
   const canReschedule = ["PAYMENT_PENDING", "CONFIRMED"].includes(session.status);
@@ -116,6 +133,55 @@ export default function MentorBookingDetailsModal({ session, mentee, onClose, on
               </div>
             </div>
           )}
+
+          {/* Shared documents */}
+          {sharedDocs.length > 0 && (
+            <div>
+              <h3 className="mb-3 text-sm font-extrabold text-gray-800">Shared by Mentee</h3>
+              <div className="space-y-2">
+                {sharedDocs.map((doc) => (
+                  <a
+                    key={doc.id}
+                    href={doc.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 rounded-xl border border-[#E5E7EB] bg-[#FAFAFF] p-3 transition-colors hover:border-[#5061E4]"
+                  >
+                    <FileText size={16} className="shrink-0 text-[#5061E4]" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-gray-900">{doc.name}</p>
+                      <p className="text-[11px] text-gray-500">
+                        {doc.type === "SOP" ? `SOP · ${doc.targetCollege}` : "Resume"}
+                      </p>
+                    </div>
+                    <ExternalLink size={14} className="shrink-0 text-gray-400" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Past interactions */}
+          <div>
+            <button
+              onClick={() => setShowHistory((v) => !v)}
+              className="flex w-full items-center justify-between rounded-xl border border-[#E5E7EB] bg-white p-3 transition-colors hover:border-[#5061E4]"
+            >
+              <span className="flex items-center gap-2 text-sm font-extrabold text-gray-800">
+                <History size={16} className="text-[#5061E4]" />
+                Session history with this mentee
+              </span>
+              <span className="text-xs font-bold text-[#5061E4]">
+                {showHistory ? "Hide" : "View"}
+              </span>
+            </button>
+
+            {showHistory && (mentee?.id || session.menteeId) && (
+              <div className="mt-3">
+                <InteractionHistory counterpartId={mentee?.id || session.menteeId} />
+              </div>
+            )}
+          </div>
 
           {/* Cancel Confirmation */}
           {showCancelConfirm && (

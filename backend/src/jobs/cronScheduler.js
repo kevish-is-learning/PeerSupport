@@ -10,7 +10,7 @@
 
 import { prisma } from '../config/database.js';
 import walletService from '../services/WalletService.js';
-import smsService from '../services/SmsService.js';
+import emailService from '../services/EmailService.js';
 import { emitSlotUpdate } from '../config/socket.js';
 import { utcToIst } from '../utils/timezoneUtils.js';
 
@@ -158,7 +158,7 @@ class CronScheduler {
   }
 
   /**
-   * Nudge both participants 24h and 1h before a confirmed session.
+   * Email both participants 24h and 1h before a confirmed session.
    *
    * Reminders are matched to a window around each lead time rather than tracked
    * per booking; the tick interval is shorter than the window, so a session is
@@ -182,34 +182,23 @@ class CronScheduler {
           select: {
             id: true,
             startTime: true,
-            menteePhone: true,
-            mentee: { select: { name: true } },
-            mentorProfile: {
-              select: { contactNumber: true, user: { select: { name: true } } },
-            },
+            mentee: { select: { name: true, email: true } },
+            mentorService: { select: { title: true } },
+            mentorProfile: { select: { user: { select: { name: true, email: true } } } },
           },
         });
 
         for (const session of sessions) {
-          const menteeName = session.mentee?.name || 'there';
-          const mentorName = session.mentorProfile?.user?.name || 'your mentor';
-
-          await Promise.allSettled([
-            session.menteePhone && smsService.sendSessionReminder({
-              phone: session.menteePhone,
-              name: menteeName,
-              counterpartName: mentorName,
-              startTime: session.startTime,
-              hoursBefore,
-            }),
-            session.mentorProfile?.contactNumber && smsService.sendSessionReminder({
-              phone: session.mentorProfile.contactNumber,
-              name: mentorName,
-              counterpartName: menteeName,
-              startTime: session.startTime,
-              hoursBefore,
-            }),
-          ]);
+          await emailService.sendSessionReminders({
+            menteeEmail: session.mentee?.email,
+            menteeName: session.mentee?.name || 'there',
+            mentorEmail: session.mentorProfile?.user?.email,
+            mentorName: session.mentorProfile?.user?.name || 'your mentor',
+            serviceName: session.mentorService?.title || 'Mentoring Session',
+            startTime: session.startTime,
+            hoursBefore,
+            bookingId: session.id,
+          });
         }
 
         if (sessions.length > 0) {

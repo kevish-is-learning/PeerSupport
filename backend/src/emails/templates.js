@@ -288,6 +288,28 @@ export function sessionCompletedMentorEmail({ mentorName, menteeName, serviceNam
   };
 }
 
+export function sessionReminderEmail({ recipientName, counterpartName, recipientRole, serviceName, startTime, hoursBefore, bookingId }) {
+  const lead = hoursBefore === 1 ? 'in 1 hour' : `in ${hoursBefore} hours`;
+  const isMentor = recipientRole === 'MENTOR';
+  const body = message({
+    eyebrow: 'Session reminder', heading: `Your session starts ${escapeHtml(lead)}`,
+    intro: `Hi <strong>${safeText(recipientName, 'there')}</strong> — a quick reminder that your PeerSupport session with <strong>${safeText(counterpartName, isMentor ? 'your mentee' : 'your mentor')}</strong> starts ${escapeHtml(lead)}.`,
+    children: `${detailCard([
+      row(isMentor ? 'Mentee' : 'Mentor', safeText(counterpartName, isMentor ? 'Your mentee' : 'Your mentor')),
+      row('Session', safeText(serviceName, 'Mentoring session')),
+      row('Starts', escapeHtml(`${formatDateIST(startTime)}, ${formatTimeIST(startTime)} IST`)),
+      row('Status', status('Upcoming', 'blue'), true),
+    ])}
+    ${button(sessionPath(isMentor ? 'MENTOR' : 'MENTEE'), 'Open my sessions')}
+    <p style="margin:14px 0 0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">Booking ID: ${safeText(bookingId)}</p>`,
+  });
+  return {
+    subject: `Reminder: your session ${lead}`,
+    html: layout({ title: 'Session reminder', preheader: `Your PeerSupport session starts ${lead}.`, content: body }),
+    text: `Reminder: your PeerSupport session with ${counterpartName || 'your counterpart'} starts ${lead} — ${formatDateIST(startTime)}, ${formatTimeIST(startTime)} IST. ${safeUrl(sessionPath(isMentor ? 'MENTOR' : 'MENTEE'))}`,
+  };
+}
+
 export function feedbackSharedEmail({ menteeName, mentorName, serviceName, sessionDate, bookingId }) {
   const body = message({
     eyebrow: 'Session feedback', heading: 'Your mentor shared feedback',

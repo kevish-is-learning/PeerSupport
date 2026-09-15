@@ -1,4 +1,4 @@
-import { Home, Users, Calendar, Wallet, User, Briefcase, CalendarDays, BarChart3 } from "lucide-react";
+import { Home, Users, Calendar, Wallet, User, Briefcase, CalendarDays, BarChart3, Layers } from "lucide-react";
 
 export const MENTOR_NAV_ITEMS = [
   { label: "Home", href: "/mentor/dashboard", icon: Home, requiresApproval: true },
@@ -8,6 +8,7 @@ export const MENTOR_NAV_ITEMS = [
   { label: "Payouts", href: "/mentor/payments", icon: Wallet, requiresApproval: true },
   { label: "Profile", href: "/mentor/profile", icon: User, requiresApproval: false },
   { label: "Availability", href: "/mentor/availability", icon: CalendarDays, requiresApproval: true },
+  { label: "Packages", href: "/mentor/packages", icon: Layers, requiresApproval: true },
 ];
 
 export const MENTOR_ALLOWED_UNAPPROVED_ROUTES = ["/mentor/profile", "/mentor/help-center"];

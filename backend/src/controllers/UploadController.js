@@ -1,5 +1,13 @@
 import cloudinary, { getFolder } from '../config/cloudinary.js';
 
+const IMAGE_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/heic',
+  'image/heif',
+]);
+
 export const uploadSingleFile = async (req, res) => {
   try {
     if (!req.file) {
@@ -7,32 +15,42 @@ export const uploadSingleFile = async (req, res) => {
     }
 
     const requestedFolder = req.body.folder;
-    const allowedFolders = new Set(['avatar', 'general']);
+    const allowedFolders = new Set(['avatar', 'general', 'documents']);
     const folder = allowedFolders.has(requestedFolder) ? requestedFolder : 'general';
     const userId = req.user.id;
     const shortId = userId.substring(0, 8);
     const uniqueId = `file_${Date.now()}`;
 
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: getFolder(`user_${shortId}`, folder),
-        public_id: uniqueId,
-        resource_type: 'image',
-        format: 'webp',
-        overwrite: true,
-      },
-      (error, result) => {
-        if (error) {
-          console.error('[Cloudinary] Direct upload failed:', error);
-          return res.status(500).json({ success: false, message: 'Cloud upload failed' });
+    const isImage = IMAGE_MIME_TYPES.has(req.file.mimetype);
+
+    // Images are normalised to webp; documents are stored as-is under the
+    // "raw" resource type so Cloudinary serves them back unmodified.
+    const uploadOptions = isImage
+      ? {
+          folder: getFolder(`user_${shortId}`, folder),
+          public_id: uniqueId,
+          resource_type: 'image',
+          format: 'webp',
+          overwrite: true,
         }
-        return res.status(200).json({
-          success: true,
-          url: result.secure_url,
-          message: 'File uploaded successfully',
-        });
+      : {
+          folder: getFolder(`user_${shortId}`, 'documents'),
+          public_id: uniqueId,
+          resource_type: 'raw',
+          overwrite: true,
+        };
+
+    const stream = cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {
+      if (error) {
+        console.error('[Cloudinary] Direct upload failed:', error);
+        return res.status(500).json({ success: false, message: 'Cloud upload failed' });
       }
-    );
+      return res.status(200).json({
+        success: true,
+        url: result.secure_url,
+        message: 'File uploaded successfully',
+      });
+    });
 
     stream.end(req.file.buffer);
   } catch (error) {

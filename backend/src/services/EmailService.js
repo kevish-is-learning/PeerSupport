@@ -17,6 +17,7 @@ import {
   sessionCompletedMenteeEmail,
   sessionCompletedMentorEmail,
   feedbackSharedEmail,
+  sessionReminderEmail,
   paymentReceiptEmail,
 } from '../emails/templates.js';
 import { generateInvoiceBuffer } from '../utils/invoiceGenerator.js';
@@ -214,6 +215,22 @@ class EmailService {
   /**
    * Tell the mentee their mentor has written up post-session feedback.
    */
+  /**
+   * Remind both participants that a session is coming up.
+   */
+  async sendSessionReminders({ menteeEmail, menteeName, mentorEmail, mentorName, serviceName, startTime, hoursBefore, bookingId }) {
+    const shared = { serviceName, startTime, hoursBefore, bookingId };
+
+    return Promise.all([
+      this._send(menteeEmail, sessionReminderEmail({
+        ...shared, recipientName: menteeName, counterpartName: mentorName, recipientRole: 'MENTEE',
+      })),
+      this._send(mentorEmail, sessionReminderEmail({
+        ...shared, recipientName: mentorName, counterpartName: menteeName, recipientRole: 'MENTOR',
+      })),
+    ]);
+  }
+
   async sendFeedbackSharedEmail({ menteeEmail, menteeName, mentorName, serviceName, sessionDate, bookingId }) {
     return this._send(
       menteeEmail,

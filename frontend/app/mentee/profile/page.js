@@ -26,6 +26,7 @@ import {
 import useAuthStore from "../../../store/useAuthStore";
 import { menteeProfileApi, resolveUploadUrl } from "../../../lib/api";
 import { toast } from "sonner";
+import DocumentManager from "../../../components/mentee/DocumentManager";
 
 // ─── Education type options ─────────────────────────────────────────────────
 const EDUCATION_TYPES = ["10th", "12th", "Graduation", "Post Graduation"];
@@ -1140,6 +1141,10 @@ export default function MenteeProfileSettingsPage() {
                 )}
             </>
           )}
+
+          <div className="mt-6">
+            <DocumentManager />
+          </div>
         </div>
       </div>
     </div>

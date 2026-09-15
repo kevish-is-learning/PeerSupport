@@ -6,6 +6,10 @@ import {
   CreditCard,
   Banknote,
   Star,
+  FileText,
+  Video,
+  MessagesSquare,
+  LifeBuoy,
 } from "lucide-react";
 
 export const ADMIN_NAV_ITEMS = [
@@ -64,6 +68,38 @@ export const ADMIN_NAV_ITEMS = [
     icon: Star,
     shortcut: "G R",
     key: "reviews",
+  },
+  {
+    href: "/admin/content",
+    label: "Content",
+    description: "Publish blog articles, curate FAQs & manage homepage testimonials",
+    icon: FileText,
+    shortcut: "G C",
+    key: "content",
+  },
+  {
+    href: "/admin/webinars",
+    label: "Webinars",
+    description: "Schedule live sessions, set pricing & track registrations",
+    icon: Video,
+    shortcut: "G W",
+    key: "webinars",
+  },
+  {
+    href: "/admin/group-discussions",
+    label: "Group Discussions",
+    description: "Open GD/WAT practice slots & monitor panel thresholds",
+    icon: MessagesSquare,
+    shortcut: "G G",
+    key: "group-discussions",
+  },
+  {
+    href: "/admin/support",
+    label: "Support",
+    description: "Respond to user tickets & track resolution status",
+    icon: LifeBuoy,
+    shortcut: "G S",
+    key: "support",
   },
 ];
 

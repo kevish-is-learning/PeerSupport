@@ -3,6 +3,7 @@ import FeaturedMentorSection from "../components/landing/FeaturedMentorSection";
 import CuratedServicesSection from "../components/landing/CuratedServicesSection";
 import ProblemsSolutionsSection from "../components/landing/ProblemsSolutionsSection";
 import CommunitySection from "../components/landing/CommunitySection";
+import TestimonialsSection from "../components/landing/TestimonialsSection";
 import FooterSection from "../components/landing/FooterSection";
 import { JsonLd, organizationJsonLd, websiteJsonLd } from "../lib/seo";
 
@@ -15,6 +16,7 @@ export default function HomePage() {
       <FeaturedMentorSection />
       <CuratedServicesSection />
       <CommunitySection />
+      <TestimonialsSection />
       <ProblemsSolutionsSection />
       <FooterSection />
     </main>

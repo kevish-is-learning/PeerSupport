@@ -3,7 +3,6 @@ import { razorpayInstance } from '../config/razorpay.js';
 import { emitSlotUpdate } from '../config/socket.js';
 import { utcToIst } from '../utils/timezoneUtils.js';
 import emailService from './EmailService.js';
-import smsService from './SmsService.js';
 import { calculatePlatformFee, calculateMentorEarning } from '../utils/financialCalculator.js';
 import crypto from 'crypto';
 
@@ -221,9 +220,6 @@ class PaymentService {
         meetingLink: fullBooking.meetingLink,
       };
 
-      const menteePhone = fullBooking.menteePhone;
-      const mentorPhone = fullBooking.mentorProfile?.contactNumber;
-
       // Fire-and-forget — a failed notification must not fail the payment.
       await Promise.allSettled([
         // Booking confirmed → mentee (carries the .ics invite)
@@ -232,13 +228,6 @@ class PaymentService {
         mentorEmail && emailService.sendNewBookingToMentor(emailData),
         // Payment receipt → mentee
         menteeEmail && emailService.sendPaymentReceipt(emailData),
-        // SMS confirmations
-        menteePhone && smsService.sendBookingConfirmed({
-          phone: menteePhone, menteeName, mentorName, startTime: fullBooking.startTime,
-        }),
-        mentorPhone && smsService.sendNewBookingToMentor({
-          phone: mentorPhone, mentorName, menteeName, startTime: fullBooking.startTime,
-        }),
       ]);
     } catch (err) {
       console.error('[PaymentService] Failed to send payment success emails:', err.message);
