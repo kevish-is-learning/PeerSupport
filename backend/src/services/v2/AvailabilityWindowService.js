@@ -13,10 +13,22 @@ import {
   createAvailabilityWindowSchema,
   updateAvailabilityWindowSchema,
   replaceDateWindowsSchema,
+  replaceRecurringWindowsSchema,
   upsertAvailabilitySchema,
 } from '../../validators/v2.validator.js';
-import { timeStringToDateTime, dateTimeToTimeString, timeToMinutes } from '../../utils/timeUtils.js';
+import {
+  timeStringToDateTime,
+  dateTimeToTimeString,
+  timeToMinutes,
+  getDayOfWeekFromDate,
+} from '../../utils/timeUtils.js';
 import { utcToIstDateString, utcToIstTimeString } from '../../utils/timezoneUtils.js';
+
+/** Group key used to compare windows that could overlap each other. */
+const recurrenceKey = (w) => (w.specificDate ? `date:${w.specificDate}` : `dow:${w.dayOfWeek}`);
+
+const dayOfWeekForDateString = (dateStr) =>
+  getDayOfWeekFromDate(new Date(`${dateStr}T00:00:00.000Z`));
 
 const createServiceError = (statusCode, message, data) => {
   const error = new Error(message);
@@ -45,8 +57,7 @@ class AvailabilityWindowService {
       where: { mentorProfileId: profile.id },
       include: {
         windowServices: {
-          include: {
-                      },
+          include: { mentorService: true },
         },
       },
       orderBy: [{ specificDate: 'asc' }, { startTime: 'asc' }],
@@ -63,8 +74,7 @@ class AvailabilityWindowService {
       where: { mentorProfileId },
       include: {
         windowServices: {
-          include: {
-                      },
+          include: { mentorService: true },
         },
       },
       orderBy: [{ specificDate: 'asc' }, { startTime: 'asc' }],
@@ -148,7 +158,6 @@ class AvailabilityWindowService {
                 startTime: b.startTime,
                 endTime: b.endTime,
                 status: b.status,
-                service: b.mentorService?.service?.name,
               })),
             }
           );
@@ -172,8 +181,10 @@ class AvailabilityWindowService {
         const window = await tx.availabilityWindow.create({
           data: {
             mentorProfileId: profileId,
-            dayOfWeek: null,
-            specificDate: new Date(`${w.specificDate}T00:00:00.000Z`),
+            dayOfWeek: w.dayOfWeek ?? null,
+            specificDate: w.specificDate
+              ? new Date(`${w.specificDate}T00:00:00.000Z`)
+              : null,
             startTime,
             endTime,
             timezone: w.timezone || 'Asia/Kolkata',
@@ -201,8 +212,7 @@ class AvailabilityWindowService {
       where: { id: { in: createdIds } },
       include: {
         windowServices: {
-          include: {
-                      },
+          include: { mentorService: true },
         },
       },
       orderBy: [{ specificDate: 'asc' }, { startTime: 'asc' }],
@@ -218,15 +228,17 @@ class AvailabilityWindowService {
     const data = createAvailabilityWindowSchema.parse(payload);
     const profile = await requireMentorProfile(userId);
 
-    this._assertNotPastDate(data.specificDate);
+    if (data.specificDate) this._assertNotPastDate(data.specificDate);
     await this._assertValidMentorServices(profile.id, data.mentorServiceIds);
-    await this._assertNoOverlaps(profile.id, data.specificDate, data.startTime, data.endTime);
+    await this._assertNoOverlaps(profile.id, data, data.startTime, data.endTime);
 
     const window = await prisma.availabilityWindow.create({
       data: {
         mentorProfileId: profile.id,
-        dayOfWeek: null,
-        specificDate: new Date(`${data.specificDate}T00:00:00.000Z`),
+        dayOfWeek: data.dayOfWeek ?? null,
+        specificDate: data.specificDate
+          ? new Date(`${data.specificDate}T00:00:00.000Z`)
+          : null,
         startTime: timeStringToDateTime(data.startTime),
         endTime: timeStringToDateTime(data.endTime),
         timezone: data.timezone || 'Asia/Kolkata',
@@ -246,8 +258,7 @@ class AvailabilityWindowService {
       where: { id: window.id },
       include: {
         windowServices: {
-          include: {
-                      },
+          include: { mentorService: true },
         },
       },
     });
@@ -274,17 +285,35 @@ class AvailabilityWindowService {
       throw createServiceError(404, 'Availability window not found');
     }
 
-    const specificDate = data.specificDate || (existing.specificDate
+    const existingDate = existing.specificDate
       ? new Date(existing.specificDate).toISOString().split('T')[0]
-      : null);
+      : null;
 
-    if (!specificDate) {
-      throw createServiceError(400, 'specificDate is required');
+    // A window keeps its recurrence kind unless the payload explicitly switches it.
+    let specificDate = null;
+    let dayOfWeek = null;
+    if (data.specificDate) {
+      specificDate = data.specificDate;
+    } else if (data.dayOfWeek) {
+      dayOfWeek = data.dayOfWeek;
+    } else {
+      specificDate = existingDate;
+      dayOfWeek = existing.dayOfWeek;
     }
 
-    this._assertNotPastDate(specificDate);
+    if (!specificDate && !dayOfWeek) {
+      throw createServiceError(400, 'Either specificDate or dayOfWeek is required');
+    }
+
+    if (specificDate) this._assertNotPastDate(specificDate);
     await this._assertValidMentorServices(profile.id, data.mentorServiceIds);
-    await this._assertNoOverlaps(profile.id, specificDate, data.startTime, data.endTime, validId);
+    await this._assertNoOverlaps(
+      profile.id,
+      { specificDate, dayOfWeek },
+      data.startTime,
+      data.endTime,
+      validId
+    );
 
     const existingWindows = await prisma.availabilityWindow.findMany({
       where: { mentorProfileId: profile.id },
@@ -292,7 +321,7 @@ class AvailabilityWindowService {
 
     const updatedDef = {
       id: validId,
-      dayOfWeek: null,
+      dayOfWeek,
       specificDate,
       startTime: data.startTime,
       endTime: data.endTime,
@@ -308,8 +337,10 @@ class AvailabilityWindowService {
       const window = await tx.availabilityWindow.update({
         where: { id: validId },
         data: {
-          dayOfWeek: null,
-          specificDate: new Date(`${specificDate}T00:00:00.000Z`),
+          dayOfWeek,
+          specificDate: specificDate
+            ? new Date(`${specificDate}T00:00:00.000Z`)
+            : null,
           startTime: timeStringToDateTime(data.startTime),
           endTime: timeStringToDateTime(data.endTime),
           timezone: data.timezone || existing.timezone || 'Asia/Kolkata',
@@ -336,8 +367,7 @@ class AvailabilityWindowService {
       where: { id: updated.id },
       include: {
         windowServices: {
-          include: {
-                      },
+          include: { mentorService: true },
         },
       },
     });
@@ -457,11 +487,85 @@ class AvailabilityWindowService {
       where: { id: { in: createdIds } },
       include: {
         windowServices: {
-          include: {
-                      },
+          include: { mentorService: true },
         },
       },
       orderBy: { startTime: 'asc' },
+    });
+
+    return created.map(this._mapWindow);
+  }
+
+  /**
+   * PUT /mentor/availability/recurring — Replace the whole weekly schedule.
+   *
+   * One-off (date-specific) windows are left untouched; they continue to act as
+   * overrides for their date.
+   */
+  async replaceRecurringWindows(userId, payload) {
+    const { windows: incoming } = replaceRecurringWindowsSchema.parse(payload);
+    const profile = await requireMentorProfile(userId);
+
+    const allMsIds = [...new Set(incoming.flatMap((w) => w.mentorServiceIds))];
+    await this._assertValidMentorServices(profile.id, allMsIds);
+    this._assertNoOverlapsInSet(incoming);
+
+    const existingWindows = await prisma.availabilityWindow.findMany({
+      where: { mentorProfileId: profile.id },
+    });
+
+    const remainingDefs = existingWindows
+      .filter((w) => !w.dayOfWeek)
+      .map((w) => this._mapWindowDef(w));
+
+    const newDefs = incoming.map((w) => ({
+      dayOfWeek: w.dayOfWeek,
+      specificDate: null,
+      startTime: w.startTime,
+      endTime: w.endTime,
+    }));
+
+    await this._assertNoOrphanedBookings(profile.id, [...remainingDefs, ...newDefs]);
+
+    const createdIds = await prisma.$transaction(async (tx) => {
+      await tx.availabilityWindow.deleteMany({
+        where: { mentorProfileId: profile.id, dayOfWeek: { not: null } },
+      });
+
+      const ids = [];
+      for (const w of incoming) {
+        const window = await tx.availabilityWindow.create({
+          data: {
+            mentorProfileId: profile.id,
+            dayOfWeek: w.dayOfWeek,
+            specificDate: null,
+            startTime: timeStringToDateTime(w.startTime),
+            endTime: timeStringToDateTime(w.endTime),
+            timezone: w.timezone || 'Asia/Kolkata',
+          },
+        });
+
+        await tx.availabilityWindowService.createMany({
+          data: w.mentorServiceIds.map((msId) => ({
+            windowId: window.id,
+            mentorServiceId: msId,
+          })),
+        });
+
+        ids.push(window.id);
+      }
+
+      return ids;
+    }, { timeout: 15000 });
+
+    const created = await prisma.availabilityWindow.findMany({
+      where: { id: { in: createdIds } },
+      include: {
+        windowServices: {
+          include: { mentorService: true },
+        },
+      },
+      orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
     });
 
     return created.map(this._mapWindow);
@@ -475,7 +579,13 @@ class AvailabilityWindowService {
     const bookingEnd = new Date(booking.endTime);
 
     const bookingDateStr = utcToIstDateString(bookingStart);
-    if (bookingDateStr !== windowDef.specificDate) return false;
+    if (windowDef.specificDate) {
+      if (bookingDateStr !== windowDef.specificDate) return false;
+    } else if (windowDef.dayOfWeek) {
+      if (dayOfWeekForDateString(bookingDateStr) !== windowDef.dayOfWeek) return false;
+    } else {
+      return false;
+    }
 
     // Check time range containment
     const [wStartH, wStartM] = windowDef.startTime.split(':').map(Number);
@@ -491,7 +601,7 @@ class AvailabilityWindowService {
 
   _mapWindowDef(w) {
     return {
-      dayOfWeek: null,
+      dayOfWeek: w.dayOfWeek ?? null,
       specificDate: w.specificDate
         ? new Date(w.specificDate).toISOString().split('T')[0]
         : null,
@@ -522,11 +632,13 @@ class AvailabilityWindowService {
     }
   }
 
-  async _assertNoOverlaps(profileId, specificDate, startTimeStr, endTimeStr, excludeId = null) {
+  async _assertNoOverlaps(profileId, { specificDate, dayOfWeek }, startTimeStr, endTimeStr, excludeId = null) {
     const existing = await prisma.availabilityWindow.findMany({
       where: {
         mentorProfileId: profileId,
-        specificDate: new Date(`${specificDate}T00:00:00.000Z`),
+        ...(specificDate
+          ? { specificDate: new Date(`${specificDate}T00:00:00.000Z`) }
+          : { dayOfWeek }),
         ...(excludeId ? { id: { not: excludeId } } : {}),
       },
     });
@@ -538,7 +650,12 @@ class AvailabilityWindowService {
       const startMin = timeToMinutes(dateTimeToTimeString(w.startTime));
       const endMin = timeToMinutes(dateTimeToTimeString(w.endTime));
       if (newStart < endMin && newEnd > startMin) {
-        throw createServiceError(409, 'Availability window overlaps an existing window for this date');
+        throw createServiceError(
+          409,
+          specificDate
+            ? 'Availability window overlaps an existing window for this date'
+            : 'Availability window overlaps an existing weekly window for this day'
+        );
       }
     }
   }
@@ -547,12 +664,12 @@ class AvailabilityWindowService {
     const groups = new Map();
 
     for (const w of windows) {
-      const key = `date:${w.specificDate}`;
+      const key = recurrenceKey(w);
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(w);
     }
 
-    for (const [, group] of groups) {
+    for (const [key, group] of groups) {
       const ranges = group
         .map((w) => ({
           start: timeToMinutes(w.startTime),
@@ -564,7 +681,12 @@ class AvailabilityWindowService {
         const prev = ranges[i - 1];
         const curr = ranges[i];
         if (curr.start < prev.end) {
-          throw createServiceError(409, 'Availability windows overlap for the same date');
+          throw createServiceError(
+            409,
+            key.startsWith('date:')
+              ? 'Availability windows overlap for the same date'
+              : 'Availability windows overlap for the same weekday'
+          );
         }
       }
     }
@@ -600,7 +722,6 @@ class AvailabilityWindowService {
             startTime: b.startTime,
             endTime: b.endTime,
             status: b.status,
-            service: b.mentorService?.service?.name,
           })),
         }
       );
@@ -623,8 +744,8 @@ class AvailabilityWindowService {
       services: (w.windowServices || []).map((ws) => ({
         windowServiceId: ws.id,
         mentorServiceId: ws.mentorServiceId,
-        serviceName: ws.mentorService?.title || ws.mentorService?.service?.name,
-        serviceSlug: ws.mentorService?.service?.slug,
+        serviceName: ws.mentorService?.title,
+        serviceSlug: ws.mentorService?.title?.toLowerCase().replace(/\s+/g, '-'),
         price: ws.mentorService?.price,
         durationMinutes: ws.mentorService?.durationMinutes,
       })),

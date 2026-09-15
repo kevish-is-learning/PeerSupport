@@ -10,6 +10,7 @@
 
 import { prisma } from '../config/database.js';
 import walletService from '../services/WalletService.js';
+import smsService from '../services/SmsService.js';
 import { emitSlotUpdate } from '../config/socket.js';
 import { utcToIst } from '../utils/timezoneUtils.js';
 
@@ -17,7 +18,14 @@ const INTERVALS = {
   AUTO_COMPLETE: 10 * 60 * 1000,     // Every 10 minutes
   NO_SHOW_CHECK: 5 * 60 * 1000,      // Every 5 minutes
   PAYMENT_EXPIRY: 5 * 60 * 1000,     // Every 5 minutes
+  REMINDERS: 10 * 60 * 1000,         // Every 10 minutes
 };
+
+/** Reminder leads, in hours before start. */
+const REMINDER_LEADS = [24, 1];
+
+/** Half-width of the window a reminder tick considers "due", in ms. */
+const REMINDER_TOLERANCE_MS = 5 * 60 * 1000;
 
 class CronScheduler {
   constructor() {
@@ -42,7 +50,11 @@ class CronScheduler {
       setInterval(() => this._expirePendingPayments(), INTERVALS.PAYMENT_EXPIRY)
     );
 
-    console.log('⏰ Cron jobs registered: auto-complete, no-show-check, payment-expiry');
+    this._timers.push(
+      setInterval(() => this._sendSessionReminders(), INTERVALS.REMINDERS)
+    );
+
+    console.log('⏰ Cron jobs registered: auto-complete, no-show-check, payment-expiry, reminders');
   }
 
   /**
@@ -142,6 +154,70 @@ class CronScheduler {
       }
     } catch (err) {
       console.error('[Cron] no-show-check error:', err.message);
+    }
+  }
+
+  /**
+   * Nudge both participants 24h and 1h before a confirmed session.
+   *
+   * Reminders are matched to a window around each lead time rather than tracked
+   * per booking; the tick interval is shorter than the window, so a session is
+   * caught at most once per lead.
+   */
+  async _sendSessionReminders() {
+    try {
+      const now = Date.now();
+
+      for (const hoursBefore of REMINDER_LEADS) {
+        const target = now + hoursBefore * 60 * 60 * 1000;
+
+        const sessions = await prisma.booking.findMany({
+          where: {
+            status: 'CONFIRMED',
+            startTime: {
+              gte: new Date(target - REMINDER_TOLERANCE_MS),
+              lt: new Date(target + REMINDER_TOLERANCE_MS),
+            },
+          },
+          select: {
+            id: true,
+            startTime: true,
+            menteePhone: true,
+            mentee: { select: { name: true } },
+            mentorProfile: {
+              select: { contactNumber: true, user: { select: { name: true } } },
+            },
+          },
+        });
+
+        for (const session of sessions) {
+          const menteeName = session.mentee?.name || 'there';
+          const mentorName = session.mentorProfile?.user?.name || 'your mentor';
+
+          await Promise.allSettled([
+            session.menteePhone && smsService.sendSessionReminder({
+              phone: session.menteePhone,
+              name: menteeName,
+              counterpartName: mentorName,
+              startTime: session.startTime,
+              hoursBefore,
+            }),
+            session.mentorProfile?.contactNumber && smsService.sendSessionReminder({
+              phone: session.mentorProfile.contactNumber,
+              name: mentorName,
+              counterpartName: menteeName,
+              startTime: session.startTime,
+              hoursBefore,
+            }),
+          ]);
+        }
+
+        if (sessions.length > 0) {
+          console.log(`[Cron] Sent ${hoursBefore}h reminders for ${sessions.length} session(s)`);
+        }
+      }
+    } catch (err) {
+      console.error('[Cron] reminder error:', err.message);
     }
   }
 

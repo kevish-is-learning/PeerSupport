@@ -29,8 +29,7 @@ async function requireMentorProfile(userId) {
 /** Standard include for fetching windows with their service mappings. */
 const windowInclude = {
   windowServices: {
-    include: {
-          },
+    include: { mentorService: true },
   },
 };
 

@@ -12,6 +12,7 @@ import { istToUtc, utcToIst } from '../utils/timezoneUtils.js';
 import emailService from './EmailService.js';
 import { ACTIVE_STATUSES } from '../utils/bookingStateMachine.js';
 import { calculatePlatformFee, calculateMentorEarning } from '../utils/financialCalculator.js';
+import packageService from './PackageService.js';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -226,8 +227,20 @@ class BookingService {
       throw createServiceError(409, 'This slot is already booked');
     }
 
-    // Create booking + payment in transaction
+    // A package redemption skips checkout entirely — the mentee already paid
+    // when they bought the bundle.
+    const redeemingPackage = Boolean(data.packagePurchaseId);
+
     const result = await prisma.$transaction(async (tx) => {
+      if (redeemingPackage) {
+        await packageService.redeemOne(tx, {
+          purchaseId: data.packagePurchaseId,
+          menteeId,
+          mentorProfileId: data.mentorProfileId,
+          mentorServiceId: data.mentorServiceId,
+        });
+      }
+
       const newBooking = await tx.booking.create({
         data: {
           menteeId,
@@ -237,10 +250,28 @@ class BookingService {
           endTime: endTimeUtc,
           purposeOfCall: data.purposeOfCall,
           notes: data.notes,
-          status: 'PAYMENT_PENDING',
+          menteePhone: data.menteePhone,
+          menteeEmail: data.menteeEmail,
+          discussionTopic: data.discussionTopic,
+          specificQuestions: data.specificQuestions,
+          packagePurchaseId: data.packagePurchaseId ?? null,
+          shareProfile: (data.sharedDocumentIds?.length ?? 0) > 0,
+          sharedFeedbackBookingId: data.sharedFeedbackBookingId ?? null,
+          status: redeemingPackage ? 'CONFIRMED' : 'PAYMENT_PENDING',
+          ...(data.sharedDocumentIds?.length
+            ? {
+                sharedDocuments: {
+                  create: data.sharedDocumentIds.map((documentId) => ({ documentId })),
+                },
+              }
+            : {}),
         },
         include: bookingInclude,
       });
+
+      if (redeemingPackage) {
+        return { booking: newBooking, payment: null, service };
+      }
 
       const platformFee = calculatePlatformFee(service.price);
       const mentorAmount = calculateMentorEarning(service.price);
@@ -258,6 +289,14 @@ class BookingService {
 
       return { booking: newBooking, payment, service };
     });
+
+    if (redeemingPackage) {
+      return {
+        booking: mapBooking(result.booking),
+        order: null,
+        redeemedFromPackage: true,
+      };
+    }
 
     // Create Razorpay order
     const amountInPaise = Math.round(result.payment.amount * 100);

@@ -124,6 +124,13 @@ model User {
 
   scheduledVerificationCalls MentorVerificationCall[] @relation("ScheduledVerificationCalls")
 
+  packagePurchases     PackagePurchase[]              @relation("MenteePackagePurchases")
+  webinarRegistrations WebinarRegistration[]          @relation("WebinarRegistrations")
+  gdRegistrations      GroupDiscussionRegistration[]  @relation("GroupDiscussionRegistrations")
+  blogPosts            BlogPost[]                     @relation("BlogAuthor")
+  supportTickets       SupportTicket[]                @relation("SupportTickets")
+  supportMessages      SupportTicketMessage[]         @relation("SupportTicketMessages")
+
   @@index([email])
   @@index([role])
 }
@@ -165,6 +172,8 @@ model MenteeProfile {
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  documents MenteeDocument[]
 
   @@index([username])
 }
@@ -235,6 +244,9 @@ model MentorProfile {
   wallet              MentorWallet?
   cancellationStat    MentorCancellationStat?
   verificationCalls   MentorVerificationCall[]
+  sessionPackages     SessionPackage[]
+  hostedWebinars      Webinar[]
+  moderatedDiscussions GroupDiscussion[]
 
   @@index([approvalStatus])
   @@index([averageRating])
@@ -272,6 +284,7 @@ model MentorService {
 
   windowServices AvailabilityWindowService[]
   bookings       Booking[]
+  packages       SessionPackage[]
 
   @@index([mentorProfileId])
 }
@@ -379,6 +392,15 @@ model Booking {
 
   rescheduledFromId String?
 
+  /// Set when this booking was redeemed from a purchased package
+  packagePurchaseId String?
+
+  /// Mentee chose to share their profile with the mentor
+  shareProfile Boolean @default(false)
+
+  /// Earlier booking whose feedback the mentee chose to resurface for the mentor
+  sharedFeedbackBookingId String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -396,6 +418,11 @@ model Booking {
 
   attendance SessionAttendance?
 
+  packagePurchase PackagePurchase? @relation(fields: [packagePurchaseId], references: [id], onDelete: SetNull)
+
+  sharedDocuments BookingSharedDocument[]
+
+  @@index([packagePurchaseId])
   @@index([menteeId])
   @@index([mentorProfileId])
   @@index([status])
@@ -706,4 +733,416 @@ model MentorVerificationCall {
   @@index([scheduledById])
   @@index([status])
   @@index([startsAt])
+}
+
+// ============================================================
+// SESSION PACKAGES (multi-session bundles)
+// ============================================================
+
+enum PackagePurchaseStatus {
+  PAYMENT_PENDING
+  ACTIVE
+  EXHAUSTED
+  EXPIRED
+  CANCELLED
+}
+
+/// A discounted bundle of sessions for one of a mentor's services.
+model SessionPackage {
+  id String @id @default(uuid())
+
+  mentorProfileId String
+  mentorServiceId String
+
+  title       String
+  description String?
+
+  /// How many sessions the bundle contains (e.g. 5)
+  sessionCount Int
+
+  /// Total price for the whole bundle, in INR
+  price Float
+
+  /// Days the pack stays redeemable after purchase
+  validityDays Int @default(180)
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  mentorService MentorService @relation(fields: [mentorServiceId], references: [id], onDelete: Cascade)
+
+  purchases PackagePurchase[]
+
+  @@index([mentorProfileId])
+  @@index([mentorServiceId])
+}
+
+/// A mentee's purchase of a SessionPackage, tracking remaining redemptions.
+model PackagePurchase {
+  id String @id @default(uuid())
+
+  packageId String
+  menteeId  String
+
+  sessionsTotal Int
+  sessionsUsed  Int @default(0)
+
+  amount Float
+
+  razorpayOrderId   String?
+  razorpayPaymentId String? @unique
+  razorpaySignature String?
+
+  status PackagePurchaseStatus @default(PAYMENT_PENDING)
+
+  expiresAt DateTime?
+  paidAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  package SessionPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  mentee  User           @relation("MenteePackagePurchases", fields: [menteeId], references: [id], onDelete: Cascade)
+
+  bookings Booking[]
+
+  @@index([menteeId])
+  @@index([packageId])
+  @@index([status])
+}
+
+// ============================================================
+// MENTEE DOCUMENTS & PROFILE SHARING
+// ============================================================
+
+enum MenteeDocumentType {
+  RESUME
+  SOP
+}
+
+/// Named resumes/SOPs a mentee can keep on file and selectively share.
+/// Resumes are universal; SOPs are college-specific.
+model MenteeDocument {
+  id String @id @default(uuid())
+
+  menteeProfileId String
+
+  type MenteeDocumentType
+
+  /// Mentee-supplied label, e.g. "Consulting resume v3"
+  name String
+
+  fileUrl String
+
+  /// Only meaningful for SOPs
+  targetCollege String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  menteeProfile MenteeProfile @relation(fields: [menteeProfileId], references: [id], onDelete: Cascade)
+
+  sharedOnBookings BookingSharedDocument[]
+
+  @@index([menteeProfileId])
+  @@index([menteeProfileId, type])
+}
+
+/// Which documents a mentee attached to a specific booking.
+model BookingSharedDocument {
+  id String @id @default(uuid())
+
+  bookingId  String
+  documentId String
+
+  createdAt DateTime @default(now())
+
+  booking  Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  document MenteeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([bookingId, documentId])
+  @@index([documentId])
+}
+
+// ============================================================
+// WEBINARS
+// ============================================================
+
+enum WebinarStatus {
+  DRAFT
+  PUBLISHED
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum GroupRegistrationStatus {
+  PAYMENT_PENDING
+  CONFIRMED
+  CANCELLED
+  ATTENDED
+}
+
+model Webinar {
+  id String @id @default(uuid())
+
+  slug        String  @unique
+  title       String
+  description String
+  coverImageUrl String?
+
+  hostMentorProfileId String?
+
+  startsAt DateTime
+  endsAt   DateTime
+
+  isPaid Boolean @default(false)
+  price  Float   @default(0)
+
+  /// Null means unlimited
+  capacity Int?
+
+  /// Video room channel (Agora) — shared by every confirmed registrant
+  roomId String?
+
+  status WebinarStatus @default(DRAFT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  hostMentorProfile MentorProfile? @relation(fields: [hostMentorProfileId], references: [id], onDelete: SetNull)
+
+  registrations WebinarRegistration[]
+
+  @@index([status])
+  @@index([startsAt])
+}
+
+model WebinarRegistration {
+  id String @id @default(uuid())
+
+  webinarId String
+  userId    String
+
+  amount Float @default(0)
+
+  razorpayOrderId   String?
+  razorpayPaymentId String? @unique
+  razorpaySignature String?
+
+  status GroupRegistrationStatus @default(CONFIRMED)
+
+  attendedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  webinar Webinar @relation(fields: [webinarId], references: [id], onDelete: Cascade)
+  user    User    @relation("WebinarRegistrations", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([webinarId, userId])
+  @@index([userId])
+}
+
+// ============================================================
+// GROUP DISCUSSIONS (GD / WAT practice)
+// ============================================================
+
+enum GroupDiscussionStatus {
+  SCHEDULED
+  CONFIRMED
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+model GroupDiscussion {
+  id String @id @default(uuid())
+
+  topic       String
+  description String?
+
+  moderatorMentorProfileId String?
+
+  startsAt DateTime
+  endsAt   DateTime
+
+  /// The slot only runs once this many people have registered
+  minParticipants Int @default(6)
+  maxParticipants Int @default(12)
+
+  price Float @default(0)
+
+  roomId String?
+
+  status GroupDiscussionStatus @default(SCHEDULED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  moderatorMentorProfile MentorProfile? @relation(fields: [moderatorMentorProfileId], references: [id], onDelete: SetNull)
+
+  registrations GroupDiscussionRegistration[]
+
+  @@index([status])
+  @@index([startsAt])
+}
+
+model GroupDiscussionRegistration {
+  id String @id @default(uuid())
+
+  groupDiscussionId String
+  userId            String
+
+  amount Float @default(0)
+
+  razorpayOrderId   String?
+  razorpayPaymentId String? @unique
+  razorpaySignature String?
+
+  status GroupRegistrationStatus @default(CONFIRMED)
+
+  /// Mentee opted to share their profile with the panel
+  shareProfile Boolean @default(false)
+
+  attendedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  groupDiscussion GroupDiscussion @relation(fields: [groupDiscussionId], references: [id], onDelete: Cascade)
+  user            User            @relation("GroupDiscussionRegistrations", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupDiscussionId, userId])
+  @@index([userId])
+}
+
+// ============================================================
+// CONTENT: BLOG, FAQ, TESTIMONIALS
+// ============================================================
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model BlogPost {
+  id String @id @default(uuid())
+
+  slug    String @unique
+  title   String
+  excerpt String?
+  content String
+
+  coverImageUrl String?
+
+  tags String[]
+
+  authorId String?
+
+  status ContentStatus @default(DRAFT)
+
+  readingMinutes Int @default(5)
+
+  publishedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User? @relation("BlogAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([status, publishedAt])
+}
+
+model Faq {
+  id String @id @default(uuid())
+
+  question String
+  answer   String
+
+  category String @default("General")
+
+  sortOrder Int @default(0)
+
+  isPublished Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+}
+
+model Testimonial {
+  id String @id @default(uuid())
+
+  authorName     String
+  authorRole     String?
+  authorImageUrl String?
+
+  quote  String
+  rating Int     @default(5)
+
+  isPublished Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished, sortOrder])
+}
+
+// ============================================================
+// SUPPORT TICKETS
+// ============================================================
+
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model SupportTicket {
+  id String @id @default(uuid())
+
+  userId String
+
+  subject  String
+  category String @default("General")
+
+  status SupportTicketStatus @default(OPEN)
+
+  resolvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation("SupportTickets", fields: [userId], references: [id], onDelete: Cascade)
+
+  messages SupportTicketMessage[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SupportTicketMessage {
+  id String @id @default(uuid())
+
+  ticketId String
+  authorId String
+
+  body String
+
+  /// True when written by an admin replying to the ticket
+  isStaffReply Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author User          @relation("SupportTicketMessages", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
 }

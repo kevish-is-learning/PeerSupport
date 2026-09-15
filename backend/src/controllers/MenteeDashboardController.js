@@ -9,7 +9,7 @@ class MenteeDashboardController {
       // Run both in parallel — getSessions already bundles stats + upcoming
       const [sessionsData, recommendedMentors] = await Promise.all([
         menteeDashboardService.getSessions(menteeId),
-        menteeDashboardService.getRecommendedMentors(),
+        menteeDashboardService.getRecommendedMentors(menteeId),
       ]);
 
       return res.status(200).json(

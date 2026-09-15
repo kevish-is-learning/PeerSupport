@@ -269,6 +269,13 @@ export const v2Api = {
   upsertAvailability(windows) {
     return apiRequest('/v2/mentor/availability', { method: 'PUT', body: { windows } });
   },
+  /** Replace the weekly recurring schedule (leaves date-specific overrides alone) */
+  replaceRecurringAvailability(windows) {
+    return apiRequest('/v2/mentor/availability/recurring', {
+      method: 'PUT',
+      body: { windows },
+    });
+  },
   /** Replace availability windows for a specific date */
   replaceAvailabilityForDate(date, windows) {
     return apiRequest(`/v2/mentor/availability/dates/${date}`, {
@@ -326,6 +333,60 @@ export const meetingApi = {
   /** Signal that this participant has finished the meeting */
   finish(bookingId) {
     return apiRequest(`/meetings/${bookingId}/finish`, { method: "PATCH" });
+  },
+};
+
+// ─── Session Feedback APIs ───────────────────────────────────────────────────
+
+export const feedbackApi = {
+  /** Mentor: submit or revise feedback for a session */
+  submit(bookingId, data) {
+    return apiRequest(`/feedback/${bookingId}`, { method: 'POST', body: data });
+  },
+  /** Either participant: read a session's feedback */
+  get(bookingId) {
+    return apiRequest(`/feedback/${bookingId}`);
+  },
+  /** Mentee: all feedback received */
+  listReceived() {
+    return apiRequest('/feedback/received');
+  },
+  /** Mentor: all feedback written */
+  listGiven() {
+    return apiRequest('/feedback/given');
+  },
+  /** Mentor: sessions still awaiting feedback */
+  listPending() {
+    return apiRequest('/feedback/pending');
+  },
+  /** Full session + feedback history with one counterpart */
+  getHistory(counterpartId) {
+    return apiRequest(`/feedback/history/${counterpartId}`);
+  },
+  /** Direct link to the PDF download (streams as an attachment) */
+  pdfUrl(bookingId) {
+    return `${API_BASE_URL}/feedback/${bookingId}/pdf`;
+  },
+  /** Fetch the PDF with credentials and hand the browser a download */
+  async downloadPdf(bookingId) {
+    const response = await fetch(`${API_BASE_URL}/feedback/${bookingId}/pdf`, {
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const payload = await parseResponse(response);
+      throw new Error(payload?.message || 'Failed to download feedback PDF');
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `session-feedback-${bookingId}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
   },
 };
 

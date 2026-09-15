@@ -18,6 +18,10 @@ import meetingRoutes from './meeting.routes.js';
 import walletRoutes from './wallet.routes.js';
 import payoutRoutes from './payout.routes.js';
 import cancellationRoutes from './cancellation.routes.js';
+import feedbackRoutes from './feedback.routes.js';
+import contentRoutes from './content.routes.js';
+import { webinarRouter, discussionRouter } from './groupSession.routes.js';
+import { packageRouter, documentRouter } from './package.routes.js';
 import uploadRoutes from './upload.routes.js';
 
 // V2 routes — new booking & availability system
@@ -61,6 +65,12 @@ router.use('/meetings', meetingRoutes);
 router.use('/wallet', walletRoutes);
 router.use('/payouts', payoutRoutes);
 router.use('/cancellations', cancellationRoutes);
+router.use('/feedback', feedbackRoutes);
+router.use('/content', contentRoutes);
+router.use('/webinars', webinarRouter);
+router.use('/group-discussions', discussionRouter);
+router.use('/packages', packageRouter);
+router.use('/mentee-documents', documentRouter);
 router.use('/upload', uploadRoutes);
 
 // ─── V2 Routes ─────────────────────────────────────────────────────────────

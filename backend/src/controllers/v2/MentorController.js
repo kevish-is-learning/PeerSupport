@@ -46,6 +46,15 @@ class MentorController {
     });
   }
 
+  replaceRecurringAvailability(req, res) {
+    return respond(res, {
+      message: 'Weekly availability updated',
+      action: () => availabilityWindowService.replaceRecurringWindows(req.user.id, req.body),
+      data: (windows) => ({ windows }),
+      error: { extras: availabilityErrorDetails },
+    });
+  }
+
   replaceAvailabilityForDate(req, res) {
     return respond(res, {
       message: 'Availability updated',

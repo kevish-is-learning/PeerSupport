@@ -16,9 +16,11 @@ import {
   bookingCancelledEmail,
   sessionCompletedMenteeEmail,
   sessionCompletedMentorEmail,
+  feedbackSharedEmail,
   paymentReceiptEmail,
 } from '../emails/templates.js';
 import { generateInvoiceBuffer } from '../utils/invoiceGenerator.js';
+import { generateSessionIcs, icsAttachment } from '../utils/icsGenerator.js';
 
 class EmailService {
   /**
@@ -80,6 +82,7 @@ class EmailService {
     endTime,
     amount,
     bookingId,
+    meetingLink,
   }) {
     const template = bookingConfirmedMenteeEmail({
       menteeName,
@@ -90,7 +93,21 @@ class EmailService {
       amount,
       bookingId,
     });
-    return this._send(menteeEmail, template);
+
+    const invite = generateSessionIcs({
+      uid: `booking-${bookingId}@peersupport`,
+      startTime,
+      endTime,
+      title: `${serviceName || 'Mentoring Session'} with ${mentorName || 'your mentor'}`,
+      description: `PeerSupport mentoring session with ${mentorName || 'your mentor'}.\nBooking ID: ${bookingId}`,
+      location: meetingLink,
+      attendees: [{ name: menteeName, email: menteeEmail }],
+    });
+
+    return this._send(menteeEmail, {
+      ...template,
+      attachments: [icsAttachment(invite, 'peersupport-session.ics')],
+    });
   }
 
   /**
@@ -107,6 +124,7 @@ class EmailService {
     amount,
     purposeOfCall,
     bookingId,
+    meetingLink,
   }) {
     const template = newBookingMentorEmail({
       mentorName,
@@ -119,7 +137,21 @@ class EmailService {
       purposeOfCall,
       bookingId,
     });
-    return this._send(mentorEmail, template);
+
+    const invite = generateSessionIcs({
+      uid: `booking-${bookingId}@peersupport`,
+      startTime,
+      endTime,
+      title: `${serviceName || 'Mentoring Session'} with ${menteeName || 'your mentee'}`,
+      description: `PeerSupport mentoring session with ${menteeName || 'your mentee'}.\nBooking ID: ${bookingId}`,
+      location: meetingLink,
+      attendees: [{ name: mentorName, email: mentorEmail }],
+    });
+
+    return this._send(mentorEmail, {
+      ...template,
+      attachments: [icsAttachment(invite, 'peersupport-session.ics')],
+    });
   }
 
   // ─── Booking Cancelled ──────────────────────────────────────────────────
@@ -179,6 +211,16 @@ class EmailService {
   /**
    * Send session completed emails to both mentor and mentee.
    */
+  /**
+   * Tell the mentee their mentor has written up post-session feedback.
+   */
+  async sendFeedbackSharedEmail({ menteeEmail, menteeName, mentorName, serviceName, sessionDate, bookingId }) {
+    return this._send(
+      menteeEmail,
+      feedbackSharedEmail({ menteeName, mentorName, serviceName, sessionDate, bookingId })
+    );
+  }
+
   async sendSessionCompletedEmails({
     menteeEmail,
     menteeName,

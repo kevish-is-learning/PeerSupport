@@ -8,6 +8,8 @@
 import { Router } from 'express';
 import { authenticateJWT, authorizeRoles } from '../middleware/auth.js';
 import adminController from '../controllers/AdminController.js';
+import contentController from '../controllers/ContentController.js';
+import groupSessionController from '../controllers/GroupSessionController.js';
 
 const router = Router();
 
@@ -66,5 +68,39 @@ router.patch('/mentor-verification/:callId/complete', adminController.completeVe
 router.patch('/mentor-verification/:callId/no-show', adminController.markVerificationNoShow);
 router.get('/mentor-verification/:callId', adminController.getVerificationCall);
 router.get('/mentor-verification/mentor/:mentorProfileId', adminController.getVerificationCallsForMentor);
+
+// ─── Content: Blog / FAQ / Testimonials ──────────────────────────────────────
+router.get('/content/posts', contentController.listAllPosts);
+router.post('/content/posts', contentController.createPost);
+router.patch('/content/posts/:id', contentController.updatePost);
+router.delete('/content/posts/:id', contentController.deletePost);
+
+router.get('/content/faqs', contentController.listAllFaqs);
+router.post('/content/faqs', contentController.createFaq);
+router.patch('/content/faqs/:id', contentController.updateFaq);
+router.delete('/content/faqs/:id', contentController.deleteFaq);
+
+router.get('/content/testimonials', contentController.listAllTestimonials);
+router.post('/content/testimonials', contentController.createTestimonial);
+router.patch('/content/testimonials/:id', contentController.updateTestimonial);
+router.delete('/content/testimonials/:id', contentController.deleteTestimonial);
+
+// ─── Support ─────────────────────────────────────────────────────────────────
+router.get('/support/tickets', contentController.listAllTickets);
+router.get('/support/tickets/:id', contentController.getTicket);
+router.post('/support/tickets/:id/reply', contentController.replyToTicket);
+router.patch('/support/tickets/:id/status', contentController.updateTicketStatus);
+
+// ─── Webinars ────────────────────────────────────────────────────────────────
+router.get('/webinars', groupSessionController.listAllWebinars);
+router.post('/webinars', groupSessionController.createWebinar);
+router.patch('/webinars/:id', groupSessionController.updateWebinar);
+router.delete('/webinars/:id', groupSessionController.deleteWebinar);
+
+// ─── Group Discussions ───────────────────────────────────────────────────────
+router.get('/group-discussions', groupSessionController.listAllDiscussions);
+router.post('/group-discussions', groupSessionController.createDiscussion);
+router.patch('/group-discussions/:id', groupSessionController.updateDiscussion);
+router.delete('/group-discussions/:id', groupSessionController.deleteDiscussion);
 
 export default router;

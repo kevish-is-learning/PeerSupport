@@ -255,6 +255,8 @@ export default function ExploreMentorsPage() {
         specialization: specialization || undefined,
         maxPrice: maxPrice < 5000 ? maxPrice : undefined,
         minRating: minRating > 0 ? minRating : undefined,
+        availability: availability || undefined,
+        experience: experience || undefined,
         sort,
         limit: 20,
       };
@@ -266,7 +268,7 @@ export default function ExploreMentorsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [search, school, specialization, maxPrice, minRating, sort]);
+  }, [search, school, specialization, maxPrice, minRating, availability, experience, sort]);
 
   // Debounce
   useEffect(() => {

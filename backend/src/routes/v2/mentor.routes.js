@@ -58,6 +58,14 @@ router.put(
 );
 
 router.put(
+  '/mentor/availability/recurring',
+  authenticateJWT,
+  authorizeRoles('MENTOR'),
+  requireApprovedMentor,
+  mentorController.replaceRecurringAvailability
+);
+
+router.put(
   '/mentor/availability/dates/:date',
   authenticateJWT,
   authorizeRoles('MENTOR'),

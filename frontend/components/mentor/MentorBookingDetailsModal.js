@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { X, Calendar as CalendarIcon, Clock, Mail, Phone } from "lucide-react";
+import { X, Calendar as CalendarIcon, Clock, Mail, Phone, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { v2BookingApi } from "../../lib/api";
 import RescheduleModal from "../shared/RescheduleModal";
+import SessionFeedbackModal from "../shared/SessionFeedbackModal";
 
 export default function MentorBookingDetailsModal({ session, mentee, onClose, onSessionUpdated }) {
   if (!session) return null;
@@ -12,9 +13,11 @@ export default function MentorBookingDetailsModal({ session, mentee, onClose, on
   const [cancelReason, setCancelReason] = useState("");
   const [cancelling, setCancelling] = useState(false);
   const [showReschedule, setShowReschedule] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   const canCancel = ["PAYMENT_PENDING", "CONFIRMED"].includes(session.status);
   const canReschedule = ["PAYMENT_PENDING", "CONFIRMED"].includes(session.status);
+  const canLeaveFeedback = ["IN_PROGRESS", "COMPLETED"].includes(session.status);
 
   const handleCancel = async () => {
     try {
@@ -146,6 +149,22 @@ export default function MentorBookingDetailsModal({ session, mentee, onClose, on
         </div>
 
         {/* Footer Actions */}
+        {canLeaveFeedback && !showCancelConfirm && (
+          <div className="border-t-2 border-black bg-gray-50 p-6">
+            <button
+              onClick={() => setShowFeedback(true)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-[#5061E4] py-3 text-sm font-extrabold text-white transition-transform hover:-translate-y-0.5 cursor-pointer"
+              style={{ boxShadow: "2px 2px 0 0 #000" }}
+            >
+              <FileText size={16} />
+              Session Feedback
+            </button>
+            <p className="mt-2 text-center text-[11px] font-medium text-gray-500">
+              Feedback is required before you can mark this session complete.
+            </p>
+          </div>
+        )}
+
         {canCancel && !showCancelConfirm && (
           <div className="flex gap-3 border-t-2 border-black bg-gray-50 p-6">
             {canReschedule && (
@@ -167,6 +186,16 @@ export default function MentorBookingDetailsModal({ session, mentee, onClose, on
           </div>
         )}
       </div>
+
+      {/* Feedback Modal */}
+      {showFeedback && (
+        <SessionFeedbackModal
+          bookingId={session.id}
+          mode="write"
+          onClose={() => setShowFeedback(false)}
+          onSubmitted={onSessionUpdated}
+        />
+      )}
 
       {/* Reschedule Modal */}
       {showReschedule && (

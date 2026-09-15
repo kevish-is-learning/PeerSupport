@@ -18,8 +18,9 @@ import {
   AlertTriangle,
   XCircle,
   FileText,
+  Download,
 } from "lucide-react";
-import { menteeBookingApi, resolveUploadUrl } from "../../../lib/api";
+import { menteeBookingApi, resolveUploadUrl, feedbackApi } from "../../../lib/api";
 import { canJoinSession, joinDisabledReason } from "../../../lib/sessionUtils";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -54,9 +55,22 @@ function StatusBadge({ status }) {
 
 /* ─── Feedback Modal ────────────────────────────────────────── */
 function FeedbackModal({ session, onClose }) {
+  const [downloading, setDownloading] = useState(false);
+
   if (!session) return null;
   const fb = session.feedback;
   const rv = session.review;
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      await feedbackApi.downloadPdf(session.id);
+    } catch (err) {
+      toast.error(err.message || "Failed to download feedback PDF");
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
@@ -123,6 +137,14 @@ function FeedbackModal({ session, onClose }) {
                     <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{fb.recommendations}</p>
                   </div>
                 )}
+                <button
+                  onClick={handleDownload}
+                  disabled={downloading}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-white py-2.5 text-xs font-extrabold text-gray-700 shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 disabled:opacity-50"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  {downloading ? "Preparing PDF…" : "Download as PDF"}
+                </button>
               </div>
             </div>
           ) : (

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { v2Api, mentorServiceApi } from "../../../lib/api";
 import { toast } from "sonner";
 import {
-  Loader2, Plus, Trash2, X, ChevronLeft, ChevronRight, Copy,
+  Loader2, Plus, Trash2, X, ChevronLeft, ChevronRight, Copy, Repeat,
 } from "lucide-react";
 
 /* ── helpers ────────────────────────────────────────────────────── */
@@ -75,6 +75,19 @@ function generateTimeOptions() {
 
 const TIME_OPTIONS = generateTimeOptions();
 
+/** Calendar column order — index matches Date.getDay(). */
+const DAYS_OF_WEEK = [
+  { value: "SUNDAY", short: "SUN" },
+  { value: "MONDAY", short: "MON" },
+  { value: "TUESDAY", short: "TUE" },
+  { value: "WEDNESDAY", short: "WED" },
+  { value: "THURSDAY", short: "THU" },
+  { value: "FRIDAY", short: "FRI" },
+  { value: "SATURDAY", short: "SAT" },
+];
+
+const dayOfWeekForDate = (date) => DAYS_OF_WEEK[date.getDay()].value;
+
 /* ── main component ─────────────────────────────────────────────── */
 
 export default function AvailabilityCalendar() {
@@ -96,6 +109,11 @@ export default function AvailabilityCalendar() {
   const [dragOverDate, setDragOverDate] = useState(null);
   const [copyModal, setCopyModal] = useState({ open: false, from: null, to: null });
   const [copying, setCopying] = useState(false);
+
+  // Weekly recurring schedule
+  const [weeklyOpen, setWeeklyOpen] = useState(false);
+  const [weeklyWindows, setWeeklyWindows] = useState([]);
+  const [savingWeekly, setSavingWeekly] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -124,6 +142,20 @@ export default function AvailabilityCalendar() {
     }
   }
 
+  // Recurring windows apply to every matching weekday unless that date has its
+  // own one-off override, which replaces the weekly schedule for that day.
+  const recurringByDay = {};
+  for (const w of windows) {
+    if (!w.dayOfWeek) continue;
+    recurringByDay[w.dayOfWeek] = (recurringByDay[w.dayOfWeek] || 0) + 1;
+  }
+
+  const slotCountForDate = (date, dateStr) =>
+    dateSlotCounts[dateStr] ?? recurringByDay[dayOfWeekForDate(date)] ?? 0;
+
+  const isRecurringDate = (date, dateStr) =>
+    !dateSlotCounts[dateStr] && Boolean(recurringByDay[dayOfWeekForDate(date)]);
+
   const prevMonth = () => {
     if (calMonth === 0) { setCalYear((y) => y - 1); setCalMonth(11); }
     else setCalMonth((m) => m - 1);
@@ -149,18 +181,23 @@ export default function AvailabilityCalendar() {
     const dateStr = formatLocalDate(date);
     setSelectedDate(dateStr);
 
+    const toFormWindow = (w) => ({
+      startTime: w.startTime,
+      endTime: w.endTime,
+      mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
+    });
+
+    // Saving here writes a one-off override, so seed the form with whatever the
+    // date currently resolves to — its own windows, else the weekly schedule.
     const existing = windows.filter((w) => w.specificDate === dateStr);
-    if (existing.length > 0) {
-      setFormWindows(
-        existing.map((w) => ({
-          startTime: w.startTime,
-          endTime: w.endTime,
-          mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
-        }))
-      );
-    } else {
-      setFormWindows([{ startTime: "09:00", endTime: "10:00", mentorServiceIds: [] }]);
-    }
+    const inherited = windows.filter((w) => w.dayOfWeek === dayOfWeekForDate(date));
+    const source = existing.length > 0 ? existing : inherited;
+
+    setFormWindows(
+      source.length > 0
+        ? source.map(toFormWindow)
+        : [{ startTime: "09:00", endTime: "10:00", mentorServiceIds: [] }]
+    );
     setModalOpen(true);
   };
 
@@ -247,6 +284,85 @@ export default function AvailabilityCalendar() {
       toast.error(e.message || "Failed to remove availability");
     } finally {
       setSaving(false);
+    }
+  };
+
+  /* ── weekly recurring schedule ────────────────────────────────── */
+
+  const openWeekly = () => {
+    setWeeklyWindows(
+      windows
+        .filter((w) => w.dayOfWeek)
+        .map((w) => ({
+          dayOfWeek: w.dayOfWeek,
+          startTime: w.startTime,
+          endTime: w.endTime,
+          mentorServiceIds: w.services?.map((s) => s.mentorServiceId) || [],
+        }))
+    );
+    setWeeklyOpen(true);
+  };
+
+  const addWeeklyWindow = () => {
+    setWeeklyWindows((prev) => [
+      ...prev,
+      { dayOfWeek: "MONDAY", startTime: "09:00", endTime: "10:00", mentorServiceIds: [] },
+    ]);
+  };
+
+  const removeWeeklyWindow = (idx) => {
+    setWeeklyWindows((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const updateWeeklyWindow = (idx, field, value) => {
+    setWeeklyWindows((prev) =>
+      prev.map((w, i) => (i === idx ? { ...w, [field]: value } : w))
+    );
+  };
+
+  const toggleWeeklyService = (idx, msId) => {
+    setWeeklyWindows((prev) =>
+      prev.map((w, i) => {
+        if (i !== idx) return w;
+        const has = w.mentorServiceIds.includes(msId);
+        return {
+          ...w,
+          mentorServiceIds: has
+            ? w.mentorServiceIds.filter((id) => id !== msId)
+            : [...w.mentorServiceIds, msId],
+        };
+      })
+    );
+  };
+
+  const handleSaveWeekly = async () => {
+    for (const w of weeklyWindows) {
+      if (w.mentorServiceIds.length === 0) {
+        toast.error("Each weekly time frame must have at least one service selected");
+        return;
+      }
+      if (w.endTime <= w.startTime) {
+        toast.error("End time must be after start time");
+        return;
+      }
+    }
+
+    setSavingWeekly(true);
+    try {
+      const res = await v2Api.replaceRecurringAvailability(weeklyWindows);
+      const updated = res?.data?.windows || [];
+      setWindows((prev) => [...prev.filter((w) => !w.dayOfWeek), ...updated]);
+      toast.success(
+        weeklyWindows.length === 0
+          ? "Weekly schedule cleared"
+          : "Weekly schedule saved"
+      );
+      setWeeklyOpen(false);
+    } catch (e) {
+      toast.error(e.message || "Failed to save weekly schedule");
+      loadData();
+    } finally {
+      setSavingWeekly(false);
     }
   };
 
@@ -376,6 +492,12 @@ export default function AvailabilityCalendar() {
             <p className="text-xs font-medium text-gray-400 mt-0.5">
               Click a date to set your availability
             </p>
+            <button
+              onClick={openWeekly}
+              className="mt-2 inline-flex items-center gap-1.5 rounded-lg border-2 border-black bg-white px-3 py-1.5 text-[11px] font-black text-[#5061E4] hover:bg-[#F8F8FF] active:translate-x-0.5 active:translate-y-0.5 transition-all"
+            >
+              <Repeat size={12} strokeWidth={3} /> Weekly Schedule
+            </button>
           </div>
           <button
             onClick={nextMonth}
@@ -410,8 +532,10 @@ export default function AvailabilityCalendar() {
             }
 
             const dateStr = formatLocalDate(date);
-            const slotCount = dateSlotCounts[dateStr] || 0;
+            const slotCount = slotCountForDate(date, dateStr);
             const hasSlots = slotCount > 0;
+            const recurring = isRecurringDate(date, dateStr);
+            const draggable = Boolean(dateSlotCounts[dateStr]);
             const past = isPastDate(date);
             const today = isToday(date);
 
@@ -420,8 +544,8 @@ export default function AvailabilityCalendar() {
                 key={dateStr}
                 onClick={() => openModal(date)}
                 disabled={past}
-                draggable={hasSlots && !past}
-                onDragStart={(e) => hasSlots && handleDragStart(e, dateStr)}
+                draggable={draggable && !past}
+                onDragStart={(e) => draggable && handleDragStart(e, dateStr)}
                 onDragOver={(e) => !past && handleDragOver(e, dateStr)}
                 onDragLeave={handleDragLeave}
                 onDragEnd={handleDragEnd}
@@ -445,6 +569,8 @@ export default function AvailabilityCalendar() {
                   className={`text-sm font-bold ${
                     today
                       ? "h-7 w-7 flex items-center justify-center rounded-full bg-[#F59E0B] text-white border-2 border-[#D97706]"
+                      : recurring
+                      ? "text-[#5061E4] font-black"
                       : hasSlots
                       ? "text-[#10B981] font-black"
                       : "text-gray-600"
@@ -453,16 +579,31 @@ export default function AvailabilityCalendar() {
                   {date.getDate()}
                 </span>
 
+                {/* Recurring marker — top right */}
+                {recurring && (
+                  <Repeat
+                    size={11}
+                    strokeWidth={3}
+                    className="absolute right-2 top-2.5 text-[#5061E4]"
+                  />
+                )}
+
                 {/* Slot indicators — bottom center */}
                 {hasSlots && (
                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-0.5">
                     {Array.from({ length: Math.min(slotCount, 3) }).map((_, i) => (
                       <span
                         key={i}
-                        className="h-1.5 w-1.5 rounded-full bg-[#10B981]"
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          recurring ? "bg-[#5061E4]" : "bg-[#10B981]"
+                        }`}
                       />
                     ))}
-                    <span className="text-[10px] font-bold text-[#10B981] ml-0.5">
+                    <span
+                      className={`text-[10px] font-bold ml-0.5 ${
+                        recurring ? "text-[#5061E4]" : "text-[#10B981]"
+                      }`}
+                    >
                       {slotCount} slot{slotCount > 1 ? "s" : ""}
                     </span>
                   </div>
@@ -491,6 +632,10 @@ export default function AvailabilityCalendar() {
             <span className="text-xs font-semibold text-gray-500">Has availability</span>
           </div>
           <div className="flex items-center gap-2">
+            <Repeat size={12} strokeWidth={3} className="text-[#5061E4]" />
+            <span className="text-xs font-semibold text-gray-500">From weekly schedule</span>
+          </div>
+          <div className="flex items-center gap-2">
             <Plus size={12} className="text-gray-400" />
             <span className="text-xs font-semibold text-gray-500">Hover to add</span>
           </div>
@@ -500,6 +645,180 @@ export default function AvailabilityCalendar() {
           </div>
         </div>
       </div>
+
+      {/* ── Weekly Schedule Modal ── */}
+      {weeklyOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setWeeklyOpen(false)}
+          />
+
+          <div
+            className="relative w-full max-w-[600px] max-h-[90vh] rounded-[24px] border-[3px] border-black bg-white flex flex-col overflow-hidden"
+            style={{ boxShadow: "6px 6px 0 0 #5061E4" }}
+          >
+            <div className="flex items-start justify-between px-7 pt-6 pb-4">
+              <div>
+                <h3 className="text-xl font-black text-black">Weekly Schedule</h3>
+                <p className="text-sm font-medium text-gray-500 mt-0.5">
+                  Repeats every week. A date you set individually overrides this.
+                </p>
+              </div>
+              <button
+                onClick={() => setWeeklyOpen(false)}
+                className="flex items-center justify-center h-9 w-9 rounded-full border-2 border-gray-200 hover:border-black transition-all"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-7 pb-4">
+              {weeklyWindows.length === 0 && (
+                <div className="rounded-2xl border-2 border-dashed border-gray-200 py-10 text-center">
+                  <Repeat size={22} className="mx-auto text-gray-300" />
+                  <p className="mt-2 text-sm font-bold text-gray-900">
+                    No weekly schedule yet
+                  </p>
+                  <p className="mt-1 text-xs font-medium text-gray-500">
+                    Add recurring hours so mentees can book without you setting each date.
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-5">
+                {weeklyWindows.map((w, idx) => (
+                  <div key={idx} className="rounded-2xl border-2 border-gray-200 p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-xs font-black uppercase tracking-widest text-gray-400">
+                        Recurring Slot {idx + 1}
+                      </span>
+                      <button
+                        onClick={() => removeWeeklyWindow(idx)}
+                        className="text-gray-300 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5 block">
+                        Day
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {DAYS_OF_WEEK.map((d) => (
+                          <button
+                            key={d.value}
+                            type="button"
+                            onClick={() => updateWeeklyWindow(idx, "dayOfWeek", d.value)}
+                            className={`rounded-lg border-2 px-3 py-1.5 text-[11px] font-black transition-all ${
+                              w.dayOfWeek === d.value
+                                ? "border-[#5061E4] bg-[#5061E4] text-white"
+                                : "border-gray-200 bg-white text-gray-500 hover:border-gray-400"
+                            }`}
+                          >
+                            {d.short}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-1">
+                        <label className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5 block">
+                          From
+                        </label>
+                        <select
+                          value={w.startTime}
+                          onChange={(e) => updateWeeklyWindow(idx, "startTime", e.target.value)}
+                          className="w-full rounded-xl border-[2.5px] border-black px-3 py-2.5 text-sm font-bold bg-white focus:outline-none focus:ring-4 focus:ring-[#5061E4]/10 appearance-none cursor-pointer"
+                        >
+                          {TIME_OPTIONS.map((o) => (
+                            <option key={o.value} value={o.value}>{o.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <span className="text-gray-300 mt-5 font-bold">→</span>
+                      <div className="flex-1">
+                        <label className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1.5 block">
+                          To
+                        </label>
+                        <select
+                          value={w.endTime}
+                          onChange={(e) => updateWeeklyWindow(idx, "endTime", e.target.value)}
+                          className="w-full rounded-xl border-[2.5px] border-black px-3 py-2.5 text-sm font-bold bg-white focus:outline-none focus:ring-4 focus:ring-[#5061E4]/10 appearance-none cursor-pointer"
+                        >
+                          {TIME_OPTIONS.map((o) => (
+                            <option key={o.value} value={o.value}>{o.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block">
+                        Services Offered During This Time
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {activeServices.map((ms) => {
+                          const isSelected = w.mentorServiceIds.includes(ms.id);
+                          return (
+                            <button
+                              key={ms.id}
+                              type="button"
+                              onClick={() => toggleWeeklyService(idx, ms.id)}
+                              className={`flex items-center gap-1.5 rounded-full border-2 px-3.5 py-1.5 text-xs font-bold transition-all ${
+                                isSelected
+                                  ? "border-[#10B981] bg-[#10B981] text-white shadow-sm"
+                                  : "border-gray-200 bg-white text-gray-500 hover:border-gray-400"
+                              }`}
+                            >
+                              {ms.title || ms.serviceName}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {activeServices.length === 0 && (
+                        <p className="text-xs text-red-500 font-medium mt-2">
+                          No active services. Create services first.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={addWeeklyWindow}
+                className="mt-4 w-full flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 py-3.5 text-sm font-bold text-[#5061E4] hover:border-[#5061E4] hover:bg-[#F8F8FF] transition-all"
+              >
+                <Plus size={16} strokeWidth={2.5} /> Add Recurring Slot
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3 px-7 py-5 border-t-2 border-gray-100">
+              <div className="flex items-center gap-3 ml-auto">
+                <button
+                  onClick={() => setWeeklyOpen(false)}
+                  disabled={savingWeekly}
+                  className="rounded-xl border-[3px] border-black bg-white px-6 py-2.5 text-sm font-black hover:bg-gray-50 disabled:opacity-50 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveWeekly}
+                  disabled={savingWeekly}
+                  className="flex items-center gap-2 rounded-xl border-[3px] border-black bg-[#5061E4] px-6 py-2.5 text-sm font-black text-white shadow-[3px_3px_0_0_#000] hover:opacity-90 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50 transition-all"
+                >
+                  {savingWeekly && <Loader2 size={14} className="animate-spin" />}
+                  Save Weekly Schedule
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Copy Confirmation Modal ── */}
       {copyModal.open && (

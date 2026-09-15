@@ -16,6 +16,16 @@ export const createBookingSchema = z.object({
   endTime: z.string().datetime({ message: 'End time must be an ISO datetime' }),
   purposeOfCall: z.string().max(1000).optional(),
   notes: z.string().max(2000).optional(),
+  menteePhone: z.string().min(10, 'Please enter a valid phone number').max(15).optional(),
+  menteeEmail: z.string().email('Invalid email address').optional(),
+  discussionTopic: z.string().max(1000).optional(),
+  specificQuestions: z.string().max(2000).optional(),
+  /// Redeem a session from a purchased bundle instead of paying at checkout
+  packagePurchaseId: z.string().uuid('Invalid package ID').optional(),
+  /// Resumes/SOPs the mentee attached for the mentor to read beforehand
+  sharedDocumentIds: z.array(z.string().uuid()).max(10).optional(),
+  /// Earlier session whose feedback the mentee chose to resurface
+  sharedFeedbackBookingId: z.string().uuid('Invalid booking ID').optional(),
 });
 
 // ─── Cancel Booking ──────────────────────────────────────────────────────────

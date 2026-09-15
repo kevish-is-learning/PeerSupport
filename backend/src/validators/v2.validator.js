@@ -7,6 +7,19 @@ const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 
 const VALID_DURATIONS = [15, 30, 45, 60];
 
+const dayOfWeekSchema = z.enum([
+  'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY',
+]);
+
+const endAfterStart = (w) => {
+  const [startH, startM] = w.startTime.split(':').map(Number);
+  const [endH, endM] = w.endTime.split(':').map(Number);
+  return endH * 60 + endM > startH * 60 + startM;
+};
+
+/** A window is either a one-off (specificDate) or recurring (dayOfWeek) — never both. */
+const exactlyOneRecurrenceKey = (w) => Boolean(w.specificDate) !== Boolean(w.dayOfWeek);
+
 // ─── PUT /mentor/services ────────────────────────────────────────────────────
 
 const serviceConfigSchema = z.object({
@@ -38,7 +51,9 @@ const windowSchema = z
   .object({
     specificDate: z
       .string()
-      .regex(datePattern, 'Date must be YYYY-MM-DD'),
+      .regex(datePattern, 'Date must be YYYY-MM-DD')
+      .optional(),
+    dayOfWeek: dayOfWeekSchema.optional(),
     startTime: z.string().regex(timePattern, 'Start time must be HH:mm'),
     endTime: z.string().regex(timePattern, 'End time must be HH:mm'),
     timezone: z.string().optional().default('Asia/Kolkata'),
@@ -46,14 +61,10 @@ const windowSchema = z
       .array(z.string().uuid())
       .min(1, 'Each window must offer at least one service'),
   })
-  .refine(
-    (w) => {
-      const [startH, startM] = w.startTime.split(':').map(Number);
-      const [endH, endM] = w.endTime.split(':').map(Number);
-      return endH * 60 + endM > startH * 60 + startM;
-    },
-    { message: 'End time must be after start time' }
-  );
+  .refine(endAfterStart, { message: 'End time must be after start time' })
+  .refine(exactlyOneRecurrenceKey, {
+    message: 'Provide either a specific date or a day of week, not both',
+  });
 
 export const upsertAvailabilitySchema = z.object({
   windows: z.array(windowSchema).min(1, 'At least one availability window is required'),
@@ -61,11 +72,13 @@ export const upsertAvailabilitySchema = z.object({
 
 // ─── POST/PATCH /mentor/availability/windows ───────────────────────────────
 
-const dateWindowSchema = z
+export const createAvailabilityWindowSchema = z
   .object({
     specificDate: z
       .string()
-      .regex(datePattern, 'Date must be YYYY-MM-DD'),
+      .regex(datePattern, 'Date must be YYYY-MM-DD')
+      .optional(),
+    dayOfWeek: dayOfWeekSchema.optional(),
     startTime: z.string().regex(timePattern, 'Start time must be HH:mm'),
     endTime: z.string().regex(timePattern, 'End time must be HH:mm'),
     timezone: z.string().optional().default('Asia/Kolkata'),
@@ -73,16 +86,10 @@ const dateWindowSchema = z
       .array(z.string().uuid())
       .min(1, 'Each window must offer at least one service'),
   })
-  .refine(
-    (w) => {
-      const [startH, startM] = w.startTime.split(':').map(Number);
-      const [endH, endM] = w.endTime.split(':').map(Number);
-      return endH * 60 + endM > startH * 60 + startM;
-    },
-    { message: 'End time must be after start time' }
-  );
-
-export const createAvailabilityWindowSchema = dateWindowSchema;
+  .refine(endAfterStart, { message: 'End time must be after start time' })
+  .refine(exactlyOneRecurrenceKey, {
+    message: 'Provide either a specific date or a day of week, not both',
+  });
 
 export const updateAvailabilityWindowSchema = z
   .object({
@@ -90,6 +97,7 @@ export const updateAvailabilityWindowSchema = z
       .string()
       .regex(datePattern, 'Date must be YYYY-MM-DD')
       .optional(),
+    dayOfWeek: dayOfWeekSchema.optional(),
     startTime: z.string().regex(timePattern, 'Start time must be HH:mm'),
     endTime: z.string().regex(timePattern, 'End time must be HH:mm'),
     timezone: z.string().optional().default('Asia/Kolkata'),
@@ -97,14 +105,30 @@ export const updateAvailabilityWindowSchema = z
       .array(z.string().uuid())
       .min(1, 'Each window must offer at least one service'),
   })
-  .refine(
-    (w) => {
-      const [startH, startM] = w.startTime.split(':').map(Number);
-      const [endH, endM] = w.endTime.split(':').map(Number);
-      return endH * 60 + endM > startH * 60 + startM;
-    },
-    { message: 'End time must be after start time' }
-  );
+  .refine(endAfterStart, { message: 'End time must be after start time' })
+  .refine((w) => !(w.specificDate && w.dayOfWeek), {
+    message: 'Provide either a specific date or a day of week, not both',
+  });
+
+// ─── PUT /mentor/availability/recurring ──────────────────────────────────────
+
+export const replaceRecurringWindowsSchema = z.object({
+  windows: z
+    .array(
+      z
+        .object({
+          dayOfWeek: dayOfWeekSchema,
+          startTime: z.string().regex(timePattern, 'Start time must be HH:mm'),
+          endTime: z.string().regex(timePattern, 'End time must be HH:mm'),
+          timezone: z.string().optional().default('Asia/Kolkata'),
+          mentorServiceIds: z
+            .array(z.string().uuid())
+            .min(1, 'Each window must offer at least one service'),
+        })
+        .refine(endAfterStart, { message: 'End time must be after start time' })
+    )
+    .default([]),
+});
 
 // ─── POST /bookings ──────────────────────────────────────────────────────────
 

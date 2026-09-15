@@ -15,7 +15,7 @@
 import { prisma } from '../../config/database.js';
 import { slotsQuerySchema, mentorIdParamSchema } from '../../validators/v2.validator.js';
 import { generateSlots } from '../../utils/slotGenerator.js';
-import { dateTimeToTimeString } from '../../utils/timeUtils.js';
+import { dateTimeToTimeString, getDayOfWeekFromDate } from '../../utils/timeUtils.js';
 import { istTimeAndDateToUtc, istToUtc, utcToIst } from '../../utils/timezoneUtils.js';
 
 const createServiceError = (statusCode, message) => {
@@ -62,19 +62,32 @@ class SlotQueryService {
     // 3. Normalize the requested date
     const requestedDate = new Date(date + 'T00:00:00.000Z');
 
-    // 4. Find matching availability windows for the specific date
-    const windows = await prisma.availabilityWindow.findMany({
-      where: {
-        mentorProfileId: validMentorId,
-        specificDate: requestedDate,
-        windowServices: {
-          some: {
-            mentorServiceId: mentorService.id,
-          },
-        },
-      },
+    // 4. Find matching availability windows.
+    //    A date-specific window overrides the weekly schedule for that date, so
+    //    the recurring fallback only applies when the date has no override at all.
+    const dateOverrides = await prisma.availabilityWindow.findMany({
+      where: { mentorProfileId: validMentorId, specificDate: requestedDate },
       orderBy: { startTime: 'asc' },
+      include: { windowServices: { select: { mentorServiceId: true } } },
     });
+
+    let windows;
+    if (dateOverrides.length > 0) {
+      windows = dateOverrides;
+    } else {
+      windows = await prisma.availabilityWindow.findMany({
+        where: {
+          mentorProfileId: validMentorId,
+          dayOfWeek: getDayOfWeekFromDate(requestedDate),
+        },
+        orderBy: { startTime: 'asc' },
+        include: { windowServices: { select: { mentorServiceId: true } } },
+      });
+    }
+
+    windows = windows.filter((w) =>
+      w.windowServices.some((ws) => ws.mentorServiceId === mentorService.id)
+    );
 
     if (windows.length === 0) {
       return {

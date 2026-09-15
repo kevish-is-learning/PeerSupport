@@ -288,6 +288,24 @@ export function sessionCompletedMentorEmail({ mentorName, menteeName, serviceNam
   };
 }
 
+export function feedbackSharedEmail({ menteeName, mentorName, serviceName, sessionDate, bookingId }) {
+  const body = message({
+    eyebrow: 'Session feedback', heading: 'Your mentor shared feedback',
+    intro: `Hi <strong>${safeText(menteeName, 'there')}</strong> — <strong>${safeText(mentorName, 'your mentor')}</strong> has written up feedback from your session. You can read it online or download it as a PDF.`,
+    children: `${detailCard([
+      row('Mentor', safeText(mentorName, 'Your mentor')), row('Session', safeText(serviceName, 'Mentoring session')),
+      row('Date', escapeHtml(formatDateIST(sessionDate))), row('Status', status('Feedback ready', 'blue'), true),
+    ])}
+    ${button(sessionPath('MENTEE'), 'View feedback')}
+    <p style="margin:14px 0 0;font:400 12px/18px Arial,sans-serif;color:#a1a1aa;">Booking ID: ${safeText(bookingId)}</p>`,
+  });
+  return {
+    subject: `${String(mentorName || 'Your mentor').trim()} shared feedback from your session`,
+    html: layout({ title: 'Session feedback', preheader: 'Your mentor has shared post-session feedback.', content: body }),
+    text: `${mentorName || 'Your mentor'} shared feedback from your session on ${formatDateIST(sessionDate)}. View it: ${safeUrl(sessionPath('MENTEE'))}`,
+  };
+}
+
 export function paymentReceiptEmail({ menteeName, mentorName, serviceName, amount, currency, paymentId, paidAt, bookingId, startTime }) {
   const amountLabel = formatCurrency(amount, currency || 'INR');
   const body = message({
