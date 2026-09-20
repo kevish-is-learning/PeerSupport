@@ -98,6 +98,12 @@ class GoogleCalendarService {
         eventId: createdEvent.id,
         meetLink,
         htmlLink: createdEvent.htmlLink,
+        // Google can silently drop an attendee (e.g. malformed address, a
+        // Workspace "domain restricted sharing" policy) even when the
+        // request itself succeeds — callers should verify every email they
+        // asked to invite actually made it into this list before treating
+        // the invite as delivered.
+        attendees: (createdEvent.attendees || []).map((a) => a.email).filter(Boolean),
       };
     } catch (err) {
       console.error('Google Calendar createEvent failed:', err.message, err.errors || '');
@@ -162,6 +168,7 @@ class GoogleCalendarService {
         eventId: updatedEvent.id,
         meetLink,
         htmlLink: updatedEvent.htmlLink,
+        attendees: (updatedEvent.attendees || []).map((a) => a.email).filter(Boolean),
       };
     } catch (err) {
       console.error('Google Calendar updateEvent failed:', err.message, err.errors || '');

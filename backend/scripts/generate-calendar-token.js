@@ -98,8 +98,14 @@ const server = http.createServer(async (req, res) => {
       process.exit(1);
     }
 
-    // Save tokens
+    // Save tokens locally (dev convenience)
     fs.writeFileSync(TOKEN_FILE, JSON.stringify(tokens, null, 2));
+
+    // Also produce a base64 blob for production: on any host where the
+    // filesystem doesn't survive redeploys/restarts (containers,
+    // serverless, most PaaS), paste this into a GOOGLE_CALENDAR_TOKEN_JSON
+    // env var / secret instead of relying on the local file.
+    const base64Token = Buffer.from(JSON.stringify(tokens)).toString('base64');
 
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(`
@@ -108,6 +114,7 @@ const server = http.createServer(async (req, res) => {
           <div style="text-align: center;">
             <h1>✅ Google Calendar Authorized!</h1>
             <p>Refresh token saved to <code>${TOKEN_FILE}</code></p>
+            <p>Check your terminal for a production env var value.</p>
             <p>You can close this tab.</p>
           </div>
         </body>
@@ -115,8 +122,10 @@ const server = http.createServer(async (req, res) => {
     `);
 
     console.log('\n✅ Authorization successful!');
-    console.log(`   Refresh token saved to ${TOKEN_FILE}`);
-    console.log('\n   You can now restart your backend server.\n');
+    console.log(`   Refresh token saved to ${TOKEN_FILE} (for local dev)`);
+    console.log('\n   For production, set this env var instead (survives redeploys/restarts):\n');
+    console.log(`   GOOGLE_CALENDAR_TOKEN_JSON=${base64Token}`);
+    console.log('\n   Restart the backend after setting it — see backend/src/config/googleCalendar.js for details.\n');
 
     server.close();
     process.exit(0);

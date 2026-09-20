@@ -17,6 +17,41 @@ const createServiceError = (statusCode, message) => {
   return error;
 };
 
+const emailsMatch = (a, b) =>
+  !!a && !!b && a.trim().toLowerCase() === b.trim().toLowerCase();
+
+const attendeesInclude = (attendees, email) =>
+  !!email && Array.isArray(attendees) && attendees.some((a) => emailsMatch(a, email));
+
+/**
+ * A "scheduled" call is only meaningful once the Meet link exists AND
+ * Google actually attached both parties as attendees on the event — an
+ * event can be created successfully (200 OK) while still dropping an
+ * attendee (bad address, a Workspace admin's "domain restricted sharing"
+ * policy, etc.), which would leave one side with no invite at all.
+ * Throws with a message identifying exactly which side is missing so the
+ * admin knows what to fix instead of a generic failure.
+ */
+const assertMeetingReachesBothParties = (googleEventData, { mentorEmail, adminEmail }, action) => {
+  if (!googleEventData || !googleEventData.meetLink) {
+    throw createServiceError(
+      502,
+      `Could not ${action} the call: Google Calendar did not return a Meet link. No changes were saved — contact an engineer to check the Google Calendar integration.`
+    );
+  }
+
+  const missing = [];
+  if (!attendeesInclude(googleEventData.attendees, mentorEmail)) missing.push(`the mentor (${mentorEmail || 'no email on file'})`);
+  if (!attendeesInclude(googleEventData.attendees, adminEmail)) missing.push(`the scheduling admin (${adminEmail || 'no email on file'})`);
+
+  if (missing.length) {
+    throw createServiceError(
+      502,
+      `Could not ${action} the call: Google Calendar did not confirm the invite reached ${missing.join(' and ')}. No changes were saved — double-check the email address and try again.`
+    );
+  }
+};
+
 const callInclude = {
   mentorProfile: {
     include: {
@@ -111,7 +146,16 @@ class MentorVerificationService {
     const adminEmail = admin?.email;
     const mentorName = mentorProfile.user?.name || 'Mentor';
 
-    let googleEventData = null;
+    // Both parties must have a real email before we even try — otherwise
+    // Google will "succeed" while quietly inviting only one side.
+    if (!mentorEmail) {
+      throw createServiceError(400, 'Cannot schedule the call: this mentor has no email on file.');
+    }
+    if (!adminEmail) {
+      throw createServiceError(500, 'Cannot schedule the call: could not determine the scheduling admin\'s email.');
+    }
+
+    let googleEventData;
     try {
       googleEventData = await googleCalendarService.createEvent({
         summary: `PeerSupport Verification Call — ${mentorName}`,
@@ -127,8 +171,19 @@ class MentorVerificationService {
       });
     } catch (err) {
       console.error('Google Calendar event creation failed:', err.message);
-      // Continue without Google Calendar — the call record is still created
+      throw createServiceError(
+        502,
+        `Could not schedule the call: Google Calendar rejected the request (${err.message}). No call was scheduled — please try again.`
+      );
     }
+
+    // createEvent() returns null (rather than throwing) when Google Calendar
+    // isn't configured at all — fail loudly here instead of silently
+    // creating a call record with no Meet link, which would look like
+    // success to the admin while the mentor never receives an invite.
+    // Also verify the Meet link AND that both parties were actually
+    // attached as attendees, not just that the API call returned 200.
+    assertMeetingReachesBothParties(googleEventData, { mentorEmail, adminEmail }, 'schedule');
 
     // 7. Create database record
     const call = await prisma.mentorVerificationCall.create({
@@ -208,25 +263,44 @@ class MentorVerificationService {
       throw createServiceError(409, 'Mentor already has another overlapping scheduled call');
     }
 
-    // 4. Update Google Calendar event (if one exists)
+    // 4. Update Google Calendar event
     const mentorName = existingCall.mentorProfile?.user?.name || 'Mentor';
-    let googleEventData = null;
+    const mentorEmail = existingCall.mentorProfile?.user?.email;
+    const adminEmail = existingCall.scheduledBy?.email;
 
-    if (existingCall.googleEventId) {
-      try {
-        googleEventData = await googleCalendarService.updateEvent(existingCall.googleEventId, {
-          summary: `PeerSupport Verification Call — ${mentorName} (Rescheduled)`,
-          description: [
-            `Rescheduled Mentor Verification Call with ${mentorName}`,
-            notes ? `\nNotes: ${notes}` : '',
-          ].filter(Boolean).join('\n'),
-          startTime: startDate,
-          endTime: endDate,
-        });
-      } catch (err) {
-        console.error('Google Calendar event update failed:', err.message);
-      }
+    // A call without an underlying Google event (e.g. a legacy row from
+    // before this check existed) can't be rescheduled in place — patching
+    // nothing would leave both parties' calendars showing the stale time.
+    // Cancel it and have the admin schedule a fresh call instead.
+    if (!existingCall.googleEventId) {
+      throw createServiceError(
+        409,
+        'Could not reschedule the call: it has no linked Google Calendar event, so there is nothing to update. Cancel this call and schedule a new one instead.'
+      );
     }
+
+    let googleEventData;
+    try {
+      googleEventData = await googleCalendarService.updateEvent(existingCall.googleEventId, {
+        summary: `PeerSupport Verification Call — ${mentorName} (Rescheduled)`,
+        description: [
+          `Rescheduled Mentor Verification Call with ${mentorName}`,
+          notes ? `\nNotes: ${notes}` : '',
+        ].filter(Boolean).join('\n'),
+        startTime: startDate,
+        endTime: endDate,
+      });
+    } catch (err) {
+      console.error('Google Calendar event update failed:', err.message);
+      throw createServiceError(
+        502,
+        `Could not reschedule the call: Google Calendar rejected the update (${err.message}). The call was not rescheduled — please try again.`
+      );
+    }
+
+    // Same "both parties confirmed" guard as scheduling — a patch can
+    // succeed while Google quietly drops an attendee.
+    assertMeetingReachesBothParties(googleEventData, { mentorEmail, adminEmail }, 'reschedule');
 
     // 5. Transaction: mark old as RESCHEDULED, create new record
     const [, newCall] = await prisma.$transaction([
