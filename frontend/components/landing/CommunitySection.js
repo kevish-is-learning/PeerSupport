@@ -50,7 +50,7 @@ function StackedCommunityCards() {
       <div className="relative h-[280px] w-[260px] xs:h-[300px] xs:w-[280px] sm:h-[320px] sm:w-[300px]">
         {/* Back — blue */}
         <div
-          className="absolute left-[40px] xs:left-[52px] top-[24px] xs:top-[28px] h-[230px] xs:h-[248px] w-[185px] xs:w-[200px] rotate-10 rounded-[22px] border-2 sm:border-[3px] border-[#1f2937] bg-white shadow-[4px_4px_0_0_#1f2937] sm:shadow-[5px_5px_0_0_#1f2937]"
+          className="absolute left-[40px] xs:left-[52px] top-[24px] xs:top-[28px] h-[230px] xs:h-[248px] w-[185px] xs:w-[200px] rotate-10 rounded-[22px] border-2 sm:border-[3px] border-[#1f2937] bg-white shadow-[3px_3px_0_0_#1f2937] sm:shadow-[3px_3px_0_0_#1f2937]"
           style={{ zIndex: 1 }}
         >
           <div className="p-4 xs:p-5">
@@ -65,7 +65,7 @@ function StackedCommunityCards() {
 
         {/* Middle — orange */}
         <div
-          className="absolute left-[20px] xs:left-[28px] top-[12px] xs:top-[14px] h-[230px] xs:h-[248px] w-[185px] xs:w-[200px] rotate-[5deg] rounded-[22px] border-2 sm:border-[3px] border-[#1f2937] bg-white shadow-[4px_4px_0_0_#1f2937] sm:shadow-[5px_5px_0_0_#1f2937]"
+          className="absolute left-[20px] xs:left-[28px] top-[12px] xs:top-[14px] h-[230px] xs:h-[248px] w-[185px] xs:w-[200px] rotate-[5deg] rounded-[22px] border-2 sm:border-[3px] border-[#1f2937] bg-white shadow-[3px_3px_0_0_#1f2937] sm:shadow-[3px_3px_0_0_#1f2937]"
           style={{ zIndex: 2 }}
         >
           <div className="p-4 xs:p-5">
@@ -80,7 +80,7 @@ function StackedCommunityCards() {
 
         {/* Front — red */}
         <div
-          className="absolute left-0 top-0 flex h-[230px] xs:h-[248px] w-[185px] xs:w-[200px] flex-col rounded-[22px] border-2 sm:border-[3px] border-[#1f2937] bg-white p-4 xs:p-5 shadow-[4px_4px_0_0_#1f2937] sm:shadow-[6px_6px_0_0_#1f2937]"
+          className="absolute left-0 top-0 flex h-[230px] xs:h-[248px] w-[185px] xs:w-[200px] flex-col rounded-[22px] border-2 sm:border-[3px] border-[#1f2937] bg-white p-4 xs:p-5 shadow-[3px_3px_0_0_#1f2937] sm:shadow-[3px_3px_0_0_#1f2937]"
           style={{ zIndex: 3 }}
         >
           <div className="relative">
@@ -95,10 +95,10 @@ function StackedCommunityCards() {
             <div className="h-2 w-[55%] rounded-full bg-neutral-100" />
           </div>
           <div className="mt-auto flex flex-wrap gap-1.5 xs:gap-2 pt-2 xs:pt-3">
-            <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#FFB800] px-2 py-0.5 text-[9px] xs:text-[10px] font-extrabold text-[#1f2937] shadow-[2px_2px_0_0_#1f2937]">
+            <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#FFB800] px-2 py-0.5 text-[9px] xs:text-[10px] font-extrabold text-[#1f2937] shadow-[3px_3px_0_0_#1f2937]">
               👍24
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#E53E3E] px-2 py-0.5 text-[9px] xs:text-[10px] font-extrabold text-white shadow-[2px_2px_0_0_#1f2937]">
+            <span className="inline-flex items-center gap-1 rounded-full border-2 border-[#1f2937] bg-[#E53E3E] px-2 py-0.5 text-[9px] xs:text-[10px] font-extrabold text-white shadow-[3px_3px_0_0_#1f2937]">
               💬12
             </span>
           </div>
@@ -136,7 +136,7 @@ export default function CommunitySection() {
           <ul className="mt-6 sm:mt-8 space-y-3.5 sm:space-y-4">
             {features.map(({ icon: Icon, label }) => (
               <li key={label} className="flex items-start gap-3">
-                <span className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg border-2 sm:border-[3px] border-[#1f2937] bg-[#F59E0B] shadow-[2px_2px_0_0_#1f2937] sm:shadow-[3px_3px_0_0_#1f2937]">
+                <span className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg border-2 sm:border-[3px] border-[#1f2937] bg-[#F59E0B] shadow-[3px_3px_0_0_#1f2937] sm:shadow-[3px_3px_0_0_#1f2937]">
                   <Icon size={16} className="text-white" strokeWidth={2.5} aria-hidden />
                 </span>
                 <span className="pt-1 text-xs xs:text-sm sm:text-[0.95rem] font-semibold leading-snug text-white">{label}</span>

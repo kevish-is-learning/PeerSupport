@@ -537,12 +537,11 @@ export default function MentorOnboardingWizard({
       </div>
 
       {/* ── Stepper Header (Minimal & Fully Responsive) ── */}
-      <div className="bg-white border-2 border-black rounded-xl sm:rounded-2xl p-3 sm:p-5 mb-5 shadow-[3px_3px_0_#FFB705] sm:shadow-[5px_5px_0_#FFB705]">
+      <div className="bg-white border-2 border-black rounded-xl sm:rounded-2xl p-3 sm:p-5 mb-5 shadow-[3px_3px_0_#FFB705] sm:shadow-[3px_3px_0_#FFB705]">
         <div className="flex w-full items-center justify-between">
           {STEPS.map((step, idx) => {
             const isActive = step.id === currentStep;
-            const isCompleted =
-              !isActive && (step.id < currentStep || validateStep(step.id, false));
+            const isCompleted = !isActive && step.id < currentStep;
 
             return (
               <React.Fragment key={step.id}>
@@ -588,9 +587,7 @@ export default function MentorOnboardingWizard({
                   <div className="flex-1 h-[2px] mx-1 xs:mx-1.5 sm:mx-3 relative top-[-10px] sm:top-[-12px] min-w-[6px]">
                     <div
                       className={`h-full w-full transition-colors duration-300 ${
-                        step.id < currentStep || validateStep(step.id, false)
-                          ? "bg-black"
-                          : "bg-gray-200"
+                        step.id < currentStep ? "bg-black" : "bg-gray-200"
                       }`}
                     />
                   </div>
@@ -602,7 +599,7 @@ export default function MentorOnboardingWizard({
       </div>
 
       {/* ── Form Content Card ── */}
-      <div className="bg-white border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-7 shadow-[4px_4px_0_#4f46e5] sm:shadow-[6px_6px_0_rgba(79,70,229,0.8)] min-h-[380px] flex flex-col justify-between">
+      <div className="bg-white border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-7 shadow-[3px_3px_0_#4f46e5] sm:shadow-[3px_3px_0_rgba(79,70,229,0.8)] min-h-[380px] flex flex-col justify-between">
         <div>
           {/* Step Title Header */}
           <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-gray-100">
@@ -649,7 +646,7 @@ export default function MentorOnboardingWizard({
                     />
                     <label
                       htmlFor="profilePhoto"
-                      className="cursor-pointer inline-flex items-center bg-[#FFB705] border-2 border-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-black hover:bg-[#e6a504] transition-colors shadow-[2px_2px_0_#1a1a1a]"
+                      className="cursor-pointer inline-flex items-center bg-[#FFB705] border-2 border-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-black hover:bg-[#e6a504] transition-colors shadow-[3px_3px_0_#1a1a1a]"
                     >
                       <Upload className="w-3.5 h-3.5 mr-1.5" />
                       {files.profilePhoto ? "Change Photo" : "Upload Photo"}
@@ -808,12 +805,12 @@ export default function MentorOnboardingWizard({
                   College document for verification <span className="font-normal text-gray-400">(optional)</span>
                 </label>
                 <p className="mt-0.5 text-[11px] text-gray-500">
-                  Upload student ID, degree, or marksheet (JPG, PNG, WEBP).
+                  Upload student ID, degree, or marksheet (JPG, PNG, WEBP, PDF, DOC, DOCX).
                 </p>
                 <input
                   type="file"
                   name="collegeDocument"
-                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   onChange={handleFileChange}
                   className="mt-2 block w-full text-xs"
                 />
@@ -1019,7 +1016,7 @@ export default function MentorOnboardingWizard({
                         onClick={() => handleExpertiseToggle(opt)}
                         className={`px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold border-2 transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-[#5f6cf3] text-white border-black shadow-[2px_2px_0_#1a1a1a]"
+                            ? "bg-[#5f6cf3] text-white border-black shadow-[3px_3px_0_#1a1a1a]"
                             : "bg-white text-gray-700 border-gray-200 hover:border-black"
                         }`}
                       >

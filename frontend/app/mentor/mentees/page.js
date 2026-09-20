@@ -115,7 +115,7 @@ export default function MyMenteesPage() {
   if (mentees.length === 0) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center bg-[#FFF7F5] p-8 text-center">
-        <div className="rounded-2xl border-4 border-black bg-white p-12 shadow-[8px_8px_0_0_#000]">
+        <div className="rounded-2xl border-4 border-black bg-white p-12 shadow-[3px_3px_0_0_#000]">
           <Users size={64} className="mx-auto mb-6 text-[#5061E4]" />
           <h2 className="text-2xl font-black text-black">No Mentees Yet</h2>
           <p className="mt-4 max-w-xs font-bold text-gray-500">
@@ -159,10 +159,10 @@ export default function MyMenteesPage() {
                     <img
                       src={resolveUploadUrl(mentee.profilePicture)}
                       alt={mentee.name}
-                      className="w-12 h-12 rounded-xl object-cover border-2 border-black shadow-[2px_2px_0_0_#000]"
+                      className="w-12 h-12 rounded-xl object-cover border-2 border-black shadow-[3px_3px_0_0_#000]"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-xl border-2 border-black bg-[#5061E4] shadow-[2px_2px_0_0_#000] flex items-center justify-center text-white font-bold">
+                    <div className="w-12 h-12 rounded-xl border-2 border-black bg-[#5061E4] shadow-[3px_3px_0_0_#000] flex items-center justify-center text-white font-bold">
                       {mentee.name.charAt(0)}
                     </div>
                   )}

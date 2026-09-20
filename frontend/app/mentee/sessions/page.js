@@ -140,7 +140,7 @@ function FeedbackModal({ session, onClose }) {
                 <button
                   onClick={handleDownload}
                   disabled={downloading}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-white py-2.5 text-xs font-extrabold text-gray-700 shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-white py-2.5 text-xs font-extrabold text-gray-700 shadow-[3px_3px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 disabled:opacity-50"
                 >
                   <Download className="h-3.5 w-3.5" />
                   {downloading ? "Preparing PDF…" : "Download as PDF"}
@@ -236,7 +236,7 @@ function SessionCard({ session, isUpcoming, onFeedbackClick, onSessionUpdated })
             <>
               <button
                 onClick={() => setExpanded(!expanded)}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black bg-white px-3 py-2 text-xs font-bold shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black bg-white px-3 py-2 text-xs font-bold shadow-[3px_3px_0px_0px_#1E1E1E] transition-all hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
               >
                 <FileText className="h-3.5 w-3.5" />
                 Details
@@ -244,7 +244,7 @@ function SessionCard({ session, isUpcoming, onFeedbackClick, onSessionUpdated })
               </button>
               <button
                 disabled={!canJoinSession(session.startTime, session.endTime)}
-                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black px-4 py-2 text-xs font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-all ${
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black px-4 py-2 text-xs font-bold text-white shadow-[3px_3px_0px_0px_#1E1E1E] transition-all ${
                   canJoinSession(session.startTime, session.endTime)
                     ? "bg-[#8B5CF6] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-none"
                     : "bg-gray-400 opacity-60 cursor-not-allowed"
@@ -262,7 +262,7 @@ function SessionCard({ session, isUpcoming, onFeedbackClick, onSessionUpdated })
             <>
               <button
                 onClick={() => setExpanded(!expanded)}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black bg-white px-3 py-2 text-xs font-bold shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black bg-white px-3 py-2 text-xs font-bold shadow-[3px_3px_0px_0px_#1E1E1E] transition-all hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
               >
                 <FileText className="h-3.5 w-3.5" />
                 Details
@@ -271,7 +271,7 @@ function SessionCard({ session, isUpcoming, onFeedbackClick, onSessionUpdated })
               {session.status === "COMPLETED" && (
                 <button
                   onClick={() => onFeedbackClick(session)}
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black bg-[#06B6D4] px-4 py-2 text-xs font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-none"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 rounded-xl border-2 border-black bg-[#06B6D4] px-4 py-2 text-xs font-bold text-white shadow-[3px_3px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-none"
                 >
                   <MessageSquare className="h-3.5 w-3.5" />
                   View Feedback
@@ -518,7 +518,7 @@ export default function MenteeSessionsPage() {
 
       <div className="grid gap-8">
         {/* Upcoming */}
-        <div className="relative rounded-2xl border-2 border-black bg-white shadow-[8px_8px_0px_0px_#8B5CF6]">
+        <div className="relative rounded-2xl border-2 border-black bg-white shadow-[3px_3px_0px_0px_#8B5CF6]">
           <div className="flex items-center justify-between border-b-2 border-black bg-[#F8EBE6] px-5 py-4 rounded-t-[14px]">
             <div className="flex items-center gap-3">
               <CalendarIcon className="h-5 w-5 text-gray-900" />
@@ -548,7 +548,7 @@ export default function MenteeSessionsPage() {
         </div>
 
         {/* Past */}
-        <div className="relative rounded-2xl border-2 border-black bg-white shadow-[8px_8px_0px_0px_#06B6D4]">
+        <div className="relative rounded-2xl border-2 border-black bg-white shadow-[3px_3px_0px_0px_#06B6D4]">
           <div className="flex items-center justify-between border-b-2 border-black bg-[#F8EBE6] px-5 py-4 rounded-t-[14px]">
             <div className="flex items-center gap-3">
               <Clock className="h-5 w-5 text-gray-900" />

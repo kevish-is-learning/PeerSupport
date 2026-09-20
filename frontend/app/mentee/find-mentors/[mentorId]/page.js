@@ -150,13 +150,13 @@ export default function MentorProfilePage() {
         {/* ── Back Button ── */}
         <Link
           href="/mentee/find-mentors"
-          className="mb-4 sm:mb-6 inline-flex items-center gap-2 rounded-xl border-2 border-black bg-white px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold text-gray-900 shadow-[2px_2px_0px_0px_#1E1E1E] transition hover:shadow-[4px_4px_0px_0px_#1E1E1E] no-underline cursor-pointer"
+          className="mb-4 sm:mb-6 inline-flex items-center gap-2 rounded-xl border-2 border-black bg-white px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold text-gray-900 shadow-[3px_3px_0px_0px_#1E1E1E] transition hover:shadow-[4px_4px_0px_0px_#1E1E1E] no-underline cursor-pointer"
         >
           <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Back to Explore
         </Link>
 
         {/* ══════════ HERO CARD ══════════ */}
-        <div className="rounded-2xl border-2 border-black bg-white shadow-[4px_4px_0px_0px_#C4B5FD] sm:shadow-[5px_5px_0px_0px_#C4B5FD] overflow-hidden">
+        <div className="rounded-2xl border-2 border-black bg-white shadow-[3px_3px_0px_0px_#C4B5FD] sm:shadow-[3px_3px_0px_0px_#C4B5FD] overflow-hidden">
           {/* Top: Avatar + Info + Book Button */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 p-4 sm:p-6 pb-4">
             <div className="flex flex-col xs:flex-row items-start xs:items-center gap-3.5 sm:gap-5 min-w-0 flex-1">
@@ -205,7 +205,7 @@ export default function MentorProfilePage() {
             {/* Book Session CTA */}
             <button
               onClick={scrollToBook}
-              className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 rounded-xl bg-[#7C3AED] px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold text-white transition-all hover:bg-[#6D28D9] shadow-[0_2px_8px_rgba(124,58,237,0.3)] cursor-pointer"
+              className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 rounded-xl bg-[#7C3AED] px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold text-white transition-all hover:bg-[#6D28D9] shadow-[3_3px_8px_rgba(124,58,237,0.3)] cursor-pointer"
             >
               <CalendarCheck className="h-4 w-4" /> Book Session
             </button>
@@ -250,7 +250,7 @@ export default function MentorProfilePage() {
           </div>
 
           {/* ── Reviews & Ratings ── */}
-          <div className="rounded-2xl border-2 border-black bg-white p-4 sm:p-5 shadow-[4px_4px_0px_0px_#FDBA74] sm:shadow-[5px_5px_0px_0px_#FDBA74] max-h-max min-w-0">
+          <div className="rounded-2xl border-2 border-black bg-white p-4 sm:p-5 shadow-[3px_3px_0px_0px_#FDBA74] sm:shadow-[3px_3px_0px_0px_#FDBA74] max-h-max min-w-0">
             <h2 className="mb-3 flex items-center gap-2 text-base sm:text-lg font-black text-gray-900">
               <Star className="h-4 w-4 sm:h-5 sm:w-5 fill-[#F59E0B] text-[#F59E0B]" /> Reviews & Ratings
             </h2>

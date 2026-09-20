@@ -10,12 +10,12 @@ const services = [
       "Connect with experienced mentors from top B-schools for personalized guidance and career advice.",
     iconBg: "#2563eb",
     iconColor: "#ffffff",
-    cardShadow: "shadow-[4px_4px_0_0_#2563eb] sm:shadow-[6px_6px_0_0_#2563eb]",
+    cardShadow: "shadow-[3px_3px_0_0_#2563eb] sm:shadow-[3px_3px_0_0_#2563eb]",
     cta: {
       label: "Find Your Mentor",
       href: "/mentee/find-mentors",
       className:
-        "inline-flex items-center gap-2 justify-center rounded-full bg-[#2563eb] px-5 py-2.5 text-xs sm:text-sm font-bold text-white transition-all hover:translate-x-px hover:translate-y-px shadow-[2px_2px_0_0_#1a1a1a]",
+        "inline-flex items-center gap-2 justify-center rounded-full bg-[#2563eb] px-5 py-2.5 text-xs sm:text-sm font-bold text-white transition-all hover:translate-x-px hover:translate-y-px shadow-[3px_3px_0_0_#1a1a1a]",
       arrowClass: "text-white"
     }
   },
@@ -26,12 +26,12 @@ const services = [
       "Join interactive GD sessions with peers and mentors to sharpen your communication and teamwork skills.",
     iconBg: "#F9C41A",
     iconColor: "#0d0d0f",
-    cardShadow: "shadow-[4px_4px_0_0_#F9C41A] sm:shadow-[6px_6px_0_0_#F9C41A]",
+    cardShadow: "shadow-[3px_3px_0_0_#F9C41A] sm:shadow-[3px_3px_0_0_#F9C41A]",
     cta: {
       label: "Join a Session",
       href: "/mentee/find-mentors",
       className:
-        "inline-flex items-center justify-center gap-2 rounded-full bg-[#F9C41A] px-5 py-2.5 text-xs sm:text-sm font-bold text-[#0d0d0f] transition-all hover:translate-x-px hover:translate-y-px shadow-[2px_2px_0_0_#1a1a1a]",
+        "inline-flex items-center justify-center gap-2 rounded-full bg-[#F9C41A] px-5 py-2.5 text-xs sm:text-sm font-bold text-[#0d0d0f] transition-all hover:translate-x-px hover:translate-y-px shadow-[3px_3px_0_0_#1a1a1a]",
       arrowClass: "text-[#0d0d0f]"
     }
   },
@@ -42,12 +42,12 @@ const services = [
       "Get real-time feedback through mock interviews and case study sessions to ace your B-school interviews.",
     iconBg: "#f97316",
     iconColor: "#ffffff",
-    cardShadow: "shadow-[4px_4px_0_0_#f97316] sm:shadow-[6px_6px_0_0_#f97316]",
+    cardShadow: "shadow-[3px_3px_0_0_#f97316] sm:shadow-[3px_3px_0_0_#f97316]",
     cta: {
       label: "Book Mock Interview",
       href: "/mentee/find-mentors",
       className:
-        "inline-flex items-center gap-2 justify-center rounded-full bg-[#f97316] px-5 py-2.5 text-xs sm:text-sm font-bold text-white transition-all hover:translate-x-px hover:translate-y-px shadow-[2px_2px_0_0_#1a1a1a]",
+        "inline-flex items-center gap-2 justify-center rounded-full bg-[#f97316] px-5 py-2.5 text-xs sm:text-sm font-bold text-white transition-all hover:translate-x-px hover:translate-y-px shadow-[3px_3px_0_0_#1a1a1a]",
       arrowClass: "text-white"
     }
   }
@@ -121,7 +121,7 @@ export default function CuratedServicesSection() {
           <div className="mt-8 sm:mt-14 flex justify-center">
             <Link
               href="/mentee/find-mentors"
-              className="inline-flex items-center gap-2 sm:gap-2.5 rounded-full border-2 sm:border-[2.5px] border-[#1a1a1a] bg-[#F9C41A] px-6 sm:px-8 py-3 sm:py-3.5 text-xs sm:text-[0.95rem] font-bold text-[#0d0d0f] shadow-[4px_4px_0_0_#1a1a1a] sm:shadow-[6px_6px_0_0_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#1a1a1a]"
+              className="inline-flex items-center gap-2 sm:gap-2.5 rounded-full border-2 sm:border-[2.5px] border-[#1a1a1a] bg-[#F9C41A] px-6 sm:px-8 py-3 sm:py-3.5 text-xs sm:text-[0.95rem] font-bold text-[#0d0d0f] shadow-[3px_3px_0_0_#1a1a1a] sm:shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#1a1a1a]"
             >
               <span>Explore All Services</span>
               <ArrowRight size={16} strokeWidth={2.5} className="text-[#0d0d0f]" />

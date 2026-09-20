@@ -9,7 +9,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 
 const StatCard = ({ icon: Icon, value, label, shadowColor }) => (
-  <article className={`rounded-2xl border-2 border-black bg-white p-6 shadow-[6px_6px_0px_0px_${shadowColor}]`}>
+  <article className={`rounded-2xl border-2 border-black bg-white p-6 shadow-[3px_3px_0px_0px_${shadowColor}]`}>
     <div className={`mb-3 inline-flex rounded-lg text-[${shadowColor}]`}>
       <Icon className="h-6 w-6" style={{ color: shadowColor }} />
     </div>
@@ -53,7 +53,7 @@ function UpcomingSessionCard({ session }) {
     </div>
     <button
       disabled={!canJoinSession(session.startTime, session.endTime)}
-      className={`rounded-xl border-2 border-[#1E1E1E] px-6 py-2 text-sm font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-all ${
+      className={`rounded-xl border-2 border-[#1E1E1E] px-6 py-2 text-sm font-bold text-white shadow-[3px_3px_0px_0px_#1E1E1E] transition-all ${
         canJoinSession(session.startTime, session.endTime)
           ? "bg-[#8B5CF6] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-[0px_0px_0px_0px_#1E1E1E]"
           : "bg-gray-400 opacity-60 cursor-not-allowed"
@@ -262,7 +262,7 @@ export default function MenteeDashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
         {/* Upcoming Sessions Section */}
-        <div className="relative rounded-2xl border-2 border-black bg-white shadow-[6px_6px_0px_0px_#8B5CF6]">
+        <div className="relative rounded-2xl border-2 border-black bg-white shadow-[3px_3px_0px_0px_#8B5CF6]">
           <div className="flex items-center gap-3 border-b-2 border-black bg-[#F8EBE6] px-5 py-4 rounded-t-[14px]">
             <Calendar className="h-5 w-5 text-gray-900" />
             <h3 className="text-lg font-bold text-gray-900">Upcoming Sessions</h3>
@@ -289,7 +289,7 @@ export default function MenteeDashboardPage() {
                 <p className="mt-1 text-sm text-gray-500">Book a session with a mentor to get started.</p>
                 <Link
                   href="/mentee/find-mentors"
-                  className="mt-4 rounded-xl border-2 border-black bg-white px-4 py-2 text-sm font-bold shadow-[2px_2px_0px_0px_#1E1E1E] transition-all hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
+                  className="mt-4 rounded-xl border-2 border-black bg-white px-4 py-2 text-sm font-bold shadow-[3px_3px_0px_0px_#1E1E1E] transition-all hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
                 >
                   Find a Mentor
                 </Link>
@@ -299,7 +299,7 @@ export default function MenteeDashboardPage() {
         </div>
 
         {/* Recommended Mentors Section */}
-        <div className="relative rounded-2xl border-2 border-black bg-white shadow-[6px_6px_0px_0px_#0EA5E9]">
+        <div className="relative rounded-2xl border-2 border-black bg-white shadow-[3px_3px_0px_0px_#0EA5E9]">
           <div className="flex items-center gap-3 border-b-2 border-black bg-[#F8EBE6] px-5 py-4 rounded-t-[14px]">
             <Star className="h-5 w-5 text-gray-900" />
             <h3 className="text-lg font-bold text-gray-900">Recommended</h3>

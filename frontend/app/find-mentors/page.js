@@ -41,7 +41,7 @@ function MentorCard({ mentor }) {
 
   return (
     <Link href={`/mentee/find-mentors/${mentor.id}`} className="block no-underline max-w-full min-w-0">
-      <div className="flex flex-col rounded-2xl border-2 border-black bg-white shadow-[4px_4px_0px_0px_#8B5CF6] transition-all hover:shadow-[6px_6px_0px_0px_#8B5CF6] hover:-translate-y-0.5 max-w-full overflow-hidden">
+      <div className="flex flex-col rounded-2xl border-2 border-black bg-white shadow-[3px_3px_0px_0px_#8B5CF6] transition-all hover:shadow-[6px_6px_0px_0px_#8B5CF6] hover:-translate-y-0.5 max-w-full overflow-hidden">
         {/* Header */}
         <div className="flex items-start justify-between gap-2.5 p-3.5 sm:p-5 pb-2.5 sm:pb-3 min-w-0">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
@@ -117,7 +117,7 @@ function MentorCard({ mentor }) {
 
         {/* CTA */}
         <div className="mt-3 sm:mt-4 px-3.5 sm:px-5 pb-3.5 sm:pb-5">
-          <div className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-[#4F46E5] py-2.5 sm:py-3 text-xs sm:text-sm font-extrabold text-white shadow-[2px_2px_0px_0px_#1E1E1E] sm:shadow-[3px_3px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-none">
+          <div className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-black bg-[#4F46E5] py-2.5 sm:py-3 text-xs sm:text-sm font-extrabold text-white shadow-[3px_3px_0px_0px_#1E1E1E] sm:shadow-[3px_3px_0px_0px_#1E1E1E] transition-all hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-none">
             📅 Book Session
           </div>
         </div>
@@ -269,7 +269,7 @@ export default function FindMentorsPage() {
       <header className="border-b-2 border-black bg-white sticky top-0 z-30">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3.5">
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-black bg-[#8B5CF6] text-sm font-black text-white shadow-[2px_2px_0px_0px_#1E1E1E]">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-black bg-[#8B5CF6] text-sm font-black text-white shadow-[3px_3px_0px_0px_#1E1E1E]">
               PS
             </div>
             <span className="text-base sm:text-lg font-extrabold tracking-tight text-gray-900">Peer Support</span>
@@ -283,13 +283,13 @@ export default function FindMentorsPage() {
           <div className="hidden sm:flex items-center gap-3">
             <Link
               href="/auth?mode=login"
-              className="rounded-xl border-2 border-black bg-white px-4 py-2 text-xs sm:text-sm font-bold text-gray-900 shadow-[2px_2px_0px_0px_#1E1E1E] transition hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
+              className="rounded-xl border-2 border-black bg-white px-4 py-2 text-xs sm:text-sm font-bold text-gray-900 shadow-[3px_3px_0px_0px_#1E1E1E] transition hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
             >
               Sign In
             </Link>
             <Link
               href="/auth?mode=register"
-              className="rounded-xl border-2 border-black bg-[#4F46E5] px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
+              className="rounded-xl border-2 border-black bg-[#4F46E5] px-4 py-2 text-xs sm:text-sm font-bold text-white shadow-[3px_3px_0px_0px_#1E1E1E] transition hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E]"
             >
               Book a Session
             </Link>
@@ -298,7 +298,7 @@ export default function FindMentorsPage() {
           <button
             type="button"
             onClick={() => setMobileNavOpen(!mobileNavOpen)}
-            className="flex sm:hidden h-9 w-9 items-center justify-center rounded-lg border-2 border-black bg-white text-black shadow-[2px_2px_0px_0px_#1E1E1E]"
+            className="flex sm:hidden h-9 w-9 items-center justify-center rounded-lg border-2 border-black bg-white text-black shadow-[3px_3px_0px_0px_#1E1E1E]"
             aria-label="Toggle menu"
           >
             {mobileNavOpen ? <X size={18} /> : <Menu size={18} />}
@@ -343,7 +343,7 @@ export default function FindMentorsPage() {
 
         {/* Search bar */}
         <div className="mx-auto mt-6 sm:mt-8 max-w-2xl">
-          <div className="flex items-center gap-2.5 sm:gap-3 rounded-full border-2 border-black bg-white px-4 sm:px-5 py-2.5 sm:py-3 shadow-[4px_4px_0px_0px_#1E1E1E]">
+          <div className="flex items-center gap-2.5 sm:gap-3 rounded-full border-2 border-black bg-white px-4 sm:px-5 py-2.5 sm:py-3 shadow-[3px_3px_0px_0px_#1E1E1E]">
             <Search className="h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-gray-400" />
             <input
               type="text"
@@ -366,7 +366,7 @@ export default function FindMentorsPage() {
         <div className="flex gap-8">
           {/* ── Desktop Sidebar filters ── */}
           <aside className="w-56 shrink-0 hidden lg:block">
-            <div className="rounded-2xl border-2 border-black bg-white p-5 shadow-[5px_5px_0px_0px_#1E1E1E] sticky top-24">
+            <div className="rounded-2xl border-2 border-black bg-white p-5 shadow-[3px_3px_0px_0px_#1E1E1E] sticky top-24">
               {filterContent}
             </div>
           </aside>
@@ -386,7 +386,7 @@ export default function FindMentorsPage() {
                 {filterContent}
                 <button
                   onClick={() => setFiltersOpen(false)}
-                  className="w-full mt-4 rounded-xl border-2 border-black bg-[#4F46E5] py-3 text-sm font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] cursor-pointer"
+                  className="w-full mt-4 rounded-xl border-2 border-black bg-[#4F46E5] py-3 text-sm font-bold text-white shadow-[3px_3px_0px_0px_#1E1E1E] cursor-pointer"
                 >
                   Apply Filters ({total} Mentors)
                 </button>
@@ -403,7 +403,7 @@ export default function FindMentorsPage() {
               </p>
               <div className="flex items-center gap-2 sm:gap-3">
                 <button
-                  className="flex items-center gap-1.5 rounded-xl border-2 border-black bg-white px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold shadow-[2px_2px_0px_0px_#1E1E1E] lg:hidden cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-xl border-2 border-black bg-white px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold shadow-[3px_3px_0px_0px_#1E1E1E] lg:hidden cursor-pointer"
                   onClick={() => setFiltersOpen(true)}
                 >
                   <Filter className="h-3.5 w-3.5" /> Filters
@@ -412,7 +412,7 @@ export default function FindMentorsPage() {
                   <select
                     value={sort}
                     onChange={(e) => setSort(e.target.value)}
-                    className="appearance-none rounded-xl border-2 border-black bg-white px-3 py-1.5 pr-7 sm:px-4 sm:py-2 sm:pr-8 text-xs sm:text-sm font-bold shadow-[2px_2px_0px_0px_#1E1E1E] focus:outline-none cursor-pointer"
+                    className="appearance-none rounded-xl border-2 border-black bg-white px-3 py-1.5 pr-7 sm:px-4 sm:py-2 sm:pr-8 text-xs sm:text-sm font-bold shadow-[3px_3px_0px_0px_#1E1E1E] focus:outline-none cursor-pointer"
                   >
                     <option value="rating">Highest Rated</option>
                     <option value="sessions">Most Sessions</option>
@@ -428,7 +428,7 @@ export default function FindMentorsPage() {
                 {[...Array(4)].map((_, i) => (
                   <div
                     key={i}
-                    className="h-60 sm:h-64 animate-pulse rounded-2xl border-2 border-black bg-gray-100 shadow-[4px_4px_0px_0px_#d1d5db]"
+                    className="h-60 sm:h-64 animate-pulse rounded-2xl border-2 border-black bg-gray-100 shadow-[3px_3px_0px_0px_#d1d5db]"
                   />
                 ))}
               </div>
@@ -445,13 +445,13 @@ export default function FindMentorsPage() {
 
             {/* Empty state */}
             {!isLoading && mentors.length === 0 && (
-              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-black bg-white py-12 sm:py-20 px-4 text-center shadow-[4px_4px_0px_0px_#1E1E1E]">
+              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-black bg-white py-12 sm:py-20 px-4 text-center shadow-[3px_3px_0px_0px_#1E1E1E]">
                 <span className="text-4xl sm:text-5xl">🔍</span>
                 <h3 className="mt-4 text-lg sm:text-xl font-extrabold text-gray-900">No mentors found</h3>
                 <p className="mt-2 text-xs sm:text-sm font-medium text-gray-500 max-w-sm">Try adjusting your filters or search terms.</p>
                 <button
                   onClick={clearFilters}
-                  className="mt-5 rounded-xl border-2 border-black bg-[#4F46E5] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] hover:-translate-y-0.5 transition cursor-pointer"
+                  className="mt-5 rounded-xl border-2 border-black bg-[#4F46E5] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-[3px_3px_0px_0px_#1E1E1E] hover:-translate-y-0.5 transition cursor-pointer"
                 >
                   Clear Filters
                 </button>

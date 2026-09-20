@@ -60,7 +60,7 @@ export default function MenteePublicProfilePage() {
   if (error || !menteeData) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#FAF5FF] p-8">
-        <div className="rounded-2xl border-4 border-black bg-white p-8 text-center shadow-[8px_8px_0_0_#000]">
+        <div className="rounded-2xl border-4 border-black bg-white p-8 text-center shadow-[3px_3px_0_0_#000]">
           <h2 className="mb-4 text-2xl font-black">Profile Not Found</h2>
           <p className="font-bold text-gray-500">{error || "This mentee hasn't set up their profile yet."}</p>
         </div>

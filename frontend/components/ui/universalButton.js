@@ -8,10 +8,10 @@ export default function UniversalButton({
   ...props
 }) {
   const variants = {
-    primary: "bg-[#5f6cf3] text-white shadow-[2px_2px_0_#1a1a1a] sm:shadow-[3px_3px_0_#1a1a1a] hover:bg-[#4f5de8]",
-    secondary: "bg-[#f3f0ee] text-[#343434] shadow-[2px_2px_0_#1a1a1a] sm:shadow-[3px_3px_0_#1a1a1a] hover:bg-[#e8e4e0]",
-    yellow: "bg-[#FFB705] text-black shadow-[2px_2px_0_#1a1a1a] sm:shadow-[3px_3px_0_#1a1a1a] hover:bg-[#e6a504]",
-    accent: "bg-[#2E2E2E] text-white shadow-[2px_2px_0_#FFB705] sm:shadow-[3px_3px_0_#FFB705] border-none hover:bg-black",
+    primary: "bg-[#5f6cf3] text-white shadow-[3px_3px_0_#1a1a1a] sm:shadow-[3px_3px_0_#1a1a1a] hover:bg-[#4f5de8]",
+    secondary: "bg-[#f3f0ee] text-[#343434] shadow-[3px_3px_0_#1a1a1a] sm:shadow-[3px_3px_0_#1a1a1a] hover:bg-[#e8e4e0]",
+    yellow: "bg-[#FFB705] text-black shadow-[3px_3px_0_#1a1a1a] sm:shadow-[3px_3px_0_#1a1a1a] hover:bg-[#e6a504]",
+    accent: "bg-[#2E2E2E] text-white shadow-[3px_3px_0_#FFB705] sm:shadow-[3px_3px_0_#FFB705] border-none hover:bg-black",
   };
 
   return (

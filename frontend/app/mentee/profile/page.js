@@ -448,7 +448,7 @@ export default function MenteeProfileSettingsPage() {
         {/* ═══════════ LEFT SIDEBAR ═══════════ */}
         <div className="space-y-6">
           {/* ── Profile Picture Card ── */}
-          <div className="relative rounded-2xl border-2 border-black bg-white p-6 shadow-[6px_6px_0px_0px_#8B5CF6]">
+          <div className="relative rounded-2xl border-2 border-black bg-white p-6 shadow-[3px_3px_0px_0px_#8B5CF6]">
             <h3 className="mb-4 text-base font-extrabold text-gray-900">
               Profile Picture
             </h3>
@@ -470,7 +470,7 @@ export default function MenteeProfileSettingsPage() {
                 {isEditing && (
                   <>
                     <label
-                      className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border-2 border-black bg-[#8B5CF6] text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] ${isSaving ? "opacity-50 pointer-events-none" : ""}`}
+                      className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border-2 border-black bg-[#8B5CF6] text-white shadow-[3px_3px_0px_0px_#1E1E1E] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] ${isSaving ? "opacity-50 pointer-events-none" : ""}`}
                     >
                       <Camera className="h-4 w-4" />
                       <input
@@ -493,7 +493,7 @@ export default function MenteeProfileSettingsPage() {
           </div>
 
           {/* ── Resume Card ── */}
-          <div className="relative rounded-2xl border-2 border-black bg-white p-6 shadow-[6px_6px_0px_0px_#06B6D4]">
+          <div className="relative rounded-2xl border-2 border-black bg-white p-6 shadow-[3px_3px_0px_0px_#06B6D4]">
             <h3 className="mb-4 text-base font-extrabold text-gray-900">
               Resume
             </h3>
@@ -535,7 +535,7 @@ export default function MenteeProfileSettingsPage() {
 
               <div className="flex gap-2">
                 <button
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border-2 border-black bg-white py-2 text-xs font-bold text-gray-900 shadow-[2px_2px_0px_0px_#1E1E1E] transition-transform active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] disabled:opacity-50"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border-2 border-black bg-white py-2 text-xs font-bold text-gray-900 shadow-[3px_3px_0px_0px_#1E1E1E] transition-transform active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] disabled:opacity-50"
                   onClick={() => {
                     if (profileData?.resumeUrl) {
                       window.open(
@@ -551,7 +551,7 @@ export default function MenteeProfileSettingsPage() {
                   <Download className="h-3.5 w-3.5" /> Download
                 </button>
                 <button
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border-2 border-black bg-[#06B6D4] py-2 text-xs font-bold text-white shadow-[2px_2px_0px_0px_#1E1E1E] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-[0px_0px_0px_0px_#1E1E1E]"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border-2 border-black bg-[#06B6D4] py-2 text-xs font-bold text-white shadow-[3px_3px_0px_0px_#1E1E1E] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-0 active:shadow-[0px_0px_0px_0px_#1E1E1E]"
                   onClick={() => resumeInputRef.current?.click()}
                 >
                   <RefreshCw className="h-3.5 w-3.5" /> Replace
@@ -588,7 +588,7 @@ export default function MenteeProfileSettingsPage() {
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex items-center gap-2 rounded-xl border-2 border-black bg-[#8B5CF6] px-5 py-2 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50 shadow-[2px_2px_0px_0px_#1E1E1E] active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] transition-all"
+                    className="flex items-center gap-2 rounded-xl border-2 border-black bg-[#8B5CF6] px-5 py-2 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50 shadow-[3px_3px_0px_0px_#1E1E1E] active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] transition-all"
                   >
                     {isSaving ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -601,7 +601,7 @@ export default function MenteeProfileSettingsPage() {
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 rounded-xl border-2 border-black bg-[#8B5CF6] px-5 py-2 text-xs font-bold text-white hover:opacity-90 shadow-[2px_2px_0px_0px_#1E1E1E] active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] transition-all"
+                  className="flex items-center gap-2 rounded-xl border-2 border-black bg-[#8B5CF6] px-5 py-2 text-xs font-bold text-white hover:opacity-90 shadow-[3px_3px_0px_0px_#1E1E1E] active:translate-y-0.5 active:shadow-[0px_0px_0px_0px_#1E1E1E] transition-all"
                 >
                   Edit Profile <Edit2 className="h-3.5 w-3.5" />
                 </button>

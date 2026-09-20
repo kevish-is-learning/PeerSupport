@@ -85,7 +85,7 @@ const bSchools = [
 function BrandMark() {
   return (
     <div
-      className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-lg border-2 border-black/80 bg-[#F9C41A] shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]"
+      className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-lg border-2 border-black/80 bg-[#F9C41A] shadow-[3px_3px_0px_0px_rgba(255,255,255,0.2)]"
       aria-hidden="true"
     >
       <span className="text-[0.95rem] font-extrabold leading-none tracking-tight text-[#0d0d0f]">PS</span>

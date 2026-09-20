@@ -27,7 +27,7 @@ function formatDate(date) {
 function StepIndicator({ current }) {
   const steps = ["Session Details", "Your Information", "Payment"];
   return (
-    <div className="flex items-center justify-center gap-0 py-6 px-4 bg-white border-2 border-black rounded-2xl shadow-[5px_5px_0px_0px_#FDBA74] ">
+    <div className="flex items-center justify-center gap-0 py-6 px-4 bg-white border-2 border-black rounded-2xl shadow-[3px_3px_0px_0px_#FDBA74] ">
       {steps.map((label, i) => {
         const stepNum = i + 1;
         const done = current > stepNum;
@@ -449,7 +449,7 @@ export default function BookingWizard({ mentor, service, date, slot, onBack, onB
       <StepIndicator current={step} />
 
       {/* Step Content */}
-      <div className="rounded-2xl border-2 border-black bg-white p-6 shadow-[5px_5px_0px_0px_#5061E4]">
+      <div className="rounded-2xl border-2 border-black bg-white p-6 shadow-[3px_3px_0px_0px_#5061E4]">
         {step === 1 && <Step1 form={form} setForm={setForm} />}
         {step === 2 && <Step2 form={form} setForm={setForm} service={service} date={date} slot={slot} />}
         {step === 3 && (

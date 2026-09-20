@@ -6,7 +6,7 @@ import useAuthStore from "../../store/useAuthStore";
 import PillButton from "../ui/PillButton";
 
 const outlineBtn =
-  "inline-flex h-10 sm:h-11 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-white px-4 sm:px-5 text-xs sm:text-sm font-bold text-[#0d0d0f] transition-colors hover:bg-neutral-50 shadow-[2px_2px_0px_0px_#1a1a1a]";
+  "inline-flex h-10 sm:h-11 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-white px-4 sm:px-5 text-xs sm:text-sm font-bold text-[#0d0d0f] transition-colors hover:bg-neutral-50 shadow-[3px_3px_0px_0px_#1a1a1a]";
 
 export default function HeaderAuthButton() {
   const { user, hasCheckedSession, fetchCurrentUser } = useAuthStore();

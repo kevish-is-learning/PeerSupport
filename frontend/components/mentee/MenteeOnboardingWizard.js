@@ -382,7 +382,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
                  />
                  <Upload className="h-8 w-8 text-gray-400 mb-3" />
                  <p className="text-sm font-medium text-gray-500">Drag and drop your resume here, or click to browse</p>
-                 <div className="mt-4 px-6 py-2 bg-[#FABE28] text-black border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-sm font-bold rounded-lg pointer-events-none">
+                 <div className="mt-4 px-6 py-2 bg-[#FABE28] text-black border border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-sm font-bold rounded-lg pointer-events-none">
                     {resumeFile || existingProfile?.resumeUrl ? "Replace File" : "Choose File"}
                  </div>
                  <p className="text-[10px] text-gray-400 mt-4">Accepted formats: PDF, DOC, DOCX (Max 5MB)</p>
@@ -396,7 +396,7 @@ export default function MenteeOnboardingWizard({ existingProfile, onComplete }) 
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="flex items-center gap-2 bg-[#8B5CF6] text-white px-8 py-3 rounded-xl font-bold text-sm border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 bg-[#8B5CF6] text-white px-8 py-3 rounded-xl font-bold text-sm border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Saving..." : "Complete Onboarding"}
             {!isSubmitting && <ChevronRight className="h-4 w-4" />}

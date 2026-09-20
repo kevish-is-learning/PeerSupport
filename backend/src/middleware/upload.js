@@ -22,22 +22,47 @@ const createUploader = (allowedMimeTypes, errorMessage) =>
     },
   });
 
-const mentorUpload = createUploader(
-  new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']),
-  'Only JPG, PNG, WEBP, and HEIC image uploads are allowed'
+const createFieldAwareUploader = (mimeTypesByField, errorMessage) =>
+  multer({
+    storage: memoryStorage,
+    fileFilter: (_req, file, callback) => {
+      const allowedMimeTypes = mimeTypesByField[file.fieldname];
+      if (!allowedMimeTypes || !allowedMimeTypes.has(file.mimetype)) {
+        callback(new Error(errorMessage));
+        return;
+      }
+      callback(null, true);
+    },
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10 MB
+    },
+  });
+
+const IMAGE_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/heic',
+  'image/heif',
+]);
+
+const DOCUMENT_MIME_TYPES = new Set([
+  ...IMAGE_MIME_TYPES,
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+]);
+
+const mentorUpload = createFieldAwareUploader(
+  {
+    profilePhoto: IMAGE_MIME_TYPES,
+    collegeDocument: DOCUMENT_MIME_TYPES,
+  },
+  'Only JPG, PNG, WEBP, HEIC images (for profile photo) or PDF, DOC, DOCX files (for college document) are allowed'
 );
 
 const menteeUpload = createUploader(
-  new Set([
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/heic',
-    'image/heif',
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  ]),
+  DOCUMENT_MIME_TYPES,
   'Only JPG, PNG, WEBP, HEIC images (for profile photo) or PDF, DOC, DOCX files (for resume) are allowed'
 );
 

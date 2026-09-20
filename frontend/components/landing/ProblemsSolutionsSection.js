@@ -204,9 +204,9 @@ export default function ProblemsSolutionsSection() {
 
         {/* Desktop Circular Ring */}
         <div className="mt-12 hidden md:flex flex-col items-center gap-8">
-          <HighlightPill text="Problems" variant="orange" className="border-2 border-[#1f2937] font-bold shadow-[4px_4px_0_0_#1f2937]" />
+          <HighlightPill text="Problems" variant="orange" className="border-2 border-[#1f2937] font-bold shadow-[3px_3px_0_0_#1f2937]" />
           <JourneyRing />
-          <HighlightPill text="Solutions" variant="blue" className="border-2 border-[#1f2937] font-bold shadow-[4px_4px_0_0_#1f2937]" />
+          <HighlightPill text="Solutions" variant="blue" className="border-2 border-[#1f2937] font-bold shadow-[3px_3px_0_0_#1f2937]" />
         </div>
 
         {/* Mobile Responsive Stacked Cards */}

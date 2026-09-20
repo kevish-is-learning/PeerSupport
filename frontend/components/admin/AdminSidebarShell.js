@@ -93,7 +93,7 @@ export default function AdminSidebarShell({ children }) {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_12%_15%,#2d3352_0%,#151b2b_45%,#0b101a_100%)] p-3 text-[#f4f5f8] sm:p-6">
       <div className="mx-auto grid w-full gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-6">
-        <aside className="rounded-[1.75rem] border border-white/30 bg-[#171d2c] p-4 shadow-[0_14px_45px_rgba(0,0,0,0.4)] sm:p-5 lg:min-h-[calc(100vh-3rem)] lg:sticky lg:top-6">
+        <aside className="rounded-[1.75rem] border border-white/30 bg-[#171d2c] p-4 shadow-[3_3px_45px_rgba(0,0,0,0.4)] sm:p-5 lg:min-h-[calc(100vh-3rem)] lg:sticky lg:top-6">
           <div className="border-b border-white/15 pb-4">
             <p className="text-[0.7rem] uppercase tracking-[0.2em] text-white/60">Admin Console</p>
             <h1 className="mt-1 text-xl font-bold">Control Center</h1>
@@ -128,7 +128,7 @@ export default function AdminSidebarShell({ children }) {
           </button>
         </aside>
 
-        <section className="rounded-[1.75rem] border border-black/10 bg-[#f8f7f3] p-4 text-[#0d1117] shadow-[0_16px_45px_rgba(0,0,0,0.2)] sm:p-6 lg:p-7">
+        <section className="rounded-[1.75rem] border border-black/10 bg-[#f8f7f3] p-4 text-[#0d1117] shadow-[3_3px_45px_rgba(0,0,0,0.2)] sm:p-6 lg:p-7">
           <header className="rounded-2xl border border-black/10 bg-white px-4 py-3">
             <p className="text-xs uppercase tracking-[0.16em] text-black/50">Admin Workspace</p>
             <div className="mt-1 flex flex-wrap items-center justify-between gap-2">

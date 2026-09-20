@@ -60,7 +60,7 @@ function MentorCardIllustration() {
 
         {/* White front card */}
         <div
-          className="absolute left-0 top-0 flex h-69.5 w-52.5 flex-col rounded-[26px] border-[3px] border-[#1a1a1a] bg-white p-5 shadow-[6px_6px_0_0_#1a1a1a]"
+          className="absolute left-0 top-0 flex h-69.5 w-52.5 flex-col rounded-[26px] border-[3px] border-[#1a1a1a] bg-white p-5 shadow-[3px_3px_0_0_#1a1a1a]"
           style={{ zIndex: 4 }}
         >
           {/* Avatar circle */}
@@ -139,7 +139,7 @@ export default function HeroSection() {
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-black bg-white text-black shadow-[2px_2px_0px_0px_#1a1a1a] transition-all hover:bg-neutral-50 active:translate-x-px active:translate-y-px active:shadow-none cursor-pointer"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-black bg-white text-black shadow-[3px_3px_0px_0px_#1a1a1a] transition-all hover:bg-neutral-50 active:translate-x-px active:translate-y-px active:shadow-none cursor-pointer"
             >
               {mobileMenuOpen ? <X size={18} strokeWidth={2.5} /> : <Menu size={18} strokeWidth={2.5} />}
             </button>

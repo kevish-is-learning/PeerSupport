@@ -128,7 +128,7 @@ function MentorCard({ mentor }) {
       href={`/mentee/find-mentors/${mentor.id}`}
       className="block no-underline group max-w-full min-w-0"
     >
-      <div className="flex flex-col rounded-2xl border-2 border-black bg-white shadow-[4px_4px_0px_0px_#C4B5FD] transition-all hover:shadow-[6px_6px_0px_0px_#A78BFA] hover:-translate-y-0.5 max-w-full overflow-hidden">
+      <div className="flex flex-col rounded-2xl border-2 border-black bg-white shadow-[3px_3px_0px_0px_#C4B5FD] transition-all hover:shadow-[6px_6px_0px_0px_#A78BFA] hover:-translate-y-0.5 max-w-full overflow-hidden">
         {/* ── Header Row ── */}
         <div className="flex items-start justify-between gap-2.5 p-3.5 sm:p-5 pb-2.5 sm:pb-3 min-w-0">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
@@ -220,7 +220,7 @@ function MentorCard({ mentor }) {
 
         {/* ── CTA ── */}
         <div className="mt-3 sm:mt-4 px-3.5 sm:px-5 pb-3.5 sm:pb-5">
-          <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#7C3AED] to-[#9333EA] py-2.5 sm:py-3 text-xs sm:text-sm font-extrabold text-white shadow-[0_2px_8px_rgba(124,58,237,0.35)] transition-all group-hover:shadow-[0_4px_16px_rgba(124,58,237,0.5)] group-hover:-translate-y-0.5 active:translate-y-0">
+          <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#7C3AED] to-[#9333EA] py-2.5 sm:py-3 text-xs sm:text-sm font-extrabold text-white shadow-[3_3px_8px_rgba(124,58,237,0.35)] transition-all group-hover:shadow-[0_4px_16px_rgba(124,58,237,0.5)] group-hover:-translate-y-0.5 active:translate-y-0">
             <CalendarCheck className="h-4 w-4" />
             Book Session
           </div>

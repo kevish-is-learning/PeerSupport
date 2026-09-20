@@ -156,7 +156,7 @@ export default function AuthPanel({ initialMode = "login", initialRole = "MENTEE
                 className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-full border-2 transition-all whitespace-nowrap cursor-pointer ${
                   form.role === "MENTEE"
                     ? "bg-[#596df2] text-white border-[#596df2]"
-                    : "bg-white text-black border-black/80 shadow-[2px_2px_0px_rgba(0,0,0,0.8)]"
+                    : "bg-white text-black border-black/80 shadow-[3px_3px_0px_rgba(0,0,0,0.8)]"
                 }`}
                 style={form.role === "MENTEE" ? {} : { opacity: 0.8 }}
               >
@@ -168,7 +168,7 @@ export default function AuthPanel({ initialMode = "login", initialRole = "MENTEE
                 className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-full border-2 transition-all whitespace-nowrap cursor-pointer ${
                   form.role === "MENTOR"
                     ? "bg-[#f08849] text-white border-[#f08849]"
-                    : "bg-white text-black border-black/80 shadow-[2px_2px_0px_rgba(0,0,0,0.8)]"
+                    : "bg-white text-black border-black/80 shadow-[3px_3px_0px_rgba(0,0,0,0.8)]"
                 }`}
                 style={form.role === "MENTOR" ? {} : { opacity: 0.8 }}
               >

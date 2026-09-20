@@ -142,7 +142,7 @@ function UpcomingSessionCard({ session, onViewDetails }) {
   const endDate = new Date(session.endTime);
 
   return (
-    <div className="rounded-xl border-2 border-black bg-white p-4 shadow-[4px_4px_0_0_#F59E0B] transition-transform hover:-translate-y-0.5">
+    <div className="rounded-xl border-2 border-black bg-white p-4 shadow-[3px_3px_0_0_#F59E0B] transition-transform hover:-translate-y-0.5">
       <div className="flex items-center gap-3 mb-3">
         <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-black bg-gray-100">
           {session.mentee?.profilePicture ? (
@@ -180,7 +180,7 @@ function UpcomingSessionCard({ session, onViewDetails }) {
             if (session.meetingLink) router.push(`/meeting/${session.id}`);
             else toast.info("Meeting link will be available soon.");
           }}
-          className={`flex-1 rounded-lg border-2 border-black px-3 py-2 text-xs font-bold text-white shadow-[2px_2px_0_0_#000] transition-all ${
+          className={`flex-1 rounded-lg border-2 border-black px-3 py-2 text-xs font-bold text-white shadow-[3px_3px_0_0_#000] transition-all ${
             canJoinSession(session.startTime, session.endTime)
               ? "bg-[#5061E4] hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] active:translate-y-0 active:shadow-none cursor-pointer"
               : "bg-gray-400 opacity-60 cursor-not-allowed"
@@ -191,7 +191,7 @@ function UpcomingSessionCard({ session, onViewDetails }) {
         </button>
         <button
           onClick={() => onViewDetails(session)}
-          className="flex-1 rounded-lg border-2 border-black bg-white px-3 py-2 text-xs font-bold text-gray-800 shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] active:translate-y-0 active:shadow-none cursor-pointer"
+          className="flex-1 rounded-lg border-2 border-black bg-white px-3 py-2 text-xs font-bold text-gray-800 shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#000] active:translate-y-0 active:shadow-none cursor-pointer"
         >
           Details
         </button>
@@ -208,7 +208,7 @@ function DaySessionCard({ session }) {
   const endDate = new Date(session.endTime);
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl border-2 border-black bg-white p-5 shadow-[4px_4px_0_0_#E5E7EB]">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl border-2 border-black bg-white p-5 shadow-[3px_3px_0_0_#E5E7EB]">
       <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border-2 border-black bg-gray-100">
         {session.mentee?.profilePicture ? (
           <img src={resolveUploadUrl(session.mentee.profilePicture)} alt={session.mentee.name} className="h-full w-full object-cover" />

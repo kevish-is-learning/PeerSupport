@@ -22,7 +22,7 @@ function MentorCard({ mentor, index }) {
   const imageUrl = resolveUploadUrl(mentor.profilePicture);
 
   return (
-    <article className="flex flex-col rounded-[22px] border-2 sm:border-4 border-black bg-white shadow-[4px_4px_0_0_#1a1a1a] sm:shadow-[5px_5px_0_0_#1a1a1a] overflow-hidden w-full max-w-full min-w-0 transition-transform duration-200 hover:-translate-y-0.5">
+    <article className="flex flex-col rounded-[22px] border-2 sm:border-4 border-black bg-white shadow-[3px_3px_0_0_#1a1a1a] sm:shadow-[3px_3px_0_0_#1a1a1a] overflow-hidden w-full max-w-full min-w-0 transition-transform duration-200 hover:-translate-y-0.5">
       <div
         className="relative m-2.5 sm:m-3 mb-0 flex aspect-4/3 sm:aspect-4/3.5 items-center justify-center overflow-hidden rounded-xl border-t-6 sm:border-t-8 bg-gray-100"
         style={{ borderColor: style.accent }}
@@ -74,7 +74,7 @@ function MentorCard({ mentor, index }) {
 
         <Link
           href={`/mentee/find-mentors/${mentor.id}`}
-          className={`mt-4 flex w-full items-center justify-center gap-2 rounded-full border-2 border-[#1a1a1a] px-4 py-2.5 text-xs sm:text-sm font-bold shadow-[2px_2px_0_0_#1a1a1a] sm:shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#1a1a1a] ${style.ctaColor}`}
+          className={`mt-4 flex w-full items-center justify-center gap-2 rounded-full border-2 border-[#1a1a1a] px-4 py-2.5 text-xs sm:text-sm font-bold shadow-[3px_3px_0_0_#1a1a1a] sm:shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#1a1a1a] ${style.ctaColor}`}
         >
           View Mentor
           <ArrowRight size={16} />

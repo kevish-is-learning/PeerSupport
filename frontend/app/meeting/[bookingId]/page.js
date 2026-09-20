@@ -39,14 +39,14 @@ function VideoPlayer({ track, isLocal = false, name, profilePic, isMuted }) {
   }, [track]);
 
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden border-3 border-black bg-gray-900 shadow-[4px_4px_0_0_#000]">
+    <div className="relative w-full h-full rounded-2xl overflow-hidden border-3 border-black bg-gray-900 shadow-[3px_3px_0_0_#000]">
       <div
         ref={containerRef}
         className="w-full h-full"
         style={{ transform: isLocal ? "scaleX(-1)" : "none" }}
       />
       {/* Name badge */}
-      <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-xl border-2 border-black bg-white/90 backdrop-blur-sm px-3 py-1.5 shadow-[2px_2px_0_0_#000]">
+      <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-xl border-2 border-black bg-white/90 backdrop-blur-sm px-3 py-1.5 shadow-[3px_3px_0_0_#000]">
         {profilePic ? (
           <img
             src={resolveUploadUrl(profilePic)}
@@ -125,7 +125,7 @@ function ConnectionBadge({ state }) {
 
   return (
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
-      <div className="flex items-center gap-2 rounded-xl border-3 border-black bg-amber-50 px-5 py-3 shadow-[4px_4px_0_0_#000]">
+      <div className="flex items-center gap-2 rounded-xl border-3 border-black bg-amber-50 px-5 py-3 shadow-[3px_3px_0_0_#000]">
         {isReconnecting ? (
           <Loader2 size={18} className="animate-spin text-amber-600" />
         ) : (
@@ -473,7 +473,7 @@ export default function MeetingPage() {
           <button
             onClick={handleJoin}
             disabled={joining}
-            className="w-full flex items-center justify-center gap-2 rounded-xl border-3 border-black bg-[#22C55E] py-3.5 text-base font-extrabold text-white shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_#000] active:translate-y-0 active:shadow-none disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 rounded-xl border-3 border-black bg-[#22C55E] py-3.5 text-base font-extrabold text-white shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_#000] active:translate-y-0 active:shadow-none disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {joining ? (
               <>
@@ -582,7 +582,7 @@ export default function MeetingPage() {
             />
             {/* Waiting overlay */}
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30">
-              <div className="flex items-center gap-2 rounded-xl border-2 border-black bg-amber-50 px-4 py-2 shadow-[2px_2px_0_0_#000]">
+              <div className="flex items-center gap-2 rounded-xl border-2 border-black bg-amber-50 px-4 py-2 shadow-[3px_3px_0_0_#000]">
                 <Loader2 size={14} className="animate-spin text-amber-600" />
                 <span className="text-xs font-bold text-gray-700">
                   Waiting for{" "}
@@ -600,7 +600,7 @@ export default function MeetingPage() {
         {/* Mic */}
         <button
           onClick={toggleMic}
-          className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 border-black shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 ${
+          className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 border-black shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 ${
             micOn
               ? "bg-gray-700 text-white"
               : "bg-red-500 text-white"
@@ -613,7 +613,7 @@ export default function MeetingPage() {
         {/* Camera */}
         <button
           onClick={toggleCamera}
-          className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 border-black shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 ${
+          className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 border-black shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 ${
             cameraOn
               ? "bg-gray-700 text-white"
               : "bg-red-500 text-white"
@@ -626,7 +626,7 @@ export default function MeetingPage() {
         {/* Screen Share */}
         <button
           onClick={toggleScreenShare}
-          className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 border-black shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 ${
+          className={`flex h-12 w-12 items-center justify-center rounded-xl border-2 border-black shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 ${
             screenSharing
               ? "bg-[#5061E4] text-white"
               : "bg-gray-700 text-white"
@@ -639,7 +639,7 @@ export default function MeetingPage() {
         {/* Leave Call (temporary) */}
         <button
           onClick={handleLeave}
-          className="flex h-12 w-28 items-center justify-center gap-2 rounded-xl border-2 border-black bg-amber-500 text-white shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 hover:bg-amber-600"
+          className="flex h-12 w-28 items-center justify-center gap-2 rounded-xl border-2 border-black bg-amber-500 text-white shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 hover:bg-amber-600"
           title="Leave meeting (you can rejoin)"
         >
           <LogOut size={18} />
@@ -650,7 +650,7 @@ export default function MeetingPage() {
         <button
           onClick={handleFinish}
           disabled={finishing}
-          className="flex h-12 w-28 items-center justify-center gap-2 rounded-xl border-2 border-black bg-red-500 text-white shadow-[2px_2px_0_0_#000] transition-all hover:-translate-y-0.5 hover:bg-red-600 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="flex h-12 w-28 items-center justify-center gap-2 rounded-xl border-2 border-black bg-red-500 text-white shadow-[3px_3px_0_0_#000] transition-all hover:-translate-y-0.5 hover:bg-red-600 disabled:opacity-60 disabled:cursor-not-allowed"
           title="Finish and end your session"
         >
           <PhoneOff size={18} />

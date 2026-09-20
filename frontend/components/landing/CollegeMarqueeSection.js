@@ -32,7 +32,7 @@ export default function CollegeMarqueeSection() {
           {loop.map((name, i) => (
             <span
               key={`${name}-${i}`}
-              className="shrink-0 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-[#0d0d0f] shadow-[4px_4px_0_0_#F9C41A] sm:px-5 sm:py-2.5 sm:text-[0.9rem]"
+              className="shrink-0 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-[#0d0d0f] shadow-[3px_3px_0_0_#F9C41A] sm:px-5 sm:py-2.5 sm:text-[0.9rem]"
             >
               {name}
             </span>

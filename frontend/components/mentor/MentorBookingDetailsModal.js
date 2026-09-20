@@ -58,7 +58,7 @@ export default function MentorBookingDetailsModal({ session, mentee, onClose, on
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
       <div 
-        className="relative w-full max-w-lg overflow-hidden rounded-[24px] bg-white border-2 border-black shadow-[8px_8px_0_0_#5763E6]"
+        className="relative w-full max-w-lg overflow-hidden rounded-[24px] bg-white border-2 border-black shadow-[3px_3px_0_0_#5763E6]"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 pb-2">

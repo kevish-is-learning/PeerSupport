@@ -312,7 +312,7 @@ export default function MentorProfilePage() {
               </div>
               {isEditing && (
                 <label
-                  className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-[#5061E4] text-white hover:bg-[#4050d0] transition-all shadow-[2px_2px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${saving ? "opacity-50 pointer-events-none" : ""}`}
+                  className={`absolute -bottom-2 -right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-[#5061E4] text-white hover:bg-[#4050d0] transition-all shadow-[3px_3px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none ${saving ? "opacity-50 pointer-events-none" : ""}`}
                 >
                   <Camera size={16} />
                   <input
@@ -384,9 +384,9 @@ export default function MentorProfilePage() {
             )}
 
             {/* Preview button */}
-            <button className="mt-2 w-full rounded-2xl border-2 border-black bg-[#5061E4] py-3.5 text-base font-black text-white shadow-[2px_2px_0_0_#000] hover:opacity-90 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
+            {/* <button className="mt-2 w-full rounded-2xl border-2 border-black bg-[#5061E4] py-3.5 text-base font-black text-white shadow-[3px_3px_0_0_#000] hover:opacity-90 active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
               Preview Full Profile
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -733,7 +733,7 @@ export default function MentorProfilePage() {
                           }
                           className={`px-4 py-2 rounded-xl border-2 text-sm font-black transition-all ${
                             sel
-                              ? "bg-[#F97316] text-white border-black shadow-[2px_2px_0_0_#000]"
+                              ? "bg-[#F97316] text-white border-black shadow-[3px_3px_0_0_#000]"
                               : "bg-white text-gray-500 border-gray-200 hover:border-black hover:text-black"
                           }`}
                         >
@@ -745,7 +745,7 @@ export default function MentorProfilePage() {
                ) : (
                   <div className="flex flex-wrap gap-3">
                      {expertiseTags.map((tag) => (
-                         <span key={tag} className="px-4 py-2 rounded-xl border-2 border-black bg-[#F97316] text-white text-sm font-bold shadow-[2px_2px_0_0_#000]">
+                         <span key={tag} className="px-4 py-2 rounded-xl border-2 border-black bg-[#F97316] text-white text-sm font-bold shadow-[3px_3px_0_0_#000]">
                              {tag}
                          </span>
                      ))}

@@ -23,8 +23,11 @@ export const uploadSingleFile = async (req, res) => {
 
     const isImage = IMAGE_MIME_TYPES.has(req.file.mimetype);
 
-    // Images are normalised to webp; documents are stored as-is under the
-    // "raw" resource type so Cloudinary serves them back unmodified.
+    // Images are normalised to webp. PDFs/DOCs are uploaded as resource_type
+    // 'image' too — Cloudinary blocks unsigned public delivery of 'raw' files
+    // (PDF/ZIP) by default as an anti-abuse measure, which would make every
+    // resume/SOP link 401 in production. 'image' delivery has no such
+    // restriction and still serves the original file unmodified.
     const uploadOptions = isImage
       ? {
           folder: getFolder(`user_${shortId}`, folder),
@@ -36,7 +39,7 @@ export const uploadSingleFile = async (req, res) => {
       : {
           folder: getFolder(`user_${shortId}`, 'documents'),
           public_id: uniqueId,
-          resource_type: 'raw',
+          resource_type: 'image',
           overwrite: true,
         };
 

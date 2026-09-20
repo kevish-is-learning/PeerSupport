@@ -109,7 +109,7 @@ export default function SessionFeedbackModal({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="relative flex max-h-[88vh] w-full max-w-lg flex-col overflow-hidden rounded-[24px] border-2 border-black bg-white shadow-[8px_8px_0_0_#5763E6]">
+      <div className="relative flex max-h-[88vh] w-full max-w-lg flex-col overflow-hidden rounded-[24px] border-2 border-black bg-white shadow-[3px_3px_0_0_#5763E6]">
         <div className="flex items-start justify-between p-6 pb-3">
           <div>
             <h2 className="text-xl font-extrabold text-gray-900">

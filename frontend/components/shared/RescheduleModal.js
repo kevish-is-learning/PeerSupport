@@ -157,7 +157,7 @@ export default function RescheduleModal({ session, onClose, onSuccess }) {
                     className={`flex flex-col items-center rounded-xl border-2 border-black px-4 py-3 min-w-[72px] transition-all cursor-pointer ${
                       isSelected
                         ? "bg-[#5061E4] text-white shadow-[3px_3px_0_0_#000]"
-                        : "bg-white text-gray-700 hover:bg-gray-50 shadow-[2px_2px_0_0_#E5E7EB]"
+                        : "bg-white text-gray-700 hover:bg-gray-50 shadow-[3px_3px_0_0_#E5E7EB]"
                     }`}
                   >
                     <span className="text-[10px] font-bold uppercase">
@@ -213,7 +213,7 @@ export default function RescheduleModal({ session, onClose, onSuccess }) {
                         className={`rounded-xl border-2 border-black px-3 py-2.5 text-center transition-all cursor-pointer ${
                           isSelected
                             ? "bg-[#22C55E] text-white shadow-[3px_3px_0_0_#000]"
-                            : "bg-white text-gray-700 hover:bg-[#F0FDF4] shadow-[2px_2px_0_0_#E5E7EB]"
+                            : "bg-white text-gray-700 hover:bg-[#F0FDF4] shadow-[3px_3px_0_0_#E5E7EB]"
                         }`}
                       >
                         <span className="text-sm font-bold">
