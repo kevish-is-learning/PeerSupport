@@ -13,6 +13,10 @@ export const PUBLIC_ROUTES = [
   { path: "/find-mentors", priority: 0.9, changeFrequency: "daily" },
   { path: "/explore-mentor", priority: 0.7, changeFrequency: "daily" },
   { path: "/auth", priority: 0.3, changeFrequency: "monthly" },
+  { path: "/privacy-policy", priority: 0.2, changeFrequency: "yearly" },
+  { path: "/terms-of-service", priority: 0.2, changeFrequency: "yearly" },
+  { path: "/refund-policy", priority: 0.2, changeFrequency: "yearly" },
+  { path: "/cookie-policy", priority: 0.2, changeFrequency: "yearly" },
 ];
 
 /** Areas behind auth — no value in crawling, and they leak nothing useful. */
