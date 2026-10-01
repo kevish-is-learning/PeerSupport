@@ -144,5 +144,21 @@ jobs:
             # Smoke test
             PORT_VALUE="$(grep -E '^PORT=' .env | head -1 | cut -d= -f2 | tr -d '\"'"'"' ')"
             PORT_VALUE="${PORT_VALUE:-8080}"
-            sleep 3
-            curl -fsS "http://127.0.0.1:${PORT_VALUE}/api/health" && echo "Health check passed."
+            # The API can take a while to start listening (DB connect, sockets),
+            # so retry for up to ~150s instead of a single check.
+            HEALTHY=0
+            for i in $(seq 1 30); do
+              if curl -fsS "http://127.0.0.1:${PORT_VALUE}/api/health"; then
+                echo ""
+                echo "Health check passed."
+                HEALTHY=1
+                break
+              fi
+              echo "Waiting for API (attempt $i/30)..."
+              sleep 5
+            done
+            if [ "$HEALTHY" -ne 1 ]; then
+              echo "Health check failed after retries."
+              pm2 logs "$APP_NAME" --lines 40 --nostream || true
+              exit 1
+            fi
