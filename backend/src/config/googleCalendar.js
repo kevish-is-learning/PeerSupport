@@ -131,8 +131,12 @@ const getCalendarClient = () => {
   }
 };
 
-const getCalendarId = () => process.env.GOOGLE_CALENDAR_ID || 'primary';
-const getAdminEmail = () => process.env.GOOGLE_ADMIN_EMAIL || '';
+// Env UIs sometimes leave stray whitespace, newlines or wrapping quotes on
+// pasted values, which makes Google answer 404 for an otherwise valid ID.
+const cleanEnv = (value) => (value || '').trim().replace(/^(['"])(.*)\1$/, '$2').trim();
+
+const getCalendarId = () => cleanEnv(process.env.GOOGLE_CALENDAR_ID) || 'primary';
+const getAdminEmail = () => cleanEnv(process.env.GOOGLE_ADMIN_EMAIL);
 const isCalendarConfigured = () => isConfigured || !!getCalendarClient();
 
 export { getCalendarClient, getCalendarId, getAdminEmail, isCalendarConfigured };
