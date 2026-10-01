@@ -8,7 +8,9 @@
  *
  * Prerequisites:
  *   1. In Google Cloud Console → APIs & Services → OAuth consent screen,
- *      add the scope: https://www.googleapis.com/auth/calendar
+ *      add the scopes: https://www.googleapis.com/auth/calendar and
+ *      https://www.googleapis.com/auth/meetings.space.settings, and enable
+ *      the "Google Meet REST API" under APIs & Services → Library
  *   2. In Credentials → your OAuth 2.0 Client ID, add this redirect URI:
  *      http://localhost:3939/callback
  *   3. Make sure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are set in .env
@@ -47,7 +49,11 @@ const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_U
 const authUrl = oauth2Client.generateAuthUrl({
   access_type: 'offline',
   prompt: 'consent', // Force consent to always get a refresh token
-  scope: ['https://www.googleapis.com/auth/calendar'],
+  scope: [
+    'https://www.googleapis.com/auth/calendar',
+    // Lets the app open Meet links to anyone (no "ask to join")
+    'https://www.googleapis.com/auth/meetings.space.settings',
+  ],
 });
 
 console.log('\n🔐 Google Calendar OAuth Setup\n');

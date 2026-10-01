@@ -11,6 +11,7 @@
 import crypto from 'crypto';
 import {
   getCalendarClient,
+  getMeetClient,
   getCalendarId,
   getAdminEmail,
   isCalendarConfigured,
@@ -23,6 +24,32 @@ const createServiceError = (statusCode, message) => {
 };
 
 class GoogleCalendarService {
+  /**
+   * Let anyone with the Meet link join directly (no "ask to join").
+   * Calendar API can't set this; it needs the Meet REST API and the
+   * meetings.space.settings scope. Best-effort: scheduling must still
+   * succeed (with the default access) if this fails.
+   */
+  async openMeetAccess(meetingCode) {
+    const meet = getMeetClient();
+    if (!meet || !meetingCode) return false;
+
+    try {
+      await meet.spaces.patch({
+        name: `spaces/${meetingCode}`,
+        updateMask: 'config.accessType',
+        requestBody: { config: { accessType: 'OPEN' } },
+      });
+      return true;
+    } catch (err) {
+      console.warn(
+        `⚠️  Could not open Meet access for ${meetingCode} (link stays default/ask-to-join):`,
+        err.message
+      );
+      return false;
+    }
+  }
+
   /**
    * Create a Google Calendar event with a Google Meet conference.
    *
@@ -93,6 +120,8 @@ class GoogleCalendarService {
         createdEvent.conferenceData?.entryPoints?.find(
           (ep) => ep.entryPointType === 'video'
         )?.uri || createdEvent.hangoutLink || null;
+
+      await this.openMeetAccess(createdEvent.conferenceData?.conferenceId);
 
       return {
         eventId: createdEvent.id,

@@ -36,6 +36,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOKEN_FILE = path.resolve(__dirname, '../../google-calendar-token.json');
 
 let calendarClient = null;
+let meetClient = null;
 let isConfigured = false;
 
 /**
@@ -122,6 +123,7 @@ const getCalendarClient = () => {
     }
 
     calendarClient = google.calendar({ version: 'v3', auth: oauth2Client });
+    meetClient = google.meet({ version: 'v2', auth: oauth2Client });
     isConfigured = true;
     console.log(`✅ Google Calendar client initialised (OAuth 2.0, token source: ${source})`);
     return calendarClient;
@@ -137,6 +139,12 @@ const cleanEnv = (value) => (value || '').trim().replace(/^(['"])(.*)\1$/, '$2')
 
 const getCalendarId = () => cleanEnv(process.env.GOOGLE_CALENDAR_ID) || 'primary';
 const getAdminEmail = () => cleanEnv(process.env.GOOGLE_ADMIN_EMAIL);
+// Google Meet REST client (shares the Calendar OAuth credentials). Used to
+// open meetings to anyone with the link; null when Calendar isn't configured.
+const getMeetClient = () => {
+  getCalendarClient();
+  return meetClient;
+};
 const isCalendarConfigured = () => isConfigured || !!getCalendarClient();
 
-export { getCalendarClient, getCalendarId, getAdminEmail, isCalendarConfigured };
+export { getCalendarClient, getMeetClient, getCalendarId, getAdminEmail, isCalendarConfigured };
