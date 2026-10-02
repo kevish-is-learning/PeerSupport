@@ -181,6 +181,26 @@ export function welcomeEmail({ name, email, role }) {
   };
 }
 
+export function mentorApprovedEmail({ name }) {
+  const firstName = String(name || 'there').trim() || 'there';
+  const body = message({
+    eyebrow: 'Application approved',
+    heading: `Congratulations, ${safeText(firstName, 'there')}`,
+    intro: 'Your mentor application has been <strong>approved</strong> by the PeerSupport team. Your profile is now live, so mentees can find and book sessions with you.',
+    children: `${detailCard([
+      row('Status', status('Approved'), true),
+    ])}
+    <p style="margin:0 0 20px;font:400 15px/24px Arial,sans-serif;color:#52525b;">Next, check that your services and availability are set up so mentees can book you.</p>
+    ${button('/mentor/dashboard', 'Open dashboard')}
+    ${button('/mentor/availability', 'Set availability', true)}`,
+  });
+  return {
+    subject: 'Your PeerSupport mentor application is approved',
+    html: layout({ title: 'Mentor application approved', preheader: 'Your mentor profile is now live on PeerSupport.', content: body }),
+    text: `Congratulations, ${firstName}! Your PeerSupport mentor application has been approved and your profile is now live. Open your dashboard: ${safeUrl('/mentor/dashboard')}`,
+  };
+}
+
 export function bookingConfirmedMenteeEmail({ menteeName, mentorName, serviceName, startTime, endTime, amount, bookingId }) {
   const mentor = safeText(mentorName, 'your mentor');
   const service = safeText(serviceName, 'Mentoring session');

@@ -11,6 +11,7 @@
 import { transporter, FROM_EMAIL } from '../config/mailer.js';
 import {
   welcomeEmail,
+  mentorApprovedEmail,
   bookingConfirmedMenteeEmail,
   newBookingMentorEmail,
   bookingCancelledEmail,
@@ -67,6 +68,16 @@ class EmailService {
   async sendWelcomeEmail({ name, email, role }) {
     const template = welcomeEmail({ name, email, role });
     return this._send(email, template);
+  }
+
+  // ─── Mentor application approved ────────────────────────────────────────
+
+  /**
+   * Tell a mentor their application was approved by an admin.
+   * @param {{ name: string, email: string }} mentor
+   */
+  async sendMentorApprovedEmail({ name, email }) {
+    return this._send(email, mentorApprovedEmail({ name }));
   }
 
   // ─── Booking Confirmed ──────────────────────────────────────────────────

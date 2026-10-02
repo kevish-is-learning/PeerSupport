@@ -73,7 +73,6 @@ export default function MentorSidebarShell({ children }) {
   const onLogout = async () => {
     try {
       await logout();
-      router.replace("/auth?mode=login");
     } catch (_error) {
       // Toast handled in store.
     }

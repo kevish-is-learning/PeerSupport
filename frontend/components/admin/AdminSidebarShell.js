@@ -70,7 +70,6 @@ export default function AdminSidebarShell({ children }) {
   const onLogout = async () => {
     try {
       await logout();
-      router.replace("/auth?mode=login");
     } catch (_error) {
       // Toast handled in store.
     }

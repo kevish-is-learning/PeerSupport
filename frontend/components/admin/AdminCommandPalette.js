@@ -150,7 +150,6 @@ export default function AdminCommandPalette({
       shortcut: "Shift+Q",
       action: async () => {
         await logout();
-        router.replace("/auth?mode=login");
       },
     },
   ];

@@ -1,4 +1,5 @@
 import { prisma } from '../config/database.js';
+import emailService from './EmailService.js';
 import { destroyAsset, isSameCloudinaryAsset } from '../config/cloudinary.js';
 import {
   createMentorProfileSchema,
@@ -282,7 +283,11 @@ class MentorProfileService {
 
     const existingProfile = await prisma.mentorProfile.findUnique({
       where: { id: profileId },
-      select: { id: true },
+      select: {
+        id: true,
+        approvalStatus: true,
+        user: { select: { name: true, email: true } },
+      },
     });
 
     if (!existingProfile) {
@@ -299,6 +304,14 @@ class MentorProfileService {
       },
       include: profileInclude,
     });
+
+    // Fire-and-forget; skip if the mentor was already approved (re-saved notes).
+    if (parsedData.approvalStatus === 'APPROVED' && existingProfile.approvalStatus !== 'APPROVED') {
+      emailService.sendMentorApprovedEmail({
+        name: existingProfile.user?.name,
+        email: existingProfile.user?.email,
+      });
+    }
 
     return mapProfile(updatedProfile);
   }

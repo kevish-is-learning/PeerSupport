@@ -2,14 +2,13 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { ADMIN_NAV_ITEMS, normalizeAdminPath } from "./adminNavigation";
 import useAuthStore from "../../store/useAuthStore";
 
 export default function AdminFloatingNav() {
   const pathname = usePathname();
-  const router = useRouter();
   const { logout } = useAuthStore();
 
   const normalizedPath = normalizeAdminPath(pathname);
@@ -17,7 +16,6 @@ export default function AdminFloatingNav() {
   const handleLogout = async () => {
     try {
       await logout();
-      router.replace("/auth?mode=login");
     } catch (_error) {
       // Handled in store
     }

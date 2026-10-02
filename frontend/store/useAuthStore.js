@@ -116,6 +116,13 @@ const useAuthStore = create((set) => ({
         isLoading: false,
       });
       toast.success(message);
+
+      // Hard navigation: guarantees the redirect happens and drops all
+      // cached client state, instead of relying on a soft router transition
+      // from a shell that just unmounted its UI.
+      if (typeof window !== "undefined") {
+        window.location.replace("/auth?mode=login");
+      }
     } catch (error) {
       const errorMessage = error.message || "Logout failed";
       set({ isLoading: false, error: errorMessage });
