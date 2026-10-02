@@ -438,32 +438,6 @@ export const supportApi = {
   },
 };
 
-// ─── Webinars ────────────────────────────────────────────────────────────────
-
-export const webinarApi = {
-  list(params = {}) {
-    return apiRequest(`/webinars${qs(params)}`);
-  },
-  get(idOrSlug) {
-    return apiRequest(`/webinars/${idOrSlug}`);
-  },
-  listMine() {
-    return apiRequest("/webinars/mine");
-  },
-  register(id) {
-    return apiRequest(`/webinars/${id}/register`, { method: "POST" });
-  },
-  verifyPayment(data) {
-    return apiRequest("/webinars/verify-payment", { method: "POST", body: data });
-  },
-  cancelRegistration(id) {
-    return apiRequest(`/webinars/${id}/register`, { method: "DELETE" });
-  },
-  getRoomToken(id) {
-    return apiRequest(`/webinars/${id}/room-token`);
-  },
-};
-
 // ─── Mentee Documents & Profile Sharing ──────────────────────────────────────
 
 export const menteeDocumentApi = {
@@ -725,20 +699,6 @@ export const adminApi = {
   },
   updateTicketStatus(id, status) {
     return apiRequest(`/admin/support/tickets/${id}/status`, { method: 'PATCH', body: { status } });
-  },
-
-  // Webinars
-  listWebinars() {
-    return apiRequest('/admin/webinars');
-  },
-  createWebinar(data) {
-    return apiRequest('/admin/webinars', { method: 'POST', body: data });
-  },
-  updateWebinar(id, data) {
-    return apiRequest(`/admin/webinars/${id}`, { method: 'PATCH', body: data });
-  },
-  deleteWebinar(id) {
-    return apiRequest(`/admin/webinars/${id}`, { method: 'DELETE' });
   },
 
   // Verification Calls

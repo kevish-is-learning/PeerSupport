@@ -8,7 +8,6 @@ import { cx } from "../ui/kit";
 
 const NAV_LINKS = [
   { href: "/find-mentors", label: "Find Mentors" },
-  { href: "/webinars", label: "Webinars" },
   { href: "/resources", label: "Resources" },
   { href: "/faq", label: "Help" },
 ];

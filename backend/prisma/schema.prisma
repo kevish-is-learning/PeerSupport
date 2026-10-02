@@ -124,10 +124,9 @@ model User {
 
   scheduledVerificationCalls MentorVerificationCall[] @relation("ScheduledVerificationCalls")
 
-  webinarRegistrations WebinarRegistration[]  @relation("WebinarRegistrations")
-  blogPosts            BlogPost[]             @relation("BlogAuthor")
-  supportTickets       SupportTicket[]        @relation("SupportTickets")
-  supportMessages      SupportTicketMessage[] @relation("SupportTicketMessages")
+  blogPosts       BlogPost[]             @relation("BlogAuthor")
+  supportTickets  SupportTicket[]        @relation("SupportTickets")
+  supportMessages SupportTicketMessage[] @relation("SupportTicketMessages")
 
   @@index([email])
   @@index([role])
@@ -241,7 +240,6 @@ model MentorProfile {
   wallet              MentorWallet?
   cancellationStat    MentorCancellationStat?
   verificationCalls   MentorVerificationCall[]
-  hostedWebinars      Webinar[]
 
   @@index([approvalStatus])
   @@index([averageRating])
@@ -774,86 +772,6 @@ model BookingSharedDocument {
 
   @@unique([bookingId, documentId])
   @@index([documentId])
-}
-
-// ============================================================
-// WEBINARS
-// ============================================================
-
-enum WebinarStatus {
-  DRAFT
-  PUBLISHED
-  LIVE
-  COMPLETED
-  CANCELLED
-}
-
-enum GroupRegistrationStatus {
-  PAYMENT_PENDING
-  CONFIRMED
-  CANCELLED
-  ATTENDED
-}
-
-model Webinar {
-  id String @id @default(uuid())
-
-  slug          String  @unique
-  title         String
-  description   String
-  coverImageUrl String?
-
-  hostMentorProfileId String?
-
-  startsAt DateTime
-  endsAt   DateTime
-
-  isPaid Boolean @default(false)
-  price  Float   @default(0)
-
-  /// Null means unlimited
-  capacity Int?
-
-  /// Video room channel (Agora) — shared by every confirmed registrant
-  roomId String?
-
-  status WebinarStatus @default(DRAFT)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  hostMentorProfile MentorProfile? @relation(fields: [hostMentorProfileId], references: [id], onDelete: SetNull)
-
-  registrations WebinarRegistration[]
-
-  @@index([status])
-  @@index([startsAt])
-}
-
-model WebinarRegistration {
-  id String @id @default(uuid())
-
-  webinarId String
-  userId    String
-
-  amount Float @default(0)
-
-  razorpayOrderId   String?
-  razorpayPaymentId String? @unique
-  razorpaySignature String?
-
-  status GroupRegistrationStatus @default(CONFIRMED)
-
-  attendedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  webinar Webinar @relation(fields: [webinarId], references: [id], onDelete: Cascade)
-  user    User    @relation("WebinarRegistrations", fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([webinarId, userId])
-  @@index([userId])
 }
 
 // ============================================================

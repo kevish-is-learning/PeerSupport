@@ -7,11 +7,9 @@ import { meetingApi } from "../lib/api";
  * useAgoraCall — manages the complete Agora RTC lifecycle.
  *
  * @param {string} bookingId — channel identifier passed to the token fetcher
- * @param {(id: string) => Promise<object>} [fetchToken] — override for webinar
- *   rooms, which issue tokens from a different endpoint
  * @returns {{ localTracks, remoteUsers, joined, joining, error, toggleMic, toggleCamera, leaveCall, screenSharing, toggleScreenShare, connectionState }}
  */
-export default function useAgoraCall(bookingId, fetchToken) {
+export default function useAgoraCall(bookingId) {
   const [joined, setJoined] = useState(false);
   const [joining, setJoining] = useState(false);
   const [error, setError] = useState(null);
@@ -39,7 +37,7 @@ export default function useAgoraCall(bookingId, fetchToken) {
       AgoraRTC.setLogLevel(3); // Warning only
 
       // 1. Get token from backend
-      const res = await (fetchToken ? fetchToken(bookingId) : meetingApi.getToken(bookingId));
+      const res = await meetingApi.getToken(bookingId);
       const { appId, channel, token, uid } = res.data;
 
       // 2. Create client
@@ -106,7 +104,7 @@ export default function useAgoraCall(bookingId, fetchToken) {
     } finally {
       setJoining(false);
     }
-  }, [bookingId, joined, joining, fetchToken]);
+  }, [bookingId, joined, joining]);
 
   // Toggle microphone
   const toggleMic = useCallback(async () => {

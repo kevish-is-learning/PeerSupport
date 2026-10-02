@@ -9,7 +9,6 @@ import { Router } from 'express';
 import { authenticateJWT, authorizeRoles } from '../middleware/auth.js';
 import adminController from '../controllers/AdminController.js';
 import contentController from '../controllers/ContentController.js';
-import groupSessionController from '../controllers/GroupSessionController.js';
 
 const router = Router();
 
@@ -90,11 +89,5 @@ router.get('/support/tickets', contentController.listAllTickets);
 router.get('/support/tickets/:id', contentController.getTicket);
 router.post('/support/tickets/:id/reply', contentController.replyToTicket);
 router.patch('/support/tickets/:id/status', contentController.updateTicketStatus);
-
-// ─── Webinars ────────────────────────────────────────────────────────────────
-router.get('/webinars', groupSessionController.listAllWebinars);
-router.post('/webinars', groupSessionController.createWebinar);
-router.patch('/webinars/:id', groupSessionController.updateWebinar);
-router.delete('/webinars/:id', groupSessionController.deleteWebinar);
 
 export default router;

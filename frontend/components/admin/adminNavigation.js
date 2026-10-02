@@ -7,7 +7,6 @@ import {
   Banknote,
   Star,
   FileText,
-  Video,
   LifeBuoy,
 } from "lucide-react";
 
@@ -75,14 +74,6 @@ export const ADMIN_NAV_ITEMS = [
     icon: FileText,
     shortcut: "G C",
     key: "content",
-  },
-  {
-    href: "/admin/webinars",
-    label: "Webinars",
-    description: "Schedule live sessions, set pricing & track registrations",
-    icon: Video,
-    shortcut: "G W",
-    key: "webinars",
   },
   {
     href: "/admin/support",

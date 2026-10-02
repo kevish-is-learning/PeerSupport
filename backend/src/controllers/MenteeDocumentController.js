@@ -1,6 +1,6 @@
 import menteeDocumentService from '../services/MenteeDocumentService.js';
 import { respond } from '../utils/controllerResponse.js';
-import { addDocumentSchema, shareDocumentsSchema } from '../validators/groupSession.validator.js';
+import { addDocumentSchema, shareDocumentsSchema } from '../validators/menteeDocument.validator.js';
 
 class MenteeDocumentController {
   listDocuments(req, res) {

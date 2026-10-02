@@ -11,7 +11,6 @@ import { prisma } from '../config/database.js';
 import emailService from '../services/EmailService.js';
 import attendanceService from '../services/AttendanceService.js';
 import feedbackService from '../services/FeedbackService.js';
-import groupSessionService from '../services/GroupSessionService.js';
 import walletService from '../services/WalletService.js';
 import crypto from 'crypto';
 
@@ -153,60 +152,6 @@ class MeetingService {
           profilePicture: booking.mentee?.profilePicture,
         },
       },
-    };
-  }
-
-  /**
-   * Agora token for a webinar room.
-   *
-   * Webinar rooms have no attendance ledger, so this only
-   * checks that the caller is the host or a confirmed registrant, then opens
-   * the room from 15 minutes before the start until 30 minutes after the end.
-   *
-   * @param {string} userId
-   * @param {{ webinarId: string }} target
-   */
-  async getGroupRoomToken(userId, target) {
-    if (!AGORA_APP_ID || !AGORA_APP_CERTIFICATE) {
-      throw createServiceError(500, 'Agora credentials not configured');
-    }
-
-    const room = await groupSessionService.authorizeRoomAccess(userId, target);
-
-    const now = new Date();
-    const opensAt = new Date(new Date(room.startsAt).getTime() - 15 * 60 * 1000);
-    const closesAt = new Date(new Date(room.endsAt).getTime() + 30 * 60 * 1000);
-
-    if (now < opensAt) {
-      const minsUntilOpen = Math.ceil((opensAt.getTime() - now.getTime()) / 60000);
-      throw createServiceError(400, `This room opens in ${minsUntilOpen} minutes`);
-    }
-    if (now > closesAt) {
-      throw createServiceError(400, 'This session has ended');
-    }
-
-    const uid = userIdToUid(userId);
-    const privilegeExpireTime = Math.floor(closesAt.getTime() / 1000);
-
-    const token = RtcTokenBuilder.buildTokenWithUid(
-      AGORA_APP_ID,
-      AGORA_APP_CERTIFICATE,
-      room.roomId,
-      uid,
-      RtcRole.PUBLISHER,
-      privilegeExpireTime,
-      privilegeExpireTime
-    );
-
-    return {
-      appId: AGORA_APP_ID,
-      channel: room.roomId,
-      token,
-      uid,
-      isHost: room.isHost,
-      title: room.title,
-      startsAt: room.startsAt,
-      endsAt: room.endsAt,
     };
   }
 

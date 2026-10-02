@@ -64,15 +64,7 @@ export default function RefundPolicyPage() {
         </p>
       </LegalSection>
 
-      <LegalSection title="6. Webinars">
-        <p>
-          The cancellation windows above apply to all paid formats on PeerSupport, including 1-on-1
-          sessions and webinars, unless a specific offering states otherwise at
-          the time of booking.
-        </p>
-      </LegalSection>
-
-      <LegalSection title="7. Mentor payouts and refunds">
+      <LegalSection title="6. Mentor payouts and refunds">
         <p>
           When a booking is refunded, any earnings already credited to the mentor for that booking
           are reversed from the mentor's wallet. This keeps mentor payout balances accurate and is
@@ -80,7 +72,7 @@ export default function RefundPolicyPage() {
         </p>
       </LegalSection>
 
-      <LegalSection title="8. Disputes">
+      <LegalSection title="7. Disputes">
         <p>
           If you believe a refund was calculated incorrectly, or you have a booking issue not
           covered above, contact us at{" "}

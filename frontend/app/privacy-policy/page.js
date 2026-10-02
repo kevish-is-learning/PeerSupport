@@ -14,8 +14,8 @@ export default function PrivacyPolicyPage() {
       <LegalSection first title="1. Who we are">
         <p>
           PeerSupport (&quot;PeerSupport&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) operates a
-          mentorship marketplace connecting mentees with mentors for 1-on-1 sessions and
-          webinars. This policy explains what personal data we collect when you
+          mentorship marketplace connecting mentees with mentors for 1-on-1
+          sessions. This policy explains what personal data we collect when you
           use our website and app, why we collect it, and the choices you have.
         </p>
       </LegalSection>

@@ -35,7 +35,6 @@ const footerLinks = [
     links: [
       { label: "Find Mentors", href: "/explore-mentor" },
       { label: "Become a Mentor", href: "/auth?mode=register" },
-      { label: "Group Sessions", href: "/mentee/find-mentors" },
       { label: "Mock Interviews", href: "/mentee/find-mentors" },
       { label: "Pricing", href: "#pricing" },
     ],
@@ -46,7 +45,6 @@ const footerLinks = [
       { label: "Blog", href: "#" },
       { label: "Success Stories", href: "#" },
       { label: "MBA Prep Guide", href: "#" },
-      { label: "Webinars", href: "#" },
       { label: "FAQs", href: "#" },
     ],
   },
