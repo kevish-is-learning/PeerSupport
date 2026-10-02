@@ -84,34 +84,6 @@ export const verifyGroupPaymentSchema = z.object({
   razorpaySignature: z.string().min(1, 'Signature is required'),
 });
 
-// ─── Packages ────────────────────────────────────────────────────────────────
-
-export const createPackageSchema = z.object({
-  mentorServiceId: z.string().uuid('Select a service for this package'),
-  title: z.string().trim().min(3, 'Title is required').max(120),
-  description: z.string().trim().max(1000).optional(),
-  sessionCount: z.number().int().min(2, 'A package needs at least 2 sessions').max(50),
-  price: z.number().positive('Price must be greater than zero').max(500000),
-  validityDays: z.number().int().min(7).max(730).optional().default(180),
-  isActive: z.boolean().optional(),
-});
-
-export const updatePackageSchema = z.object({
-  title: z.string().trim().min(3).max(120).optional(),
-  description: z.string().trim().max(1000).optional(),
-  sessionCount: z.number().int().min(2).max(50).optional(),
-  price: z.number().positive().max(500000).optional(),
-  validityDays: z.number().int().min(7).max(730).optional(),
-  isActive: z.boolean().optional(),
-});
-
-export const verifyPackagePaymentSchema = z.object({
-  purchaseId: z.string().uuid('Invalid purchase ID'),
-  razorpayOrderId: z.string().min(1, 'Order ID is required'),
-  razorpayPaymentId: z.string().min(1, 'Payment ID is required'),
-  razorpaySignature: z.string().min(1, 'Signature is required'),
-});
-
 // ─── Mentee documents ────────────────────────────────────────────────────────
 
 export const addDocumentSchema = z

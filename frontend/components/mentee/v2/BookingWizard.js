@@ -192,8 +192,8 @@ function Step2({ form, setForm, service, date, slot }) {
 
 // ─── Step 3: Payment ─────────────────────────────────────────────────────────
 
-function Step3({ service, date, slot, mentor, agreedToTerms, setAgreedToTerms, usingPackage }) {
-  const price = usingPackage ? 0 : service?.price || 0;
+function Step3({ service, date, slot, mentor, agreedToTerms, setAgreedToTerms }) {
+  const price = service?.price || 0;
   return (
     <div className="space-y-5">
       <h3 className="text-xl font-extrabold text-gray-900">Payment Details</h3>
@@ -306,7 +306,7 @@ export default function BookingWizard({ mentor, service, date, slot, onBack, onB
     menteeEmail: "",
     menteePhone: "",
   });
-  // Package redemption, shared documents and resurfaced feedback.
+  // Shared documents and resurfaced feedback.
   const [extras, setExtras] = useState({});
 
   // Load user email on mount
@@ -355,19 +355,11 @@ export default function BookingWizard({ mentor, service, date, slot, onBack, onB
         menteePhone: form.menteePhone,
         menteeEmail: form.menteeEmail,
         purposeOfCall: form.discussionTopic,
-        packagePurchaseId: extras.packagePurchaseId,
         sharedDocumentIds: extras.sharedDocumentIds?.length ? extras.sharedDocumentIds : undefined,
         sharedFeedbackBookingId: extras.sharedFeedbackBookingId,
       });
 
-      const { booking, order, redeemedFromPackage } = res?.data || {};
-
-      // A package-funded booking is already confirmed — skip Razorpay entirely.
-      if (redeemedFromPackage) {
-        setSuccessData(booking);
-        toast.success("Session booked from your package");
-        return;
-      }
+      const { booking, order } = res?.data || {};
 
       if (!booking?.id || !order?.orderId) throw new Error("Failed to initiate booking");
 
@@ -456,7 +448,6 @@ export default function BookingWizard({ mentor, service, date, slot, onBack, onB
           <div className="space-y-5">
             <BookingExtras
               mentorProfileId={mentor?.id}
-              mentorServiceId={service?.id || service?.serviceId}
               value={extras}
               onChange={setExtras}
             />
@@ -467,7 +458,6 @@ export default function BookingWizard({ mentor, service, date, slot, onBack, onB
               mentor={mentor}
               agreedToTerms={agreedToTerms}
               setAgreedToTerms={setAgreedToTerms}
-              usingPackage={Boolean(extras.packagePurchaseId)}
             />
           </div>
         )}
@@ -493,11 +483,7 @@ export default function BookingWizard({ mentor, service, date, slot, onBack, onB
             className="flex items-center gap-2 rounded-full border-[3px] border-black bg-[#22C55E] px-6 py-2.5 text-sm font-bold text-white hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ boxShadow: "3px 3px 0 0 #000" }}>
             {loading ? <Loader2 size={14} className="animate-spin" /> : <IndianRupee size={14} />}
-            {loading
-              ? "Processing..."
-              : extras.packagePurchaseId
-              ? "Confirm booking"
-              : `Pay ₹${service?.price || 0}`}
+            {loading ? "Processing..." : `Pay ₹${service?.price || 0}`}
           </button>
         )}
       </div>

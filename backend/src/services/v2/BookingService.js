@@ -22,7 +22,6 @@ import { emitSlotUpdate } from '../../config/socket.js';
 import { ACTIVE_STATUSES } from '../../utils/bookingStateMachine.js';
 import { calculatePlatformFee, calculateMentorEarning } from '../../utils/financialCalculator.js';
 import cancellationService from '../CancellationService.js';
-import packageService from '../PackageService.js';
 
 const createServiceError = (statusCode, message) => {
   const error = new Error(message);
@@ -151,21 +150,6 @@ class BookingServiceV2 {
       endTimeUtc,
     });
 
-    // Redeeming a package means the mentee already paid when they bought the
-    // bundle, so the booking is confirmed outright with no Razorpay round-trip.
-    const redeemingPackage = Boolean(data.packagePurchaseId);
-
-    if (redeemingPackage) {
-      await prisma.$transaction((tx) =>
-        packageService.redeemOne(tx, {
-          purchaseId: data.packagePurchaseId,
-          menteeId,
-          mentorProfileId: data.mentorProfileId,
-          mentorServiceId: data.mentorServiceId,
-        })
-      );
-    }
-
     // Create booking with conflict guard (SELECT FOR UPDATE)
     const booking = await createBookingWithGuard({
       menteeId,
@@ -179,48 +163,24 @@ class BookingServiceV2 {
       menteeEmail: data.menteeEmail,
       discussionTopic: data.discussionTopic,
       specificQuestions: data.specificQuestions,
-      packagePurchaseId: data.packagePurchaseId,
       sharedDocumentIds: data.sharedDocumentIds,
       sharedFeedbackBookingId: data.sharedFeedbackBookingId,
-      status: redeemingPackage ? 'CONFIRMED' : 'PAYMENT_PENDING',
-    }).catch(async (err) => {
-      // The slot was taken between redemption and insert — give the session back.
-      if (redeemingPackage) {
-        await packageService.refundOne(data.packagePurchaseId).catch(() => {});
-      }
-      throw err;
     });
 
-    if (redeemingPackage) {
-      const fullBooking = await prisma.booking.findUnique({
-        where: { id: booking.id },
-        include: bookingInclude,
-      });
-
-      emitSlotUpdate(data.mentorProfileId, {
-        startTime: utcToIst(startTimeUtc),
-        endTime: utcToIst(endTimeUtc),
-        serviceId: data.mentorServiceId,
-        action: 'booked',
-      });
-
-      return { booking: mapBooking(fullBooking), order: null, redeemedFromPackage: true };
-    }
-
     // Create payment record
-      const platformFee = calculatePlatformFee(mentorService.price);
-      const mentorAmount = calculateMentorEarning(mentorService.price);
+    const platformFee = calculatePlatformFee(mentorService.price);
+    const mentorAmount = calculateMentorEarning(mentorService.price);
 
-      const payment = await prisma.payment.create({
-        data: {
-          bookingId: booking.id,
-          amount: mentorService.price,
-          platformFee,
-          mentorAmount,
-          currency: 'INR',
-          paymentStatus: 'PENDING',
-        },
-      });
+    const payment = await prisma.payment.create({
+      data: {
+        bookingId: booking.id,
+        amount: mentorService.price,
+        platformFee,
+        mentorAmount,
+        currency: 'INR',
+        paymentStatus: 'PENDING',
+      },
+    });
 
     // Fetch the mentee for Razorpay prefill
     const mentee = await prisma.user.findUnique({

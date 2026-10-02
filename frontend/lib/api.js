@@ -493,38 +493,6 @@ export const groupDiscussionApi = {
   },
 };
 
-// ─── Session Packages ────────────────────────────────────────────────────────
-
-export const packageApi = {
-  listForMentor(mentorProfileId) {
-    return apiRequest(`/packages/mentor/${mentorProfileId}`);
-  },
-  listMine() {
-    return apiRequest("/packages/mine");
-  },
-  create(data) {
-    return apiRequest("/packages", { method: "POST", body: data });
-  },
-  update(id, data) {
-    return apiRequest(`/packages/${id}`, { method: "PATCH", body: data });
-  },
-  remove(id) {
-    return apiRequest(`/packages/${id}`, { method: "DELETE" });
-  },
-  purchase(id) {
-    return apiRequest(`/packages/${id}/purchase`, { method: "POST" });
-  },
-  verifyPayment(data) {
-    return apiRequest("/packages/verify-payment", { method: "POST", body: data });
-  },
-  listMyPurchases() {
-    return apiRequest("/packages/purchases/mine");
-  },
-  listRedeemable(params = {}) {
-    return apiRequest(`/packages/purchases/redeemable${qs(params)}`);
-  },
-};
-
 // ─── Mentee Documents & Profile Sharing ──────────────────────────────────────
 
 export const menteeDocumentApi = {

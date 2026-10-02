@@ -64,12 +64,11 @@ export default function RefundPolicyPage() {
         </p>
       </LegalSection>
 
-      <LegalSection title="6. Group sessions, webinars, and packages">
+      <LegalSection title="6. Group sessions and webinars">
         <p>
           The cancellation windows above apply to all paid formats on PeerSupport, including 1-on-1
           sessions, group discussions, and webinars, unless a specific offering states otherwise at
-          the time of booking. For multi-session packages, refunds are calculated on the unused
-          portion of the package based on the same windows.
+          the time of booking.
         </p>
       </LegalSection>
 

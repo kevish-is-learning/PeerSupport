@@ -124,12 +124,11 @@ model User {
 
   scheduledVerificationCalls MentorVerificationCall[] @relation("ScheduledVerificationCalls")
 
-  packagePurchases     PackagePurchase[]              @relation("MenteePackagePurchases")
-  webinarRegistrations WebinarRegistration[]          @relation("WebinarRegistrations")
-  gdRegistrations      GroupDiscussionRegistration[]  @relation("GroupDiscussionRegistrations")
-  blogPosts            BlogPost[]                     @relation("BlogAuthor")
-  supportTickets       SupportTicket[]                @relation("SupportTickets")
-  supportMessages      SupportTicketMessage[]         @relation("SupportTicketMessages")
+  webinarRegistrations WebinarRegistration[]         @relation("WebinarRegistrations")
+  gdRegistrations      GroupDiscussionRegistration[] @relation("GroupDiscussionRegistrations")
+  blogPosts            BlogPost[]                    @relation("BlogAuthor")
+  supportTickets       SupportTicket[]               @relation("SupportTickets")
+  supportMessages      SupportTicketMessage[]        @relation("SupportTicketMessages")
 
   @@index([email])
   @@index([role])
@@ -178,7 +177,6 @@ model MenteeProfile {
   @@index([username])
 }
 
-
 // ============================================================
 // MENTOR PROFILE
 // ============================================================
@@ -209,7 +207,7 @@ model MentorProfile {
   collegeDocumentUrl String?
 
   /// Structured application data; legacy text fields are retained for existing profiles.
-  education Json?
+  education              Json?
   professionalExperience Json?
 
   /// JSON blob storing "Why I Want to Mentor" Q&A answers
@@ -218,7 +216,7 @@ model MentorProfile {
   approvalStatus MentorApprovalStatus @default(PENDING)
 
   adminReviewNotes String?
-  reviewedAt DateTime?
+  reviewedAt       DateTime?
 
   isVerified Boolean @default(false)
 
@@ -235,17 +233,16 @@ model MentorProfile {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  mentorServices      MentorService[]
-  availabilityWindows AvailabilityWindow[]
-  mentorBookings      Booking[]  @relation("MentorBookings")
-  reviews             Review[]
-  feedbacks           SessionFeedback[]
-  payouts             Payout[]
-  wallet              MentorWallet?
-  cancellationStat    MentorCancellationStat?
-  verificationCalls   MentorVerificationCall[]
-  sessionPackages     SessionPackage[]
-  hostedWebinars      Webinar[]
+  mentorServices       MentorService[]
+  availabilityWindows  AvailabilityWindow[]
+  mentorBookings       Booking[]                @relation("MentorBookings")
+  reviews              Review[]
+  feedbacks            SessionFeedback[]
+  payouts              Payout[]
+  wallet               MentorWallet?
+  cancellationStat     MentorCancellationStat?
+  verificationCalls    MentorVerificationCall[]
+  hostedWebinars       Webinar[]
   moderatedDiscussions GroupDiscussion[]
 
   @@index([approvalStatus])
@@ -265,17 +262,17 @@ model MentorService {
   mentorProfileId String
 
   /// Custom service title (used when serviceId is null, or as override)
-  title           String?
+  title       String?
   /// Custom service description
-  description     String?
+  description String?
 
   /// Price in INR (₹50 – ₹2000)
   price           Float
   /// Session duration: 15, 30, 45, or 60 minutes
   durationMinutes Int
   /// Buffer between consecutive slots: 0, 5, 10, or 15 minutes
-  bufferMinutes   Int      @default(0)
-  isActive        Boolean  @default(true)
+  bufferMinutes   Int     @default(0)
+  isActive        Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -284,7 +281,6 @@ model MentorService {
 
   windowServices AvailabilityWindowService[]
   bookings       Booking[]
-  packages       SessionPackage[]
 
   @@index([mentorProfileId])
 }
@@ -318,7 +314,7 @@ model AvailabilityWindow {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  mentorProfile  MentorProfile              @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  mentorProfile  MentorProfile               @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
   windowServices AvailabilityWindowService[]
 
   @@index([mentorProfileId])
@@ -392,9 +388,6 @@ model Booking {
 
   rescheduledFromId String?
 
-  /// Set when this booking was redeemed from a purchased package
-  packagePurchaseId String?
-
   /// Mentee chose to share their profile with the mentor
   shareProfile Boolean @default(false)
 
@@ -418,11 +411,8 @@ model Booking {
 
   attendance SessionAttendance?
 
-  packagePurchase PackagePurchase? @relation(fields: [packagePurchaseId], references: [id], onDelete: SetNull)
-
   sharedDocuments BookingSharedDocument[]
 
-  @@index([packagePurchaseId])
   @@index([menteeId])
   @@index([mentorProfileId])
   @@index([status])
@@ -552,10 +542,10 @@ model SessionAttendance {
 
   bookingId String @unique
 
-  mentorJoinedAt  DateTime?
-  mentorLeftAt    DateTime?
-  menteeJoinedAt  DateTime?
-  menteeLeftAt    DateTime?
+  mentorJoinedAt   DateTime?
+  mentorLeftAt     DateTime?
+  menteeJoinedAt   DateTime?
+  menteeLeftAt     DateTime?
   mentorFinishedAt DateTime?
   menteeFinishedAt DateTime?
 
@@ -568,8 +558,8 @@ model SessionAttendance {
   menteeReconnects Int @default(0)
 
   /// Whether each participant was present for meaningful duration
-  mentorPresent      Boolean @default(false)
-  menteePresent      Boolean @default(false)
+  mentorPresent Boolean @default(false)
+  menteePresent Boolean @default(false)
 
   /// Whether the session met minimum 15-minute requirement
   minimumDurationMet Boolean @default(false)
@@ -601,7 +591,7 @@ model MentorWallet {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  mentorProfile MentorProfile       @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
   transactions  WalletTransaction[]
 }
 
@@ -687,7 +677,7 @@ model Payout {
   /// External reference (bank transaction ID, UTR, etc.)
   transactionRef String?
 
-  requestedAt DateTime @default(now())
+  requestedAt DateTime  @default(now())
   approvedAt  DateTime?
   processedAt DateTime?
 
@@ -708,110 +698,31 @@ model Payout {
 // ============================================================
 
 model MentorVerificationCall {
-  id              String  @id @default(uuid())
+  id String @id @default(uuid())
 
   mentorProfileId String
   scheduledById   String
 
-  googleEventId   String?
-  meetingLink     String?
+  googleEventId String?
+  meetingLink   String?
 
-  startsAt        DateTime
-  endsAt          DateTime
+  startsAt DateTime
+  endsAt   DateTime
 
-  notes           String?
+  notes String?
 
-  status          VerificationCallStatus @default(SCHEDULED)
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  mentorProfile   MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
-  scheduledBy     User          @relation("ScheduledVerificationCalls", fields: [scheduledById], references: [id])
-
-  @@index([mentorProfileId])
-  @@index([scheduledById])
-  @@index([status])
-  @@index([startsAt])
-}
-
-// ============================================================
-// SESSION PACKAGES (multi-session bundles)
-// ============================================================
-
-enum PackagePurchaseStatus {
-  PAYMENT_PENDING
-  ACTIVE
-  EXHAUSTED
-  EXPIRED
-  CANCELLED
-}
-
-/// A discounted bundle of sessions for one of a mentor's services.
-model SessionPackage {
-  id String @id @default(uuid())
-
-  mentorProfileId String
-  mentorServiceId String
-
-  title       String
-  description String?
-
-  /// How many sessions the bundle contains (e.g. 5)
-  sessionCount Int
-
-  /// Total price for the whole bundle, in INR
-  price Float
-
-  /// Days the pack stays redeemable after purchase
-  validityDays Int @default(180)
-
-  isActive Boolean @default(true)
+  status VerificationCallStatus @default(SCHEDULED)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   mentorProfile MentorProfile @relation(fields: [mentorProfileId], references: [id], onDelete: Cascade)
-  mentorService MentorService @relation(fields: [mentorServiceId], references: [id], onDelete: Cascade)
-
-  purchases PackagePurchase[]
+  scheduledBy   User          @relation("ScheduledVerificationCalls", fields: [scheduledById], references: [id])
 
   @@index([mentorProfileId])
-  @@index([mentorServiceId])
-}
-
-/// A mentee's purchase of a SessionPackage, tracking remaining redemptions.
-model PackagePurchase {
-  id String @id @default(uuid())
-
-  packageId String
-  menteeId  String
-
-  sessionsTotal Int
-  sessionsUsed  Int @default(0)
-
-  amount Float
-
-  razorpayOrderId   String?
-  razorpayPaymentId String? @unique
-  razorpaySignature String?
-
-  status PackagePurchaseStatus @default(PAYMENT_PENDING)
-
-  expiresAt DateTime?
-  paidAt    DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  package SessionPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
-  mentee  User           @relation("MenteePackagePurchases", fields: [menteeId], references: [id], onDelete: Cascade)
-
-  bookings Booking[]
-
-  @@index([menteeId])
-  @@index([packageId])
+  @@index([scheduledById])
   @@index([status])
+  @@index([startsAt])
 }
 
 // ============================================================
@@ -889,9 +800,9 @@ enum GroupRegistrationStatus {
 model Webinar {
   id String @id @default(uuid())
 
-  slug        String  @unique
-  title       String
-  description String
+  slug          String  @unique
+  title         String
+  description   String
   coverImageUrl String?
 
   hostMentorProfileId String?
@@ -1032,7 +943,7 @@ enum ContentStatus {
 model BlogPost {
   id String @id @default(uuid())
 
-  slug    String @unique
+  slug    String  @unique
   title   String
   excerpt String?
   content String
@@ -1083,7 +994,7 @@ model Testimonial {
   authorImageUrl String?
 
   quote  String
-  rating Int     @default(5)
+  rating Int    @default(5)
 
   isPublished Boolean @default(true)
   sortOrder   Int     @default(0)

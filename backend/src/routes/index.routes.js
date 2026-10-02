@@ -21,7 +21,7 @@ import cancellationRoutes from './cancellation.routes.js';
 import feedbackRoutes from './feedback.routes.js';
 import contentRoutes from './content.routes.js';
 import { webinarRouter, discussionRouter } from './groupSession.routes.js';
-import { packageRouter, documentRouter } from './package.routes.js';
+import { documentRouter } from './document.routes.js';
 import uploadRoutes from './upload.routes.js';
 
 // V2 routes — new booking & availability system
@@ -69,7 +69,6 @@ router.use('/feedback', feedbackRoutes);
 router.use('/content', contentRoutes);
 router.use('/webinars', webinarRouter);
 router.use('/group-discussions', discussionRouter);
-router.use('/packages', packageRouter);
 router.use('/mentee-documents', documentRouter);
 router.use('/upload', uploadRoutes);
 
