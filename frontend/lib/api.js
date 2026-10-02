@@ -808,13 +808,20 @@ export const adminApi = {
   },
 };
 
+// Google avatars are stored as ~96px thumbnails (`...=s96-c`). `=s0` asks
+// Google for the original-resolution photo instead.
+function toFullSizeGooglePhoto(url) {
+  if (!/^https:\/\/[^/]*googleusercontent\.com\//.test(url)) return url;
+  return url.replace(/=s\d+(-c)?$/, "=s0").replace(/([?&])sz=\d+/, "$1sz=1024");
+}
+
 export function resolveUploadUrl(filePath) {
   if (!filePath) {
     return "";
   }
 
   if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
-    return filePath;
+    return toFullSizeGooglePhoto(filePath);
   }
 
   const apiOrigin = API_BASE_URL.replace(/\/api\/?$/, "");

@@ -4,6 +4,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import bcrypt from 'bcryptjs';
 import { prisma } from './database.js';
 import emailService from '../services/EmailService.js';
+import { toFullSizeGooglePhoto } from '../utils/avatarUrl.js';
 
 // Serialize user for session
 passport.serializeUser((user, done) => {
@@ -123,7 +124,7 @@ passport.use(
             name: profile.displayName,
             googleId: profile.id,
             provider: 'GOOGLE',
-            profilePicture: profile.photos[0]?.value,
+            profilePicture: toFullSizeGooglePhoto(profile.photos[0]?.value),
             isVerified: true, // Google accounts are verified
             role: role, // Use the role extracted from state
           },

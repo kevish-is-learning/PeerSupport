@@ -180,6 +180,8 @@ const mentorProfileUpload = (req, res, next) => {
             public_id: publicId,
             resource_type: 'image',
             format: 'webp',
+            // Max quality — the default webp re-encode visibly softens avatars.
+            transformation: [{ quality: 100 }],
           }).then((url) => {
             uploads.profilePhotoUrl = url;
           })
@@ -249,6 +251,8 @@ const menteeProfileUpload = (req, res, next) => {
             public_id: publicId,
             resource_type: 'image',
             format: 'webp',
+            // Max quality — the default webp re-encode visibly softens avatars.
+            transformation: [{ quality: 100 }],
           }).then((url) => {
             uploads.profilePhotoUrl = url;
           })
