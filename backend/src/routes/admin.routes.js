@@ -97,10 +97,4 @@ router.post('/webinars', groupSessionController.createWebinar);
 router.patch('/webinars/:id', groupSessionController.updateWebinar);
 router.delete('/webinars/:id', groupSessionController.deleteWebinar);
 
-// ─── Group Discussions ───────────────────────────────────────────────────────
-router.get('/group-discussions', groupSessionController.listAllDiscussions);
-router.post('/group-discussions', groupSessionController.createDiscussion);
-router.patch('/group-discussions/:id', groupSessionController.updateDiscussion);
-router.delete('/group-discussions/:id', groupSessionController.deleteDiscussion);
-
 export default router;

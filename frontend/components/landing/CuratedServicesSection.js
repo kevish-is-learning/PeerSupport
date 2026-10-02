@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Video, Users, BookOpen, ArrowRight, Sparkles } from "lucide-react";
+import { Video, BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import HighlightPill from "../ui/HighlightPill";
 
 const services = [
@@ -17,22 +17,6 @@ const services = [
       className:
         "inline-flex items-center gap-2 justify-center rounded-full bg-[#2563eb] px-5 py-2.5 text-xs sm:text-sm font-bold text-white transition-all hover:translate-x-px hover:translate-y-px shadow-[3px_3px_0_0_#1a1a1a]",
       arrowClass: "text-white"
-    }
-  },
-  {
-    icon: Users,
-    title: "Group Discussions",
-    description:
-      "Join interactive GD sessions with peers and mentors to sharpen your communication and teamwork skills.",
-    iconBg: "#F9C41A",
-    iconColor: "#0d0d0f",
-    cardShadow: "shadow-[3px_3px_0_0_#F9C41A] sm:shadow-[3px_3px_0_0_#F9C41A]",
-    cta: {
-      label: "Join a Session",
-      href: "/mentee/find-mentors",
-      className:
-        "inline-flex items-center justify-center gap-2 rounded-full bg-[#F9C41A] px-5 py-2.5 text-xs sm:text-sm font-bold text-[#0d0d0f] transition-all hover:translate-x-px hover:translate-y-px shadow-[3px_3px_0_0_#1a1a1a]",
-      arrowClass: "text-[#0d0d0f]"
     }
   },
   {

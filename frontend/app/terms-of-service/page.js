@@ -29,7 +29,7 @@ export default function TermsOfServicePage() {
       <LegalSection title="3. Mentees and mentors">
         <LegalList
           items={[
-            "Mentees book sessions, group discussions, and webinars with mentors listed on the platform for guidance, interview preparation, and related mentorship services.",
+            "Mentees book sessions and webinars with mentors listed on the platform for guidance, interview preparation, and related mentorship services.",
             "Mentors apply to join the platform and go through a verification process, which may include a review of submitted documents and a verification call, before their profile is approved and made visible to mentees.",
             "PeerSupport acts as a marketplace connecting mentees and mentors. We do not guarantee specific outcomes (such as admission results, job offers, or exam scores) from any session.",
             "Mentors are independent contractors, not employees or agents of PeerSupport, and are solely responsible for the accuracy of their listed qualifications and the advice they give.",

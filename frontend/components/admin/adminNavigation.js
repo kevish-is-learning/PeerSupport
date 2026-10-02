@@ -8,7 +8,6 @@ import {
   Star,
   FileText,
   Video,
-  MessagesSquare,
   LifeBuoy,
 } from "lucide-react";
 
@@ -84,14 +83,6 @@ export const ADMIN_NAV_ITEMS = [
     icon: Video,
     shortcut: "G W",
     key: "webinars",
-  },
-  {
-    href: "/admin/group-discussions",
-    label: "Group Discussions",
-    description: "Open GD/WAT practice slots & monitor panel thresholds",
-    icon: MessagesSquare,
-    shortcut: "G G",
-    key: "group-discussions",
   },
   {
     href: "/admin/support",

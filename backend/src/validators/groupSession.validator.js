@@ -42,41 +42,6 @@ export const updateWebinarSchema = z
   })
   .refine(endsAfterStart, { message: 'End time must be after start time' });
 
-export const createDiscussionSchema = z
-  .object({
-    topic: z.string().trim().min(3, 'Topic is required').max(200),
-    description: z.string().trim().max(3000).optional(),
-    moderatorMentorProfileId: z.string().uuid().optional().nullable(),
-    startsAt: isoDateTime,
-    endsAt: isoDateTime,
-    minParticipants: z.number().int().min(2).max(50).optional().default(6),
-    maxParticipants: z.number().int().min(2).max(50).optional().default(12),
-    price: z.number().min(0).max(100000).optional().default(0),
-    status: z.enum(['SCHEDULED', 'CONFIRMED', 'LIVE', 'COMPLETED', 'CANCELLED']).optional(),
-  })
-  .refine(endsAfterStart, { message: 'End time must be after start time' })
-  .refine((d) => d.maxParticipants >= d.minParticipants, {
-    message: 'Maximum participants must be at least the minimum',
-  });
-
-export const updateDiscussionSchema = z
-  .object({
-    topic: z.string().trim().min(3).max(200).optional(),
-    description: z.string().trim().max(3000).optional(),
-    moderatorMentorProfileId: z.string().uuid().optional().nullable(),
-    startsAt: isoDateTime.optional(),
-    endsAt: isoDateTime.optional(),
-    minParticipants: z.number().int().min(2).max(50).optional(),
-    maxParticipants: z.number().int().min(2).max(50).optional(),
-    price: z.number().min(0).max(100000).optional(),
-    status: z.enum(['SCHEDULED', 'CONFIRMED', 'LIVE', 'COMPLETED', 'CANCELLED']).optional(),
-  })
-  .refine(endsAfterStart, { message: 'End time must be after start time' });
-
-export const registerDiscussionSchema = z.object({
-  shareProfile: z.boolean().optional().default(false),
-});
-
 export const verifyGroupPaymentSchema = z.object({
   registrationId: z.string().uuid('Invalid registration ID'),
   razorpayOrderId: z.string().min(1, 'Order ID is required'),

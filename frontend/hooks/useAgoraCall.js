@@ -7,8 +7,8 @@ import { meetingApi } from "../lib/api";
  * useAgoraCall — manages the complete Agora RTC lifecycle.
  *
  * @param {string} bookingId — channel identifier passed to the token fetcher
- * @param {(id: string) => Promise<object>} [fetchToken] — override for group
- *   rooms (webinars / GDs), which issue tokens from a different endpoint
+ * @param {(id: string) => Promise<object>} [fetchToken] — override for webinar
+ *   rooms, which issue tokens from a different endpoint
  * @returns {{ localTracks, remoteUsers, joined, joining, error, toggleMic, toggleCamera, leaveCall, screenSharing, toggleScreenShare, connectionState }}
  */
 export default function useAgoraCall(bookingId, fetchToken) {

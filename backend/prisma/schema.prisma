@@ -124,11 +124,10 @@ model User {
 
   scheduledVerificationCalls MentorVerificationCall[] @relation("ScheduledVerificationCalls")
 
-  webinarRegistrations WebinarRegistration[]         @relation("WebinarRegistrations")
-  gdRegistrations      GroupDiscussionRegistration[] @relation("GroupDiscussionRegistrations")
-  blogPosts            BlogPost[]                    @relation("BlogAuthor")
-  supportTickets       SupportTicket[]               @relation("SupportTickets")
-  supportMessages      SupportTicketMessage[]        @relation("SupportTicketMessages")
+  webinarRegistrations WebinarRegistration[]  @relation("WebinarRegistrations")
+  blogPosts            BlogPost[]             @relation("BlogAuthor")
+  supportTickets       SupportTicket[]        @relation("SupportTickets")
+  supportMessages      SupportTicketMessage[] @relation("SupportTicketMessages")
 
   @@index([email])
   @@index([role])
@@ -233,17 +232,16 @@ model MentorProfile {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  mentorServices       MentorService[]
-  availabilityWindows  AvailabilityWindow[]
-  mentorBookings       Booking[]                @relation("MentorBookings")
-  reviews              Review[]
-  feedbacks            SessionFeedback[]
-  payouts              Payout[]
-  wallet               MentorWallet?
-  cancellationStat     MentorCancellationStat?
-  verificationCalls    MentorVerificationCall[]
-  hostedWebinars       Webinar[]
-  moderatedDiscussions GroupDiscussion[]
+  mentorServices      MentorService[]
+  availabilityWindows AvailabilityWindow[]
+  mentorBookings      Booking[]                @relation("MentorBookings")
+  reviews             Review[]
+  feedbacks           SessionFeedback[]
+  payouts             Payout[]
+  wallet              MentorWallet?
+  cancellationStat    MentorCancellationStat?
+  verificationCalls   MentorVerificationCall[]
+  hostedWebinars      Webinar[]
 
   @@index([approvalStatus])
   @@index([averageRating])
@@ -855,79 +853,6 @@ model WebinarRegistration {
   user    User    @relation("WebinarRegistrations", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([webinarId, userId])
-  @@index([userId])
-}
-
-// ============================================================
-// GROUP DISCUSSIONS (GD / WAT practice)
-// ============================================================
-
-enum GroupDiscussionStatus {
-  SCHEDULED
-  CONFIRMED
-  LIVE
-  COMPLETED
-  CANCELLED
-}
-
-model GroupDiscussion {
-  id String @id @default(uuid())
-
-  topic       String
-  description String?
-
-  moderatorMentorProfileId String?
-
-  startsAt DateTime
-  endsAt   DateTime
-
-  /// The slot only runs once this many people have registered
-  minParticipants Int @default(6)
-  maxParticipants Int @default(12)
-
-  price Float @default(0)
-
-  roomId String?
-
-  status GroupDiscussionStatus @default(SCHEDULED)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  moderatorMentorProfile MentorProfile? @relation(fields: [moderatorMentorProfileId], references: [id], onDelete: SetNull)
-
-  registrations GroupDiscussionRegistration[]
-
-  @@index([status])
-  @@index([startsAt])
-}
-
-model GroupDiscussionRegistration {
-  id String @id @default(uuid())
-
-  groupDiscussionId String
-  userId            String
-
-  amount Float @default(0)
-
-  razorpayOrderId   String?
-  razorpayPaymentId String? @unique
-  razorpaySignature String?
-
-  status GroupRegistrationStatus @default(CONFIRMED)
-
-  /// Mentee opted to share their profile with the panel
-  shareProfile Boolean @default(false)
-
-  attendedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  groupDiscussion GroupDiscussion @relation(fields: [groupDiscussionId], references: [id], onDelete: Cascade)
-  user            User            @relation("GroupDiscussionRegistrations", fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([groupDiscussionId, userId])
   @@index([userId])
 }
 

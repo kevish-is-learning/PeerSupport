@@ -5,7 +5,7 @@ export const SITE_URL =
 
 export const SITE_DESCRIPTION =
   "Book 1-on-1 mentorship with IIM alumni and CAT toppers. Get interview prep, " +
-  "profile reviews, GD/WAT practice and personalised guidance for your MBA journey.";
+  "profile reviews and personalised guidance for your MBA journey.";
 
 /** Routes that should appear in the sitemap and be crawlable. */
 export const PUBLIC_ROUTES = [
@@ -39,7 +39,6 @@ export const organizationJsonLd = () => ({
     "CAT exam preparation",
     "MBA admissions",
     "Personal interview preparation",
-    "Group discussion and WAT practice",
   ],
 });
 

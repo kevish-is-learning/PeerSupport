@@ -7,25 +7,19 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import useAgoraCall from "../../../../hooks/useAgoraCall";
-import { webinarApi, groupDiscussionApi } from "../../../../lib/api";
+import { webinarApi } from "../../../../lib/api";
 import { Badge, Button, Spinner, cx } from "../../../../components/ui/kit";
 
 /**
- * Shared video room for webinars and group discussions.
- * `kind` is "webinar" or "discussion" and selects the token endpoint.
+ * Video room for webinars.
  */
 export default function GroupRoomPage() {
-  const { kind, id } = useParams();
+  const { id } = useParams();
   const router = useRouter();
 
-  const isWebinar = kind === "webinar";
-  const backHref = isWebinar ? "/webinars" : "/group-discussions";
+  const backHref = "/webinars";
 
-  const fetchToken = useCallback(
-    (roomId) =>
-      isWebinar ? webinarApi.getRoomToken(roomId) : groupDiscussionApi.getRoomToken(roomId),
-    [isWebinar]
-  );
+  const fetchToken = useCallback((roomId) => webinarApi.getRoomToken(roomId), []);
 
   const {
     join,
@@ -47,11 +41,11 @@ export default function GroupRoomPage() {
   const joinAttempted = useRef(false);
 
   useEffect(() => {
-    const loader = isWebinar ? webinarApi.get(id) : groupDiscussionApi.get(id);
-    loader
-      .then((res) => setMeta(res.data?.webinar || res.data?.discussion || null))
+    webinarApi
+      .get(id)
+      .then((res) => setMeta(res.data?.webinar || null))
       .catch(() => setMeta(null));
-  }, [id, isWebinar]);
+  }, [id]);
 
   // Join once on mount; the guard survives strict-mode's double effect.
   useEffect(() => {
@@ -85,7 +79,7 @@ export default function GroupRoomPage() {
       <header className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3 sm:px-6">
         <div className="min-w-0">
           <h1 className="truncate text-sm font-bold text-white">
-            {meta?.title || meta?.topic || (isWebinar ? "Webinar" : "Group Discussion")}
+            {meta?.title || "Webinar"}
           </h1>
           <p className="mt-0.5 text-[11px] text-gray-400">
             {joining ? "Connecting…" : joined ? "Live" : "Not connected"}

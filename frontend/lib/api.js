@@ -464,35 +464,6 @@ export const webinarApi = {
   },
 };
 
-// ─── Group Discussions ───────────────────────────────────────────────────────
-
-export const groupDiscussionApi = {
-  list(params = {}) {
-    return apiRequest(`/group-discussions${qs(params)}`);
-  },
-  get(id) {
-    return apiRequest(`/group-discussions/${id}`);
-  },
-  listMine() {
-    return apiRequest("/group-discussions/mine");
-  },
-  register(id, data = {}) {
-    return apiRequest(`/group-discussions/${id}/register`, { method: "POST", body: data });
-  },
-  verifyPayment(data) {
-    return apiRequest("/group-discussions/verify-payment", { method: "POST", body: data });
-  },
-  cancelRegistration(id) {
-    return apiRequest(`/group-discussions/${id}/register`, { method: "DELETE" });
-  },
-  listParticipants(id) {
-    return apiRequest(`/group-discussions/${id}/participants`);
-  },
-  getRoomToken(id) {
-    return apiRequest(`/group-discussions/${id}/room-token`);
-  },
-};
-
 // ─── Mentee Documents & Profile Sharing ──────────────────────────────────────
 
 export const menteeDocumentApi = {
@@ -768,20 +739,6 @@ export const adminApi = {
   },
   deleteWebinar(id) {
     return apiRequest(`/admin/webinars/${id}`, { method: 'DELETE' });
-  },
-
-  // Group discussions
-  listDiscussions() {
-    return apiRequest('/admin/group-discussions');
-  },
-  createDiscussion(data) {
-    return apiRequest('/admin/group-discussions', { method: 'POST', body: data });
-  },
-  updateDiscussion(id, data) {
-    return apiRequest(`/admin/group-discussions/${id}`, { method: 'PATCH', body: data });
-  },
-  deleteDiscussion(id) {
-    return apiRequest(`/admin/group-discussions/${id}`, { method: 'DELETE' });
   },
 
   // Verification Calls

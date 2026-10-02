@@ -4,7 +4,6 @@ export const MENTEE_NAV_ITEMS = [
   { label: "Analytics", href: "/mentee/analytics" },
   { label: "Explore Mentors", href: "/mentee/find-mentors" },
   { label: "Webinars", href: "/webinars" },
-  { label: "Group Discussions", href: "/group-discussions" },
   { label: "Profile", href: "/mentee/profile" },
   { label: "Support", href: "/mentee/support" },
 ];

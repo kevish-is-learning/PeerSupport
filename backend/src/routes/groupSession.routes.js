@@ -1,5 +1,5 @@
 /**
- * Group Session Routes — /api/webinars and /api/group-discussions
+ * Webinar Routes — /api/webinars
  *
  * Listings are public but personalised when a session cookie is present, so
  * they use optionalAuth to surface "you're registered" state.
@@ -20,16 +20,4 @@ webinarRouter.post('/verify-payment', authenticateJWT, groupSessionController.ve
 webinarRouter.delete('/:id/register', authenticateJWT, groupSessionController.cancelWebinarRegistration);
 webinarRouter.get('/:id/room-token', authenticateJWT, groupSessionController.getWebinarRoomToken);
 
-const discussionRouter = Router();
-
-discussionRouter.get('/', optionalAuth, groupSessionController.listDiscussions);
-discussionRouter.get('/mine', authenticateJWT, groupSessionController.listMyDiscussions);
-discussionRouter.get('/:id', optionalAuth, groupSessionController.getDiscussion);
-
-discussionRouter.post('/:id/register', authenticateJWT, groupSessionController.registerForDiscussion);
-discussionRouter.post('/verify-payment', authenticateJWT, groupSessionController.verifyDiscussionPayment);
-discussionRouter.delete('/:id/register', authenticateJWT, groupSessionController.cancelDiscussionRegistration);
-discussionRouter.get('/:id/participants', authenticateJWT, groupSessionController.listDiscussionParticipants);
-discussionRouter.get('/:id/room-token', authenticateJWT, groupSessionController.getDiscussionRoomToken);
-
-export { webinarRouter, discussionRouter };
+export { webinarRouter };

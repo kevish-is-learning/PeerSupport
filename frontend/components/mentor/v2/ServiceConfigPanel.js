@@ -24,7 +24,6 @@ const SERVICE_ICONS = {
   "mock-interview": "🎤",
   "profile-review": "👤",
   "sop-review": "📄",
-  "gd-practice": "💬",
   "strategy-session": "🎯",
 };
 

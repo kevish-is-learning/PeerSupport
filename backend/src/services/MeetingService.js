@@ -157,14 +157,14 @@ class MeetingService {
   }
 
   /**
-   * Agora token for a webinar or group-discussion room.
+   * Agora token for a webinar room.
    *
-   * Group rooms are many-to-many and have no attendance ledger, so this only
+   * Webinar rooms have no attendance ledger, so this only
    * checks that the caller is the host or a confirmed registrant, then opens
    * the room from 15 minutes before the start until 30 minutes after the end.
    *
    * @param {string} userId
-   * @param {{ webinarId?: string, groupDiscussionId?: string }} target
+   * @param {{ webinarId: string }} target
    */
   async getGroupRoomToken(userId, target) {
     if (!AGORA_APP_ID || !AGORA_APP_CERTIFICATE) {

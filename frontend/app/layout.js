@@ -14,7 +14,6 @@ export const metadata = {
     "CAT mentorship",
     "IIM alumni mentor",
     "MBA interview preparation",
-    "GD WAT practice",
     "CAT topper guidance",
     "B-school admissions",
     "1-on-1 mentoring",
